@@ -1,32 +1,28 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, ArrowUpRight } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import DesktopNav from '../navigation/DesktopNav';
 import MobileNav from '../navigation/MobileNav';
 import { miscInfo } from '../../data/miscInfo';
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
-    <header className="sticky top-0 z-40 border-b bg-[var(--misc-card-bg)]/95 backdrop-blur-sm">
-      <div className="bg-[var(--misc-deep-blue)] text-[var(--misc-card-bg)]">
-        <div className="misc-container flex min-h-8 items-center justify-between gap-4 text-[10px] uppercase tracking-[0.18em]">
-          <span className="hidden sm:inline">An academic initiative of {miscInfo.parentOrganization}</span>
-          <span className="ml-auto text-[var(--misc-gold)]">Knowledge · Character · Service</span>
-        </div>
-      </div>
-      <div className="misc-container flex items-center justify-between gap-6 py-4 sm:py-5">
-        <Link to="/" className="group flex items-center gap-3" aria-label="MISC Homepage">
-          <span className="motif-grid flex size-11 items-center justify-center border border-[var(--misc-gold)] bg-[var(--misc-deep-blue)] font-serif text-xl font-bold text-[var(--misc-gold)] shadow-sm">M</span>
-          <span className="flex flex-col">
-            <span className="font-serif text-xl font-bold leading-none tracking-tight text-[var(--misc-deep-blue)] sm:text-2xl">{miscInfo.name}</span>
-            <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.17em] text-[var(--misc-text-muted)]">Markaz Integrated Studies Council</span>
+    <header className="sticky top-0 z-40 border-b border-[var(--misc-border)] bg-[var(--misc-card-bg)]/95 backdrop-blur-md">
+      <div className="misc-container flex min-h-[76px] items-center justify-between gap-5 lg:min-h-[88px]">
+        <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label="MISC Homepage">
+          <span className="motif-grid flex size-10 shrink-0 items-center justify-center border border-[var(--misc-gold)] bg-[var(--misc-deep-blue)] font-serif text-lg font-bold text-[var(--misc-gold)] transition-colors group-hover:bg-[var(--misc-blue)] sm:size-11">M</span>
+          <span className="flex min-w-0 flex-col">
+            <span className="font-serif text-lg font-bold leading-none tracking-tight text-[var(--misc-deep-blue)] sm:text-xl">{miscInfo.name}</span>
+            <span className="mt-1 truncate text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--misc-text-muted)] sm:text-[10px] sm:tracking-[0.17em]">{miscInfo.fullName}</span>
           </span>
         </Link>
         <DesktopNav />
-        <button type="button" onClick={() => setMobileMenuOpen(true)} className="flex size-10 items-center justify-center border border-[var(--misc-border)] text-[var(--misc-deep-blue)] hover:border-[var(--misc-gold)] lg:hidden" aria-label="Open navigation menu"><Menu /></button>
+        <button type="button" onClick={() => setMobileMenuOpen(true)} className="flex size-10 shrink-0 items-center justify-center border border-[var(--misc-border)] text-[var(--misc-deep-blue)] transition-colors hover:border-[var(--misc-gold)] hover:text-[var(--misc-blue)] lg:hidden" aria-label="Open navigation menu" aria-expanded={mobileMenuOpen}>
+          <Menu aria-hidden="true" />
+        </button>
       </div>
-      <div className="hidden border-t bg-[var(--misc-bg)] lg:block"><div className="misc-container flex items-center justify-end gap-2 py-2 text-xs text-[var(--misc-text-muted)]"><span>Explore the council</span><ArrowUpRight className="size-3 text-[var(--misc-gold)]" /></div></div>
       <MobileNav isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </header>
   );
