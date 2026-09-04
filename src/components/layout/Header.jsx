@@ -1,50 +1,34 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import { Menu, ArrowUpRight } from 'lucide-react';
 import DesktopNav from '../navigation/DesktopNav';
 import MobileNav from '../navigation/MobileNav';
 import { miscInfo } from '../../data/miscInfo';
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
-      {/* Main Single Sticky Navbar matching Figma reference */}
-      <div className="misc-container flex items-center justify-between py-3.5 sm:py-4">
-        {/* Brand / Logo */}
-        <Link to="/" className="flex items-center space-x-3 group" aria-label="MISC Homepage">
-          <div className="w-10 h-10 bg-[#0B1D3A] text-[#D4AF37] flex items-center justify-center rounded font-serif font-bold text-xl border border-[#D4AF37]/30 shadow-xs group-hover:bg-[#145DA0] transition-colors">
-            M
-          </div>
-          <div className="flex flex-col">
-            <span className="font-serif font-bold text-xl tracking-tight text-[#0B1D3A] leading-none">
-              {miscInfo.name}
-            </span>
-            <span className="text-[11px] font-medium tracking-wider text-slate-500 uppercase mt-0.5">
-              Markaz Integrated Council
-            </span>
-          </div>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <DesktopNav />
-
-        {/* Mobile Hamburger Toggle */}
-        <button
-          type="button"
-          onClick={() => setMobileMenuOpen(true)}
-          className="lg:hidden p-2 rounded-md text-slate-700 hover:text-[#0B1D3A] hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#0B1D3A] cursor-pointer"
-          aria-label="Open navigation menu"
-        >
-          <Menu className="w-6 h-6" />
-        </button>
+    <header className="sticky top-0 z-40 border-b bg-[var(--misc-card-bg)]/95 backdrop-blur-sm">
+      <div className="bg-[var(--misc-deep-blue)] text-[var(--misc-card-bg)]">
+        <div className="misc-container flex min-h-8 items-center justify-between gap-4 text-[10px] uppercase tracking-[0.18em]">
+          <span className="hidden sm:inline">An academic initiative of {miscInfo.parentOrganization}</span>
+          <span className="ml-auto text-[var(--misc-gold)]">Knowledge · Character · Service</span>
+        </div>
       </div>
-
-      {/* Mobile Drawer */}
+      <div className="misc-container flex items-center justify-between gap-6 py-4 sm:py-5">
+        <Link to="/" className="group flex items-center gap-3" aria-label="MISC Homepage">
+          <span className="motif-grid flex size-11 items-center justify-center border border-[var(--misc-gold)] bg-[var(--misc-deep-blue)] font-serif text-xl font-bold text-[var(--misc-gold)] shadow-sm">M</span>
+          <span className="flex flex-col">
+            <span className="font-serif text-xl font-bold leading-none tracking-tight text-[var(--misc-deep-blue)] sm:text-2xl">{miscInfo.name}</span>
+            <span className="mt-1 text-[10px] font-semibold uppercase tracking-[0.17em] text-[var(--misc-text-muted)]">Markaz Integrated Studies Council</span>
+          </span>
+        </Link>
+        <DesktopNav />
+        <button type="button" onClick={() => setMobileMenuOpen(true)} className="flex size-10 items-center justify-center border border-[var(--misc-border)] text-[var(--misc-deep-blue)] hover:border-[var(--misc-gold)] lg:hidden" aria-label="Open navigation menu"><Menu /></button>
+      </div>
+      <div className="hidden border-t bg-[var(--misc-bg)] lg:block"><div className="misc-container flex items-center justify-end gap-2 py-2 text-xs text-[var(--misc-text-muted)]"><span>Explore the council</span><ArrowUpRight className="size-3 text-[var(--misc-gold)]" /></div></div>
       <MobileNav isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </header>
   );
 };
-
 export default Header;
