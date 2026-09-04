@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --misc-deep-blue: #0B1D3A;
+    --misc-blue: #145DA0;
+    --misc-blue-light: #1E3A8A;
+    --misc-gold: #D4AF37;
+    --misc-gold-hover: #B89628;
+    --misc-bg: #F8FAFC;
+    --misc-card-bg: #FFFFFF;
+    --misc-border: #E2E8F0;
+    --misc-text: #0B1D3A;
+    --misc-text-muted: #475569;
+  }
+
+  body {
+    background-color: var(--misc-bg);
+    color: var(--misc-text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, .font-serif-heading {
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+  }
+}
+
+/* Custom Utilities for Academic MISC Brand */
+.bg-misc-deep-blue {
+  background-color: #0B1D3A;
+}
+
+.bg-misc-blue {
+  background-color: #145DA0;
+}
+
+.text-misc-deep-blue {
+  color: #0B1D3A;
+}
+
+.text-misc-blue {
+  color: #145DA0;
+}
+
+.text-misc-gold {
+  color: #D4AF37;
+}
+
+.bg-misc-gold {
+  background-color: #D4AF37;
+}
+
+.border-misc-gold {
+  border-color: #D4AF37;
+}
+
+.border-misc-blue {
+  border-color: #145DA0;
+}
+
+.hover\:bg-misc-gold-hover:hover {
+  background-color: #B89628;
+}
+
+/* Container constraints as specified */
+.misc-container {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .misc-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .misc-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
