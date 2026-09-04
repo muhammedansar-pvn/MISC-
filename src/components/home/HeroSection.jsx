@@ -1,128 +1,43 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, BookOpen, ShieldCheck, Award } from 'lucide-react';
+import { ArrowRight, ChevronDown } from 'lucide-react';
 import Button from '../common/Button';
-import { miscInfo } from '../../data/miscInfo';
+
+const glanceStats = [
+  ['3', 'Major Programme Streams'],
+  ['6+', 'Campus Institutions'],
+  ['1400+', 'Students Enrolled'],
+  ['25+', 'Years of Excellence']
+];
 
 export const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative bg-[#0B1D3A] text-white py-16 sm:py-24 lg:py-32 overflow-hidden border-b border-[#D4AF37]/20">
-      <div className="relative misc-container z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
-          {/* LEFT SIDE — HERO TEXT CONTENT (Cols 1-7) */}
-          <div className="lg:col-span-7 space-y-6 sm:space-y-8">
-            {/* Eyebrow Label with Gold Accent Line */}
-            <div className="flex items-center space-x-3">
-              <span className="w-8 h-[2px] bg-[#D4AF37]" />
-              <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#D4AF37] uppercase">
-                {miscInfo.parentOrganization}
-              </span>
-            </div>
+    <section className="relative isolate min-h-[calc(100vh-76px)] overflow-hidden bg-[var(--misc-deep-blue)] text-[var(--misc-card-bg)] lg:min-h-[calc(100vh-88px)]">
+      <div className="absolute inset-0 -z-20 bg-cover bg-center" style={{ backgroundImage: "url('/misc-campus-hero.png')" }} aria-hidden="true" />
+      <div className="absolute inset-0 -z-10 bg-[var(--misc-deep-blue)]/85" aria-hidden="true" />
+      <div className="motif-grid absolute inset-0 -z-10 opacity-20" aria-hidden="true" />
+      <div className="absolute inset-x-0 bottom-0 -z-10 h-1/3 bg-gradient-to-t from-[var(--misc-deep-blue)]/60 to-transparent" aria-hidden="true" />
 
-            {/* Main Headline */}
-            <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
-              Integrating Islamic & <br className="hidden sm:inline" />
-              <span className="text-[#D4AF37]">Contemporary Education</span>
-            </h1>
+      <div className="misc-container relative grid gap-14 py-20 sm:py-28 lg:grid-cols-12 lg:items-center lg:gap-12 lg:py-32">
+        <div className="lg:col-span-7 xl:col-span-7">
+          <div className="mb-7 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--misc-gold)] sm:text-xs"><span className="h-px w-10 bg-[var(--misc-gold)]" />Markaz Integrated Studies Council</div>
+          <h1 className="max-w-3xl font-serif text-5xl font-bold leading-[1.02] tracking-tight text-balance sm:text-6xl lg:text-7xl xl:text-[5.25rem]">Where Islamic Scholarship Meets <span className="text-[var(--misc-gold)]">Contemporary Excellence</span></h1>
+          <p className="mt-8 max-w-2xl text-base leading-relaxed text-slate-200 sm:text-lg">Integrating Islamic scholarship, contemporary knowledge, skill development and character formation — preparing scholars and professionals for a global world.</p>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row"><Button variant="gold" size="lg" onClick={() => navigate('/academics')} className="group">Explore programmes <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" /></Button><Button variant="outlineLight" size="lg" onClick={() => navigate('/contact')}>Apply for admission <ArrowRight className="ml-2 size-4" /></Button></div>
+        </div>
 
-            {/* Supporting Subtitle */}
-            <p className="text-slate-300 text-base sm:text-xl font-normal leading-relaxed max-w-2xl">
-              {miscInfo.aboutShort}
-            </p>
-
-            {/* Call to Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
-              <Button
-                variant="miscBlue"
-                size="lg"
-                onClick={() => navigate('/academics')}
-                className="group"
-              >
-                <span>EXPLORE PROGRAMMES</span>
-                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-
-              <Button
-                variant="outlineLight"
-                size="lg"
-                onClick={() => navigate('/about')}
-              >
-                ABOUT MISC
-              </Button>
-            </div>
+        <div className="lg:col-span-5 xl:col-start-9">
+          <div className="border border-white/25 bg-[var(--misc-deep-blue)]/55 p-6 backdrop-blur-md sm:p-8">
+            <div className="border-b border-white/20 pb-5"><span className="text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--misc-gold)]">At a glance</span><h2 className="mt-3 font-serif text-2xl font-bold sm:text-3xl">A tradition of excellence</h2></div>
+            <dl className="grid grid-cols-2 divide-x divide-y divide-white/15 border-b border-white/15"><>{glanceStats.map(([value, label], index) => <div key={label} className={`py-6 ${index % 2 === 0 ? 'pr-5' : 'pl-5'}`}><dt className="font-serif text-3xl font-bold text-[var(--misc-gold)] sm:text-4xl">{value}</dt><dd className="mt-2 text-[10px] uppercase leading-relaxed tracking-[0.1em] text-slate-300 sm:text-xs">{label}</dd></div>)}</></dl>
+            <p className="pt-5 text-xs leading-relaxed text-slate-300">One connected academic vision, shaped for a changing world.</p>
           </div>
-
-          {/* RIGHT SIDE — AT A GLANCE PANEL (Cols 8-12) */}
-          <div className="lg:col-span-5">
-            <div className="bg-white/5 border border-white/10 rounded-lg p-6 sm:p-8 backdrop-blur-xs shadow-lg space-y-6">
-              <div className="border-b border-white/10 pb-4">
-                <span className="text-xs font-bold uppercase tracking-widest text-[#D4AF37]">
-                  MISC AT A GLANCE
-                </span>
-                <h3 className="font-serif text-xl font-bold text-white mt-1">
-                  Academic Framework
-                </h3>
-              </div>
-
-              {/* 3 Metric Summary Items */}
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3.5">
-                  <div className="w-8 h-8 rounded bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center shrink-0 border border-[#D4AF37]/30 mt-0.5">
-                    <BookOpen className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold text-white block">
-                      3 Major Streams
-                    </span>
-                    <span className="text-xs text-slate-300 font-light">
-                      Alim, Secondary & Higher Secondary Integrated Streams
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3.5">
-                  <div className="w-8 h-8 rounded bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center shrink-0 border border-[#D4AF37]/30 mt-0.5">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold text-white block">
-                      Central Evaluation
-                    </span>
-                    <span className="text-xs text-slate-300 font-light">
-                      Unified Examination Board & Syllabus Guidelines
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3.5">
-                  <div className="w-8 h-8 rounded bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center shrink-0 border border-[#D4AF37]/30 mt-0.5">
-                    <Award className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold text-white block">
-                      Direct & Collaborating
-                    </span>
-                    <span className="text-xs text-slate-300 font-light">
-                      Campus Institutions & Collaborating Centers Network
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
-                <span>Central Secretariat</span>
-                <span className="text-[#D4AF37] font-semibold">Jamia Markaz</span>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
+      <div className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 items-center gap-3 text-[10px] uppercase tracking-[0.25em] text-slate-300 sm:flex"><span className="h-px w-8 bg-[var(--misc-gold)]" />Scroll to explore<ChevronDown className="size-3 text-[var(--misc-gold)]" /></div>
     </section>
   );
 };
-
 export default HeroSection;

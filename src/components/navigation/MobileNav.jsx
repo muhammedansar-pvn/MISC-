@@ -6,80 +6,24 @@ import { miscInfo } from '../../data/miscInfo';
 
 export const MobileNav = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 lg:hidden">
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
-        onClick={onClose}
-      />
-
-      {/* Drawer */}
-      <div className="fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-xl flex flex-col z-50 transform transition-transform duration-300 ease-in-out">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-[#0B1D3A] text-white">
-          <div className="flex items-center space-x-2">
-            <span className="font-serif text-lg font-bold tracking-wider text-white">
-              {miscInfo.name}
-            </span>
-            <span className="text-xs text-[#D4AF37] border-l border-slate-600 pl-2">
-              Jamia Markaz
-            </span>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-1 rounded hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
-            aria-label="Close menu"
-          >
-            <X className="w-6 h-6" />
-          </button>
+    <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+      <button className="absolute inset-0 bg-[var(--misc-deep-blue)]/70" onClick={onClose} aria-label="Close navigation overlay" />
+      <aside className="absolute inset-y-0 right-0 flex w-[min(88vw,24rem)] flex-col border-l border-[var(--misc-gold)]/40 bg-[var(--misc-card-bg)] shadow-2xl animate-in slide-in-from-right duration-300">
+        <div className="flex items-center justify-between border-b border-white/10 bg-[var(--misc-deep-blue)] px-5 py-5 text-[var(--misc-card-bg)]">
+          <span className="flex flex-col"><span className="font-serif text-xl font-bold">{miscInfo.name}</span><span className="mt-1 text-[9px] uppercase tracking-[0.16em] text-[var(--misc-gold)]">{miscInfo.fullName}</span></span>
+          <button onClick={onClose} className="flex size-9 items-center justify-center border border-[var(--misc-gold)] text-[var(--misc-gold)] transition-colors hover:bg-[var(--misc-gold)] hover:text-[var(--misc-deep-blue)]" aria-label="Close menu"><X aria-hidden="true" /></button>
         </div>
-
-        {/* Navigation Links */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              onClick={onClose}
-              className={({ isActive }) =>
-                `block px-4 py-3 rounded-md text-base font-medium transition-colors ${
-                  isActive
-                    ? 'bg-[#0B1D3A] text-white font-semibold'
-                    : 'text-slate-700 hover:bg-slate-100 hover:text-[#0B1D3A]'
-                }`
-              }
-            >
-              {link.name}
-            </NavLink>
-          ))}
+        <nav className="flex flex-1 flex-col gap-1 p-5" aria-label="Mobile primary navigation">
+          {navLinks.map((link) => <NavLink key={link.path} to={link.path} onClick={onClose} className={({ isActive }) => `border-b px-3 py-4 text-sm font-semibold uppercase tracking-[0.12em] transition-colors ${isActive ? 'border-[var(--misc-gold)] text-[var(--misc-blue)]' : 'border-[var(--misc-border)] text-[var(--misc-text)] hover:text-[var(--misc-blue)]'}`}>{link.name}</NavLink>)}
+        </nav>
+        <div className="flex flex-col gap-4 border-t border-[var(--misc-border)] bg-[var(--misc-bg)] p-5 text-xs text-[var(--misc-text-muted)]">
+          <div className="flex items-center gap-3"><Mail className="size-4 text-[var(--misc-gold)]" aria-hidden="true" />{miscInfo.email}</div>
+          <div className="flex items-center gap-3"><Phone className="size-4 text-[var(--misc-gold)]" aria-hidden="true" />{miscInfo.phone}</div>
+          <NavLink to={applyCta.path} onClick={onClose} className="bg-[var(--misc-deep-blue)] px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.12em] text-[var(--misc-card-bg)] transition-colors hover:bg-[var(--misc-blue)]">{applyCta.name}</NavLink>
         </div>
-
-        {/* Footer Info & CTA */}
-        <div className="p-4 border-t border-slate-200 bg-slate-50 space-y-4">
-          <div className="space-y-1.5 text-xs text-slate-600">
-            <div className="flex items-center space-x-2">
-              <Mail className="w-4 h-4 text-[#D4AF37]" />
-              <span>{miscInfo.email}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Phone className="w-4 h-4 text-[#D4AF37]" />
-              <span>{miscInfo.phone}</span>
-            </div>
-          </div>
-
-          <NavLink
-            to={applyCta.path}
-            onClick={onClose}
-            className="block w-full text-center bg-[#0B1D3A] text-white hover:bg-[#145DA0] text-sm font-bold tracking-wider uppercase px-4 py-3 rounded transition-colors"
-          >
-            {applyCta.name}
-          </NavLink>
-        </div>
-      </div>
+      </aside>
     </div>
   );
 };
-
 export default MobileNav;

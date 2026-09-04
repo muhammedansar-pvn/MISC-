@@ -9,42 +9,22 @@ export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
-      {/* Main Single Sticky Navbar matching Figma reference */}
-      <div className="misc-container flex items-center justify-between py-3.5 sm:py-4">
-        {/* Brand / Logo */}
-        <Link to="/" className="flex items-center space-x-3 group" aria-label="MISC Homepage">
-          <div className="w-10 h-10 bg-[#0B1D3A] text-[#D4AF37] flex items-center justify-center rounded font-serif font-bold text-xl border border-[#D4AF37]/30 shadow-xs group-hover:bg-[#145DA0] transition-colors">
-            M
-          </div>
-          <div className="flex flex-col">
-            <span className="font-serif font-bold text-xl tracking-tight text-[#0B1D3A] leading-none">
-              {miscInfo.name}
-            </span>
-            <span className="text-[11px] font-medium tracking-wider text-slate-500 uppercase mt-0.5">
-              Markaz Integrated Council
-            </span>
-          </div>
+    <header className="sticky top-0 z-40 border-b border-[var(--misc-border)] bg-[var(--misc-card-bg)]/95 backdrop-blur-md">
+      <div className="misc-container flex min-h-[76px] items-center justify-between gap-5 lg:min-h-[88px]">
+        <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label="MISC Homepage">
+          <span className="motif-grid flex size-10 shrink-0 items-center justify-center border border-[var(--misc-gold)] bg-[var(--misc-deep-blue)] font-serif text-lg font-bold text-[var(--misc-gold)] transition-colors group-hover:bg-[var(--misc-blue)] sm:size-11">M</span>
+          <span className="flex min-w-0 flex-col">
+            <span className="font-serif text-lg font-bold leading-none tracking-tight text-[var(--misc-deep-blue)] sm:text-xl">{miscInfo.name}</span>
+            <span className="mt-1 truncate text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--misc-text-muted)] sm:text-[10px] sm:tracking-[0.17em]">{miscInfo.fullName}</span>
+          </span>
         </Link>
-
-        {/* Desktop Navigation */}
         <DesktopNav />
-
-        {/* Mobile Hamburger Toggle */}
-        <button
-          type="button"
-          onClick={() => setMobileMenuOpen(true)}
-          className="lg:hidden p-2 rounded-md text-slate-700 hover:text-[#0B1D3A] hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-[#0B1D3A] cursor-pointer"
-          aria-label="Open navigation menu"
-        >
-          <Menu className="w-6 h-6" />
+        <button type="button" onClick={() => setMobileMenuOpen(true)} className="flex size-10 shrink-0 items-center justify-center border border-[var(--misc-border)] text-[var(--misc-deep-blue)] transition-colors hover:border-[var(--misc-gold)] hover:text-[var(--misc-blue)] lg:hidden" aria-label="Open navigation menu" aria-expanded={mobileMenuOpen}>
+          <Menu aria-hidden="true" />
         </button>
       </div>
-
-      {/* Mobile Drawer */}
       <MobileNav isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </header>
   );
 };
-
 export default Header;
