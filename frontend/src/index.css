@@ -1,28 +1,43 @@
 @import "tailwindcss";
 
+@theme {
+  --font-serif: 'Cormorant Garamond', 'Noto Naskh Arabic', Georgia, serif;
+  --font-display: 'Cormorant Garamond', 'Noto Naskh Arabic', Georgia, serif;
+  --font-sans: 'Manrope', 'Noto Sans Malayalam', 'Noto Naskh Arabic', system-ui, -apple-system, sans-serif;
+}
+
 @layer base {
   :root {
     --misc-bg: #FFFFFF;
-    --misc-bg-subtle: #F8FAFC;
-    --misc-bg-light-blue: #EAF4FF;
-    --misc-bg-soft-blue: #DCEEFF;
-    --misc-charcoal: #172033;
-    --misc-text: #172033;
-    --misc-text-muted: #64748B;
-    --misc-blue-accent: #3B82F6;
-    --misc-blue-hover: #2563EB;
-    --misc-border: #E5EAF0;
+    --misc-bg-subtle: #F7F8F5;
+    --misc-bg-light-blue: #E6F2F1;
+    --misc-bg-soft-blue: #E6F2F1;
+    --misc-charcoal: #132238;
+    --misc-text: #132238;
+    --misc-text-muted: #475569;
+    --misc-blue-accent: #2F7C7A;
+    --misc-blue-hover: #256664;
+    --misc-border: #E2E8E0;
   }
 
   body {
     background-color: var(--misc-bg);
     color: var(--misc-text);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Manrope', 'Noto Sans Malayalam', 'Noto Naskh Arabic', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
   }
 
-  h1, h2, h3, h4, .font-serif-heading {
-    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+  h1, h2, h3, h4, .font-serif, .font-display, .font-serif-heading {
+    font-family: 'Cormorant Garamond', 'Noto Naskh Arabic', Georgia, Cambria, serif;
+  }
+
+  /* Script fallback rules for Malayalam and Arabic */
+  [lang="ml"], :lang(ml) {
+    font-family: 'Noto Sans Malayalam', 'Manrope', system-ui, sans-serif;
+  }
+
+  [lang="ar"], :lang(ar), [dir="rtl"] {
+    font-family: 'Noto Naskh Arabic', 'Cormorant Garamond', Georgia, serif;
   }
 }
 
@@ -38,29 +53,29 @@
   }
 }
 
-/* Custom Utilities for Premium MISC White + Light Blue + Dark Charcoal Theme */
+/* Custom Utilities for Premium MISC Option 1 Warm Ivory + Deep Navy + Muted Teal Theme */
 .bg-misc-charcoal {
-  background-color: #172033;
+  background-color: #132238;
 }
 
 .bg-misc-light-blue {
-  background-color: #EAF4FF;
+  background-color: #E6F2F1;
 }
 
 .bg-misc-soft-blue {
-  background-color: #DCEEFF;
+  background-color: #E6F2F1;
 }
 
 .text-misc-charcoal {
-  color: #172033;
+  color: #132238;
 }
 
 .text-misc-blue {
-  color: #3B82F6;
+  color: #2F7C7A;
 }
 
 .border-misc {
-  border-color: #E5EAF0;
+  border-color: #E2E8E0;
 }
 
 /* Container constraints */

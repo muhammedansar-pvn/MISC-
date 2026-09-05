@@ -8,14 +8,14 @@ export const FinalCTA = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative bg-[#172033] text-white py-16 sm:py-20 overflow-hidden">
+    <section className="relative bg-[#132238] text-white py-16 sm:py-20 overflow-hidden">
       <div className="misc-container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
 
           {/* LEFT SIDE — CTA COPY & BUTTONS (Cols 1-7) */}
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15">
-              <span className="w-2 h-2 rounded-full bg-[#3B82F6]" />
+              <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
               <span className="text-xs font-semibold tracking-wider text-white uppercase">
                 JOIN THE NETWORK
               </span>
@@ -54,7 +54,7 @@ export const FinalCTA = () => {
           <div className="lg:col-span-5">
             <div className="bg-white/5 border border-white/10 rounded-xl p-6 sm:p-8 space-y-6 shadow-lg">
               <div className="border-b border-white/10 pb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#3B82F6]">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#2F7C7A]">
                   OFFICIAL SECRETARIAT
                 </span>
                 <h3 className="font-serif text-lg font-bold text-white mt-1">
@@ -64,19 +64,19 @@ export const FinalCTA = () => {
 
               <div className="space-y-4 text-sm text-slate-300">
                 <div className="flex items-start space-x-3">
-                  <MapPin className="w-4 h-4 text-[#3B82F6] mt-1 shrink-0" />
+                  <MapPin className="w-4 h-4 text-[#2F7C7A] mt-1 shrink-0" />
                   <span className="leading-relaxed">{miscInfo.address}</span>
                 </div>
 
                 <div className="flex items-center space-x-3">
-                  <Mail className="w-4 h-4 text-[#3B82F6] shrink-0" />
+                  <Mail className="w-4 h-4 text-[#2F7C7A] shrink-0" />
                   <a href={`mailto:${miscInfo.email}`} className="hover:text-white transition-colors font-mono">
                     {miscInfo.email}
                   </a>
                 </div>
 
                 <div className="flex items-center space-x-3">
-                  <Phone className="w-4 h-4 text-[#3B82F6] shrink-0" />
+                  <Phone className="w-4 h-4 text-[#2F7C7A] shrink-0" />
                   <a href={`tel:${miscInfo.phone.replace(/\s+/g, '')}`} className="hover:text-white transition-colors font-mono">
                     {miscInfo.phone}
                   </a>

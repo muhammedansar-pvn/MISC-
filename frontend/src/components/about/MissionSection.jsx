@@ -4,18 +4,18 @@ import { miscInfo } from '../../data/miscInfo';
 
 export const MissionSection = () => {
   return (
-    <section className="relative bg-white py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-slate-200">
+    <section className="relative bg-white py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-[#E2E8E0]">
       <div className="relative misc-container z-10">
         <div className="max-w-4xl mx-auto space-y-8">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded bg-[#0B1D3A]/5 text-[#145DA0] flex items-center justify-center">
+            <div className="w-10 h-10 rounded bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center">
               <Target className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider block">
+              <span className="text-xs font-bold text-[#2F7C7A] uppercase tracking-wider block">
                 MISSION FRAMEWORK
               </span>
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B1D3A]">
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#132238]">
                 Our Mission Commitments
               </h2>
             </div>
@@ -25,10 +25,10 @@ export const MissionSection = () => {
             {miscInfo.missionBullets.map((bullet, idx) => (
               <div
                 key={idx}
-                className="bg-[#F8FAFC] rounded-md border border-slate-200 p-6 flex items-start space-x-4 shadow-2xs"
+                className="bg-[#F7F8F5] rounded-md border border-[#E2E8E0] p-6 flex items-start space-x-4 shadow-2xs"
               >
-                <CheckCircle2 className="w-5 h-5 text-[#145DA0] shrink-0 mt-0.5" />
-                <p className="text-xs sm:text-sm text-slate-700 font-normal leading-relaxed">
+                <CheckCircle2 className="w-5 h-5 text-[#2F7C7A] shrink-0 mt-0.5" />
+                <p className="text-xs sm:text-sm text-[#475569] font-normal leading-relaxed">
                   {bullet}
                 </p>
               </div>

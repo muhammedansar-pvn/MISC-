@@ -11,21 +11,21 @@ const iconMap = {
 
 export const ExaminationCategories = () => {
   return (
-    <section className="relative bg-white py-16 sm:py-20 lg:py-28 overflow-hidden border-b border-slate-200">
+    <section className="relative bg-white py-16 sm:py-20 lg:py-28 overflow-hidden border-b border-[#E2E8E0]">
       <div className="relative misc-container z-10">
         <div className="max-w-3xl space-y-4 mb-12 sm:mb-16">
           <div className="flex items-center space-x-3">
-            <span className="w-8 h-[2px] bg-[#D4AF37]" />
-            <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#D4AF37] uppercase">
+            <span className="w-8 h-[2px] bg-[#2F7C7A]" />
+            <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#2F7C7A] uppercase">
               EXAMINATION CATEGORIES
             </span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B1D3A] tracking-tight leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#132238] tracking-tight leading-tight">
             Official Examination Information Areas
           </h2>
 
-          <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
+          <p className="text-base sm:text-lg text-[#475569] font-normal leading-relaxed">
             Discover the central assessment areas governing examination frameworks, grading policies, board circulars, and academic record guidelines.
           </p>
         </div>
@@ -38,29 +38,29 @@ export const ExaminationCategories = () => {
             return (
               <div
                 key={item.id}
-                className="bg-[#F8FAFC] rounded-md border border-slate-200 p-6 shadow-2xs hover:shadow-md hover:border-[#D4AF37]/60 transition-all duration-200 flex flex-col justify-between"
+                className="bg-[#F7F8F5] rounded-md border border-[#E2E8E0] p-6 shadow-2xs hover:shadow-md hover:border-[#2F7C7A]/60 transition-all duration-200 flex flex-col justify-between"
               >
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
-                    <span className="font-serif text-xs font-bold text-[#D4AF37] tracking-wider">
+                  <div className="flex items-center justify-between border-b border-[#E2E8E0]/80 pb-3">
+                    <span className="font-serif text-xs font-bold text-[#2F7C7A] tracking-wider">
                       {itemNumber}
                     </span>
-                    <div className="w-8 h-8 rounded bg-[#0B1D3A]/5 text-[#145DA0] flex items-center justify-center">
+                    <div className="w-8 h-8 rounded bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center">
                       <IconComp className="w-4 h-4" />
                     </div>
                   </div>
 
-                  <h3 className="font-serif text-lg font-bold text-[#0B1D3A] tracking-tight">
+                  <h3 className="font-serif text-lg font-bold text-[#132238] tracking-tight">
                     {item.title}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#475569] font-normal leading-relaxed">
                     {item.description}
                   </p>
                 </div>
 
-                <div className="pt-6 mt-4 border-t border-slate-200/60 flex items-center justify-between">
-                  <span className="text-[10px] font-bold tracking-wider text-[#145DA0] uppercase bg-[#145DA0]/10 px-2.5 py-1 rounded border border-[#145DA0]/20 flex items-center space-x-1">
+                <div className="pt-6 mt-4 border-t border-[#E2E8E0]/60 flex items-center justify-between">
+                  <span className="text-[10px] font-bold tracking-wider text-[#2F7C7A] uppercase bg-[#E6F2F1] px-2.5 py-1 rounded border border-[#E2E8E0] flex items-center space-x-1">
                     <span>OFFICIAL AREA</span>
                   </span>
                 </div>

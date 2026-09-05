@@ -9,21 +9,21 @@ const roles = [
 
 export const CoordinationRole = () => {
   return (
-    <section className="relative bg-[#F8FAFC] py-16 sm:py-20 lg:py-28 overflow-hidden border-b border-slate-200">
+    <section className="relative bg-[#F7F8F5] py-16 sm:py-20 lg:py-28 overflow-hidden border-b border-[#E2E8E0]">
       <div className="relative misc-container z-10">
         <div className="max-w-3xl space-y-4 mb-12 sm:mb-16">
           <div className="flex items-center space-x-3">
-            <span className="w-8 h-[2px] bg-[#D4AF37]" />
-            <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#D4AF37] uppercase">
+            <span className="w-8 h-[2px] bg-[#2F7C7A]" />
+            <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#2F7C7A] uppercase">
               COORDINATION ROLE
             </span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#0B1D3A] tracking-tight leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#132238] tracking-tight leading-tight">
             One Framework. Connected Institutions.
           </h2>
 
-          <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
+          <p className="text-base sm:text-lg text-[#475569] font-normal leading-relaxed">
             How MISC provides academic governance, examination moderation, and educational supervision across member centers.
           </p>
         </div>
@@ -34,15 +34,15 @@ export const CoordinationRole = () => {
             return (
               <div
                 key={idx}
-                className="bg-white rounded-md border border-slate-200 p-6 sm:p-8 shadow-2xs space-y-3"
+                className="bg-white rounded-md border border-[#E2E8E0] p-6 sm:p-8 shadow-2xs space-y-3"
               >
-                <div className="w-10 h-10 rounded bg-[#0B1D3A]/5 text-[#145DA0] flex items-center justify-center">
+                <div className="w-10 h-10 rounded bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center">
                   <Icon className="w-5 h-5" />
                 </div>
-                <h3 className="font-serif text-lg font-bold text-[#0B1D3A]">
+                <h3 className="font-serif text-lg font-bold text-[#132238]">
                   {item.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed font-normal">
                   {item.desc}
                 </p>
               </div>

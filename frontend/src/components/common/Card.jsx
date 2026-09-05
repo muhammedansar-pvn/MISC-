@@ -12,8 +12,8 @@ export const Card = ({
 }) => {
   return (
     <div
-      className={`bg-white rounded-md border border-[#E5EAF0] shadow-2xs ${
-        hover ? 'hover:shadow-xs hover:-translate-y-0.5 hover:border-[#2563EB]/40 transition-all duration-200' : ''
+      className={`bg-white rounded-md border border-[#E2E8E0] shadow-2xs ${
+        hover ? 'hover:shadow-xs hover:-translate-y-0.5 hover:border-[#2F7C7A]/40 transition-all duration-200' : ''
       } ${padding} ${className}`}
       {...props}
     >

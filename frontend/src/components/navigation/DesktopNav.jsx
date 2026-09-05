@@ -24,8 +24,8 @@ export const DesktopNav = () => {
             className={({ isActive }) =>
               `text-xs xl:text-sm font-medium transition-colors duration-200 py-1.5 border-b-2 ${
                 isActive
-                  ? 'text-[#172033] border-[#2563EB] font-semibold'
-                  : 'text-[#64748B] border-transparent hover:text-[#2563EB]'
+                  ? 'text-[#132238] border-[#2F7C7A] font-semibold'
+                  : 'text-[#475569] border-transparent hover:text-[#2F7C7A]'
               }`
             }
           >
@@ -34,24 +34,24 @@ export const DesktopNav = () => {
         ))}
       </nav>
 
-      <div className="h-5 w-px bg-[#E5EAF0]" />
+      <div className="h-5 w-px bg-[#E2E8E0]" />
 
       {/* Language Selector Dropdown */}
       <div className="relative">
         <button
           type="button"
           onClick={() => setShowLangMenu(!showLangMenu)}
-          className="flex items-center space-x-1.5 text-xs font-semibold text-[#172033] hover:text-[#2563EB] bg-[#F8FAFC] border border-[#E5EAF0] px-2.5 py-1.5 rounded transition-colors"
+          className="flex items-center space-x-1.5 text-xs font-semibold text-[#132238] hover:text-[#2F7C7A] bg-[#F7F8F5] border border-[#E2E8E0] px-2.5 py-1.5 rounded transition-colors cursor-pointer"
           aria-expanded={showLangMenu}
           aria-label="Select Language"
         >
-          <Globe className="w-3.5 h-3.5 text-[#2563EB]" />
+          <Globe className="w-3.5 h-3.5 text-[#2F7C7A]" />
           <span>{lang}</span>
-          <ChevronDown className="w-3 h-3 text-slate-400" />
+          <ChevronDown className="w-3 h-3 text-[#475569]" />
         </button>
 
         {showLangMenu && (
-          <div className="absolute right-0 mt-2 w-36 bg-white border border-[#E5EAF0] rounded shadow-md py-1 z-50">
+          <div className="absolute right-0 mt-2 w-36 bg-white border border-[#E2E8E0] rounded shadow-md py-1 z-50">
             {languages.map((item) => (
               <button
                 key={item.code}
@@ -60,8 +60,8 @@ export const DesktopNav = () => {
                   setLang(item.code);
                   setShowLangMenu(false);
                 }}
-                className={`w-full text-left px-3 py-1.5 text-xs transition-colors ${
-                  lang === item.code ? 'bg-[#EAF4FF] text-[#2563EB] font-semibold' : 'text-[#172033] hover:bg-[#F8FAFC]'
+                className={`w-full text-left px-3 py-1.5 text-xs transition-colors cursor-pointer ${
+                  lang === item.code ? 'bg-[#E6F2F1] text-[#2F7C7A] font-semibold' : 'text-[#132238] hover:bg-[#F7F8F5]'
                 }`}
               >
                 {item.label}
@@ -74,7 +74,7 @@ export const DesktopNav = () => {
       {/* Contact Enquiry CTA */}
       <NavLink
         to={applyCta.path}
-        className="bg-[#172033] text-white hover:bg-[#2563EB] text-xs font-bold tracking-wider uppercase px-4 py-2 rounded shadow-2xs transition-colors duration-200 flex items-center space-x-1.5 shrink-0"
+        className="bg-[#2F7C7A] text-white hover:bg-[#256664] text-xs font-bold tracking-wider uppercase px-4 py-2 rounded shadow-2xs transition-colors duration-200 flex items-center space-x-1.5 shrink-0"
       >
         <span>Enquiry</span>
         <ArrowRight className="w-3.5 h-3.5" />

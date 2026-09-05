@@ -10,14 +10,14 @@ export const MobileNav = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 z-50 lg:hidden">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-[#172033]/60 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-[#132238]/60 backdrop-blur-xs transition-opacity"
         onClick={onClose}
       />
 
       {/* Drawer */}
       <div className="fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-xl flex flex-col z-50 transform transition-transform duration-300 ease-in-out">
         {/* Drawer Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[#E5EAF0] bg-[#172033] text-white">
+        <div className="flex items-center justify-between p-4 border-b border-[#E2E8E0] bg-[#132238] text-white">
           <div className="flex items-center space-x-2.5">
             <img
               src="/logo.png"
@@ -50,8 +50,8 @@ export const MobileNav = ({ isOpen, onClose }) => {
               className={({ isActive }) =>
                 `block px-4 py-3 rounded-md text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-[#EAF4FF] text-[#2563EB] font-semibold border-l-4 border-[#2563EB]'
-                    : 'text-[#172033] hover:bg-[#F8FAFC] hover:text-[#2563EB]'
+                    ? 'bg-[#E6F2F1] text-[#2F7C7A] font-semibold border-l-4 border-[#2F7C7A]'
+                    : 'text-[#132238] hover:bg-[#F7F8F5] hover:text-[#2F7C7A]'
                 }`
               }
             >
@@ -61,14 +61,14 @@ export const MobileNav = ({ isOpen, onClose }) => {
         </div>
 
         {/* Footer Info & CTA */}
-        <div className="p-4 border-t border-[#E5EAF0] bg-[#F8FAFC] space-y-4">
-          <div className="space-y-2 text-xs text-[#64748B]">
+        <div className="p-4 border-t border-[#E2E8E0] bg-[#F7F8F5] space-y-4">
+          <div className="space-y-2 text-xs text-[#475569]">
             <div className="flex items-center space-x-2">
-              <Mail className="w-4 h-4 text-[#2563EB]" />
+              <Mail className="w-4 h-4 text-[#2F7C7A]" />
               <span className="font-mono">{miscInfo.email}</span>
             </div>
             <div className="flex items-center space-x-2">
-              <Phone className="w-4 h-4 text-[#2563EB]" />
+              <Phone className="w-4 h-4 text-[#2F7C7A]" />
               <span className="font-mono">{miscInfo.phone}</span>
             </div>
           </div>
@@ -76,7 +76,7 @@ export const MobileNav = ({ isOpen, onClose }) => {
           <NavLink
             to={applyCta.path}
             onClick={onClose}
-            className="flex items-center justify-center space-x-1.5 w-full text-center bg-[#172033] text-white hover:bg-[#2563EB] text-xs font-bold tracking-wider uppercase px-4 py-3 rounded transition-colors shadow-2xs"
+            className="flex items-center justify-center space-x-1.5 w-full text-center bg-[#2F7C7A] text-white hover:bg-[#256664] text-xs font-bold tracking-wider uppercase px-4 py-3 rounded transition-colors shadow-2xs"
           >
             <span>Enquiry</span>
             <ArrowRight className="w-4 h-4" />

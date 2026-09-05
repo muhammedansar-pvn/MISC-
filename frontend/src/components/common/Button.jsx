@@ -16,11 +16,11 @@ export const Button = ({
   const baseStyles = "inline-flex items-center justify-center font-semibold rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer tracking-wider text-xs sm:text-sm uppercase";
 
   const variants = {
-    primary: "bg-[#172033] text-white hover:bg-[#2563EB] focus:ring-[#172033] border border-[#172033] shadow-2xs",
-    secondary: "bg-white text-[#172033] border border-[#E5EAF0] hover:bg-[#F8FAFC] hover:border-[#172033] focus:ring-[#172033]",
-    miscBlue: "bg-[#2563EB] text-white hover:bg-[#172033] border border-[#2563EB] shadow-2xs focus:ring-[#2563EB]",
-    lightBlue: "bg-[#EAF4FF] text-[#172033] border border-[#DCEEFF] hover:bg-[#DCEEFF] hover:text-[#2563EB] focus:ring-[#2563EB]",
-    outlineDark: "bg-transparent text-[#172033] border border-[#172033] hover:bg-[#172033] hover:text-white focus:ring-[#172033]",
+    primary: "bg-[#2F7C7A] text-white hover:bg-[#256664] focus:ring-[#2F7C7A] border border-[#2F7C7A] shadow-2xs",
+    secondary: "bg-white text-[#132238] border border-[#E2E8E0] hover:bg-[#E6F2F1] hover:border-[#2F7C7A] focus:ring-[#2F7C7A]",
+    miscBlue: "bg-[#2F7C7A] text-white hover:bg-[#132238] border border-[#2F7C7A] shadow-2xs focus:ring-[#2F7C7A]",
+    lightBlue: "bg-[#E6F2F1] text-[#132238] border border-[#E2E8E0] hover:bg-[#E6F2F1] hover:text-[#2F7C7A] focus:ring-[#2F7C7A]",
+    outlineDark: "bg-transparent text-[#132238] border border-[#132238] hover:bg-[#132238] hover:text-white focus:ring-[#132238]",
     outlineLight: "bg-transparent text-white border border-white/30 hover:bg-white/10 hover:border-white focus:ring-white"
   };
 

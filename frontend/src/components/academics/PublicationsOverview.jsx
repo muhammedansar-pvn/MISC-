@@ -31,23 +31,23 @@ export const PublicationsOverview = () => {
   ];
 
   return (
-    <section className="relative bg-[#F8FAFC] py-16 sm:py-24 border-b border-[#E5EAF0]">
+    <section className="relative bg-[#F7F8F5] py-16 sm:py-24 border-b border-[#E2E8E0]">
       <div className="misc-container">
         
         {/* Section Header */}
         <div className="max-w-3xl space-y-3 mb-12">
-          <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#EAF4FF] border border-[#DCEEFF]">
-            <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
-            <span className="text-xs font-semibold tracking-wider text-[#2563EB] uppercase">
+          <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#E6F2F1] border border-[#E2E8E0]">
+            <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
+            <span className="text-xs font-semibold tracking-wider text-[#2F7C7A] uppercase">
               FROM THE JOURNAL
             </span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#172033] tracking-tight leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#132238] tracking-tight leading-tight">
             Academic Research & Scholarly Publications
           </h2>
 
-          <p className="text-base text-[#4B5563]">
+          <p className="text-base text-[#475569]">
             Peer-reviewed research papers, journal articles, and curriculum monographs issued by MISC research wings.
           </p>
         </div>
@@ -57,30 +57,30 @@ export const PublicationsOverview = () => {
           {publications.map((item, idx) => (
             <div 
               key={idx}
-              className="bg-white p-6 rounded-xl border border-[#E5EAF0] shadow-xs hover:border-[#3B82F6]/40 transition-all flex flex-col justify-between group"
+              className="bg-white p-6 rounded-xl border border-[#E2E8E0] shadow-xs hover:border-[#2F7C7A]/40 transition-all flex flex-col justify-between group"
             >
               <div className="space-y-4">
-                <span className="text-[10px] font-bold tracking-wider text-[#2563EB] bg-[#EAF4FF] border border-[#DCEEFF] px-2.5 py-1 rounded-full uppercase inline-block">
+                <span className="text-[10px] font-semibold tracking-wider text-[#2F7C7A] bg-[#E6F2F1] border border-[#E2E8E0] px-2.5 py-1 rounded-full uppercase inline-block">
                   {item.category}
                 </span>
 
-                <h3 className="font-serif text-lg font-bold text-[#172033] group-hover:text-[#2563EB] transition-colors leading-snug">
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#132238] group-hover:text-[#2F7C7A] transition-colors leading-snug">
                   {item.title}
                 </h3>
 
-                <p className="text-xs text-[#6B7280] leading-relaxed">
+                <p className="text-xs text-[#475569] font-normal leading-relaxed">
                   {item.snippet}
                 </p>
               </div>
 
-              <div className="pt-4 mt-6 border-t border-[#E5EAF0] space-y-3">
-                <div className="flex items-center justify-between text-[11px] text-[#6B7280]">
-                  <span className="flex items-center space-x-1">
-                    <User className="w-3 h-3 text-[#2563EB]" />
+              <div className="pt-4 mt-6 border-t border-[#E2E8E0] space-y-3">
+                <div className="flex items-center justify-between text-[11px] text-[#475569]">
+                  <span className="flex items-center space-x-1.5">
+                    <User className="w-3.5 h-3.5 text-[#2F7C7A]" />
                     <span>{item.author}</span>
                   </span>
-                  <span className="flex items-center space-x-1">
-                    <Calendar className="w-3 h-3 text-[#6B7280]" />
+                  <span className="flex items-center space-x-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-[#475569]" />
                     <span>{item.date}</span>
                   </span>
                 </div>

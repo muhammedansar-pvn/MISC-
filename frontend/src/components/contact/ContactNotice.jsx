@@ -4,15 +4,15 @@ import { miscInfo } from '../../data/miscInfo';
 
 export const ContactNotice = () => {
   return (
-    <section className="relative bg-[#F8FAFC] py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-slate-200">
+    <section className="relative bg-[#F7F8F5] py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-[#E2E8E0]">
       <div className="relative misc-container z-10">
-        <div className="bg-[#0B1D3A] text-white rounded-lg p-8 sm:p-12 border border-[#D4AF37]/30 shadow-lg relative overflow-hidden text-center max-w-4xl mx-auto space-y-6">
-          <div className="w-14 h-14 mx-auto rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37]">
+        <div className="bg-[#132238] text-white rounded-lg p-8 sm:p-12 border border-[#2F7C7A]/30 shadow-lg relative overflow-hidden text-center max-w-4xl mx-auto space-y-6">
+          <div className="w-14 h-14 mx-auto rounded-full bg-[#2F7C7A]/20 border border-[#2F7C7A]/40 flex items-center justify-center text-[#E6F2F1]">
             <ShieldCheck className="w-6 h-6" />
           </div>
 
           <div className="space-y-3 max-w-xl mx-auto">
-            <span className="inline-block bg-[#D4AF37]/20 text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded border border-[#D4AF37]/40">
+            <span className="inline-block bg-[#2F7C7A]/20 text-[#E6F2F1] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded border border-[#2F7C7A]/40">
               OFFICIAL SECRETARIAT DESK
             </span>
 
@@ -21,7 +21,7 @@ export const ContactNotice = () => {
             </h3>
 
             <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed">
-              All official administrative and academic correspondence must be directed to <span className="text-[#D4AF37] font-mono">{miscInfo.email}</span> or submitted in writing to the Jamia Markaz campus office.
+              All official administrative and academic correspondence must be directed to <span className="text-[#E6F2F1] font-mono">{miscInfo.email}</span> or submitted in writing to the Jamia Markaz campus office.
             </p>
           </div>
 

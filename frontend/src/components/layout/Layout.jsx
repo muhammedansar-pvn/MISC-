@@ -22,7 +22,7 @@ export const Layout = () => {
   }, [location]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 font-sans text-slate-900 antialiased selection:bg-[#D4AF37]/30 selection:text-[#0B1D3A]">
+    <div className="flex flex-col min-h-screen bg-[#F7F8F5] font-sans text-[#132238] antialiased selection:bg-[#2F7C7A]/30 selection:text-[#132238]">
       <Header />
       <main className="flex-grow">
         <Outlet />

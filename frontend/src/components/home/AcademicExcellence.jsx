@@ -30,7 +30,7 @@ export const AcademicExcellence = () => {
   ];
 
   return (
-    <section className="relative bg-white text-[#172033] py-14 border-b border-[#E5EAF0]">
+    <section className="relative bg-white text-[#132238] py-14 border-b border-[#E2E8E0]">
       <div className="misc-container">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {highlights.map((item, idx) => {
@@ -38,22 +38,22 @@ export const AcademicExcellence = () => {
             return (
               <div
                 key={idx}
-                className="bg-[#F8FAFC] border border-[#E5EAF0] rounded-xl p-6 space-y-3 hover:border-[#3B82F6]/40 transition-all shadow-xs"
+                className="bg-[#F7F8F5] border border-[#E2E8E0] rounded-xl p-6 space-y-3 hover:border-[#2F7C7A]/40 transition-all shadow-xs"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-serif text-3xl font-bold text-[#2563EB]">
+                  <span className="font-serif text-3xl font-bold text-[#2F7C7A]">
                     {item.number}
                   </span>
-                  <div className="w-9 h-9 rounded-lg bg-[#EAF4FF] text-[#2563EB] flex items-center justify-center border border-[#DCEEFF]">
+                  <div className="w-9 h-9 rounded-lg bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center border border-[#E2E8E0]">
                     <IconComp className="w-4 h-4" />
                   </div>
                 </div>
 
-                <h3 className="font-serif text-base font-bold text-[#172033] tracking-tight">
+                <h3 className="font-serif text-base font-bold text-[#132238] tracking-tight">
                   {item.label}
                 </h3>
 
-                <p className="text-xs text-[#6B7280] font-normal leading-relaxed">
+                <p className="text-xs text-[#475569] font-normal leading-relaxed">
                   {item.description}
                 </p>
               </div>

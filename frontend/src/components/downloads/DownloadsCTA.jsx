@@ -7,14 +7,14 @@ export const DownloadsCTA = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative bg-[#0B1D3A] text-white py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-[#D4AF37]/20">
+    <section className="relative bg-[#132238] text-white py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-[#2F7C7A]/20">
       <div className="relative misc-container z-10 text-center max-w-3xl mx-auto space-y-6">
         <div className="flex items-center justify-center space-x-3">
-          <span className="w-8 h-[2px] bg-[#D4AF37]" />
-          <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#D4AF37] uppercase">
+          <span className="w-8 h-[2px] bg-[#2F7C7A]" />
+          <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#E6F2F1] uppercase">
             NEED ASSISTANCE?
           </span>
-          <span className="w-8 h-[2px] bg-[#D4AF37]" />
+          <span className="w-8 h-[2px] bg-[#2F7C7A]" />
         </div>
 
         <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
