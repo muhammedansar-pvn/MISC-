@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --misc-bg: #FFFFFF;
+    --misc-bg-subtle: #F8FAFC;
+    --misc-bg-light-blue: #EAF4FF;
+    --misc-bg-soft-blue: #DCEEFF;
+    --misc-charcoal: #172033;
+    --misc-text: #172033;
+    --misc-text-muted: #64748B;
+    --misc-blue-accent: #3B82F6;
+    --misc-blue-hover: #2563EB;
+    --misc-border: #E5EAF0;
+  }
+
+  body {
+    background-color: var(--misc-bg);
+    color: var(--misc-text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, .font-serif-heading {
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+  }
+}
+
+/* Reduced motion preference accessibility rule */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom Utilities for Premium MISC White + Light Blue + Dark Charcoal Theme */
+.bg-misc-charcoal {
+  background-color: #172033;
+}
+
+.bg-misc-light-blue {
+  background-color: #EAF4FF;
+}
+
+.bg-misc-soft-blue {
+  background-color: #DCEEFF;
+}
+
+.text-misc-charcoal {
+  color: #172033;
+}
+
+.text-misc-blue {
+  color: #3B82F6;
+}
+
+.border-misc {
+  border-color: #E5EAF0;
+}
+
+/* Container constraints */
+.misc-container {
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .misc-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .misc-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}

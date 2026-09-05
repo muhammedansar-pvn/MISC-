@@ -1,16 +1,41 @@
-# React + Vite
+# MISC — Markaz Integrated Studies Council
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Integrated Portal & Website for Markaz Integrated Studies Council (Jamia Markaz, Karanthur, Kozhikode).
 
-Currently, two official plugins are available:
+## Repository Architecture
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```
+MISC/
+├── frontend/                     # React 19 + Vite + Tailwind CSS v4 Public Website
+│   ├── src/                      # Source code (Pages, Components, Data)
+│   ├── public/                   # Public assets (favicon, icons)
+│   ├── package.json              # Frontend dependencies
+│   └── vite.config.js            # Vite configuration
+│
+└── backend/                      # Node.js / Express Backend Architecture Shell
+    └── src/
+        ├── config/               # Database and service configurations
+        ├── controllers/          # Route controller handlers
+        ├── middleware/           # Auth and validation middleware
+        ├── models/               # Data schemas and models
+        ├── routes/               # Express API endpoints
+        ├── services/             # Core business logic services
+        ├── validators/           # Request validation schemas
+        └── utils/                # Utility helpers
+```
 
-## React Compiler
+## Running the Application
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Frontend Development
 
-## Expanding the Oxlint configuration
+```bash
+cd frontend
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+### Frontend Production Build
+
+```bash
+cd frontend
+npm run build
+```
