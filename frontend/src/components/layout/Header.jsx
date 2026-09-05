@@ -28,8 +28,6 @@ export const Header = () => {
             </span>
           </div>
         </Link>
-
-        {/* Desktop Navigation */}
         <DesktopNav />
 
         {/* Mobile Hamburger Toggle */}
@@ -42,11 +40,8 @@ export const Header = () => {
           <Menu className="w-6 h-6" />
         </button>
       </div>
-
-      {/* Mobile Drawer */}
       <MobileNav isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </header>
   );
 };
-
 export default Header;

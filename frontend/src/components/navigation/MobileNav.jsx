@@ -6,7 +6,6 @@ import { miscInfo } from '../../data/miscInfo';
 
 export const MobileNav = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
       {/* Backdrop */}
@@ -87,5 +86,4 @@ export const MobileNav = ({ isOpen, onClose }) => {
     </div>
   );
 };
-
 export default MobileNav;
