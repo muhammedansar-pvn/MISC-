@@ -9,25 +9,36 @@ export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-[#E2E8E0] shadow-2xs">
-      {/* Clean White Navbar */}
+    <header 
+      className={`sticky top-0 z-50 w-full border-b transition-colors duration-200 ${
+        mobileMenuOpen 
+          ? 'bg-[#132238] border-slate-800 text-white' 
+          : 'bg-white/95 backdrop-blur-sm border-[#E2E8E0] shadow-2xs text-[#132238]'
+      }`}
+    >
+      {/* Clean Navbar */}
       <div className="misc-container flex items-center justify-between py-3 sm:py-3.5">
         {/* Brand / Logo */}
         <Link 
           to="/" 
+          onClick={() => setMobileMenuOpen(false)}
           className="flex items-center space-x-2.5 sm:space-x-3 group min-w-0 pr-2" 
           aria-label="MISC Homepage"
         >
           <img
             src="/logo.png"
             alt="MISC - Markaz Integrated Studies Council Logo"
-            className="h-9 sm:h-10 lg:h-12 w-auto object-contain shrink-0 transition-transform group-hover:scale-[1.02]"
+            className="h-9 sm:h-10 lg:h-12 w-auto object-contain shrink-0 transition-transform group-hover:scale-[1.02] bg-white p-0.5 rounded-sm"
           />
           <div className="flex flex-col min-w-0">
-            <span className="font-serif font-bold text-base sm:text-lg xl:text-xl tracking-tight text-[#132238] leading-none truncate">
+            <span className={`font-serif font-bold text-base sm:text-lg xl:text-xl tracking-tight leading-none truncate ${
+              mobileMenuOpen ? 'text-white' : 'text-[#132238]'
+            }`}>
               {miscInfo.name}
             </span>
-            <span className="text-[9px] sm:text-[10px] font-semibold tracking-wider sm:tracking-widest text-[#475569] uppercase mt-0.5 truncate">
+            <span className={`text-[9px] sm:text-[10px] font-semibold tracking-wider sm:tracking-widest uppercase mt-0.5 truncate ${
+              mobileMenuOpen ? 'text-slate-300' : 'text-[#475569]'
+            }`}>
               Markaz Integrated Studies Council
             </span>
           </div>
@@ -40,7 +51,11 @@ export const Header = () => {
         <button
           type="button"
           onClick={() => setMobileMenuOpen((prev) => !prev)}
-          className="lg:hidden w-[44px] h-[44px] flex items-center justify-center rounded-md bg-white border border-[#E2E8E0] text-[#132238] hover:bg-[#E6F2F1] hover:text-[#2F7C7A] active:bg-[#E6F2F1] transition-colors focus-visible:ring-2 focus-visible:ring-[#2F7C7A] focus-visible:outline-none cursor-pointer shrink-0"
+          className={`lg:hidden w-[44px] h-[44px] flex items-center justify-center rounded-md border transition-colors cursor-pointer shrink-0 focus-visible:ring-2 focus-visible:ring-[#2F7C7A] focus-visible:outline-none ${
+            mobileMenuOpen
+              ? 'bg-[#132238] border-slate-700 text-white hover:bg-slate-800'
+              : 'bg-white border-[#E2E8E0] text-[#132238] hover:bg-[#E6F2F1] hover:text-[#2F7C7A] active:bg-[#E6F2F1]'
+          }`}
           aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-navigation-menu"
@@ -53,7 +68,7 @@ export const Header = () => {
         </button>
       </div>
 
-      {/* Mobile Navigation Drawer */}
+      {/* Mobile Navigation Panel */}
       <MobileNav isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </header>
   );
