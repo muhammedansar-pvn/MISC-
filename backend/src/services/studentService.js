@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const StudentProfile = require("../models/StudentProfile");
-const Campus = require("../models/Campus");
+const InstitutionProfile = require("../models/InstitutionProfile");
 const Class = require("../models/Class");
 const {
   generateAccountSetupToken,
@@ -15,18 +15,18 @@ const createStudent = async (studentData) => {
     dateOfBirth,
     admissionYear,
     classId,
-    campusId,
+    institutionId,
     contactNumber,
     fatherName,
     motherName,
     photo,
   } = studentData;
 
-  // 1. Verify campus
-  const campus = await Campus.findById(campusId);
+  // 1. Verify institution
+  const institution = await InstitutionProfile.findById(institutionId);
 
-  if (!campus) {
-    throw new Error("Campus not found");
+  if (!institution) {
+    throw new Error("Institution not found");
   }
 
   // 2. Verify class
@@ -36,9 +36,9 @@ const createStudent = async (studentData) => {
     throw new Error("Class not found");
   }
 
-  // 3. Make sure class belongs to selected campus
-  if (studentClass.campusId.toString() !== campusId.toString()) {
-    throw new Error("Class does not belong to the selected campus");
+  // 3. Make sure class belongs to selected institution
+  if (studentClass.institutionId.toString() !== institutionId.toString()) {
+    throw new Error("Class does not belong to the selected institution");
   }
 
   // 4. Generate unique registration number
@@ -63,7 +63,7 @@ const createStudent = async (studentData) => {
       dateOfBirth,
       admissionYear,
       classId,
-      campusId,
+      institutionId,
       contactNumber,
       fatherName,
       motherName,

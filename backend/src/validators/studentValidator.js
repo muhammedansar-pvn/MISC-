@@ -37,7 +37,7 @@ const studentSchema = Joi.object({
     .length(24)
     .required(),
 
-  campusId: Joi.string()
+  institutionId: Joi.string()
     .hex()
     .length(24)
     .required(),

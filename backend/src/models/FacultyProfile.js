@@ -40,9 +40,9 @@ const facultyProfileSchema = new mongoose.Schema(
       trim: true,
     },
 
-    campusId: {
+    institutionId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Campus",
+      ref: "InstitutionProfile",
       required: true,
     },
 

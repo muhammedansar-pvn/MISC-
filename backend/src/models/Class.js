@@ -15,9 +15,9 @@ const classSchema = new mongoose.Schema(
       uppercase: true,
     },
 
-    campusId: {
+    institutionId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Campus",
+      ref: "InstitutionProfile",
       required: true,
     },
 
@@ -39,11 +39,11 @@ const classSchema = new mongoose.Schema(
   }
 );
 
-// Same class code can exist in different campuses/years,
-// but not twice within the same campus and academic year.
+// Same class code can exist in different institutions/years,
+// but not twice within the same institution and academic year.
 classSchema.index(
   {
-    campusId: 1,
+    institutionId: 1,
     code: 1,
     academicYear: 1,
   },

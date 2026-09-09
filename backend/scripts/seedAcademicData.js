@@ -4,7 +4,6 @@ const connectDB = require("../src/config/db");
 
 const User = require("../src/models/User");
 const InstitutionProfile = require("../src/models/InstitutionProfile");
-const Campus = require("../src/models/Campus");
 const Class = require("../src/models/Class");
 
 const seedAcademicData = async () => {
@@ -45,30 +44,9 @@ const seedAcademicData = async () => {
       console.log("Test institution already exists.");
     }
 
-    // Check existing campus
-    let campus = await Campus.findOne({
-      code: "MISC-CAMPUS",
-    });
-
-    if (!campus) {
-      campus = await Campus.create({
-        institutionId: institution._id,
-        name: "MISC Test Campus",
-        code: "MISC-CAMPUS",
-        address: "Karanthur, Kozhikode, Kerala",
-        contactNumber: "0000000000",
-        email: "campus@misc.markaz.in",
-        status: "ACTIVE",
-      });
-
-      console.log("Test campus created.");
-    } else {
-      console.log("Test campus already exists.");
-    }
-
     // Check existing class
     let studentClass = await Class.findOne({
-      campusId: campus._id,
+      institutionId: institution._id,
       code: "STD-01",
       academicYear: 2026,
     });
@@ -77,7 +55,7 @@ const seedAcademicData = async () => {
       studentClass = await Class.create({
         name: "Standard 1",
         code: "STD-01",
-        campusId: campus._id,
+        institutionId: institution._id,
         academicYear: 2026,
         status: "ACTIVE",
       });
@@ -89,7 +67,6 @@ const seedAcademicData = async () => {
 
     console.log("\nAcademic test data ready:");
     console.log("Institution ID:", institution._id);
-    console.log("Campus ID:", campus._id);
     console.log("Class ID:", studentClass._id);
 
     process.exit(0);

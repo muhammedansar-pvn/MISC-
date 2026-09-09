@@ -32,7 +32,7 @@ const getStudentProfile = async (req, res) => {
     const studentProfile = await StudentProfile.findOne({
       userId: req.user.userId,
     })
-      .populate("campusId", "name code")
+      .populate("institutionId", "institutionName institutionCode type")
       .populate("classId", "name code academicYear");
 
     if (!studentProfile) {
