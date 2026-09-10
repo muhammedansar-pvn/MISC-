@@ -2,6 +2,22 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      trim: true,
+    },
+
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+    },
+
+    department: {
+      type: String,
+      trim: true,
+    },
+
     username: {
       type: String,
       trim: true,
@@ -20,14 +36,25 @@ const userSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["PENDING_SETUP", "ACTIVE", "SUSPENDED"],
+      enum: ["PENDING_SETUP", "ACTIVE", "SUSPENDED", "INVITED"],
       required: true,
     },
 
     mobile: {
       type: String,
-      required: true,
       trim: true,
+    },
+
+    invitationTokenHash: {
+      type: String,
+    },
+
+    invitationTokenExpiresAt: {
+      type: Date,
+    },
+
+    invitationUsedAt: {
+      type: Date,
     },
   },
   {

@@ -16,14 +16,18 @@ export const AboutHero = () => {
 
           {/* Main Heading */}
           <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#132238] leading-tight">
-            Academic Authority & <br className="hidden sm:inline" />
-            <span className="text-[#2F7C7A]">Educational Governance</span>
+            About MISC
           </h1>
 
           {/* Supporting Copy */}
-          <p className="text-[#475569] text-base sm:text-lg font-normal leading-relaxed max-w-3xl">
-            {miscInfo.aboutShort}
-          </p>
+          <div className="space-y-4 text-[#475569] text-base sm:text-lg font-normal leading-relaxed max-w-3xl">
+            <p>
+              Markaz Integrated Studies Council (MISC) is the academic coordination body of Jamia Markaz, established to integrate and oversee institutions and dars systems functioning directly under Jamia Markaz as well as those operating through academic collaboration. MISC provides a unified educational framework that combines Islamic scholarship, modern education, skill development, and character formation.
+            </p>
+            <p>
+              Through a centralized system of curriculum design, teacher training, examinations, quality assurance, and student development programs, MISC ensures academic excellence and holistic growth across all affiliated institutions. The council is committed to nurturing knowledgeable, competent, and socially responsible graduates who can contribute meaningfully to their communities and the wider world.
+            </p>
+          </div>
         </div>
       </div>
     </section>

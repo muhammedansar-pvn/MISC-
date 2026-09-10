@@ -15,7 +15,8 @@
     "express": "^4.21.2",
     "joi": "^18.2.8",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^8.10.1"
+    "mongoose": "^8.10.1",
+    "resend": "^6.27.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

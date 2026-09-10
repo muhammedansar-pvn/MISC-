@@ -22,7 +22,7 @@ export const DesktopNav = () => {
             key={link.path}
             to={link.path}
             className={({ isActive }) =>
-              `text-xs xl:text-sm font-medium transition-colors duration-200 py-1.5 border-b-2 ${
+              `text-[14px] lg:text-[14.5px] xl:text-[15px] font-medium transition-colors duration-200 py-1.5 border-b-2 ${
                 isActive
                   ? 'text-[#132238] border-[#2F7C7A] font-semibold'
                   : 'text-[#475569] border-transparent hover:text-[#2F7C7A]'

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Landmark, Bell } from 'lucide-react';
 import { institutionsData } from '../../data/institutionsData';
+import ScrollReveal from '../common/ScrollReveal';
 
 export const DirectInstitutions = () => {
   const ownList = institutionsData.own || [];
@@ -8,22 +9,44 @@ export const DirectInstitutions = () => {
   return (
     <section className="relative bg-[#F7F8F5] py-16 sm:py-20 lg:py-28 overflow-hidden border-b border-[#E2E8E0]">
       <div className="relative misc-container z-10">
-        <div className="max-w-3xl space-y-4 mb-12 sm:mb-16">
-          <div className="flex items-center space-x-3">
-            <span className="w-8 h-[2px] bg-[#2F7C7A]" />
-            <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#2F7C7A] uppercase">
-              DIRECT INSTITUTIONS
-            </span>
+        <ScrollReveal delay={100}>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-12 sm:mb-16">
+            <div className="lg:col-span-7 space-y-4">
+              <div className="flex items-center space-x-3">
+                <span className="w-8 h-[2px] bg-[#2F7C7A]" />
+                <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#2F7C7A] uppercase">
+                  DIRECT INSTITUTIONS
+                </span>
+              </div>
+
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#132238] tracking-tight leading-tight">
+                Institutions Under Jamia Markaz
+              </h2>
+
+              <p className="text-[15.5px] sm:text-[17px] text-[#475569] font-normal leading-relaxed">
+                Campus institutions and dars systems functioning directly under the central management and academic oversight of Jamia Markaz.
+              </p>
+            </div>
+
+            <div className="lg:col-span-5">
+              <div className="relative rounded-xl overflow-hidden border border-[#E2E8E0] shadow-md bg-white p-2 group">
+                <div className="overflow-hidden rounded-lg">
+                  <img
+                    src="/campus.png"
+                    alt="Markaz Shari'yya Academy Campus Building"
+                    className="w-full h-60 sm:h-64 object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  />
+                </div>
+                <div className="pt-2 px-1 pb-0.5 flex items-center justify-between text-xs text-[#475569]">
+                  <span className="font-serif font-bold text-[#132238]">Markaz Shari'yya Academy</span>
+                  <span className="text-[10px] uppercase font-bold text-[#2F7C7A] bg-[#E6F2F1] px-2 py-0.5 rounded border border-[#E2E8E0]">
+                    FLAGSHIP CAMPUS
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#132238] tracking-tight leading-tight">
-            Institutions Under Jamia Markaz
-          </h2>
-
-          <p className="text-base sm:text-lg text-[#475569] font-normal leading-relaxed">
-            Campus institutions and dars systems functioning directly under the central management and academic oversight of Jamia Markaz.
-          </p>
-        </div>
+        </ScrollReveal>
 
         {ownList.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">

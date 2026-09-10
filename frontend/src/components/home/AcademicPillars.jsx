@@ -21,10 +21,10 @@ export const AcademicPillars = () => {
           </div>
 
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#132238] tracking-tight leading-tight">
-            Academic Framework & Institutional Pillars
+            Vision & Mission Framework
           </h2>
           <p className="text-base text-[#475569]">
-            Eight core principles guiding integrated curriculum design, board evaluation, and character development.
+            Official institutional Vision and Mission of Markaz Integrated Studies Council.
           </p>
         </div>
 
@@ -39,15 +39,15 @@ export const AcademicPillars = () => {
 
             <div className="space-y-3">
               <span className="text-xs font-bold text-[#2F7C7A] uppercase tracking-wider">
-                OUR VISION
+                VISION
               </span>
-              <blockquote className="font-serif text-xl sm:text-2xl font-semibold text-[#132238] leading-snug">
-                "To synthesize authentic Islamic jurisprudence with contemporary academic disciplines, producing scholars who lead society with wisdom, integrity, and intellectual rigor."
+              <blockquote className="font-serif text-lg sm:text-xl font-semibold text-[#132238] leading-relaxed italic border-l-4 border-[#2F7C7A] pl-4">
+                "{miscInfo.vision}"
               </blockquote>
             </div>
 
             <p className="text-sm text-[#475569] leading-relaxed border-t border-[#E2E8E0] pt-4">
-              Under the auspices of Jamia Markaz, MISC establishes a standardized national model for integrated Islamic higher education.
+              Under the auspices of Jamia Markaz, MISC establishes a standardized framework for integrated higher education.
             </p>
 
             <Button
@@ -56,15 +56,15 @@ export const AcademicPillars = () => {
               onClick={() => navigate('/about')}
               className="w-full justify-between group mt-2"
             >
-              <span>EXPLORE FULL MISSION</span>
+              <span>EXPLORE ABOUT MISC</span>
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
 
           {/* RIGHT: 8 NUMBERED MISSION ITEMS (01-08) */}
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <ol className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 list-none p-0 m-0">
             {academicPillarsData.map((pillar) => (
-              <div
+              <li
                 key={pillar.id || pillar.number}
                 className="bg-[#F7F8F5] p-5 rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A]/40 transition-all flex flex-col justify-between"
               >
@@ -74,7 +74,7 @@ export const AcademicPillars = () => {
                       {String(pillar.number).padStart(2, '0')}
                     </span>
                     <span className="text-[10px] uppercase tracking-wider font-semibold text-[#475569]">
-                      PILLAR
+                      MISSION POINT
                     </span>
                   </div>
 
@@ -82,13 +82,13 @@ export const AcademicPillars = () => {
                     {pillar.title}
                   </h3>
 
-                  <p className="text-xs text-[#475569] leading-relaxed">
+                  <p className="text-xs sm:text-[13px] text-[#475569] leading-relaxed">
                     {pillar.description}
                   </p>
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
 
         </div>
 

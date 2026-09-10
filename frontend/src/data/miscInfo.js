@@ -13,12 +13,20 @@ export const miscInfo = {
     instagram: "https://www.instagram.com/misc.markaz.in",
     youtube: "https://www.youtube.com/@jamiamarkazofficial"
   },
-  aboutShort: "MISC (Markaz Integrated Studies Council) is the academic coordination body of Jamia Markaz, overseeing institutions and educational systems operating under and in collaboration with Jamia Markaz.",
-  vision: "To cultivate a generation of scholars and leaders equipped with deep Islamic knowledge alongside modern contemporary academic competence.",
+  aboutShort: "Markaz Integrated Studies Council (MISC) is the academic coordination body of Jamia Markaz, established to integrate and oversee institutions and dars systems functioning directly under Jamia Markaz as well as those operating through academic collaboration.",
+  aboutParagraphs: [
+    "Markaz Integrated Studies Council (MISC) is the academic coordination body of Jamia Markaz, established to integrate and oversee institutions and dars systems functioning directly under Jamia Markaz as well as those operating through academic collaboration. MISC provides a unified educational framework that combines Islamic scholarship, modern education, skill development, and character formation.",
+    "Through a centralized system of curriculum design, teacher training, examinations, quality assurance, and student development programs, MISC ensures academic excellence and holistic growth across all affiliated institutions. The council is committed to nurturing knowledgeable, competent, and socially responsible graduates who can contribute meaningfully to their communities and the wider world."
+  ],
+  vision: "To develop a generation of scholars and professionals who harmoniously combine Islamic values with contemporary knowledge, demonstrating academic excellence, spiritual integrity, leadership, and a global outlook.",
   missionBullets: [
-    "Integrate traditional Islamic jurisprudence and sciences with contemporary university education.",
-    "Standardize academic curricula and quality standards across all affiliated institutions.",
-    "Provide a unified examination board, syllabus guidelines, and evaluation portal.",
-    "Foster moral integrity, intellectual rigor, and community leadership among students."
+    "To provide an integrated educational model that combines Islamic and contemporary disciplines.",
+    "To ensure academic quality through standardized curricula, teacher training, and centralized assessment systems.",
+    "To promote excellence in teaching, learning, research, and skill development.",
+    "To nurture students with strong moral character, leadership qualities, and social responsibility.",
+    "To facilitate holistic personality development through mentorship, guidance, and experiential learning.",
+    "To prepare graduates for higher education, professional careers, community leadership, and da‘wah engagement.",
+    "To strengthen institutional collaboration and continuous improvement across affiliated institutions.",
+    "To contribute to society by producing knowledgeable, ethical, and competent individuals committed to lifelong learning and service."
   ]
 };

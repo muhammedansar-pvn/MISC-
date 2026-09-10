@@ -9,6 +9,9 @@ const {
   registerStudent,
 } = require("../controllers/studentController");
 const {
+  createUserInvitation,
+} = require("../controllers/adminUserController");
+const {
   validateStudent,
 } = require("../validators/studentValidator");
 
@@ -18,7 +21,15 @@ router.post(
   "/students",
   requireAuth,
   requireRole("ADMIN"),
+  validateStudent,
   registerStudent
+);
+
+router.post(
+  "/users",
+  requireAuth,
+  requireRole("ADMIN"),
+  createUserInvitation
 );
 
 module.exports = router;

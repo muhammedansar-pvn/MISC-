@@ -34,22 +34,34 @@ export const PublicationsOverview = () => {
     <section className="relative bg-[#F7F8F5] py-16 sm:py-24 border-b border-[#E2E8E0]">
       <div className="misc-container">
         
-        {/* Section Header */}
-        <div className="max-w-3xl space-y-3 mb-12">
-          <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#E6F2F1] border border-[#E2E8E0]">
-            <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
-            <span className="text-xs font-semibold tracking-wider text-[#2F7C7A] uppercase">
-              FROM THE JOURNAL
-            </span>
+        {/* Section Header with Visual Card */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-12">
+          <div className="lg:col-span-7 space-y-3">
+            <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#E6F2F1] border border-[#E2E8E0]">
+              <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
+              <span className="text-xs font-semibold tracking-wider text-[#2F7C7A] uppercase">
+                FROM THE JOURNAL
+              </span>
+            </div>
+
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#132238] tracking-tight leading-tight">
+              Academic Research & Scholarly Publications
+            </h2>
+
+            <p className="text-base text-[#475569]">
+              Peer-reviewed research papers, journal articles, and curriculum monographs issued by MISC research wings.
+            </p>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#132238] tracking-tight leading-tight">
-            Academic Research & Scholarly Publications
-          </h2>
-
-          <p className="text-base text-[#475569]">
-            Peer-reviewed research papers, journal articles, and curriculum monographs issued by MISC research wings.
-          </p>
+          <div className="lg:col-span-5">
+            <div className="relative rounded-xl overflow-hidden border border-[#E2E8E0] shadow-sm bg-white p-2">
+              <img
+                src="/MKZ01377.JPG.jpeg"
+                alt="MISC Scholars conducting manuscript research in library"
+                className="w-full h-56 sm:h-64 object-cover object-center rounded-lg"
+              />
+            </div>
+          </div>
         </div>
 
         {/* 3 Journal Articles Grid */}

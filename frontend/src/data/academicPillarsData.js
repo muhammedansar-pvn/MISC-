@@ -2,42 +2,42 @@
 export const academicPillarsData = [
   {
     number: "01",
-    title: "Integrated Education",
-    description: "Harmonizing traditional Islamic jurisprudence and classical scholarship with modern university academic disciplines."
+    title: "Integrated Educational Model",
+    description: "To provide an integrated educational model that combines Islamic and contemporary disciplines."
   },
   {
     number: "02",
-    title: "Academic Quality",
-    description: "Maintaining standardized curricula, quality assurance frameworks, and rigorous board evaluation systems."
+    title: "Academic Quality Assurance",
+    description: "To ensure academic quality through standardized curricula, teacher training, and centralized assessment systems."
   },
   {
     number: "03",
-    title: "Teaching & Research",
-    description: "Fostering intellectual inquiry, scholarly research publications, and dedicated pedagogical excellence."
+    title: "Teaching & Skill Development",
+    description: "To promote excellence in teaching, learning, research, and skill development."
   },
   {
     number: "04",
-    title: "Character Formation",
-    description: "Nurturing moral integrity, Islamic ethics, and spiritual consciousness across all institutional activities."
+    title: "Character & Moral Nurturing",
+    description: "To nurture students with strong moral character, leadership qualities, and social responsibility."
   },
   {
     number: "05",
     title: "Holistic Development",
-    description: "Promoting physical, intellectual, emotional, and social growth through structured co-curricular engagement."
+    description: "To facilitate holistic personality development through mentorship, guidance, and experiential learning."
   },
   {
     number: "06",
-    title: "Higher Education & Career",
-    description: "Preparing students for advanced university degrees, professional career paths, and global leadership roles."
+    title: "Higher Education & Careers",
+    description: "To prepare graduates for higher education, professional careers, community leadership, and da‘wah engagement."
   },
   {
     number: "07",
     title: "Institutional Collaboration",
-    description: "Unifying affiliated colleges and campus institutions under a centralized academic coordination network."
+    description: "To strengthen institutional collaboration and continuous improvement across affiliated institutions."
   },
   {
     number: "08",
-    title: "Social Responsibility",
-    description: "Empowering graduates to serve communities, foster social harmony, and contribute ethically to global society."
+    title: "Societal Service & Contribution",
+    description: "To contribute to society by producing knowledgeable, ethical, and competent individuals committed to lifelong learning and service."
   }
 ];

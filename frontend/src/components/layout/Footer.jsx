@@ -27,7 +27,7 @@ export const Footer = () => {
                 </p>
               </div>
             </div>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+            <p className="text-[13.5px] sm:text-[14.5px] text-slate-300 leading-relaxed font-normal">
               {miscInfo.aboutShort}
             </p>
             {/* Social Icons */}

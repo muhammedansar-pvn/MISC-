@@ -37,7 +37,7 @@ export const MobileNav = ({ isOpen, onClose }) => {
               to={link.path}
               onClick={onClose}
               className={({ isActive }) =>
-                `flex items-center justify-between min-h-[50px] px-4 py-3.5 rounded-lg text-base font-medium transition-colors ${
+                `flex items-center justify-between min-h-[50px] px-4 py-3.5 rounded-lg text-[15.5px] sm:text-base font-medium transition-colors ${
                   isActive
                     ? 'bg-[#2F7C7A] text-white font-semibold shadow-2xs'
                     : 'text-slate-200 hover:text-white hover:bg-white/10'
@@ -66,7 +66,7 @@ export const MobileNav = ({ isOpen, onClose }) => {
           <NavLink
             to={applyCta.path}
             onClick={onClose}
-            className="flex items-center justify-center space-x-2 w-full text-center bg-[#2F7C7A] text-white hover:bg-[#256664] text-xs font-bold tracking-wider uppercase px-4 py-3.5 rounded-lg transition-colors shadow-sm cursor-pointer"
+            className="flex items-center justify-center space-x-2 w-full text-center bg-[#2F7C7A] text-white hover:bg-[#256664] text-[13.5px] sm:text-[14px] font-bold tracking-wider uppercase px-4 py-3.5 rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             <span>ENQUIRY</span>
             <ArrowRight className="w-4 h-4" />

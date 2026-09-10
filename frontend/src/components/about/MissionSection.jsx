@@ -16,24 +16,26 @@ export const MissionSection = () => {
                 MISSION FRAMEWORK
               </span>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#132238]">
-                Our Mission Commitments
+                Mission
               </h2>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <ol className="grid grid-cols-1 md:grid-cols-2 gap-6 list-none p-0 m-0">
             {miscInfo.missionBullets.map((bullet, idx) => (
-              <div
+              <li
                 key={idx}
-                className="bg-[#F7F8F5] rounded-md border border-[#E2E8E0] p-6 flex items-start space-x-4 shadow-2xs"
+                className="bg-[#F7F8F5] rounded-lg border border-[#E2E8E0] p-6 flex items-start space-x-4 shadow-2xs hover:border-[#2F7C7A]/40 transition-colors"
               >
-                <CheckCircle2 className="w-5 h-5 text-[#2F7C7A] shrink-0 mt-0.5" />
-                <p className="text-xs sm:text-sm text-[#475569] font-normal leading-relaxed">
+                <span className="w-7 h-7 rounded-full bg-[#2F7C7A] text-white font-bold text-xs flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                  {idx + 1}
+                </span>
+                <p className="text-sm sm:text-[15px] text-[#475569] font-normal leading-relaxed">
                   {bullet}
                 </p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </div>
     </section>

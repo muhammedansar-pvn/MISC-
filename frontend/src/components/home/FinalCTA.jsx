@@ -1,92 +1,59 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Mail, Phone, MapPin } from 'lucide-react';
+import { ArrowRight, Mail } from 'lucide-react';
 import Button from '../common/Button';
-import { miscInfo } from '../../data/miscInfo';
 
 export const FinalCTA = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative bg-[#132238] text-white py-16 sm:py-20 overflow-hidden">
+    <section className="bg-white py-12 sm:py-16 lg:py-20 border-b border-[#E2E8E0]">
       <div className="misc-container">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="bg-[#F7F8F5] border border-[#E2E8E0] rounded-3xl p-8 sm:p-12 lg:p-14 text-center max-w-4xl mx-auto shadow-2xs relative overflow-hidden space-y-6">
+          
+          {/* Subtle Accent Background Grid */}
+          <div className="absolute inset-0 bg-[radial-gradient(#2F7C7A_1px,transparent_1px)] [background-size:20px_20px] opacity-10 pointer-events-none" />
 
-          {/* LEFT SIDE — CTA COPY & BUTTONS (Cols 1-7) */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15">
-              <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
-              <span className="text-xs font-semibold tracking-wider text-white uppercase">
-                JOIN THE NETWORK
-              </span>
-            </div>
-
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
-              Connect with Markaz Integrated Studies Council
-            </h2>
-
-            <p className="text-slate-300 text-base leading-relaxed max-w-2xl">
-              For enquiries regarding academic stream integration, institutional collaboration guidelines, board examinations, or general Secretariat directives, reach out to our team.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => navigate('/contact')}
-                className="group shadow-md"
-              >
-                <span>CONTACT SECRETARIAT</span>
-                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-
-              <Button
-                variant="outlineLight"
-                size="lg"
-                onClick={() => navigate('/about')}
-              >
-                ABOUT THE COUNCIL
-              </Button>
-            </div>
+          {/* Badge */}
+          <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#E6F2F1] border border-[#E2E8E0] relative z-10">
+            <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
+            <span className="text-xs font-semibold tracking-wider text-[#2F7C7A] uppercase">
+              JOIN THE MISC NETWORK
+            </span>
           </div>
 
-          {/* RIGHT SIDE — SECRETARIAT INFORMATION PANEL (Cols 8-12) */}
-          <div className="lg:col-span-5">
-            <div className="bg-white/5 border border-white/10 rounded-xl p-6 sm:p-8 space-y-6 shadow-lg">
-              <div className="border-b border-white/10 pb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#2F7C7A]">
-                  OFFICIAL SECRETARIAT
-                </span>
-                <h3 className="font-serif text-lg font-bold text-white mt-1">
-                  Central Help Desk
-                </h3>
-              </div>
+          {/* Heading */}
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#132238] tracking-tight leading-tight relative z-10 max-w-2xl mx-auto">
+            Explore the MISC Ecosystem
+          </h2>
 
-              <div className="space-y-4 text-sm text-slate-300">
-                <div className="flex items-start space-x-3">
-                  <MapPin className="w-4 h-4 text-[#2F7C7A] mt-1 shrink-0" />
-                  <span className="leading-relaxed">{miscInfo.address}</span>
-                </div>
+          {/* Supporting Text */}
+          <p className="text-base sm:text-lg text-[#475569] font-normal leading-relaxed max-w-xl mx-auto relative z-10">
+            Discover how Markaz Integrated Studies Council integrates classical scholarship with modern academic governance and university programs.
+          </p>
 
-                <div className="flex items-center space-x-3">
-                  <Mail className="w-4 h-4 text-[#2F7C7A] shrink-0" />
-                  <a href={`mailto:${miscInfo.email}`} className="hover:text-white transition-colors font-mono">
-                    {miscInfo.email}
-                  </a>
-                </div>
+          {/* CTAs */}
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => navigate('/about')}
+              className="group shadow-sm w-full sm:w-auto"
+            >
+              <span>EXPLORE MISC</span>
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
 
-                <div className="flex items-center space-x-3">
-                  <Phone className="w-4 h-4 text-[#2F7C7A] shrink-0" />
-                  <a href={`tel:${miscInfo.phone.replace(/\s+/g, '')}`} className="hover:text-white transition-colors font-mono">
-                    {miscInfo.phone}
-                  </a>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-white/10 text-xs text-slate-400">
-                <p>Secretariat Operating Hours: Mon – Sat (Office Hours)</p>
-              </div>
-            </div>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => navigate('/contact')}
+              className="group bg-white text-[#132238] border-[#E2E8E0] hover:border-[#2F7C7A] w-full sm:w-auto"
+            >
+              <Mail className="w-4 h-4 mr-2 text-[#2F7C7A]" />
+              <span>CONTACT US</span>
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
 
         </div>

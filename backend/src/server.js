@@ -7,6 +7,7 @@ const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const accountSetupRoutes = require("./routes/accountSetupRoutes");
 const studentRoutes = require("./routes/studentRoutes");
+const { handleTestEmail } = require("./controllers/testEmailController");
 const app = express();
 
 // Middleware
@@ -20,6 +21,9 @@ app.get("/api/health", (req, res) => {
     message: "MISC API is running",
   });
 });
+
+// Resend Email Integration Test Endpoint (Dev Only)
+app.get("/api/test-email", handleTestEmail);
 
 // Authentication Routes
 app.use("/api/auth", authRoutes);
