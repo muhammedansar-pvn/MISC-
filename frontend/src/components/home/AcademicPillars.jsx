@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Quote } from 'lucide-react';
 import Button from '../common/Button';
 import { academicPillarsData } from '../../data/academicPillarsData';
+import { miscInfo } from '../../data/miscInfo';
 
 export const AcademicPillars = () => {
   const navigate = useNavigate();
