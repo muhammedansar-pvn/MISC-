@@ -1,50 +1,53 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, HelpCircle } from 'lucide-react';
 import Button from '../common/Button';
 
 export const DownloadsCTA = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative bg-[#132238] text-white py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-[#2F7C7A]/20">
-      <div className="relative misc-container z-10 text-center max-w-3xl mx-auto space-y-6">
-        <div className="flex items-center justify-center space-x-3">
-          <span className="w-8 h-[2px] bg-[#2F7C7A]" />
-          <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#E6F2F1] uppercase">
-            NEED ASSISTANCE?
-          </span>
-          <span className="w-8 h-[2px] bg-[#2F7C7A]" />
-        </div>
+    <section className="relative bg-[#132238] text-white py-16 sm:py-20 overflow-hidden border-b border-[#2F7C7A]/30">
+      {/* Background aerial image with dark overlay */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/markaz-drone.jpg (1).jpeg"
+          alt="Jamia Markaz Aerial View"
+          className="w-full h-full object-cover object-center opacity-20"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#132238] via-[#132238]/95 to-[#132238]" />
+      </div>
 
-        <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
-          Questions About Academic Resources?
-        </h2>
+      <div className="misc-container relative z-10">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 sm:p-12 backdrop-blur-sm max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-xl">
+            <div className="flex items-center space-x-2">
+              <HelpCircle className="w-4 h-4 text-[#2F7C7A]" />
+              <span className="text-xs font-bold uppercase tracking-widest text-[#2F7C7A]">
+                NEED MORE HELP?
+              </span>
+            </div>
 
-        <p className="text-slate-300 text-base sm:text-lg font-normal leading-relaxed">
-          For inquiries regarding document availability, board circulars, or affiliation manuals, connect directly with the Secretariat.
-        </p>
+            <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white leading-tight">
+              Can't find what you're looking for?
+            </h3>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-          <Button
-            variant="miscBlue"
-            size="lg"
-            onClick={() => navigate('/contact')}
-            className="group w-full sm:w-auto"
-          >
-            <span>CONTACT MISC</span>
-            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-          </Button>
+            <p className="text-xs sm:text-sm text-slate-300 font-normal leading-relaxed">
+              Contact the MISC Secretariat for assistance with academic documents and resources.
+            </p>
+          </div>
 
-          <Button
-            variant="outlineLight"
-            size="lg"
-            onClick={() => navigate('/academics')}
-            className="group w-full sm:w-auto"
-          >
-            <span>EXPLORE ACADEMICS</span>
-            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-          </Button>
+          <div className="shrink-0">
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => navigate('/contact')}
+              className="group shadow-md"
+            >
+              <span>CONTACT US</span>
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </div>
         </div>
       </div>
     </section>

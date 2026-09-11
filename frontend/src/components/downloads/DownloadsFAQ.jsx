@@ -34,23 +34,25 @@ export const DownloadsFAQ = () => {
   };
 
   return (
-    <section className="relative bg-white py-16 sm:py-20 lg:py-28 overflow-hidden border-b border-[#E2E8E0]">
-      <div className="relative misc-container z-10">
-        <div className="max-w-3xl space-y-4 mb-12 sm:mb-16">
-          <div className="flex items-center space-x-3">
-            <span className="w-8 h-[2px] bg-[#2F7C7A]" />
-            <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#2F7C7A] uppercase">
-              FREQUENTLY ASKED QUESTIONS
-            </span>
+    <section className="relative bg-white py-14 sm:py-18 border-b border-[#E2E8E0]">
+      <div className="misc-container">
+        
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10 pb-4 border-b border-[#E2E8E0]">
+          <div>
+            <div className="flex items-center space-x-2.5 mb-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#2F7C7A]" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#2F7C7A]">
+                SUPPORT
+              </span>
+            </div>
+            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#132238]">
+              Frequently Asked Questions
+            </h2>
           </div>
-
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#132238] tracking-tight leading-tight">
-            Resources & Documentation FAQs
-          </h2>
-
-          <p className="text-base sm:text-lg text-[#475569] font-normal leading-relaxed">
-            Common enquiries regarding academic manuals, document access, and Secretariat publishing procedures.
-          </p>
+          <span className="text-xs sm:text-sm text-[#475569] font-medium">
+            Common queries about academic resources
+          </span>
         </div>
 
         <div className="max-w-3xl mx-auto space-y-4">
