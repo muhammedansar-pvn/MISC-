@@ -25,11 +25,13 @@ export const Header = () => {
           className="flex items-center group min-w-0 pr-2" 
           aria-label="MISC Homepage"
         >
-          <img
-            src="/logo.png"
-            alt="MISC - Markaz Integrated Studies Council"
-            className="h-11 sm:h-13 lg:h-[3.75rem] w-auto object-contain shrink-0 transition-transform group-hover:scale-[1.02] bg-white p-0.5 rounded-sm"
-          />
+          <div className="relative flex items-center justify-center overflow-hidden h-10 sm:h-12 lg:h-14 shrink-0">
+            <img
+              src="/logo.png"
+              alt="MISC - Markaz Integrated Studies Council"
+              className="h-full w-auto object-contain shrink-0 scale-[1.35] transition-transform duration-200 group-hover:scale-[1.4]"
+            />
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
