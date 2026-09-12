@@ -80,28 +80,7 @@ export const ExaminationFramework = () => {
           })}
         </div>
 
-        <div className="bg-[#132238] text-white rounded-md border border-[#2F7C7A]/40 p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 max-w-4xl mx-auto relative overflow-hidden">
-          <div className="space-y-1 text-center sm:text-left z-10">
-            <span className="text-[10px] font-bold text-[#E6F2F1] uppercase tracking-widest bg-[#2F7C7A]/20 px-2.5 py-0.5 rounded border border-[#2F7C7A]/40">
-              SRS EVALUATION RULE
-            </span>
-            <h4 className="font-serif text-xl font-bold text-white pt-1">
-              Minimum Pass Requirement
-            </h4>
-            <p className="text-xs sm:text-sm text-slate-300">
-              The MISC examination framework specifies 35 as the minimum pass mark for academic evaluation.
-            </p>
-          </div>
-
-          <div className="bg-[#2F7C7A] border border-[#E6F2F1]/50 px-6 py-3 rounded text-center z-10 shrink-0">
-            <span className="font-serif text-3xl font-bold text-white block leading-none">
-              35
-            </span>
-            <span className="text-[10px] text-slate-100 uppercase font-semibold tracking-wider block mt-1">
-              PASS MARK
-            </span>
-          </div>
-        </div>
+       
       </div>
     </section>
   );
