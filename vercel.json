@@ -1,6 +1,6 @@
 {
-  "buildCommand": "test -d frontend && cd frontend || true; npm run build",
-  "outputDirectory": "frontend/dist",
-  "installCommand": "test -d frontend && cd frontend || true; npm install",
+  "buildCommand": "cd frontend && npm run build && cd .. && cp -r frontend/dist dist",
+  "outputDirectory": "dist",
+  "installCommand": "cd frontend && npm install",
   "framework": "vite"
 }
