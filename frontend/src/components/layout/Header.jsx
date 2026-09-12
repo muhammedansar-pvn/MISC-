@@ -27,21 +27,14 @@ export const Header = () => {
         >
           <img
             src="/logo.png"
-            alt="MISC - Markaz Integrated Studies Council Logo"
-            className="h-9 sm:h-10 lg:h-12 w-auto object-contain shrink-0 transition-transform group-hover:scale-[1.02] bg-white p-0.5 rounded-sm"
+            alt="MISC Logo"
+            className="h-10 sm:h-11 lg:h-[3.15rem] w-auto object-contain shrink-0 transition-transform group-hover:scale-[1.02] bg-white p-0.5 rounded-sm"
           />
-          <div className="flex flex-col min-w-0">
-            <span className={`font-serif font-bold text-base sm:text-lg xl:text-xl tracking-tight leading-none truncate ${
-              mobileMenuOpen ? 'text-white' : 'text-[#132238]'
-            }`}>
-              {miscInfo.name}
-            </span>
-            <span className={`text-[9px] sm:text-[10px] font-semibold tracking-wider sm:tracking-widest uppercase mt-0.5 truncate ${
-              mobileMenuOpen ? 'text-slate-300' : 'text-[#475569]'
-            }`}>
-              Markaz Integrated Studies Council
-            </span>
-          </div>
+          <span className={`font-serif font-bold text-xl sm:text-2xl lg:text-[1.75rem] tracking-tight leading-none ${
+            mobileMenuOpen ? 'text-white' : 'text-[#132238]'
+          }`}>
+            {miscInfo.name}
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
