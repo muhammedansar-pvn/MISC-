@@ -28,9 +28,9 @@ export const Header = () => {
           <img
             src="/logo.png"
             alt="MISC Logo"
-            className="h-11 sm:h-12 lg:h-14 w-auto object-contain shrink-0 transition-transform group-hover:scale-[1.02] bg-white p-0.5 rounded"
+            className="h-13 sm:h-15 lg:h-[4.25rem] w-auto object-contain shrink-0 transition-transform group-hover:scale-[1.02] bg-white p-0.5 rounded"
           />
-          <span className={`font-serif font-bold text-2xl sm:text-3xl tracking-tight leading-none ${
+          <span className={`font-serif font-bold text-xl sm:text-2xl lg:text-[1.75rem] tracking-tight leading-none ${
             mobileMenuOpen ? 'text-white' : 'text-[#132238]'
           }`}>
             {miscInfo.name}
