@@ -22,15 +22,15 @@ export const Header = () => {
         <Link 
           to="/" 
           onClick={() => setMobileMenuOpen(false)}
-          className="flex items-center space-x-2.5 sm:space-x-3 group min-w-0 pr-2" 
+          className="flex items-center space-x-3 sm:space-x-3.5 group min-w-0 pr-2" 
           aria-label="MISC Homepage"
         >
           <img
             src="/logo.png"
             alt="MISC Logo"
-            className="h-10 sm:h-11 lg:h-[3.15rem] w-auto object-contain shrink-0 transition-transform group-hover:scale-[1.02] bg-white p-0.5 rounded-sm"
+            className="h-11 sm:h-12 lg:h-14 w-auto object-contain shrink-0 transition-transform group-hover:scale-[1.02] bg-white p-0.5 rounded"
           />
-          <span className={`font-serif font-bold text-xl sm:text-2xl lg:text-[1.75rem] tracking-tight leading-none ${
+          <span className={`font-serif font-bold text-2xl sm:text-3xl tracking-tight leading-none ${
             mobileMenuOpen ? 'text-white' : 'text-[#132238]'
           }`}>
             {miscInfo.name}
