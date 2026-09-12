@@ -31,8 +31,8 @@ export const VisionSection = () => {
 
             <div className="md:col-span-5 h-full min-h-[260px] relative bg-[#132238] border-t md:border-t-0 md:border-l border-[#E2E8E0] overflow-hidden">
               <img
-                src="/misc-campus-hero.png"
-                alt="Jamia Markaz Evening Campus Courtyard"
+                src="/vision.png"
+                alt="MISC Institutional Vision"
                 className="w-full h-full object-cover object-center min-h-[260px] transition-transform duration-700 ease-out group-hover:scale-[1.03]"
               />
             </div>
