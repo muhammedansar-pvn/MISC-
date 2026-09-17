@@ -3,11 +3,21 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
+
+// Routes Imports
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const accountSetupRoutes = require("./routes/accountSetupRoutes");
+const institutionRoutes = require("./routes/institutionRoutes");
+const academicRoutes = require("./routes/academicRoutes");
 const studentRoutes = require("./routes/studentRoutes");
+const facultyRoutes = require("./routes/facultyRoutes");
+const cmsRoutes = require("./routes/cmsRoutes");
+const eventRoutes = require("./routes/eventRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const examRoutes = require("./routes/examRoutes");
 const { handleTestEmail } = require("./controllers/testEmailController");
+
 const app = express();
 
 // Middleware
@@ -18,18 +28,26 @@ app.use(express.json());
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "MISC API is running",
+    message: "MISC Integrated Portal API Server is running",
   });
 });
 
 // Resend Email Integration Test Endpoint (Dev Only)
 app.get("/api/test-email", handleTestEmail);
 
-// Authentication Routes
+// Mount API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/auth", accountSetupRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/student", studentRoutes);
+app.use("/api/institutions", institutionRoutes);
+app.use("/api/academic", academicRoutes);
+app.use("/api/students", studentRoutes);
+app.use("/api/faculty", facultyRoutes);
+app.use("/api/cms", cmsRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/exams", examRoutes);
+
 // 404 Handler for Unknown API Routes
 app.use("/api/*", (req, res) => {
   res.status(404).json({
@@ -60,3 +78,5 @@ const server = app.listen(PORT, () => {
 server.on("error", (error) => {
   console.error("Server Startup Error:", error.message);
 });
+
+module.exports = app;

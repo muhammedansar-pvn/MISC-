@@ -48,18 +48,15 @@ const studentProfileSchema = new mongoose.Schema(
     classId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Class",
-      required: true,
     },
 
     institutionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "InstitutionProfile",
-      required: true,
     },
 
     contactNumber: {
       type: String,
-      required: true,
       trim: true,
     },
 
@@ -86,17 +83,9 @@ const studentProfileSchema = new mongoose.Schema(
   }
 );
 
-studentProfileSchema.index(
-  { userId: 1 },
-  { unique: true }
-);
+// Indexes
+studentProfileSchema.index({ userId: 1 }, { unique: true });
+studentProfileSchema.index({ registrationNumber: 1 }, { unique: true });
+studentProfileSchema.index({ institutionId: 1, classId: 1 });
 
-studentProfileSchema.index(
-  { registrationNumber: 1 },
-  { unique: true }
-);
-
-module.exports = mongoose.model(
-  "StudentProfile",
-  studentProfileSchema
-);
+module.exports = mongoose.model("StudentProfile", studentProfileSchema);

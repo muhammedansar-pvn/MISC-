@@ -59,7 +59,7 @@ export const HeroSection = () => {
       `}</style>
 
       {/* BACKGROUND HERO IMAGE LAYER */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0 bg-[#F7F8F5]">
+      <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0 bg-[#4d5341]">
         
         {/* High-Resolution Real Campus Aerial Background Image with Slow Subtle Ken Burns */}
         <img

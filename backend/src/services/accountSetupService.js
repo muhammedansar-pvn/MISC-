@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const AccountSetupToken = require("../models/AccountSetupToken");
 
-const generateAccountSetupToken = async (userId) => {
+const generateAccountSetupToken = async (userId, purpose = "ACCOUNT_SETUP") => {
   const rawToken = crypto.randomBytes(32).toString("hex");
 
   const tokenHash = crypto
@@ -16,6 +16,7 @@ const generateAccountSetupToken = async (userId) => {
   await AccountSetupToken.create({
     userId,
     tokenHash,
+    purpose,
     expiresAt,
   });
 

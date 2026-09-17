@@ -2,9 +2,7 @@ const User = require("../models/User");
 const StudentProfile = require("../models/StudentProfile");
 const InstitutionProfile = require("../models/InstitutionProfile");
 const Class = require("../models/Class");
-const {
-  generateAccountSetupToken,
-} = require("./accountSetupService");
+const { generateAccountSetupToken } = require("./accountSetupService");
 
 const createStudent = async (studentData) => {
   const {
@@ -22,29 +20,18 @@ const createStudent = async (studentData) => {
     photo,
   } = studentData;
 
-  // 1. Verify institution
-  const institution = await InstitutionProfile.findById(institutionId);
-
-  if (!institution) {
-    throw new Error("Institution not found");
+  if (institutionId) {
+    const institution = await InstitutionProfile.findById(institutionId);
+    if (!institution) throw new Error("Institution not found");
   }
 
-  // 2. Verify class
-  const studentClass = await Class.findById(classId);
-
-  if (!studentClass) {
-    throw new Error("Class not found");
+  if (classId) {
+    const studentClass = await Class.findById(classId);
+    if (!studentClass) throw new Error("Class not found");
   }
 
-  // 3. Make sure class belongs to selected institution
-  if (studentClass.institutionId.toString() !== institutionId.toString()) {
-    throw new Error("Class does not belong to the selected institution");
-  }
-
-  // 4. Generate unique registration number
   const registrationNumber = await generateRegistrationNumber();
 
-  // 5. Create User account
   const user = await User.create({
     role: "STUDENT",
     status: "PENDING_SETUP",
@@ -52,7 +39,6 @@ const createStudent = async (studentData) => {
   });
 
   try {
-    // 6. Create Student Profile
     const studentProfile = await StudentProfile.create({
       userId: user._id,
       registrationNumber,
@@ -70,10 +56,8 @@ const createStudent = async (studentData) => {
       photo,
     });
 
-    // 7. Generate Account Setup Token & Link
-    const setup = await generateAccountSetupToken(user._id);
+    const setup = await generateAccountSetupToken(user._id, "ACCOUNT_SETUP");
 
-    // 8. Return complete registration result
     return {
       user,
       studentProfile,
@@ -81,11 +65,27 @@ const createStudent = async (studentData) => {
       setupExpiresAt: setup.expiresAt,
     };
   } catch (error) {
-    // Remove User if StudentProfile or setup creation fails
     await User.findByIdAndDelete(user._id);
-
     throw error;
   }
+};
+
+const getStudents = async (filter = {}) => {
+  return StudentProfile.find(filter)
+    .populate("userId", "name email username role status mobile")
+    .populate("institutionId")
+    .populate("classId");
+};
+
+const getStudentById = async (id) => {
+  return StudentProfile.findById(id)
+    .populate("userId", "name email username role status mobile")
+    .populate("institutionId")
+    .populate("classId");
+};
+
+const updateStudent = async (id, updateData) => {
+  return StudentProfile.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
 };
 
 const generateRegistrationNumber = async () => {
@@ -104,8 +104,9 @@ const generateRegistrationNumber = async () => {
       lastStudent.registrationNumber.replace(`MISC${year}`, ""),
       10
     );
-
-    nextNumber = lastNumber + 1;
+    if (!isNaN(lastNumber)) {
+      nextNumber = lastNumber + 1;
+    }
   }
 
   return `MISC${year}${String(nextNumber).padStart(4, "0")}`;
@@ -113,4 +114,7 @@ const generateRegistrationNumber = async () => {
 
 module.exports = {
   createStudent,
+  getStudents,
+  getStudentById,
+  updateStudent,
 };

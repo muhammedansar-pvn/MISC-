@@ -14,6 +14,12 @@ const accountSetupTokenSchema = new mongoose.Schema(
       trim: true,
     },
 
+    purpose: {
+      type: String,
+      required: true,
+      enum: ["ACCOUNT_SETUP", "ADMIN_INVITATION"],
+    },
+
     expiresAt: {
       type: Date,
       required: true,
@@ -29,19 +35,8 @@ const accountSetupTokenSchema = new mongoose.Schema(
   }
 );
 
-// Token hash must be unique
-accountSetupTokenSchema.index(
-  { tokenHash: 1 },
-  { unique: true }
-);
+// Indexes
+accountSetupTokenSchema.index({ tokenHash: 1 }, { unique: true });
+accountSetupTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-// Automatically remove expired tokens
-accountSetupTokenSchema.index(
-  { expiresAt: 1 },
-  { expireAfterSeconds: 0 }
-);
-
-module.exports = mongoose.model(
-  "AccountSetupToken",
-  accountSetupTokenSchema
-);
+module.exports = mongoose.model("AccountSetupToken", accountSetupTokenSchema);

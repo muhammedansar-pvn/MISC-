@@ -24,7 +24,7 @@ const institutionProfileSchema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
-      trim: true,
+      enum: ["DIRECT", "COLLABORATING"],
     },
 
     address: {
@@ -59,17 +59,8 @@ const institutionProfileSchema = new mongoose.Schema(
   }
 );
 
-institutionProfileSchema.index(
-  { userId: 1 },
-  { unique: true }
-);
+// Indexes
+institutionProfileSchema.index({ userId: 1 }, { unique: true });
+institutionProfileSchema.index({ institutionCode: 1 }, { unique: true });
 
-institutionProfileSchema.index(
-  { institutionCode: 1 },
-  { unique: true }
-);
-
-module.exports = mongoose.model(
-  "InstitutionProfile",
-  institutionProfileSchema
-);
+module.exports = mongoose.model("InstitutionProfile", institutionProfileSchema);

@@ -1,11 +1,8 @@
 const Joi = require("joi");
+const { validateSchema } = require("./authValidator");
 
 const accountSetupSchema = Joi.object({
-  token: Joi.string()
-    .trim()
-    .length(64)
-    .required(),
-
+  token: Joi.string().trim().required(),
   username: Joi.string()
     .trim()
     .lowercase()
@@ -13,41 +10,12 @@ const accountSetupSchema = Joi.object({
     .max(30)
     .pattern(/^[a-z0-9._-]+$/)
     .required(),
-
-  password: Joi.string()
-    .min(8)
-    .max(100)
-    .required(),
-
-  confirmPassword: Joi.any()
-    .valid(Joi.ref("password"))
-    .required()
-    .messages({
-      "any.only": "Passwords do not match",
-    }),
-}).options({
-  abortEarly: false,
-  stripUnknown: true,
+  password: Joi.string().min(6).max(100).required(),
+  confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
+    "any.only": "Passwords do not match",
+  }),
 });
 
-const validateAccountSetup = (req, res, next) => {
-  const { error, value } = accountSetupSchema.validate(req.body);
-
-  if (error) {
-    return res.status(400).json({
-      success: false,
-      message: "Validation failed",
-      errors: error.details.map((detail) => ({
-        field: detail.path.join("."),
-        message: detail.message,
-      })),
-    });
-  }
-
-  req.body = value;
-  next();
-};
-
 module.exports = {
-  validateAccountSetup,
+  validateAccountSetup: validateSchema(accountSetupSchema),
 };

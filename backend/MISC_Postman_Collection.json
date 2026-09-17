@@ -1,0 +1,318 @@
+{
+  "info": {
+    "_postman_id": "misc-portal-api-collection",
+    "name": "MISC Integrated Portal API",
+    "description": "Postman Collection for MISC Integrated Portal & Website API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/health", "host": ["{{baseUrl}}"], "path": ["api", "health"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Authentication",
+      "item": [
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) { pm.environment.set('adminToken', jsonData.token); }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin@12345\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Send OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"test@misc.markaz.in\",\n  \"purpose\": \"EMAIL_VERIFICATION\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/send-otp", "host": ["{{baseUrl}}"], "path": ["api", "auth", "send-otp"] }
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"test@misc.markaz.in\",\n  \"otp\": \"123456\",\n  \"purpose\": \"EMAIL_VERIFICATION\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/verify-otp", "host": ["{{baseUrl}}"], "path": ["api", "auth", "verify-otp"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Admin",
+      "item": [
+        {
+          "name": "Invite User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Institution User\",\n  \"email\": \"inst@misc.markaz.in\",\n  \"role\": \"INSTITUTION\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api", "admin", "users"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Institutions",
+      "item": [
+        {
+          "name": "Create Institution Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{instUserId}}\",\n  \"institutionName\": \"Markaz College\",\n  \"institutionCode\": \"MKZ-01\",\n  \"type\": \"DIRECT\",\n  \"address\": \"Kozhikode, Kerala\",\n  \"contactNumber\": \"04952220000\",\n  \"email\": \"inst@misc.markaz.in\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/institutions", "host": ["{{baseUrl}}"], "path": ["api", "institutions"] }
+          }
+        },
+        {
+          "name": "List Institutions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/institutions", "host": ["{{baseUrl}}"], "path": ["api", "institutions"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Academic",
+      "item": [
+        {
+          "name": "Create Academic Year",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"yearName\": \"2026-2027\",\n  \"yearCode\": \"AY2026\",\n  \"startDate\": \"2026-06-01T00:00:00.000Z\",\n  \"endDate\": \"2027-03-31T00:00:00.000Z\",\n  \"status\": \"ACTIVE\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/academic/academic-years", "host": ["{{baseUrl}}"], "path": ["api", "academic", "academic-years"] }
+          }
+        },
+        {
+          "name": "Create Class",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Standard 10\",\n  \"code\": \"STD-10\",\n  \"institutionId\": \"{{institutionId}}\",\n  \"academicYearId\": \"{{academicYearId}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/academic/classes", "host": ["{{baseUrl}}"], "path": ["api", "academic", "classes"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Students",
+      "item": [
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nameEnglish\": \"Muhammed\",\n  \"dateOfBirth\": \"2008-01-01T00:00:00.000Z\",\n  \"admissionYear\": 2026,\n  \"fatherName\": \"Father\",\n  \"motherName\": \"Mother\",\n  \"institutionId\": \"{{institutionId}}\",\n  \"classId\": \"{{classId}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api", "students"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Faculty",
+      "item": [
+        {
+          "name": "Create Faculty Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{facultyUserId}}\",\n  \"facultyId\": \"FAC-001\",\n  \"institutionId\": \"{{institutionId}}\",\n  \"designation\": \"Senior Lecturer\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/faculty", "host": ["{{baseUrl}}"], "path": ["api", "faculty"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 CMS",
+      "item": [
+        {
+          "name": "Get Articles",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/cms/articles", "host": ["{{baseUrl}}"], "path": ["api", "cms", "articles"] }
+          }
+        },
+        {
+          "name": "Submit Enquiry",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Visitor\",\n  \"email\": \"visitor@example.com\",\n  \"subject\": \"GENERAL_ENQUIRY\",\n  \"message\": \"Inquiring about syllabus regulations.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/cms/enquiries", "host": ["{{baseUrl}}"], "path": ["api", "cms", "enquiries"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Events",
+      "item": [
+        {
+          "name": "List Public Events",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/events/events", "host": ["{{baseUrl}}"], "path": ["api", "events", "events"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Payments",
+      "item": [
+        {
+          "name": "Record Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"paymentType\": \"EVENT_REGISTRATION\",\n  \"eventRegistrationId\": \"{{eventRegistrationId}}\",\n  \"amount\": 500,\n  \"gateway\": \"RAZORPAY\",\n  \"transactionId\": \"TXN_99887766\",\n  \"status\": \"SUCCESS\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/payments", "host": ["{{baseUrl}}"], "path": ["api", "payments"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 Exams",
+      "item": [
+        {
+          "name": "Create Board Exam",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Annual Board Exam 2026\",\n  \"code\": \"BE-2026\",\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"startDate\": \"2026-11-01T00:00:00.000Z\",\n  \"endDate\": \"2026-11-15T00:00:00.000Z\",\n  \"status\": \"SCHEDULED\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/exams/exams", "host": ["{{baseUrl}}"], "path": ["api", "exams", "exams"] }
+          }
+        },
+        {
+          "name": "Submit Mark Entry",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"examId\": \"{{examId}}\",\n  \"examScheduleId\": \"{{examScheduleId}}\",\n  \"studentId\": \"{{studentId}}\",\n  \"subjectId\": \"{{subjectId}}\",\n  \"marksObtained\": 88,\n  \"status\": \"DRAFT\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/exams/mark-entries", "host": ["{{baseUrl}}"], "path": ["api", "exams", "mark-entries"] }
+          }
+        },
+        {
+          "name": "Verify Mark Entries",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/api/exams/mark-entries/verify/{{examScheduleId}}", "host": ["{{baseUrl}}"], "path": ["api", "exams", "mark-entries", "verify", "{{examScheduleId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Results",
+      "item": [
+        {
+          "name": "Generate Exam Results",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"examId\": \"{{examId}}\",\n  \"classId\": \"{{classId}}\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/exams/exam-results/generate", "host": ["{{baseUrl}}"], "path": ["api", "exams", "exam-results", "generate"] }
+          }
+        }
+      ]
+    }
+  ]
+}

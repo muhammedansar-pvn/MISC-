@@ -14,9 +14,13 @@ const facultyProfileSchema = new mongoose.Schema(
       trim: true,
     },
 
+    institutionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "InstitutionProfile",
+    },
+
     nameEnglish: {
       type: String,
-      required: true,
       trim: true,
     },
 
@@ -35,38 +39,23 @@ const facultyProfileSchema = new mongoose.Schema(
       trim: true,
     },
 
-    photo: {
-      type: String,
-      trim: true,
-    },
-
-    institutionId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "InstitutionProfile",
-      required: true,
-    },
-
     designation: {
       type: String,
-      required: true,
       trim: true,
     },
 
     islamicQualification: {
       type: String,
-      required: true,
       trim: true,
     },
 
     academicQualification: {
       type: String,
-      required: true,
       trim: true,
     },
 
     joiningYear: {
       type: Number,
-      required: true,
     },
 
     previousExperience: {
@@ -76,7 +65,11 @@ const facultyProfileSchema = new mongoose.Schema(
 
     contactNumber: {
       type: String,
-      required: true,
+      trim: true,
+    },
+
+    photo: {
+      type: String,
       trim: true,
     },
   },
@@ -86,17 +79,8 @@ const facultyProfileSchema = new mongoose.Schema(
   }
 );
 
-facultyProfileSchema.index(
-  { userId: 1 },
-  { unique: true }
-);
+// Indexes
+facultyProfileSchema.index({ userId: 1 }, { unique: true });
+facultyProfileSchema.index({ facultyId: 1 }, { unique: true });
 
-facultyProfileSchema.index(
-  { facultyId: 1 },
-  { unique: true }
-);
-
-module.exports = mongoose.model(
-  "FacultyProfile",
-  facultyProfileSchema
-);
+module.exports = mongoose.model("FacultyProfile", facultyProfileSchema);

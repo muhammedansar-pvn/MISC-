@@ -21,8 +21,9 @@ const classSchema = new mongoose.Schema(
       required: true,
     },
 
-    academicYear: {
-      type: Number,
+    academicYearId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicYear",
       required: true,
     },
 
@@ -39,13 +40,12 @@ const classSchema = new mongoose.Schema(
   }
 );
 
-// Same class code can exist in different institutions/years,
-// but not twice within the same institution and academic year.
+// Compound Unique Index
 classSchema.index(
   {
     institutionId: 1,
     code: 1,
-    academicYear: 1,
+    academicYearId: 1,
   },
   {
     unique: true,

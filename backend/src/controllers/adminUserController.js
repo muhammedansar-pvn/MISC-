@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const User = require("../models/User");
+const AccountSetupToken = require("../models/AccountSetupToken");
 const { sendUserInvitationEmail } = require("../services/emailService");
-
 
 const createUserInvitation = async (req, res) => {
   try {
@@ -59,17 +59,24 @@ const createUserInvitation = async (req, res) => {
       department: department || undefined,
       mobile: mobile || undefined,
       status: "INVITED",
-      invitationTokenHash,
-      invitationTokenExpiresAt,
     });
 
     await user.save();
+
+    // Create invitation token in accountSetupTokens
+    const setupTokenDoc = await AccountSetupToken.create({
+      userId: user._id,
+      tokenHash: invitationTokenHash,
+      purpose: "ADMIN_INVITATION",
+      expiresAt: invitationTokenExpiresAt,
+    });
 
     // Send invitation email via Resend
     try {
       await sendUserInvitationEmail(normalizedEmail, name, rawToken);
     } catch (emailError) {
-      // Rollback user creation to avoid inconsistent state on email failure
+      // Rollback user creation and token doc to avoid inconsistent state
+      await AccountSetupToken.findByIdAndDelete(setupTokenDoc._id);
       await User.findByIdAndDelete(user._id);
       console.error("Failed to send invitation email, transaction rolled back:", emailError.message);
       return res.status(500).json({
@@ -88,7 +95,7 @@ const createUserInvitation = async (req, res) => {
         role: user.role,
         department: user.department,
         status: user.status,
-        invitationExpiresAt: user.invitationTokenExpiresAt,
+        invitationExpiresAt: invitationTokenExpiresAt,
       },
     });
   } catch (error) {
@@ -100,6 +107,106 @@ const createUserInvitation = async (req, res) => {
   }
 };
 
+const getUsers = async (req, res) => {
+  try {
+    const { role, status, search } = req.query;
+    const filter = {};
+
+    if (role) {
+      filter.role = role.toUpperCase();
+    }
+
+    if (status) {
+      filter.status = status.toUpperCase();
+    }
+
+    if (search) {
+      const searchRegex = new RegExp(search.trim(), "i");
+      filter.$or = [
+        { name: searchRegex },
+        { email: searchRegex },
+        { username: searchRegex },
+      ];
+    }
+
+    const users = await User.find(filter)
+      .select("-passwordHash")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      count: users.length,
+      data: users,
+    });
+  } catch (error) {
+    console.error("Get Users Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve users",
+    });
+  }
+};
+
+const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id).select("-passwordHash");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    console.error("Get User By ID Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve user details",
+    });
+  }
+};
+
+const getDashboardStats = async (req, res) => {
+  try {
+    const [totalUsers, activeUsers, pendingUsers, institutions, students, faculty] =
+      await Promise.all([
+        User.countDocuments(),
+        User.countDocuments({ status: "ACTIVE" }),
+        User.countDocuments({ status: { $in: ["INVITED", "PENDING_SETUP"] } }),
+        User.countDocuments({ role: "INSTITUTION" }),
+        User.countDocuments({ role: "STUDENT" }),
+        User.countDocuments({ role: "FACULTY" }),
+      ]);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        totalUsers,
+        activeUsers,
+        pendingUsers,
+        institutions,
+        students,
+        faculty,
+      },
+    });
+  } catch (error) {
+    console.error("Get Dashboard Stats Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch dashboard statistics",
+    });
+  }
+};
+
 module.exports = {
   createUserInvitation,
+  getUsers,
+  getUserById,
+  getDashboardStats,
 };

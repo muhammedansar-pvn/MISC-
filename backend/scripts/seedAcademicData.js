@@ -4,6 +4,7 @@ const connectDB = require("../src/config/db");
 
 const User = require("../src/models/User");
 const InstitutionProfile = require("../src/models/InstitutionProfile");
+const AcademicYear = require("../src/models/AcademicYear");
 const Class = require("../src/models/Class");
 
 const seedAcademicData = async () => {
@@ -22,6 +23,25 @@ const seedAcademicData = async () => {
       );
     }
 
+    // Check existing academic year
+    let academicYear = await AcademicYear.findOne({
+      yearCode: "AY2026",
+    });
+
+    if (!academicYear) {
+      academicYear = await AcademicYear.create({
+        yearName: "2026-2027",
+        yearCode: "AY2026",
+        startDate: new Date("2026-06-01"),
+        endDate: new Date("2027-03-31"),
+        isCurrent: true,
+        status: "ACTIVE",
+      });
+      console.log("Academic year AY2026 created.");
+    } else {
+      console.log("Academic year AY2026 already exists.");
+    }
+
     // Check existing institution
     let institution = await InstitutionProfile.findOne({
       institutionCode: "MISC-TEST",
@@ -32,7 +52,7 @@ const seedAcademicData = async () => {
         userId: admin._id,
         institutionName: "MISC Test Institution",
         institutionCode: "MISC-TEST",
-        type: "TEST",
+        type: "DIRECT",
         address: "Karanthur, Kozhikode, Kerala",
         contactNumber: "0000000000",
         email: "test@misc.markaz.in",
@@ -48,7 +68,7 @@ const seedAcademicData = async () => {
     let studentClass = await Class.findOne({
       institutionId: institution._id,
       code: "STD-01",
-      academicYear: 2026,
+      academicYearId: academicYear._id,
     });
 
     if (!studentClass) {
@@ -56,7 +76,7 @@ const seedAcademicData = async () => {
         name: "Standard 1",
         code: "STD-01",
         institutionId: institution._id,
-        academicYear: 2026,
+        academicYearId: academicYear._id,
         status: "ACTIVE",
       });
 
@@ -66,6 +86,7 @@ const seedAcademicData = async () => {
     }
 
     console.log("\nAcademic test data ready:");
+    console.log("Academic Year ID:", academicYear._id);
     console.log("Institution ID:", institution._id);
     console.log("Class ID:", studentClass._id);
 

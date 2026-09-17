@@ -9,19 +9,14 @@ const userSchema = new mongoose.Schema(
 
     email: {
       type: String,
-      trim: true,
       lowercase: true,
-    },
-
-    department: {
-      type: String,
       trim: true,
     },
 
     username: {
       type: String,
-      trim: true,
       lowercase: true,
+      trim: true,
     },
 
     passwordHash: {
@@ -30,31 +25,24 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["ADMIN", "STUDENT", "FACULTY", "INSTITUTION"],
       required: true,
+      enum: ["ADMIN", "STUDENT", "FACULTY", "INSTITUTION"],
     },
 
     status: {
       type: String,
-      enum: ["PENDING_SETUP", "ACTIVE", "SUSPENDED", "INVITED"],
       required: true,
+      enum: ["PENDING_SETUP", "ACTIVE", "SUSPENDED", "INVITED"],
+    },
+
+    department: {
+      type: String,
+      trim: true,
     },
 
     mobile: {
       type: String,
       trim: true,
-    },
-
-    invitationTokenHash: {
-      type: String,
-    },
-
-    invitationTokenExpiresAt: {
-      type: Date,
-    },
-
-    invitationUsedAt: {
-      type: Date,
     },
   },
   {
@@ -62,5 +50,9 @@ const userSchema = new mongoose.Schema(
     collection: "users",
   }
 );
+
+// Indexes
+userSchema.index({ username: 1 }, { unique: true, sparse: true });
+userSchema.index({ email: 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model("User", userSchema);
