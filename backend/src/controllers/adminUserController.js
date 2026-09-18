@@ -73,7 +73,10 @@ const createUserInvitation = async (req, res) => {
 
     // Send invitation email via Resend
     try {
-      await sendUserInvitationEmail(normalizedEmail, name, rawToken);
+      const emailResult = await sendUserInvitationEmail(normalizedEmail, name, rawToken);
+      if (!emailResult || emailResult.success === false) {
+        throw new Error(emailResult?.error || emailResult?.message || "Failed to deliver invitation email");
+      }
     } catch (emailError) {
       // Rollback user creation and token doc to avoid inconsistent state
       await AccountSetupToken.findByIdAndDelete(setupTokenDoc._id);
@@ -81,7 +84,7 @@ const createUserInvitation = async (req, res) => {
       console.error("Failed to send invitation email, transaction rolled back:", emailError.message);
       return res.status(500).json({
         success: false,
-        message: "Failed to send invitation email. Please check email configuration.",
+        message: "Failed to send account setup invitation. Please try again.",
       });
     }
 
@@ -172,27 +175,45 @@ const getUserById = async (req, res) => {
   }
 };
 
+const Event = require("../models/Event");
+const Exam = require("../models/Exam");
+const Payment = require("../models/Payment");
+
 const getDashboardStats = async (req, res) => {
   try {
-    const [totalUsers, activeUsers, pendingUsers, institutions, students, faculty] =
-      await Promise.all([
-        User.countDocuments(),
-        User.countDocuments({ status: "ACTIVE" }),
-        User.countDocuments({ status: { $in: ["INVITED", "PENDING_SETUP"] } }),
-        User.countDocuments({ role: "INSTITUTION" }),
-        User.countDocuments({ role: "STUDENT" }),
-        User.countDocuments({ role: "FACULTY" }),
-      ]);
+    const [userStatsFacet, events, exams, payments] = await Promise.all([
+      User.aggregate([
+        {
+          $facet: {
+            totalUsers: [{ $count: "count" }],
+            activeUsers: [{ $match: { status: "ACTIVE" } }, { $count: "count" }],
+            pendingUsers: [{ $match: { status: { $in: ["INVITED", "PENDING_SETUP"] } } }, { $count: "count" }],
+            institutions: [{ $match: { role: "INSTITUTION" } }, { $count: "count" }],
+            students: [{ $match: { role: "STUDENT" } }, { $count: "count" }],
+            faculty: [{ $match: { role: "FACULTY" } }, { $count: "count" }],
+          },
+        },
+      ]),
+      Event.countDocuments().catch(() => 0),
+      Exam.countDocuments().catch(() => 0),
+      Payment.countDocuments().catch(() => 0),
+    ]);
+
+    const facet = (userStatsFacet && userStatsFacet[0]) || {};
+    const extractCount = (arr) => (arr && arr[0] ? arr[0].count : 0);
 
     return res.status(200).json({
       success: true,
       data: {
-        totalUsers,
-        activeUsers,
-        pendingUsers,
-        institutions,
-        students,
-        faculty,
+        totalUsers: extractCount(facet.totalUsers),
+        activeUsers: extractCount(facet.activeUsers),
+        pendingUsers: extractCount(facet.pendingUsers),
+        institutions: extractCount(facet.institutions),
+        students: extractCount(facet.students),
+        faculty: extractCount(facet.faculty),
+        events,
+        exams,
+        payments,
       },
     });
   } catch (error) {

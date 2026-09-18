@@ -65,5 +65,7 @@ markEntrySchema.index(
     unique: true,
   }
 );
+markEntrySchema.index({ examId: 1, studentId: 1 });
+markEntrySchema.index({ examScheduleId: 1, status: 1 });
 
 module.exports = mongoose.model("MarkEntry", markEntrySchema);

@@ -40,7 +40,25 @@ export const accountSetup = async ({ token, username, password, confirmPassword 
   return response.data;
 };
 
+export const register = async ({ name, email, password, mobile, role }) => {
+  const response = await apiClient.post('/auth/register', { name, email, password, mobile, role });
+  return response.data;
+};
+
+export const verifyEmailOtp = async ({ email, otp }) => {
+  const response = await apiClient.post('/auth/verify-email-otp', { email, otp });
+  return response.data;
+};
+
+export const resendEmailOtp = async ({ email }) => {
+  const response = await apiClient.post('/auth/resend-email-otp', { email });
+  return response.data;
+};
+
 export default {
+  register,
+  verifyEmailOtp,
+  resendEmailOtp,
   login,
   setPassword,
   forgotPassword,

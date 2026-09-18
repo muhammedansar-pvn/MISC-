@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Exam = require("../models/Exam");
 const ExamSchedule = require("../models/ExamSchedule");
 const ExamRegistration = require("../models/ExamRegistration");
@@ -7,24 +8,47 @@ const StudentProfile = require("../models/StudentProfile");
 
 // Exam
 const createExam = async (data) => Exam.create(data);
-const getExams = async (filter = {}) => Exam.find(filter).populate("academicYearId").sort({ startDate: -1 });
-const getExamById = async (id) => Exam.findById(id).populate("academicYearId");
+
+const getExams = async (filter = {}) =>
+  Exam.find(filter)
+    .populate("academicYearId", "yearCode title status")
+    .sort({ startDate: -1 })
+    .lean();
+
+const getExamById = async (id) =>
+  Exam.findById(id)
+    .populate("academicYearId", "yearCode title status")
+    .lean();
+
 const updateExam = async (id, data) => Exam.findByIdAndUpdate(id, data, { new: true });
 
 // ExamSchedule
 const createExamSchedule = async (data) => ExamSchedule.create(data);
-const getExamSchedules = async (filter = {}) => ExamSchedule.find(filter).populate("examId").populate("classId").populate("subjectId");
-const getExamScheduleById = async (id) => ExamSchedule.findById(id).populate("examId").populate("classId").populate("subjectId");
+
+const getExamSchedules = async (filter = {}) =>
+  ExamSchedule.find(filter)
+    .populate("examId", "title examCode startDate endDate")
+    .populate("classId", "className section")
+    .populate("subjectId", "subjectName subjectCode")
+    .lean();
+
+const getExamScheduleById = async (id) =>
+  ExamSchedule.findById(id)
+    .populate("examId", "title examCode startDate endDate")
+    .populate("classId", "className section")
+    .populate("subjectId", "subjectName subjectCode")
+    .lean();
+
 const updateExamSchedule = async (id, data) => ExamSchedule.findByIdAndUpdate(id, data, { new: true });
 
 // ExamRegistration
 const registerStudentForExam = async (data) => {
-  const existingReg = await ExamRegistration.findOne({ examId: data.examId, studentId: data.studentId });
+  const existingReg = await ExamRegistration.exists({ examId: data.examId, studentId: data.studentId });
   if (existingReg) {
     throw new Error("Student is already registered for this examination");
   }
 
-  const existingRoll = await ExamRegistration.findOne({ rollNumber: data.rollNumber });
+  const existingRoll = await ExamRegistration.exists({ rollNumber: data.rollNumber });
   if (existingRoll) {
     throw new Error("Roll number is already assigned");
   }
@@ -34,10 +58,11 @@ const registerStudentForExam = async (data) => {
 
 const getExamRegistrations = async (filter = {}) => {
   return ExamRegistration.find(filter)
-    .populate("examId")
-    .populate("studentId")
-    .populate("institutionId")
-    .populate("paymentId");
+    .populate("examId", "title examCode startDate endDate")
+    .populate("studentId", "name registrationNumber classId")
+    .populate("institutionId", "name code")
+    .populate("paymentId", "transactionId status amount")
+    .lean();
 };
 
 const updateExamRegistrationStatus = async (id, registrationStatus) => {
@@ -46,7 +71,7 @@ const updateExamRegistrationStatus = async (id, registrationStatus) => {
 
 // MarkEntry
 const submitOrUpdateMarkEntry = async (data) => {
-  const schedule = await ExamSchedule.findById(data.examScheduleId);
+  const schedule = await ExamSchedule.findById(data.examScheduleId).lean();
   if (!schedule) {
     throw new Error("Exam schedule record not found");
   }
@@ -64,11 +89,12 @@ const submitOrUpdateMarkEntry = async (data) => {
 
 const getMarkEntries = async (filter = {}) => {
   return MarkEntry.find(filter)
-    .populate("examId")
-    .populate("examScheduleId")
-    .populate("studentId")
-    .populate("subjectId")
-    .populate("evaluatorId");
+    .populate("examId", "title examCode")
+    .populate("examScheduleId", "maxMarks passMarks examDate")
+    .populate("studentId", "name registrationNumber")
+    .populate("subjectId", "subjectName subjectCode")
+    .populate("evaluatorId", "name")
+    .lean();
 };
 
 const verifyMarkEntries = async (examScheduleId) => {
@@ -81,61 +107,98 @@ const verifyMarkEntries = async (examScheduleId) => {
 
 // ExamResult Aggregation (Requires Verified Marks!)
 const aggregateAndGenerateResults = async (examId, classId) => {
-  // Check if any mark entries for this exam & class are unverified
-  const unverifiedEntries = await MarkEntry.find({
-    examId,
+  const schedulesForClass = await ExamSchedule.find({ examId, classId }).select("_id").lean();
+  const scheduleIds = schedulesForClass.map((s) => s._id);
+
+  if (scheduleIds.length === 0) {
+    throw new Error("No exam schedules found for this exam and class.");
+  }
+
+  // Check if any mark entries for this exam & class schedules are unverified
+  const unverifiedCount = await MarkEntry.countDocuments({
+    examScheduleId: { $in: scheduleIds },
     status: { $ne: "VERIFIED" },
   });
 
-  const schedulesForClass = await ExamSchedule.find({ examId, classId }).select("_id");
-  const scheduleIds = schedulesForClass.map((s) => s._id.toString());
-
-  const unverifiedForClass = unverifiedEntries.filter((m) =>
-    scheduleIds.includes(m.examScheduleId.toString())
-  );
-
-  if (unverifiedForClass.length > 0) {
+  if (unverifiedCount > 0) {
     throw new Error(
-      `Cannot generate results. Found ${unverifiedForClass.length} unverified or draft mark entries for this class.`
+      `Cannot generate results. Found ${unverifiedCount} unverified or draft mark entries for this class.`
     );
   }
 
   // Get all registered students for this exam & class
-  const registrations = await ExamRegistration.find({ examId }).populate("studentId");
+  const registrations = await ExamRegistration.find({ examId }).populate("studentId", "classId").lean();
 
   const classStudents = registrations.filter(
     (r) => r.studentId && r.studentId.classId && r.studentId.classId.toString() === classId.toString()
   );
 
-  const generatedResults = [];
+  if (classStudents.length === 0) {
+    return [];
+  }
 
-  for (const reg of classStudents) {
-    const studentId = reg.studentId._id;
-    const institutionId = reg.institutionId;
+  const studentMap = new Map();
+  classStudents.forEach((r) => {
+    studentMap.set(r.studentId._id.toString(), r.institutionId);
+  });
 
-    const studentMarks = await MarkEntry.find({
-      examId,
-      studentId,
-    }).populate("examScheduleId");
+  const studentObjectIds = Array.from(studentMap.keys()).map((id) => new mongoose.Types.ObjectId(id));
+  const examObjectId = new mongoose.Types.ObjectId(examId);
 
-    let totalMax = 0;
-    let totalObtained = 0;
-    let hasFailed = false;
+  // Single MongoDB Aggregation Pipeline for all target students
+  const aggregatedStats = await MarkEntry.aggregate([
+    {
+      $match: {
+        examId: examObjectId,
+        studentId: { $in: studentObjectIds },
+      },
+    },
+    {
+      $lookup: {
+        from: "examSchedules",
+        localField: "examScheduleId",
+        foreignField: "_id",
+        as: "schedule",
+      },
+    },
+    { $unwind: "$schedule" },
+    {
+      $group: {
+        _id: "$studentId",
+        totalMax: { $sum: "$schedule.maxMarks" },
+        totalObtained: {
+          $sum: { $cond: [{ $eq: ["$isAbsent", true] }, 0, "$marksObtained"] },
+        },
+        hasFailed: {
+          $max: {
+            $cond: [
+              {
+                $or: [
+                  { $eq: ["$isAbsent", true] },
+                  { $lt: ["$marksObtained", "$schedule.passMarks"] },
+                ],
+              },
+              1,
+              0,
+            ],
+          },
+        },
+      },
+    },
+  ]);
 
-    for (const entry of studentMarks) {
-      const schedule = entry.examScheduleId;
-      if (schedule) {
-        totalMax += schedule.maxMarks;
-        totalObtained += entry.isAbsent ? 0 : entry.marksObtained;
+  const bulkOps = [];
+  const publishedAt = new Date();
 
-        if (entry.isAbsent || entry.marksObtained < schedule.passMarks) {
-          hasFailed = true;
-        }
-      }
-    }
+  for (const stat of aggregatedStats) {
+    const studentIdStr = stat._id.toString();
+    const institutionId = studentMap.get(studentIdStr);
+    const totalMax = stat.totalMax || 0;
+    const totalObtained = stat.totalObtained || 0;
+    const hasFailed = stat.hasFailed === 1;
 
     const percentage = totalMax > 0 ? (totalObtained / totalMax) * 100 : 0;
-    
+
     let grade = "F";
     if (!hasFailed) {
       if (percentage >= 90) grade = "A+";
@@ -148,35 +211,47 @@ const aggregateAndGenerateResults = async (examId, classId) => {
 
     const resultStatus = hasFailed ? "FAILED" : "PASSED";
 
-    const result = await ExamResult.findOneAndUpdate(
-      { examId, studentId },
-      {
-        examId,
-        studentId,
-        classId,
-        institutionId,
-        totalMaxMarks: totalMax,
-        totalMarksObtained: totalObtained,
-        percentage: Math.round(percentage * 100) / 100,
-        grade,
-        resultStatus,
-        publishedAt: new Date(),
+    bulkOps.push({
+      updateOne: {
+        filter: { examId, studentId: stat._id },
+        update: {
+          $set: {
+            examId,
+            studentId: stat._id,
+            classId,
+            institutionId,
+            totalMaxMarks: totalMax,
+            totalMarksObtained: totalObtained,
+            percentage: Math.round(percentage * 100) / 100,
+            grade,
+            resultStatus,
+            publishedAt,
+          },
+        },
+        upsert: true,
       },
-      { upsert: true, new: true }
-    );
-
-    generatedResults.push(result);
+    });
   }
 
-  return generatedResults;
+  if (bulkOps.length > 0) {
+    await ExamResult.bulkWrite(bulkOps);
+  }
+
+  return ExamResult.find({ examId, classId })
+    .populate("examId", "title examCode")
+    .populate("studentId", "name registrationNumber")
+    .populate("classId", "className section")
+    .populate("institutionId", "name code")
+    .lean();
 };
 
 const getExamResults = async (filter = {}) => {
   return ExamResult.find(filter)
-    .populate("examId")
-    .populate("studentId")
-    .populate("classId")
-    .populate("institutionId");
+    .populate("examId", "title examCode")
+    .populate("studentId", "name registrationNumber")
+    .populate("classId", "className section")
+    .populate("institutionId", "name code")
+    .lean();
 };
 
 module.exports = {

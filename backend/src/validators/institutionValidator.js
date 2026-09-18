@@ -2,14 +2,14 @@ const Joi = require("joi");
 const { validateSchema } = require("./authValidator");
 
 const createInstitutionSchema = Joi.object({
-  userId: Joi.string().hex().length(24).required(),
+  userId: Joi.string().hex().length(24).allow(null, "").optional(),
   institutionName: Joi.string().trim().min(2).max(200).required(),
   institutionCode: Joi.string().trim().uppercase().min(2).max(20).required(),
-  type: Joi.string().valid("DIRECT", "COLLABORATING").required(),
+  type: Joi.string().valid("DIRECT", "COLLABORATING", "AFFILIATED", "RECOGNIZED").required(),
   address: Joi.string().trim().required(),
   contactNumber: Joi.string().trim().required(),
   email: Joi.string().email().lowercase().trim().required(),
-  status: Joi.string().valid("ACTIVE", "INACTIVE").default("ACTIVE"),
+  status: Joi.string().valid("ACTIVE", "INACTIVE", "SUSPENDED").default("ACTIVE"),
 });
 
 const updateInstitutionSchema = Joi.object({

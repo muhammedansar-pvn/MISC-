@@ -7,7 +7,116 @@ const { generateToken } = require("../utils/jwt");
 const { sendPasswordResetEmail } = require("../services/emailService");
 const { sendAndStoreOtp, verifyOtpCode } = require("../services/otpService");
 
-// 1. Login
+// 1. Register User
+const register = async (req, res) => {
+  try {
+    const { name, email, password, mobile, role } = req.body;
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if user already exists
+    const existingUser = await User.findOne({
+      $or: [{ email: normalizedEmail }, { username: normalizedEmail }],
+    });
+
+    if (existingUser) {
+      if (existingUser.emailVerified === false) {
+        await sendAndStoreOtp(normalizedEmail, "EMAIL_VERIFICATION");
+        return res.status(200).json({
+          success: true,
+          message: "Registration pending verification. A new OTP has been sent to your email.",
+          requiresEmailVerification: true,
+          email: normalizedEmail,
+        });
+      }
+      return res.status(409).json({
+        success: false,
+        message: "User with this email already exists",
+      });
+    }
+
+    const passwordHash = await hashPassword(password);
+    const targetRole = role && ["STUDENT", "FACULTY", "INSTITUTION"].includes(role.toUpperCase()) ? role.toUpperCase() : "STUDENT";
+
+    const user = await User.create({
+      name,
+      email: normalizedEmail,
+      username: normalizedEmail,
+      passwordHash,
+      role: targetRole,
+      status: "PENDING_SETUP",
+      emailVerified: false,
+      mobile: mobile || undefined,
+    });
+
+    // Send Email Verification OTP
+    await sendAndStoreOtp(normalizedEmail, "EMAIL_VERIFICATION");
+
+    return res.status(201).json({
+      success: true,
+      message: "Registration successful. Please verify your email with the OTP sent to your inbox.",
+      requiresEmailVerification: true,
+      email: normalizedEmail,
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    return res.status(500).json({ success: false, message: error.message || "Registration failed" });
+  }
+};
+
+// 2. Verify Email OTP
+const verifyEmailOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const normalizedEmail = email.toLowerCase().trim();
+
+    await verifyOtpCode(normalizedEmail, otp, "EMAIL_VERIFICATION");
+
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User account not found" });
+    }
+
+    user.emailVerified = true;
+    user.status = "ACTIVE";
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Email verified successfully. You can now login.",
+    });
+  } catch (error) {
+    console.error("Verify Email OTP Error:", error);
+    return res.status(400).json({ success: false, message: error.message || "OTP verification failed" });
+  }
+};
+
+// 3. Resend Email OTP
+const resendEmailOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user || user.emailVerified === true) {
+      return res.status(200).json({
+        success: true,
+        message: "If an unverified account exists, a new verification OTP has been sent.",
+      });
+    }
+
+    await sendAndStoreOtp(normalizedEmail, "EMAIL_VERIFICATION");
+
+    return res.status(200).json({
+      success: true,
+      message: "A new email verification OTP has been sent.",
+    });
+  } catch (error) {
+    console.error("Resend Email OTP Error:", error);
+    return res.status(500).json({ success: false, message: "Failed to resend OTP" });
+  }
+};
+
+// 4. Login
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -15,14 +124,10 @@ const login = async (req, res) => {
 
     const user = await User.findOne({
       $or: [{ username: normalizedIdentifier }, { email: normalizedIdentifier }],
-    });
+    }).select("+passwordHash");
 
     if (!user) {
       return res.status(401).json({ success: false, message: "Invalid username or password" });
-    }
-
-    if (user.status !== "ACTIVE") {
-      return res.status(403).json({ success: false, message: "Account is not active" });
     }
 
     if (!user.passwordHash) {
@@ -32,6 +137,19 @@ const login = async (req, res) => {
     const isPasswordValid = await comparePassword(password, user.passwordHash);
     if (!isPasswordValid) {
       return res.status(401).json({ success: false, message: "Invalid username or password" });
+    }
+
+    if (user.role !== "ADMIN" && user.emailVerified === false) {
+      return res.status(403).json({
+        success: false,
+        requiresEmailVerification: true,
+        message: "Please verify your email before logging in.",
+        email: user.email,
+      });
+    }
+
+    if (user.status !== "ACTIVE") {
+      return res.status(403).json({ success: false, message: "Account is not active" });
     }
 
     const token = generateToken({
@@ -59,7 +177,7 @@ const login = async (req, res) => {
   }
 };
 
-// 2. Verify Account Setup Token
+// 5. Verify Account Setup Token
 const verifyAccountSetupToken = async (req, res) => {
   try {
     const { token } = req.params;
@@ -68,7 +186,6 @@ const verifyAccountSetupToken = async (req, res) => {
     }
 
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-
     const setupTokenDoc = await AccountSetupToken.findOne({ tokenHash });
 
     if (!setupTokenDoc) {
@@ -106,7 +223,7 @@ const verifyAccountSetupToken = async (req, res) => {
   }
 };
 
-// 3. Account Setup / Set Password
+// 6. Account Setup / Set Password
 const accountSetup = async (req, res) => {
   try {
     const { token, username, password, confirmPassword } = req.body;
@@ -119,7 +236,6 @@ const accountSetup = async (req, res) => {
     }
 
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
-
     const setupTokenDoc = await AccountSetupToken.findOne({ tokenHash });
 
     if (!setupTokenDoc) {
@@ -150,6 +266,7 @@ const accountSetup = async (req, res) => {
 
     user.passwordHash = await hashPassword(password);
     user.status = "ACTIVE";
+    user.emailVerified = true;
     await user.save();
 
     setupTokenDoc.usedAt = new Date();
@@ -164,7 +281,7 @@ const accountSetup = async (req, res) => {
 
 const setPassword = accountSetup;
 
-// 3. Forgot Password
+// 7. Forgot Password
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -172,7 +289,6 @@ const forgotPassword = async (req, res) => {
 
     const user = await User.findOne({ email: normalizedEmail });
     if (!user) {
-      // Return success to prevent email enumeration
       return res.status(200).json({
         success: true,
         message: "If an account with that email exists, a password reset link has been sent.",
@@ -201,7 +317,7 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-// 4. Reset Password
+// 8. Reset Password
 const resetPassword = async (req, res) => {
   try {
     const { token, password } = req.body;
@@ -231,7 +347,7 @@ const resetPassword = async (req, res) => {
   }
 };
 
-// 5. Send OTP
+// 9. Send OTP
 const sendOtp = async (req, res) => {
   try {
     const { identifier, purpose } = req.body;
@@ -243,7 +359,7 @@ const sendOtp = async (req, res) => {
   }
 };
 
-// 6. Verify OTP
+// 10. Verify OTP
 const verifyOtp = async (req, res) => {
   try {
     const { identifier, otp, purpose } = req.body;
@@ -256,6 +372,9 @@ const verifyOtp = async (req, res) => {
 };
 
 module.exports = {
+  register,
+  verifyEmailOtp,
+  resendEmailOtp,
   login,
   setPassword,
   accountSetup,

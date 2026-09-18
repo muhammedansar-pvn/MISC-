@@ -1,3 +1,4 @@
+const User = require("../models/User");
 const {
   createInstitution,
   getInstitutions,
@@ -7,7 +8,22 @@ const {
 
 const handleCreateInstitution = async (req, res) => {
   try {
-    const institution = await createInstitution(req.body);
+    const data = { ...req.body };
+    if (!data.userId) {
+      const email = (data.email || `inst_${Date.now()}@markaz.in`).toLowerCase().trim();
+      let instUser = await User.findOne({ email });
+      if (!instUser) {
+        instUser = await User.create({
+          name: data.institutionName,
+          email,
+          username: `inst_${Date.now()}`,
+          role: "INSTITUTION",
+          status: "ACTIVE",
+        });
+      }
+      data.userId = instUser._id;
+    }
+    const institution = await createInstitution(data);
     return res.status(201).json({
       success: true,
       message: "Institution created successfully",

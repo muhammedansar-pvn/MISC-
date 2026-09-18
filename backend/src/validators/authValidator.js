@@ -61,6 +61,18 @@ const userInvitationSchema = Joi.object({
   mobile: Joi.string().trim().allow(""),
 });
 
+const registerSchema = Joi.object({
+  name: Joi.string().trim().min(2).max(100).required(),
+  email: Joi.string().email().lowercase().trim().required(),
+  password: Joi.string().min(6).max(100).required(),
+  mobile: Joi.string().trim().allow("", null),
+  role: Joi.string().valid("STUDENT", "FACULTY", "INSTITUTION").default("STUDENT"),
+});
+
+const resendEmailOtpSchema = Joi.object({
+  email: Joi.string().email().lowercase().trim().required(),
+});
+
 module.exports = {
   validateLogin: validateSchema(loginSchema),
   validateForgotPassword: validateSchema(forgotPasswordSchema),
@@ -68,5 +80,7 @@ module.exports = {
   validateSendOtp: validateSchema(sendOtpSchema),
   validateVerifyOtp: validateSchema(verifyOtpSchema),
   validateUserInvitation: validateSchema(userInvitationSchema),
+  validateRegister: validateSchema(registerSchema),
+  validateResendEmailOtp: validateSchema(resendEmailOtpSchema),
   validateSchema,
 };

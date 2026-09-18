@@ -69,7 +69,16 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: response.message || 'Login failed' };
     } catch (error) {
       setLoading(false);
-      const message = error.response?.data?.message || 'Invalid username or password';
+      const data = error.response?.data;
+      if (data?.requiresEmailVerification) {
+        return {
+          success: false,
+          requiresEmailVerification: true,
+          email: data.email,
+          message: data.message || 'Email verification required',
+        };
+      }
+      const message = data?.message || 'Invalid username or password';
       return { success: false, message };
     }
   };

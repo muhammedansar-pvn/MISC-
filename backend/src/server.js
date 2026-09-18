@@ -16,13 +16,22 @@ const cmsRoutes = require("./routes/cmsRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const examRoutes = require("./routes/examRoutes");
+const webhookRoutes = require("./routes/webhookRoutes");
 const { handleTestEmail } = require("./controllers/testEmailController");
+const { validateEmailConfig } = require("./services/emailService");
 
 const app = express();
 
 // Middleware
 app.use(cors());
+
+// Webhook Routes (Must be mounted before global express.json() for raw body parsing)
+app.use("/api/webhooks", webhookRoutes);
+
 app.use(express.json());
+
+// Validate Email Service Configuration
+validateEmailConfig();
 
 // Health Check Endpoint
 app.get("/api/health", (req, res) => {

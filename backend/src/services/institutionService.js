@@ -2,12 +2,12 @@ const InstitutionProfile = require("../models/InstitutionProfile");
 const User = require("../models/User");
 
 const createInstitution = async (data) => {
-  const user = await User.findById(data.userId);
-  if (!user) {
+  const userExists = await User.exists({ _id: data.userId });
+  if (!userExists) {
     throw new Error("Target user account not found");
   }
 
-  const existingCode = await InstitutionProfile.findOne({
+  const existingCode = await InstitutionProfile.exists({
     institutionCode: data.institutionCode.toUpperCase(),
   });
   if (existingCode) {
@@ -23,11 +23,15 @@ const createInstitution = async (data) => {
 };
 
 const getInstitutions = async (filter = {}) => {
-  return InstitutionProfile.find(filter).populate("userId", "name email username role status");
+  return InstitutionProfile.find(filter)
+    .populate("userId", "name email username role status")
+    .lean();
 };
 
 const getInstitutionById = async (id) => {
-  return InstitutionProfile.findById(id).populate("userId", "name email username role status");
+  return InstitutionProfile.findById(id)
+    .populate("userId", "name email username role status")
+    .lean();
 };
 
 const updateInstitution = async (id, updateData) => {

@@ -3,7 +3,7 @@ const OtpVerification = require("../models/OtpVerification");
 const { sendOtpEmail } = require("./emailService");
 
 const generate6DigitOtp = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return crypto.randomInt(100000, 1000000).toString();
 };
 
 const hashOtp = (otp) => {
@@ -38,15 +38,17 @@ const sendAndStoreOtp = async (identifier, purpose) => {
   });
 
   // If identifier is an email address, send email
+  let emailResult = { success: true };
   if (identifier.includes("@")) {
-    await sendOtpEmail(identifier, rawOtp, purpose);
+    emailResult = await sendOtpEmail(identifier, rawOtp, purpose);
   }
 
+  const isSuccess = emailResult.success !== false;
+
   return {
-    success: true,
-    message: "OTP generated and sent successfully",
+    success: isSuccess,
+    message: isSuccess ? "OTP generated and sent successfully" : (emailResult.message || "Failed to deliver OTP email"),
     expiresAt,
-    // Note: rawOtp return is intended for testing/dev environments if needed
   };
 };
 
@@ -58,7 +60,7 @@ const verifyOtpCode = async (identifier, otp, purpose) => {
     purpose,
   });
 
-  if (!record) {
+  if (!record || record.verifiedAt) {
     throw new Error("Invalid or expired OTP");
   }
 

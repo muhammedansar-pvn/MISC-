@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema(
 
     passwordHash: {
       type: String,
+      select: false,
     },
 
     role: {
@@ -44,6 +45,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -54,5 +60,6 @@ const userSchema = new mongoose.Schema(
 // Indexes
 userSchema.index({ username: 1 }, { unique: true, sparse: true });
 userSchema.index({ email: 1 }, { unique: true, sparse: true });
+userSchema.index({ role: 1, status: 1 });
 
 module.exports = mongoose.model("User", userSchema);

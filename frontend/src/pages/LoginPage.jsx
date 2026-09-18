@@ -36,6 +36,8 @@ export const LoginPage = () => {
     if (result.success) {
       // Redirect to target origin page if requested, or user role dashboard
       navigate(from || result.redirectTo, { replace: true });
+    } else if (result.requiresEmailVerification) {
+      navigate('/verify-email', { state: { email: result.email || formData.username } });
     } else {
       setError(result.message);
     }
@@ -110,7 +112,7 @@ export const LoginPage = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-12 py-3 rounded border border-[#E2E8E0] bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 rounded border border-[#E2E8E0] bg-[#ffffff] text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
@@ -133,6 +135,15 @@ export const LoginPage = () => {
             </button>
           </div>
         </form>
+
+        <div className="text-center pt-2 border-t border-[#E2E8E0]">
+          <p className="text-sm text-[#64748B]">
+            Don't have an account?{' '}
+            <Link to="/register" className="font-semibold text-[#2F7C7A] hover:underline">
+              Create an account
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

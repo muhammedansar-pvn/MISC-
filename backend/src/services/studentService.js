@@ -21,13 +21,13 @@ const createStudent = async (studentData) => {
   } = studentData;
 
   if (institutionId) {
-    const institution = await InstitutionProfile.findById(institutionId);
-    if (!institution) throw new Error("Institution not found");
+    const institutionExists = await InstitutionProfile.exists({ _id: institutionId });
+    if (!institutionExists) throw new Error("Institution not found");
   }
 
   if (classId) {
-    const studentClass = await Class.findById(classId);
-    if (!studentClass) throw new Error("Class not found");
+    const classExists = await Class.exists({ _id: classId });
+    if (!classExists) throw new Error("Class not found");
   }
 
   const registrationNumber = await generateRegistrationNumber();
@@ -73,15 +73,17 @@ const createStudent = async (studentData) => {
 const getStudents = async (filter = {}) => {
   return StudentProfile.find(filter)
     .populate("userId", "name email username role status mobile")
-    .populate("institutionId")
-    .populate("classId");
+    .populate("institutionId", "name code")
+    .populate("classId", "className section")
+    .lean();
 };
 
 const getStudentById = async (id) => {
   return StudentProfile.findById(id)
     .populate("userId", "name email username role status mobile")
-    .populate("institutionId")
-    .populate("classId");
+    .populate("institutionId", "name code")
+    .populate("classId", "className section")
+    .lean();
 };
 
 const updateStudent = async (id, updateData) => {
@@ -94,6 +96,7 @@ const generateRegistrationNumber = async () => {
   const lastStudent = await StudentProfile.findOne({
     registrationNumber: new RegExp(`^MISC${year}`),
   })
+    .select("registrationNumber")
     .sort({ registrationNumber: -1 })
     .lean();
 
