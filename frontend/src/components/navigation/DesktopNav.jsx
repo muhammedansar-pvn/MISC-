@@ -1,9 +1,13 @@
+'use client';
+
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Globe, ArrowRight, ChevronDown } from 'lucide-react';
 import { navLinks, applyCta } from '../../data/navigationData';
 
 export const DesktopNav = () => {
+  const pathname = usePathname();
   const [lang, setLang] = useState('EN');
   const [showLangMenu, setShowLangMenu] = useState(false);
 
@@ -17,21 +21,22 @@ export const DesktopNav = () => {
     <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
       {/* Primary Navigation Links */}
       <nav className="flex items-center space-x-5 xl:space-x-7">
-        {navLinks.map((link) => (
-          <NavLink
-            key={link.path}
-            to={link.path}
-            className={({ isActive }) =>
-              `text-[14px] lg:text-[14.5px] xl:text-[15px] font-medium transition-colors duration-200 py-1.5 border-b-2 ${
+        {navLinks.map((link) => {
+          const isActive = pathname === link.path;
+          return (
+            <Link
+              key={link.path}
+              href={link.path}
+              className={`text-[14px] lg:text-[14.5px] xl:text-[15px] font-medium transition-colors duration-200 py-1.5 border-b-2 ${
                 isActive
                   ? 'text-[#132238] border-[#2F7C7A] font-semibold'
                   : 'text-[#475569] border-transparent hover:text-[#2F7C7A]'
-              }`
-            }
-          >
-            {link.name}
-          </NavLink>
-        ))}
+              }`}
+            >
+              {link.name}
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="h-5 w-px bg-[#E2E8E0]" />
@@ -72,13 +77,13 @@ export const DesktopNav = () => {
       </div>
 
       {/* Contact Enquiry CTA */}
-      <NavLink
-        to={applyCta.path}
+      <Link
+        href={applyCta.path}
         className="bg-[#2F7C7A] text-white hover:bg-[#256664] text-xs font-bold tracking-wider uppercase px-4 py-2 rounded shadow-2xs transition-colors duration-200 flex items-center space-x-1.5 shrink-0"
       >
         <span>Enquiry</span>
         <ArrowRight className="w-3.5 h-3.5" />
-      </NavLink>
+      </Link>
     </div>
   );
 };

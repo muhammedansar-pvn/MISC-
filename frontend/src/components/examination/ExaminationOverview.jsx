@@ -1,6 +1,8 @@
+'use client';
+
 import React from 'react';
-import { Award, CheckCircle2, ShieldCheck, FileCheck2, ScrollText, UserCheck } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Award, CheckCircle2, ShieldCheck, FileCheck2, ScrollText, UserCheck, ArrowRight } from 'lucide-react';
+import { useNavigate } from '@/hooks/useNavigate';
 import Button from '../common/Button';
 
 export const ExaminationOverview = () => {

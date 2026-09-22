@@ -1,6 +1,8 @@
+'use client';
+
 import React from 'react';
-import { BookOpen, ArrowRight, Calendar, User, Tag } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { BookOpen, FileText, ArrowRight, ExternalLink, Calendar, User, Tag } from 'lucide-react';
+import { useNavigate } from '@/hooks/useNavigate';
 import Button from '../common/Button';
 
 export const PublicationsOverview = () => {

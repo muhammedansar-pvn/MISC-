@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/hooks/useNavigate';
 import { ArrowRight, Download, Calendar, User, Quote } from 'lucide-react';
 import Button from '../common/Button';
 

@@ -16,6 +16,10 @@ import {
   FolderTree,
   ChevronLeft,
   ChevronRight,
+  ShieldAlert,
+  ShieldCheck,
+  Edit3,
+  Trash2,
 } from 'lucide-react';
 import RoleBadge from '../components/admin/RoleBadge';
 import StatusBadge from '../components/admin/StatusBadge';
@@ -23,7 +27,8 @@ import UserCard from '../components/admin/UserCard';
 import { UserCardSkeleton, StatCardSkeleton } from '../components/admin/SkeletonLoader';
 import UserFormModal from '../components/admin/UserFormModal';
 import UserDetailsModal from '../components/admin/UserDetailsModal';
-import { getUsers, getDashboardStats } from '../services/adminService';
+import UserDeleteConfirmModal from '../components/admin/UserDeleteConfirmModal';
+import { getUsers, getDashboardStats, updateUserStatus } from '../services/adminService';
 
 export const AdminUsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -42,8 +47,10 @@ export const AdminUsersPage = () => {
   const pageSize = 12;
 
   // Modals & Selected User
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [userToEdit, setUserToEdit] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -91,6 +98,26 @@ export const AdminUsersPage = () => {
     setCurrentPage(1);
   };
 
+  const handleOpenAddModal = () => {
+    setUserToEdit(null);
+    setIsFormModalOpen(true);
+  };
+
+  const handleOpenEditModal = (user) => {
+    setUserToEdit(user);
+    setIsFormModalOpen(true);
+  };
+
+  const handleToggleStatus = async (user) => {
+    const newStatus = user.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+    try {
+      await updateUserStatus(user._id, newStatus);
+      fetchData();
+    } catch (err) {
+      alert(err.response?.data?.message || `Failed to change status for ${user.name || user.email}`);
+    }
+  };
+
   // Pagination calculation
   const totalUsersCount = users.length;
   const totalPages = Math.ceil(totalUsersCount / pageSize) || 1;
@@ -98,7 +125,7 @@ export const AdminUsersPage = () => {
   const paginatedUsers = users.slice(startIndex, startIndex + pageSize);
 
   const activeCount = users.filter((u) => u.status === 'ACTIVE').length;
-  const suspendedCount = users.filter((u) => u.status === 'SUSPENDED').length;
+  const suspendedCount = users.filter((u) => u.status === 'SUSPENDED' || u.status === 'INACTIVE').length;
 
   return (
     <div className="space-y-6 w-full max-w-full min-w-0">
@@ -118,24 +145,17 @@ export const AdminUsersPage = () => {
 
         <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={() => setIsInviteModalOpen(true)}
-            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] transition-all shadow-xs"
+            onClick={handleOpenAddModal}
+            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] transition-all shadow-xs cursor-pointer"
           >
             <UserPlus className="w-4 h-4 mr-2" /> Add User
           </button>
 
           <button
             onClick={() => handleClearFilters()}
-            className="inline-flex items-center justify-center px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 transition-all"
+            className="inline-flex items-center justify-center px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 transition-all cursor-pointer"
           >
             <UsersIcon className="w-4 h-4 mr-1.5 text-slate-500" /> Directory
-          </button>
-
-          <button
-            onClick={() => alert('Role distribution analytics feature coming soon.')}
-            className="inline-flex items-center justify-center px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 transition-all hidden sm:inline-flex"
-          >
-            <FolderTree className="w-4 h-4 mr-1.5 text-slate-500" /> Role Distribution
           </button>
         </div>
       </div>
@@ -159,7 +179,7 @@ export const AdminUsersPage = () => {
                 </p>
                 <p className="text-[11px] text-slate-500 font-medium mt-1 truncate">
                   <span className="text-emerald-600 font-bold">{activeCount} Active</span> /{' '}
-                  <span className="text-rose-600 font-bold">{suspendedCount} Suspended</span>
+                  <span className="text-rose-600 font-bold">{suspendedCount} Inactive/Suspended</span>
                 </p>
               </div>
               <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center flex-shrink-0 ml-3">
@@ -249,28 +269,19 @@ export const AdminUsersPage = () => {
             >
               <option value="">All Statuses</option>
               <option value="ACTIVE">ACTIVE</option>
+              <option value="INACTIVE">INACTIVE</option>
               <option value="INVITED">INVITED</option>
               <option value="PENDING_SETUP">PENDING SETUP</option>
               <option value="SUSPENDED">SUSPENDED</option>
             </select>
           </div>
 
-          {/* Right Action Controls: PDF & View Switch */}
+          {/* Right Action Controls: View Switch */}
           <div className="flex items-center space-x-3 w-full lg:w-auto justify-between lg:justify-end flex-wrap sm:flex-nowrap gap-y-2">
-            <button
-              onClick={() => alert('PDF report export is currently unavailable.')}
-              className="inline-flex items-center px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all opacity-80"
-              title="PDF Report Generation"
-            >
-              <FileDown className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
-              Download PDF
-            </button>
-
-            {/* Cards vs Table Toggle */}
             <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
               <button
                 onClick={() => setViewMode('cards')}
-                className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   viewMode === 'cards'
                     ? 'bg-white text-[#132238] shadow-xs'
                     : 'text-slate-500 hover:text-slate-900'
@@ -281,7 +292,7 @@ export const AdminUsersPage = () => {
               </button>
               <button
                 onClick={() => setViewMode('table')}
-                className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   viewMode === 'table'
                     ? 'bg-white text-[#132238] shadow-xs'
                     : 'text-slate-500 hover:text-slate-900'
@@ -307,7 +318,7 @@ export const AdminUsersPage = () => {
             {statusFilter && <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded font-bold">{statusFilter}</span>}
             <button
               onClick={handleClearFilters}
-              className="text-[#2F7C7A] hover:underline font-bold ml-2 inline-flex items-center"
+              className="text-[#2F7C7A] hover:underline font-bold ml-2 inline-flex items-center cursor-pointer"
             >
               <X className="w-3.5 h-3.5 mr-1" /> Clear all
             </button>
@@ -329,7 +340,7 @@ export const AdminUsersPage = () => {
           <p className="text-sm font-bold text-rose-700">{error}</p>
           <button
             onClick={fetchData}
-            className="inline-flex items-center px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider"
+            className="inline-flex items-center px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider cursor-pointer"
           >
             <RefreshCw className="w-4 h-4 mr-2" /> Retry
           </button>
@@ -343,15 +354,15 @@ export const AdminUsersPage = () => {
           </p>
         </div>
       ) : viewMode === 'cards' ? (
-        /* Card Grid View (3 columns on 1024px desktop, 4 columns on 1280px+ desktop) */
+        /* Card Grid View */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4.5 w-full min-w-0">
           {paginatedUsers.map((user) => (
             <UserCard
               key={user._id}
               user={user}
               onDetails={(u) => setSelectedUser(u)}
-              onEdit={(u) => setIsInviteModalOpen(true)}
-              onToggleStatus={(u) => alert(`Status toggle for ${u.name || u.email} requested.`)}
+              onEdit={(u) => handleOpenEditModal(u)}
+              onToggleStatus={(u) => handleToggleStatus(u)}
             />
           ))}
         </div>
@@ -394,15 +405,39 @@ export const AdminUsersPage = () => {
                     <td className="px-6 py-4 text-right space-x-1">
                       <button
                         onClick={() => setSelectedUser(user)}
-                        className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-all"
+                        className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-all cursor-pointer"
+                        title="View Details"
                       >
-                        View
+                        <Eye className="w-3.5 h-3.5 inline mr-1 text-slate-500" /> View
                       </button>
                       <button
-                        onClick={() => setIsInviteModalOpen(true)}
-                        className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-lg text-xs font-bold transition-all"
+                        onClick={() => handleOpenEditModal(user)}
+                        className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-lg text-xs font-bold transition-all cursor-pointer"
+                        title="Edit User"
                       >
-                        Edit
+                        <Edit3 className="w-3.5 h-3.5 inline mr-1 text-emerald-600" /> Edit
+                      </button>
+                      <button
+                        onClick={() => handleToggleStatus(user)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all border cursor-pointer ${
+                          user.status === 'ACTIVE'
+                            ? 'bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-200'
+                            : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200'
+                        }`}
+                        title={user.status === 'ACTIVE' ? 'Deactivate User' : 'Activate User'}
+                      >
+                        {user.status === 'ACTIVE' ? (
+                          <><ShieldAlert className="w-3.5 h-3.5 inline mr-1 text-amber-600" /> Deactivate</>
+                        ) : (
+                          <><ShieldCheck className="w-3.5 h-3.5 inline mr-1 text-emerald-600" /> Activate</>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => setUserToDelete(user)}
+                        className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold transition-all cursor-pointer"
+                        title="Delete User"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 inline mr-1 text-rose-600" /> Delete
                       </button>
                     </td>
                   </tr>
@@ -426,7 +461,7 @@ export const AdminUsersPage = () => {
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white text-slate-600 transition-all"
+              className="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white text-slate-600 transition-all cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -435,7 +470,7 @@ export const AdminUsersPage = () => {
               <button
                 key={pageNum}
                 onClick={() => setCurrentPage(pageNum)}
-                className={`w-8 h-8 rounded-lg font-bold transition-all text-xs ${
+                className={`w-8 h-8 rounded-lg font-bold transition-all text-xs cursor-pointer ${
                   currentPage === pageNum
                     ? 'bg-[#2F7C7A] text-white shadow-xs'
                     : 'text-slate-600 hover:bg-slate-100'
@@ -448,7 +483,7 @@ export const AdminUsersPage = () => {
             <button
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white text-slate-600 transition-all"
+              className="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white text-slate-600 transition-all cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -456,11 +491,15 @@ export const AdminUsersPage = () => {
         </div>
       )}
 
-      {/* Invite/Add User Modal */}
+      {/* Invite / Edit User Form Modal */}
       <UserFormModal
-        isOpen={isInviteModalOpen}
-        onClose={() => setIsInviteModalOpen(false)}
+        isOpen={isFormModalOpen}
+        onClose={() => {
+          setIsFormModalOpen(false);
+          setUserToEdit(null);
+        }}
         onSuccess={fetchData}
+        userToEdit={userToEdit}
       />
 
       {/* User Details Modal */}
@@ -468,6 +507,14 @@ export const AdminUsersPage = () => {
         isOpen={!!selectedUser}
         onClose={() => setSelectedUser(null)}
         user={selectedUser}
+      />
+
+      {/* Delete Confirmation & Dependency Safeguard Modal */}
+      <UserDeleteConfirmModal
+        isOpen={!!userToDelete}
+        onClose={() => setUserToDelete(null)}
+        onSuccess={fetchData}
+        user={userToDelete}
       />
     </div>
   );

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Mail, Phone, Eye, Edit3, ShieldAlert, ShieldCheck } from 'lucide-react';
 import StatusBadge from './StatusBadge';

@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/hooks/useNavigate';
 import { BookOpen, GraduationCap, ArrowRight, ShieldCheck, Layers, FileText, Calendar, Compass, ScrollText } from 'lucide-react';
 import Button from '../common/Button';
 import { academicCategories } from '../../data/academicsData';

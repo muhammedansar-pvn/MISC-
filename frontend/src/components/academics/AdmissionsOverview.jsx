@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/hooks/useNavigate';
 import { GraduationCap, ArrowRight, Bell } from 'lucide-react';
 import Button from '../common/Button';
 

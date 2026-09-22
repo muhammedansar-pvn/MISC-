@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import DesktopNav from '../navigation/DesktopNav';
 import MobileNav from '../navigation/MobileNav';
@@ -20,7 +22,7 @@ export const Header = () => {
       <div className="misc-container flex items-center justify-between py-3 sm:py-3.5">
         {/* Brand / Logo */}
         <Link 
-          to="/" 
+          href="/" 
           onClick={() => setMobileMenuOpen(false)}
           className="flex items-center group min-w-0 pr-2" 
           aria-label="MISC Homepage"

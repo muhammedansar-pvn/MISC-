@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { BookOpen, FileText, FileCheck, Calendar, GraduationCap, Folder, ArrowRight } from 'lucide-react';
 

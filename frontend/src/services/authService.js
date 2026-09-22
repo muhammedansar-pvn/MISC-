@@ -1,7 +1,17 @@
 import apiClient from '../api/axios';
 
-export const login = async ({ username, password }) => {
-  const response = await apiClient.post('/auth/login', { username, password });
+export const login = async ({ username, email, password }) => {
+  const response = await apiClient.post('/auth/login', { username, email, password });
+  return response.data;
+};
+
+export const verify2FAOtp = async ({ verificationId, otp }) => {
+  const response = await apiClient.post('/auth/verify-otp', { verificationId, otp });
+  return response.data;
+};
+
+export const resend2FAOtp = async ({ verificationId }) => {
+  const response = await apiClient.post('/auth/resend-otp', { verificationId });
   return response.data;
 };
 
@@ -60,6 +70,8 @@ export default {
   verifyEmailOtp,
   resendEmailOtp,
   login,
+  verify2FAOtp,
+  resend2FAOtp,
   setPassword,
   forgotPassword,
   resetPassword,

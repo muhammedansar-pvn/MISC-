@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import ScrollReveal from '../common/ScrollReveal';
 import ImageCrossfade from '../common/ImageCrossfade';

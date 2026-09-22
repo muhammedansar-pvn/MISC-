@@ -1,10 +1,15 @@
+'use client';
+
 import React, { useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Mail, Phone, ArrowRight, ChevronRight } from 'lucide-react';
 import { navLinks, applyCta } from '../../data/navigationData';
 import { miscInfo } from '../../data/miscInfo';
 
 export const MobileNav = ({ isOpen, onClose }) => {
+  const pathname = usePathname();
+
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isOpen) {
@@ -31,23 +36,24 @@ export const MobileNav = ({ isOpen, onClose }) => {
         
         {/* Navigation Links */}
         <nav className="space-y-2">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              onClick={onClose}
-              className={({ isActive }) =>
-                `flex items-center justify-between min-h-[50px] px-4 py-3.5 rounded-lg text-[15.5px] sm:text-base font-medium transition-colors ${
+          {navLinks.map((link) => {
+            const isActive = pathname === link.path;
+            return (
+              <Link
+                key={link.path}
+                href={link.path}
+                onClick={onClose}
+                className={`flex items-center justify-between min-h-[50px] px-4 py-3.5 rounded-lg text-[15.5px] sm:text-base font-medium transition-colors ${
                   isActive
                     ? 'bg-[#2F7C7A] text-white font-semibold shadow-2xs'
                     : 'text-slate-200 hover:text-white hover:bg-white/10'
-                }`
-              }
-            >
-              <span>{link.name}</span>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
-            </NavLink>
-          ))}
+                }`}
+              >
+                <span>{link.name}</span>
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Footer Info & CTA Area in Normal Document Flow */}
@@ -63,14 +69,14 @@ export const MobileNav = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          <NavLink
-            to={applyCta.path}
+          <Link
+            href={applyCta.path}
             onClick={onClose}
             className="flex items-center justify-center space-x-2 w-full text-center bg-[#2F7C7A] text-white hover:bg-[#256664] text-[13.5px] sm:text-[14px] font-bold tracking-wider uppercase px-4 py-3.5 rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             <span>ENQUIRY</span>
             <ArrowRight className="w-4 h-4" />
-          </NavLink>
+          </Link>
         </div>
 
       </div>

@@ -1,6 +1,8 @@
+'use client';
+
 import React from 'react';
 import { Award, Building2, BookOpen, ShieldCheck, ArrowRight, GitFork } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/hooks/useNavigate';
 
 export const InstitutionalHighlightsSection = () => {
   const navigate = useNavigate();

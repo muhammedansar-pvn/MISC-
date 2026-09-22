@@ -2,10 +2,10 @@ require("dotenv").config();
 
 const connectDB = require("../src/config/db");
 
-const User = require("../src/models/User");
-const InstitutionProfile = require("../src/models/InstitutionProfile");
-const AcademicYear = require("../src/models/AcademicYear");
-const Class = require("../src/models/Class");
+const User = require("../src/modules/users/user.model");
+const InstitutionProfile = require("../src/modules/institutions/institution.model");
+const AcademicYear = require("../src/modules/academics/academic-year.model");
+const Class = require("../src/modules/academics/class.model");
 
 const seedAcademicData = async () => {
   try {

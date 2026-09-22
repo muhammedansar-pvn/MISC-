@@ -5,9 +5,14 @@ node_modules/
 **/node_modules/
 
 # Build and Output Artifacts
+.next/
+**/.next/
+out/
 dist/
 **/dist/
 dist-ssr/
+*.tsbuildinfo
+**/*.tsbuildinfo
 
 # Environment Variables
 .env

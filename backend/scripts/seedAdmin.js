@@ -1,8 +1,8 @@
 require("dotenv").config();
 
 const connectDB = require("../src/config/db");
-const User = require("../src/models/User");
-const { hashPassword } = require("../src/utils/password");
+const User = require("../src/modules/users/user.model");
+const { hashPassword } = require("../src/shared/utils/password");
 
 const seedAdmin = async () => {
   try {

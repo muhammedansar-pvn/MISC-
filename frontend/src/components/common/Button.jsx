@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 /**
@@ -8,7 +10,7 @@ export const Button = ({
   variant = "primary",
   size = "md",
   className = "",
-  onClick,
+  onClick = undefined,
   type = "button",
   disabled = false,
   ...props

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { BookOpen, Compass, ShieldCheck, Award } from 'lucide-react';
 import ScrollReveal from '../common/ScrollReveal';

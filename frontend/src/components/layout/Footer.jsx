@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, ArrowRight } from 'lucide-react';
 import { miscInfo } from '../../data/miscInfo';
 import { navLinks, applyCta } from '../../data/navigationData';
@@ -71,7 +71,7 @@ export const Footer = () => {
               {navLinks.map((link) => (
                 <li key={link.path}>
                   <Link
-                    to={link.path}
+                    href={link.path}
                     className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2"
                   >
                     <span className="text-[#2F7C7A] text-xs">›</span>
@@ -89,25 +89,25 @@ export const Footer = () => {
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
               <li>
-                <Link to="/academics" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
+                <Link href="/academics" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
                   <span className="text-[#2F7C7A] text-xs">›</span>
                   <span>Integrated Programmes</span>
                 </Link>
               </li>
               <li>
-                <Link to="/institutions" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
+                <Link href="/institutions" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
                   <span className="text-[#2F7C7A] text-xs">›</span>
                   <span>Collaborating Institutions</span>
                 </Link>
               </li>
               <li>
-                <Link to="/downloads" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
+                <Link href="/downloads" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
                   <span className="text-[#2F7C7A] text-xs">›</span>
                   <span>Resource Guidelines</span>
                 </Link>
               </li>
               <li>
-                <Link to="/examination" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
+                <Link href="/examination" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
                   <span className="text-[#2F7C7A] text-xs">›</span>
                   <span>Board Examinations</span>
                 </Link>
@@ -141,7 +141,7 @@ export const Footer = () => {
 
             <div className="pt-2">
               <Link
-                to={applyCta.path}
+                href={applyCta.path}
                 className="inline-flex items-center justify-center w-full bg-[#2F7C7A] hover:bg-[#256664] text-white font-bold text-xs uppercase tracking-wider px-4 py-3 rounded-lg shadow-sm transition-colors space-x-2"
               >
                 <span>{applyCta.name}</span>
@@ -155,8 +155,8 @@ export const Footer = () => {
         <div className="pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-4">
           <p>© {new Date().getFullYear()} {miscInfo.fullName} ({miscInfo.name}). All rights reserved.</p>
           <div className="flex space-x-6">
-            <Link to="/about" className="hover:text-[#2F7C7A] transition-colors">About Council</Link>
-            <Link to="/contact" className="hover:text-[#2F7C7A] transition-colors">Help Desk</Link>
+            <Link href="/about" className="hover:text-[#2F7C7A] transition-colors">About Council</Link>
+            <Link href="/contact" className="hover:text-[#2F7C7A] transition-colors">Help Desk</Link>
           </div>
         </div>
       </div>

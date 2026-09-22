@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/hooks/useNavigate';
 import { BookOpen, ShieldCheck, Building2, Download, ArrowRight } from 'lucide-react';
 
 export const CoreServicesSection = () => {

@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/hooks/useNavigate';
 import { BookOpen, GraduationCap, Award, FileText, CheckCircle2, ArrowUpRight } from 'lucide-react';
 
 export const QuickAccessSection = () => {
