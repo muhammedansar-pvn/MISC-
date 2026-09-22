@@ -1,164 +1,218 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Facebook, Instagram, Youtube, ArrowRight } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
 import { miscInfo } from '../../data/miscInfo';
-import { navLinks, applyCta } from '../../data/navigationData';
 
 export const Footer = () => {
   return (
-    <footer className="relative bg-[#132238] text-white pt-16 pb-8 border-t border-slate-800">
+    <footer className="relative bg-[#132238] text-white pt-20 pb-12 border-t border-slate-800">
       <div className="misc-container">
-        {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 pb-12 border-b border-slate-800">
-          {/* Column 1: Institutional Description & Brand */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
+        
+        {/* Brand Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-14 border-b border-white/10 gap-8">
+          <div className="space-y-4 max-w-xl">
+            <div className="flex items-center space-x-3.5">
               <img
                 src="/logo.png"
                 alt="MISC Logo"
-                className="h-10 w-auto object-contain bg-white p-1 rounded-md shrink-0"
+                className="h-10 sm:h-12 w-auto object-contain bg-white p-1 rounded shrink-0"
               />
               <div>
-                <h3 className="font-serif text-lg sm:text-xl font-bold tracking-tight text-white leading-snug">
+                <h3 className="font-serif text-xl sm:text-2xl font-normal text-white tracking-tight">
                   {miscInfo.name}
                 </h3>
-                <p className="text-[10px] sm:text-xs text-[#2F7C7A] font-semibold uppercase tracking-wider">
-                  {miscInfo.parentOrganization}
+                <p className="text-[10px] sm:text-xs font-mono tracking-widest text-[#2F7C7A] uppercase">
+                  {miscInfo.parentOrganization}, Karanthur
                 </p>
               </div>
             </div>
-            <p className="text-[13.5px] sm:text-[14.5px] text-slate-300 leading-relaxed font-normal">
-              {miscInfo.aboutShort}
+
+            <p className="text-sm text-slate-300 font-normal leading-relaxed">
+              Markaz Integrated Studies Council coordinates unified educational streams, academic standards, and board evaluations across a federation of over 50 institutions.
             </p>
-            {/* Social Icons */}
-            <div className="flex items-center space-x-3 pt-2">
-              <a
-                href={miscInfo.socialLinks.facebook}
-                target="_blank"
-                rel="noreferrer"
-                className="w-9 h-9 rounded-lg bg-slate-800/80 hover:bg-[#2F7C7A] hover:text-white text-slate-300 flex items-center justify-center transition-colors border border-slate-700"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-4 h-4" />
-              </a>
-              <a
-                href={miscInfo.socialLinks.instagram}
-                target="_blank"
-                rel="noreferrer"
-                className="w-9 h-9 rounded-lg bg-slate-800/80 hover:bg-[#2F7C7A] hover:text-white text-slate-300 flex items-center justify-center transition-colors border border-slate-700"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a
-                href={miscInfo.socialLinks.youtube}
-                target="_blank"
-                rel="noreferrer"
-                className="w-9 h-9 rounded-lg bg-slate-800/80 hover:bg-[#2F7C7A] hover:text-white text-slate-300 flex items-center justify-center transition-colors border border-slate-700"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-4 h-4" />
-              </a>
-            </div>
           </div>
 
-          {/* Column 2: Quick Navigation Links */}
-          <div className="space-y-4">
-            <h4 className="font-serif text-lg font-bold text-white border-b border-[#2F7C7A]/40 pb-2 inline-block">
-              Quick Links
-            </h4>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
-              {navLinks.map((link) => (
-                <li key={link.path}>
-                  <Link
-                    href={link.path}
-                    className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2"
-                  >
-                    <span className="text-[#2F7C7A] text-xs">›</span>
-                    <span>{link.name}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {/* Social Icons */}
+          <div className="flex items-center space-x-3 shrink-0">
+            <a
+              href={miscInfo.socialLinks.facebook}
+              target="_blank"
+              rel="noreferrer"
+              className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#2F7C7A] text-slate-300 hover:text-white flex items-center justify-center transition-all duration-200 border border-white/10"
+              aria-label="Facebook"
+            >
+              <Facebook className="w-4 h-4" />
+            </a>
+            <a
+              href={miscInfo.socialLinks.instagram}
+              target="_blank"
+              rel="noreferrer"
+              className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#2F7C7A] text-slate-300 hover:text-white flex items-center justify-center transition-all duration-200 border border-white/10"
+              aria-label="Instagram"
+            >
+              <Instagram className="w-4 h-4" />
+            </a>
+            <a
+              href={miscInfo.socialLinks.youtube}
+              target="_blank"
+              rel="noreferrer"
+              className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#2F7C7A] text-slate-300 hover:text-white flex items-center justify-center transition-all duration-200 border border-white/10"
+              aria-label="YouTube"
+            >
+              <Youtube className="w-4 h-4" />
+            </a>
           </div>
+        </div>
 
-          {/* Column 3: Academic Portals & Downloads */}
+        {/* 6 Structured Academic Editorial Columns */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 sm:gap-10 py-14 border-b border-white/10">
+          
+          {/* Column 1: MISC */}
           <div className="space-y-4">
-            <h4 className="font-serif text-lg font-bold text-white border-b border-[#2F7C7A]/40 pb-2 inline-block">
-              Academic Wings
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#2F7C7A]">
+              MISC
             </h4>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
+            <ul className="space-y-2.5 text-xs sm:text-[13px] text-slate-300">
               <li>
-                <Link href="/academics" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
-                  <span className="text-[#2F7C7A] text-xs">›</span>
-                  <span>Integrated Programmes</span>
-                </Link>
+                <Link href="/about" className="hover:text-white transition-colors">About Council</Link>
               </li>
               <li>
-                <Link href="/institutions" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
-                  <span className="text-[#2F7C7A] text-xs">›</span>
-                  <span>Collaborating Institutions</span>
-                </Link>
+                <Link href="/about" className="hover:text-white transition-colors">Vision & Mandate</Link>
               </li>
               <li>
-                <Link href="/downloads" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
-                  <span className="text-[#2F7C7A] text-xs">›</span>
-                  <span>Resource Guidelines</span>
-                </Link>
+                <Link href="/about" className="hover:text-white transition-colors">Central Secretariat</Link>
               </li>
               <li>
-                <Link href="/examination" className="hover:text-[#2F7C7A] transition-colors flex items-center space-x-2">
-                  <span className="text-[#2F7C7A] text-xs">›</span>
-                  <span>Board Examinations</span>
-                </Link>
+                <Link href="/institutions" className="hover:text-white transition-colors">Jamia Markaz</Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 4: Contact Info & Apply CTA */}
+          {/* Column 2: Academics */}
           <div className="space-y-4">
-            <h4 className="font-serif text-lg font-bold text-white border-b border-[#2F7C7A]/40 pb-2 inline-block">
-              Contact Secretariat
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#2F7C7A]">
+              Academics
             </h4>
-            <div className="space-y-3 text-xs sm:text-sm text-slate-300">
-              <div className="flex items-start space-x-3">
-                <MapPin className="w-4 h-4 text-[#2F7C7A] mt-1 shrink-0" />
-                <span className="leading-relaxed">{miscInfo.address}</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Mail className="w-4 h-4 text-[#2F7C7A] shrink-0" />
+            <ul className="space-y-2.5 text-xs sm:text-[13px] text-slate-300">
+              <li>
+                <Link href="/academics" className="hover:text-white transition-colors">Islamic Studies</Link>
+              </li>
+              <li>
+                <Link href="/academics" className="hover:text-white transition-colors">Contemporary Studies</Link>
+              </li>
+              <li>
+                <Link href="/academics" className="hover:text-white transition-colors">Integrated Streams</Link>
+              </li>
+              <li>
+                <Link href="/academics" className="hover:text-white transition-colors">Stream Syllabi</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Institutions */}
+          <div className="space-y-4">
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#2F7C7A]">
+              Institutions
+            </h4>
+            <ul className="space-y-2.5 text-xs sm:text-[13px] text-slate-300">
+              <li>
+                <Link href="/institutions" className="hover:text-white transition-colors">Direct Campuses</Link>
+              </li>
+              <li>
+                <Link href="/institutions" className="hover:text-white transition-colors">Academic Collaborations</Link>
+              </li>
+              <li>
+                <Link href="/institutions" className="hover:text-white transition-colors">Affiliation By-Laws</Link>
+              </li>
+              <li>
+                <Link href="/institutions" className="hover:text-white transition-colors">Campus Directory</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Examination */}
+          <div className="space-y-4">
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#2F7C7A]">
+              Examination
+            </h4>
+            <ul className="space-y-2.5 text-xs sm:text-[13px] text-slate-300">
+              <li>
+                <Link href="/examination" className="hover:text-white transition-colors">Board Regulations</Link>
+              </li>
+              <li>
+                <Link href="/examination" className="hover:text-white transition-colors">Examination Timetable</Link>
+              </li>
+              <li>
+                <Link href="/examination" className="hover:text-white transition-colors">Results Verification</Link>
+              </li>
+              <li>
+                <Link href="/examination" className="hover:text-white transition-colors">Hall Ticket Portal</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 5: Resources */}
+          <div className="space-y-4">
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#2F7C7A]">
+              Resources
+            </h4>
+            <ul className="space-y-2.5 text-xs sm:text-[13px] text-slate-300">
+              <li>
+                <Link href="/downloads" className="hover:text-white transition-colors">Academic Calendar</Link>
+              </li>
+              <li>
+                <Link href="/downloads" className="hover:text-white transition-colors">Secretariat Circulars</Link>
+              </li>
+              <li>
+                <Link href="/downloads" className="hover:text-white transition-colors">Official Forms</Link>
+              </li>
+              <li>
+                <Link href="/downloads" className="hover:text-white transition-colors">Research Publications</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 6: Contact */}
+          <div className="space-y-4">
+            <h4 className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#2F7C7A]">
+              Contact
+            </h4>
+            <div className="space-y-2.5 text-xs sm:text-[13px] text-slate-300">
+              <p className="leading-relaxed text-slate-400">
+                Jamia Markaz, Karanthur, Kozhikode, Kerala 673573
+              </p>
+              <p>
                 <a href={`mailto:${miscInfo.email}`} className="hover:text-[#2F7C7A] transition-colors font-mono">
                   {miscInfo.email}
                 </a>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Phone className="w-4 h-4 text-[#2F7C7A] shrink-0" />
+              </p>
+              <p>
                 <a href={`tel:${miscInfo.phone.replace(/\s+/g, '')}`} className="hover:text-[#2F7C7A] transition-colors font-mono">
                   {miscInfo.phone}
                 </a>
+              </p>
+              <div className="pt-1">
+                <Link href="/contact" className="text-[#2F7C7A] hover:text-white transition-colors font-semibold">
+                  Contact Helpdesk →
+                </Link>
               </div>
             </div>
-
-            <div className="pt-2">
-              <Link
-                href={applyCta.path}
-                className="inline-flex items-center justify-center w-full bg-[#2F7C7A] hover:bg-[#256664] text-white font-bold text-xs uppercase tracking-wider px-4 py-3 rounded-lg shadow-sm transition-colors space-x-2"
-              >
-                <span>{applyCta.name}</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
           </div>
+
         </div>
 
         {/* Bottom Legal / Copyright Strip */}
         <div className="pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 gap-4">
-          <p>© {new Date().getFullYear()} {miscInfo.fullName} ({miscInfo.name}). All rights reserved.</p>
+          <p>© {new Date().getFullYear()} MISC • Markaz Integrated Studies Council. All rights reserved.</p>
           <div className="flex space-x-6">
-            <Link href="/about" className="hover:text-[#2F7C7A] transition-colors">About Council</Link>
-            <Link href="/contact" className="hover:text-[#2F7C7A] transition-colors">Help Desk</Link>
+            <Link href="/about" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/about" className="hover:text-white transition-colors">Terms</Link>
+            <Link href="/contact" className="hover:text-white transition-colors">Secretariat</Link>
           </div>
         </div>
+
       </div>
     </footer>
   );

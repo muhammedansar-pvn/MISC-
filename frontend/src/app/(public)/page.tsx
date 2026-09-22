@@ -1,46 +1,46 @@
 import type { Metadata } from 'next';
 import HeroSection from '@/components/home/HeroSection';
-import QuickAccessSection from '@/components/home/QuickAccessSection';
 import AboutSection from '@/components/home/AboutSection';
 import AcademicPillars from '@/components/home/AcademicPillars';
 import InstitutionalHighlightsSection from '@/components/home/InstitutionalHighlightsSection';
+import FeaturedInstitutionSection from '@/components/home/FeaturedInstitutionSection';
 import CoreServicesSection from '@/components/home/CoreServicesSection';
-import LatestUpdatesSection from '@/components/home/LatestUpdatesSection';
 import ImportantResourcesSection from '@/components/home/ImportantResourcesSection';
+import LatestUpdatesSection from '@/components/home/LatestUpdatesSection';
 import FinalCTA from '@/components/home/FinalCTA';
 
 export const metadata: Metadata = {
-  title: 'MISC - Markaz Integrated Studies Council',
+  title: 'MISC - Markaz Integrated Studies Council | Jamia Markaz',
   description:
-    'Markaz Integrated Studies Council (MISC) is the academic coordination council of Jamia Markaz, overseeing integrated educational streams, standardized curricula, and board evaluations.',
+    'Markaz Integrated Studies Council (MISC) is the premier academic coordination body of Jamia Markaz, Karanthur, integrating Islamic scholarship with contemporary university knowledge.',
 };
 
 export default function HomePage() {
   return (
-    <div className="w-full bg-[#F7F8F5]">
-      {/* 1. INSTITUTIONAL HERO */}
+    <div className="w-full bg-[#F7F7F3] overflow-x-hidden">
+      {/* 1. CINEMATIC FULL-BLEED HERO & MINIMAL STAT RAIL */}
       <HeroSection />
 
-      {/* 2. QUICK ACCESS GATEWAY */}
-      <QuickAccessSection />
-
-      {/* 3. EDITORIAL ABOUT MISC INTRO */}
+      {/* 2. EDITORIAL INTRODUCTION (01 ABOUT MISC) */}
       <AboutSection />
 
-      {/* 4. VISION & MISSION FRAMEWORK */}
+      {/* 3. VISION & PRINCIPLES (02 VISION) */}
       <AcademicPillars />
 
-      {/* 5. THE MISC ECOSYSTEM & GOVERNANCE SCOPE */}
+      {/* 4. THE ACADEMIC ECOSYSTEM (03 THE MISC FRAMEWORK - DARK NAVY) */}
       <InstitutionalHighlightsSection />
 
-      {/* 6. ACADEMIC INFRASTRUCTURE & PILLARS */}
+      {/* 5. FEATURED INSTITUTION (04 JAMIA MARKAZ KARANTHUR) */}
+      <FeaturedInstitutionSection />
+
+      {/* 6. PROGRAMMES SHOWCASE (05 ACADEMIC STREAMS - HORIZONTAL ROWS) */}
       <CoreServicesSection />
 
-      {/* 7. NOTICES & ACADEMIC CIRCULARS */}
-      <LatestUpdatesSection />
-
-      {/* 8. ESSENTIAL RESOURCES & PORTALS */}
+      {/* 7. ACADEMIC STANDARDS (06 BOARD GOVERNANCE) */}
       <ImportantResourcesSection />
+
+      {/* 8. NEWS & NOTICES (07 EDITORIAL DISPATCHES) */}
+      <LatestUpdatesSection />
 
       {/* 9. FINAL CLOSING CTA */}
       <FinalCTA />

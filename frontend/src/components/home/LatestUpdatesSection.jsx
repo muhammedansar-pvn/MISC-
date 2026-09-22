@@ -2,146 +2,147 @@
 
 import React from 'react';
 import { useNavigate } from '@/hooks/useNavigate';
-import { Calendar, ArrowRight, FileText, Bell, BookOpen } from 'lucide-react';
-import Button from '../common/Button';
+import { ArrowRight } from 'lucide-react';
 
 export const LatestUpdatesSection = () => {
   const navigate = useNavigate();
 
-  const updates = [
-    {
-      category: 'EXAMINATION BOARD',
-      date: 'MARCH 2026',
-      title: 'Annual Board Examination Timetable & Regulations Released',
-      excerpt: 'Official examination schedules and instruction guidelines published for member institutions across all integrated streams under central board governance.',
-      icon: FileText,
-      path: '/examination',
-      featured: true
-    },
+  const featuredStory = {
+    category: 'EXAMINATION DIRECTIVE',
+    date: 'MARCH 2026',
+    title: 'MISC Central Examination Board Releases Annual Assessment Framework & Regulations for 2026',
+    excerpt: 'Comprehensive official directive specifying unified scheduling, hall ticket verification guidelines, and evaluation rubrics across all 50+ affiliated collegiate streams under Jamia Markaz.',
+    image: '/Diwan.JPG.jpeg',
+    path: '/examination',
+  };
+
+  const secondaryStories = [
     {
       category: 'ACADEMIC CIRCULAR',
       date: 'FEBRUARY 2026',
-      title: 'Central Academic Secretariat Announces Unified Syllabus Enhancements',
-      excerpt: 'Updated curriculum guidelines harmonizing classical scholarship with contemporary university degree subjects.',
-      icon: Bell,
+      title: 'Secretariat Concludes Curricular Modernization for Higher Secondary Integrated Streams',
+      excerpt: 'Harmonized syllabus integrating classical Islamic studies with accredited university degree pathways.',
+      image: '/MKZ01377.JPG.jpeg',
       path: '/academics',
-      featured: false
     },
     {
-      category: 'PUBLICATIONS',
+      category: 'SECRETARIAT CONVOCATION',
       date: 'JANUARY 2026',
-      title: 'Release of MISC Academic Research Journal & Study Materials',
-      excerpt: 'New scholarly journal volume and downloadable academic resource packages available for institutions and faculty.',
-      icon: BookOpen,
-      path: '/downloads',
-      featured: false
+      title: 'Annual Council of Principals & Institutional Deans Assembly Convened at Karanthur',
+      excerpt: 'Over 50 institutional heads gathered to ratify academic policies and institutional quality standards.',
+      image: '/markaz-drone.jpg (1).jpeg',
+      path: '/contact',
     },
   ];
 
-  const featuredNotice = updates.find(item => item.featured) || updates[0];
-  const supportingNotices = updates.filter(item => item !== featuredNotice);
-
   return (
-    <section className="bg-[#F7F8F5] py-16 sm:py-20 lg:py-24 border-b border-[#E2E8E0]">
+    <section className="relative bg-[#FFFFFF] text-[#132238] py-24 sm:py-32 lg:py-36 xl:py-40 border-b border-[rgba(19,34,56,0.12)]">
       <div className="misc-container">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 lg:mb-16 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 sm:mb-20 gap-6 pb-6 border-b border-[rgba(19,34,56,0.12)]">
           <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#E6F2F1] border border-[#E2E8E0]">
-              <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
-              <span className="text-xs font-semibold tracking-wider text-[#2F7C7A] uppercase">
-                CIRCULARS & NOTICES
+            <div className="flex items-center space-x-3">
+              <span className="font-mono text-xs sm:text-sm font-semibold text-[#2F7C7A] tracking-wider">
+                07
+              </span>
+              <span className="text-xs sm:text-[13px] font-mono tracking-[0.25em] text-[#667085] uppercase">
+                DISPATCHES
               </span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#132238] tracking-tight leading-tight">
-              Official Directives & Announcements
+
+            <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[#132238] leading-tight">
+              NEWS & NOTICES
             </h2>
-            <p className="text-sm sm:text-base text-[#475569] font-normal leading-relaxed">
-              Official Secretariat circulars, examination board notifications, and academic publications.
-            </p>
           </div>
 
-          <div>
-            <Button
-              variant="outline"
-              size="md"
-              onClick={() => navigate('/contact')}
-              className="group bg-white hover:border-[#2F7C7A]"
-            >
-              <span>VIEW ALL ANNOUNCEMENTS</span>
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
+          <p className="text-sm sm:text-base text-[#667085] font-normal leading-relaxed max-w-md">
+            Official announcements, examination board directives, circulars, and academic dispatches from the MISC Secretariat.
+          </p>
         </div>
 
-        {/* Featured Notice + Supporting List Split */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        {/* Asymmetric Editorial Composition: 1 Large Feature + 2 Sub-Features */}
+        <div className="space-y-12 sm:space-y-16">
           
-          {/* Featured Notice (Cols 1-7) */}
-          <div className="lg:col-span-7 bg-white rounded-2xl p-8 sm:p-10 border border-[#E2E8E0] shadow-sm flex flex-col justify-between group hover:border-[#2F7C7A]/50 transition-all">
-            <div>
-              <div className="flex items-center justify-between pb-6 mb-6 border-b border-[#E2E8E0]">
-                <span className="text-xs font-bold tracking-wider text-[#2F7C7A] uppercase bg-[#E6F2F1] px-3 py-1 rounded border border-[#E2E8E0]">
-                  FEATURED NOTICE • {featuredNotice.category}
-                </span>
-                <div className="flex items-center space-x-1.5 font-mono text-xs text-[#132238] font-bold">
-                  <Calendar className="w-4 h-4 text-[#2F7C7A]" />
-                  <span>{featuredNotice.date}</span>
-                </div>
+          {/* 1. LARGE FEATURED STORY */}
+          <div
+            onClick={() => navigate(featuredStory.path)}
+            className="group cursor-pointer grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center border border-[rgba(19,34,56,0.12)] bg-[#F7F7F3] p-4 sm:p-6 lg:p-8 hover:border-[#2F7C7A]/50 transition-all duration-300"
+          >
+            {/* Image (7 cols) */}
+            <div className="lg:col-span-7 overflow-hidden aspect-[16/10] bg-slate-100 relative">
+              <img
+                src={featuredStory.image}
+                alt={featuredStory.title}
+                className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+              />
+              <div className="absolute top-4 left-4 bg-[#132238]/90 backdrop-blur-xs text-white text-[10px] font-mono tracking-widest px-3 py-1 uppercase">
+                FEATURED DISPATCH
               </div>
-
-              <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#132238] group-hover:text-[#2F7C7A] transition-colors leading-snug mb-4">
-                {featuredNotice.title}
-              </h3>
-
-              <p className="text-sm sm:text-base text-[#475569] leading-relaxed font-normal mb-8">
-                {featuredNotice.excerpt}
-              </p>
             </div>
 
-            <div className="pt-6 border-t border-[#E2E8E0] flex items-center justify-between">
-              <span className="text-xs text-slate-500 font-medium">MISC Examination Board • Secretariat</span>
-              <button
-                onClick={() => navigate(featuredNotice.path)}
-                className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-[#2F7C7A] hover:text-[#256664] cursor-pointer"
-              >
-                <span>Read Full Directive</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+            {/* Narrative (5 cols) */}
+            <div className="lg:col-span-5 space-y-4 sm:space-y-6 lg:py-4">
+              <div className="flex items-center space-x-3 text-[11px] font-mono tracking-widest uppercase text-[#2F7C7A]">
+                <span>{featuredStory.date}</span>
+                <span>•</span>
+                <span className="text-[#667085]">{featuredStory.category}</span>
+              </div>
+
+              <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-[#132238] leading-[1.18] group-hover:text-[#2F7C7A] transition-colors">
+                {featuredStory.title}
+              </h3>
+
+              <p className="text-sm sm:text-base text-[#132238]/80 font-normal leading-relaxed">
+                {featuredStory.excerpt}
+              </p>
+
+              <div className="pt-2">
+                <span className="inline-flex items-center space-x-2 text-xs font-semibold tracking-wider text-[#132238] uppercase group-hover:text-[#2F7C7A] transition-colors">
+                  <span>READ DIRECTIVE</span>
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1.5 transition-transform text-[#2F7C7A]" />
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Supporting Notices Stacked List (Cols 8-12) */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
-            {supportingNotices.map((item, index) => (
+          {/* 2. TWO SMALLER STORIES (Asymmetric 2-Column Split) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10">
+            {secondaryStories.map((story, idx) => (
               <div
-                key={index}
-                onClick={() => navigate(item.path)}
-                className="bg-white rounded-xl p-6 border border-[#E2E8E0] shadow-2xs hover:shadow-sm hover:border-[#2F7C7A]/50 transition-all cursor-pointer flex flex-col justify-between flex-1 group"
+                key={idx}
+                onClick={() => navigate(story.path)}
+                className="group cursor-pointer border border-[rgba(19,34,56,0.12)] bg-[#F7F7F3] p-5 sm:p-7 hover:border-[#2F7C7A]/50 transition-all duration-300 flex flex-col justify-between"
               >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10.5px] font-bold tracking-wider text-[#2F7C7A] uppercase bg-[#E6F2F1] px-2.5 py-0.5 rounded">
-                      {item.category}
-                    </span>
-                    <span className="font-mono text-xs font-medium text-slate-500">
-                      {item.date}
-                    </span>
+                <div className="space-y-4">
+                  <div className="overflow-hidden aspect-[16/9] bg-slate-100 mb-5">
+                    <img
+                      src={story.image}
+                      alt={story.title}
+                      className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
                   </div>
 
-                  <h4 className="font-serif text-lg font-bold text-[#132238] group-hover:text-[#2F7C7A] transition-colors leading-snug">
-                    {item.title}
+                  <div className="flex items-center space-x-2.5 text-[10px] sm:text-[11px] font-mono tracking-widest uppercase text-[#2F7C7A]">
+                    <span>{story.date}</span>
+                    <span>•</span>
+                    <span className="text-[#667085]">{story.category}</span>
+                  </div>
+
+                  <h4 className="font-serif text-xl sm:text-2xl font-normal text-[#132238] leading-snug group-hover:text-[#2F7C7A] transition-colors">
+                    {story.title}
                   </h4>
 
-                  <p className="text-xs text-[#475569] leading-relaxed line-clamp-2">
-                    {item.excerpt}
+                  <p className="text-xs sm:text-sm text-[#667085] font-normal leading-relaxed">
+                    {story.excerpt}
                   </p>
                 </div>
 
-                <div className="pt-3 mt-4 border-t border-[#E2E8E0]/80 flex items-center justify-between text-xs text-[#2F7C7A] font-bold uppercase tracking-wider">
-                  <span>View Update</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <div className="pt-6 mt-4 border-t border-[rgba(19,34,56,0.08)] flex items-center justify-between">
+                  <span className="text-xs font-semibold tracking-wider text-[#132238] uppercase group-hover:text-[#2F7C7A] transition-colors">
+                    READ STORY
+                  </span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#2F7C7A] transform group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             ))}

@@ -1,35 +1,6 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Manrope, Noto_Naskh_Arabic, Noto_Sans_Malayalam } from 'next/font/google';
 import AuthProvider from '@/components/providers/AuthProvider';
 import './globals.css';
-
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
-  variable: '--font-cormorant',
-  display: 'swap',
-});
-
-const manrope = Manrope({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-manrope',
-  display: 'swap',
-});
-
-const notoArabic = Noto_Naskh_Arabic({
-  subsets: ['arabic'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-noto-arabic',
-  display: 'swap',
-});
-
-const notoMalayalam = Noto_Sans_Malayalam({
-  subsets: ['malayalam'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-noto-malayalam',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://misc.markaz.in'),
@@ -73,12 +44,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${cormorant.variable} ${manrope.variable} ${notoArabic.variable} ${notoMalayalam.variable}`}
-      suppressHydrationWarning
-    >
-      <body className="bg-white text-[#132238] antialiased selection:bg-[#2F7C7A]/30 selection:text-[#132238]" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Manrope:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="bg-[#F7F7F3] text-[#132238] antialiased selection:bg-[#2F7C7A]/30 selection:text-[#132238]" suppressHydrationWarning>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Eye } from 'lucide-react';
 import { miscInfo } from '../../data/miscInfo';

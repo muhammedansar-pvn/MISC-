@@ -2,28 +2,20 @@
 
 import React from 'react';
 import { useNavigate } from '@/hooks/useNavigate';
-import { ArrowRight } from 'lucide-react';
-import Button from '../common/Button';
-import { miscInfo } from '../../data/miscInfo';
+import { ArrowRight, ArrowDown } from 'lucide-react';
 
 export const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative bg-[#F7F8F5] text-[#132238] py-12 sm:py-16 lg:py-20 border-b border-[#E2E8E0] overflow-hidden min-h-[680px] lg:min-h-[80vh] flex flex-col justify-center">
+    <section className="relative w-full min-h-[92vh] lg:min-h-screen flex flex-col justify-between overflow-hidden bg-[#0D1B2A] text-white">
       
-      {/* SCOPED HERO MOTION & REDUCED MOTION STYLES */}
+      {/* SCOPED ENTRANCE ANIMATION & PARALLAX STYLES */}
       <style>{`
-        @keyframes heroKenBurns {
-          0% { transform: scale(1.00); }
-          50% { transform: scale(1.04); }
-          100% { transform: scale(1.00); }
-        }
-
         @keyframes heroFadeUp {
           0% {
             opacity: 0;
-            transform: translateY(var(--fade-y, 16px));
+            transform: translateY(22px);
           }
           100% {
             opacity: 1;
@@ -31,139 +23,220 @@ export const HeroSection = () => {
           }
         }
 
-        .animate-hero-kenburns {
-          animation: heroKenBurns 26s ease-in-out infinite;
-          will-change: transform;
+        @keyframes heroFadeIn {
+          0% { opacity: 0; }
+          100% { opacity: 1; }
         }
 
-        .animate-hero-fade-up {
-          opacity: 0;
-          animation: heroFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        .hero-reveal-eyebrow {
+          animation: heroFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
         }
 
-        @media (max-width: 640px) {
-          .animate-hero-kenburns {
-            animation-duration: 30s;
-          }
+        .hero-reveal-title-1 {
+          animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
+        }
+
+        .hero-reveal-title-2 {
+          animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.34s both;
+        }
+
+        .hero-reveal-desc {
+          animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.46s both;
+        }
+
+        .hero-reveal-buttons {
+          animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.58s both;
+        }
+
+        .hero-reveal-quote {
+          animation: heroFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+        }
+
+        .hero-reveal-stats {
+          animation: heroFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .animate-hero-kenburns {
+          .hero-reveal-eyebrow,
+          .hero-reveal-title-1,
+          .hero-reveal-title-2,
+          .hero-reveal-desc,
+          .hero-reveal-buttons,
+          .hero-reveal-quote,
+          .hero-reveal-stats {
             animation: none !important;
-            transform: scale(1) !important;
-          }
-          .animate-hero-fade-up {
             opacity: 1 !important;
-            transform: translateY(0) !important;
-            animation: none !important;
+            transform: none !important;
           }
         }
       `}</style>
 
-      {/* BACKGROUND HERO IMAGE LAYER */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0 bg-[#4d5341]">
-        
-        {/* High-Resolution Real Campus Aerial Background Image with Slow Subtle Ken Burns */}
+      {/* 1. CINEMATIC FULL-VIEWPORT REAL STUDENT-STUDY PHOTOGRAPH */}
+      {/* Students and their faces on the RIGHT remain bright, sharp, and natural */}
+      <div className="absolute inset-0 z-0 overflow-hidden bg-[#0D1B2A]">
         <img
-          src="/markaz-drone.jpg (1).jpeg"
-          alt=""
-          aria-hidden="true"
-          className="w-full h-full object-cover object-center animate-hero-kenburns"
+          src="/DSC00390.JPG.jpeg"
+          alt="Scholars studying classical texts in Jamia Markaz library"
+          className="h-full w-full object-cover object-[65%_35%] sm:object-[68%_36%] lg:object-[70%_38%]"
         />
 
-        {/* Single Subtle Left-Side Gradient Overlay for Text Readability */}
-        <div className="absolute inset-0 w-full lg:w-2/3 bg-gradient-to-r from-[#F7F8F5] via-[#F7F8F5]/65 to-transparent z-10 pointer-events-none" />
+        {/* Left-only text readability gradient (becomes completely transparent before reaching students' faces) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0D1B2A]/95 via-[#0D1B2A]/65 via-[38%] to-transparent pointer-events-none" />
+
+        {/* Subtle bottom gradient for statistics readability without darkening faces */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B2A]/65 via-transparent to-transparent pointer-events-none" />
       </div>
 
-      {/* MAIN HERO CONTENT */}
-      <div className="misc-container relative z-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      {/* Header Clearance Spacer */}
+      <div className="pt-24 sm:pt-28 lg:pt-32" />
+
+      {/* 2. MAIN HERO BODY (Left Content + Right Subtle Floating Quote) */}
+      <div className="misc-container relative z-10 my-auto py-6 sm:py-8 lg:py-12 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* LEFT SIDE — EDITORIAL HERO TYPOGRAPHY & CTAs */}
-          <div className="lg:col-span-8 xl:col-span-7 space-y-6">
+          {/* LEFT SIDE CONTENT: Occupies approximately 50% of the hero width */}
+          <div className="lg:col-span-7 xl:col-span-7 space-y-6 sm:space-y-8 max-w-2xl lg:max-w-none">
             
-            {/* 1. Eyebrow Badge */}
-            <div 
-              className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#E6F2F1] border border-[#E2E8E0] shadow-2xs animate-hero-fade-up"
-              style={{ '--fade-y': '12px', animationDelay: '0ms' }}
-            >
-              <span className="w-2 h-2 rounded-full bg-[#2F7C7A] animate-pulse" />
-              <span className="text-xs font-semibold tracking-wider text-[#2F7C7A] uppercase">
-                {miscInfo.parentOrganization}, KARANTHUR
+            {/* Small Eyebrow with Thin Teal Horizontal Line Beside It */}
+            <div className="flex items-center space-x-3.5 hero-reveal-eyebrow">
+              <span className="text-xs sm:text-[13px] font-mono tracking-[0.25em] text-[#F7F5EF] uppercase font-medium">
+                MARKAZ INTEGRATED STUDIES COUNCIL
               </span>
+              <span className="h-[1.5px] w-12 sm:w-16 bg-[#2F7C7A] shrink-0" />
             </div>
 
-            {/* 2. Main Headline */}
-            <h1 
-              className="font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-semibold tracking-tight text-[#132238] leading-[1.14] animate-hero-fade-up"
-              style={{ '--fade-y': '20px', animationDelay: '150ms' }}
-            >
-              Integrating Islamic Scholarship with <br className="hidden sm:inline" />
-              <span className="text-[#2F7C7A]">Contemporary Knowledge</span>
-            </h1>
+            {/* Main Editorial Headline (72–96px on desktop, line height 0.95–1.0, medium weight) */}
+            <div className="space-y-1 sm:space-y-2">
+              <h1 className="font-serif text-[44px] sm:text-[62px] md:text-[72px] lg:text-[78px] xl:text-[88px] 2xl:text-[94px] font-normal tracking-[-0.025em] leading-[0.98] text-[#FFFFFF]">
+                <span className="block hero-reveal-title-1">
+                  Integrating
+                </span>
+                <span className="block hero-reveal-title-1">
+                  Islamic Scholarship
+                </span>
+                <span className="block hero-reveal-title-2">
+                  with <span className="text-[#2F7C7A] italic font-normal">Contemporary</span>
+                </span>
+                <span className="block hero-reveal-title-2 text-[#2F7C7A] italic font-normal">
+                  Knowledge
+                </span>
+              </h1>
+            </div>
 
-            {/* 3. Supporting Subtitle */}
-            <p 
-              className="text-[#475569] text-base sm:text-lg font-normal leading-relaxed max-w-2xl animate-hero-fade-up"
-              style={{ '--fade-y': '16px', animationDelay: '300ms' }}
-            >
-              {miscInfo.aboutShort}
+            {/* Description (approx 2 lines, 17–19px, soft/warm white) */}
+            <p className="text-[16px] sm:text-[18px] lg:text-[19px] text-[#F7F5EF]/90 font-normal leading-relaxed max-w-xl hero-reveal-desc">
+              An academic network harmonizing classical Islamic scholarship with contemporary knowledge for a better tomorrow.
             </p>
 
-            {/* 4. Call to Action Buttons */}
-            <div 
-              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2 animate-hero-fade-up"
-              style={{ '--fade-y': '12px', animationDelay: '450ms' }}
-            >
-              <Button
-                variant="primary"
-                size="lg"
+            {/* CTA Buttons: Rectangular with small border radius, NO pill shapes */}
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-5 hero-reveal-buttons">
+              <button
+                type="button"
                 onClick={() => navigate('/academics')}
-                className="group shadow-sm hover:-translate-y-0.5 transition-all duration-300"
+                className="inline-flex items-center justify-center space-x-2 bg-[#2F7C7A] hover:bg-[#256664] text-white text-xs sm:text-[13px] font-semibold tracking-wider uppercase px-7 py-3.5 rounded-xs transition-all duration-200 cursor-pointer shadow-sm hover:translate-x-0.5 group"
               >
                 <span>EXPLORE PROGRAMMES</span>
-                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1.5 transition-transform duration-300" />
-              </Button>
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+              </button>
 
-              <Button
-                variant="outline"
-                size="lg"
+              <button
+                type="button"
                 onClick={() => navigate('/about')}
-                className="bg-white/85 backdrop-blur-sm text-[#132238] border-[#E2E8E0] hover:border-[#2F7C7A] hover:-translate-y-0.5 transition-all duration-300"
+                className="inline-flex items-center justify-center space-x-2 bg-transparent hover:bg-white/10 text-[#F7F5EF] border border-white/40 hover:border-white text-xs sm:text-[13px] font-semibold tracking-wider uppercase px-7 py-3.5 rounded-xs backdrop-blur-2xs transition-all duration-200 cursor-pointer group"
               >
-                ABOUT MISC
-              </Button>
+                <span>DISCOVER MISC</span>
+                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1 text-slate-300" />
+              </button>
+            </div>
+
+          </div>
+
+          {/* FAR RIGHT SIDE: Subtle Vertical Quote (Non-competing, visible on large screens) */}
+          <div className="hidden lg:flex lg:col-span-5 justify-end hero-reveal-quote">
+            <div className="border-l border-white/20 pl-6 space-y-3 max-w-xs backdrop-blur-2xs py-2 bg-black/10 rounded-xs">
+              <blockquote className="font-serif italic text-base lg:text-[1.1rem] xl:text-[1.2rem] text-[#F7F5EF]/80 leading-snug">
+                “Knowledge <br />
+                People <br />
+                Communities <br />
+                A Brighter <br />
+                Tomorrow”
+              </blockquote>
+              <div className="pt-2 border-t border-white/10">
+                <span className="font-mono text-[9.5px] tracking-[0.25em] text-[#F7F5EF]/60 uppercase block">
+                  JAMIA MARKAZ
+                </span>
+                <span className="font-mono text-[9px] tracking-[0.25em] text-[#2F7C7A] uppercase block font-semibold">
+                  KARANTHUR
+                </span>
+              </div>
             </div>
           </div>
 
         </div>
-
-        {/* UNIFIED STATISTICS PANEL BELOW HERO */}
-        <div 
-          className="mt-12 pt-6 border-t border-[#E2E8E0]/80 animate-hero-fade-up"
-          style={{ '--fade-y': '16px', animationDelay: '600ms' }}
-        >
-          <div className="bg-white/85 backdrop-blur-sm border border-[#E2E8E0] rounded-xl shadow-2xs overflow-hidden grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#E2E8E0]">
-            <div className="p-4 sm:p-5 text-left">
-              <div className="text-xl sm:text-2xl font-serif font-bold text-[#132238]">Integrated</div>
-              <div className="text-xs text-[#475569] font-semibold mt-1 uppercase tracking-wider">Academic Streams</div>
-            </div>
-            <div className="p-4 sm:p-5 text-left">
-              <div className="text-xl sm:text-2xl font-serif font-bold text-[#132238]">Unified</div>
-              <div className="text-xs text-[#475569] font-semibold mt-1 uppercase tracking-wider">Examination Board</div>
-            </div>
-            <div className="p-4 sm:p-5 text-left">
-              <div className="text-xl sm:text-2xl font-serif font-bold text-[#132238]">Network</div>
-              <div className="text-xs text-[#475569] font-semibold mt-1 uppercase tracking-wider">Institution Network</div>
-            </div>
-            <div className="p-4 sm:p-5 text-left">
-              <div className="text-xl sm:text-2xl font-serif font-bold text-[#132238]">Karanthur</div>
-              <div className="text-xs text-[#475569] font-semibold mt-1 uppercase tracking-wider">Jamia Markaz HQ</div>
-            </div>
-          </div>
-        </div>
-
       </div>
+
+      {/* 3. BOTTOM STATISTICS RAIL & SCROLL INDICATOR */}
+      {/* NO CARDS. NO ROUNDED BOXES. Thin vertical separators. */}
+      <div className="relative z-10 w-full border-t border-white/15 bg-[#0D1B2A]/85 backdrop-blur-sm hero-reveal-stats">
+        <div className="misc-container py-5 sm:py-6">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            
+            {/* Horizontal Statistics Rail */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 lg:gap-0 lg:divide-x lg:divide-white/15 w-full lg:w-auto flex-1">
+              
+              <div className="lg:pr-8 xl:pr-10">
+                <div className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal leading-none text-white">
+                  50<span className="text-[#2F7C7A]">+</span>
+                </div>
+                <div className="text-[11px] sm:text-[12px] font-mono tracking-[0.12em] text-[#F7F5EF]/80 uppercase mt-2">
+                  AFFILIATED INSTITUTIONS
+                </div>
+              </div>
+
+              <div className="lg:px-8 xl:px-10">
+                <div className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal leading-none text-white">
+                  20<span className="text-[#2F7C7A]">+</span>
+                </div>
+                <div className="text-[11px] sm:text-[12px] font-mono tracking-[0.12em] text-[#F7F5EF]/80 uppercase mt-2">
+                  ACADEMIC PROGRAMMES
+                </div>
+              </div>
+
+              <div className="lg:px-8 xl:px-10">
+                <div className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal leading-none text-white">
+                  10K<span className="text-[#2F7C7A]">+</span>
+                </div>
+                <div className="text-[11px] sm:text-[12px] font-mono tracking-[0.12em] text-[#F7F5EF]/80 uppercase mt-2">
+                  STUDENTS & SCHOLARS
+                </div>
+              </div>
+
+              <div className="lg:pl-8 xl:pl-10">
+                <div className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal leading-none text-white">
+                  4<span className="text-[#2F7C7A]">+</span> DECADES
+                </div>
+                <div className="text-[11px] sm:text-[12px] font-mono tracking-[0.12em] text-[#F7F5EF]/80 uppercase mt-2">
+                  OF ACADEMIC SERVICE
+                </div>
+              </div>
+
+            </div>
+
+            {/* Bottom-Right Minimal Scroll Indicator */}
+            <div className="hidden lg:flex items-center space-x-3 text-[#F7F5EF]/80 hover:text-white transition-colors shrink-0 pl-6">
+              <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center text-[#2F7C7A] group-hover:border-[#2F7C7A] transition-colors">
+                <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
+              </div>
+              <div className="text-left font-mono text-[9px] tracking-[0.2em] leading-tight uppercase">
+                SCROLL <br />
+                <span className="text-[#2F7C7A]">TO EXPLORE</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     </section>
   );
 };

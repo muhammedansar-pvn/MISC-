@@ -1,117 +1,123 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from '@/hooks/useNavigate';
-import { BookOpen, ShieldCheck, Building2, Download, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export const CoreServicesSection = () => {
   const navigate = useNavigate();
+  const [activeImage, setActiveImage] = useState('/MKZ01377.JPG.jpeg');
 
-  const services = [
+  const programmes = [
     {
-      icon: BookOpen,
-      title: 'Integrated Academics',
-      category: 'CURRICULUM & STREAMS',
-      description: 'Blending classical Islamic scholarship with accredited university degree programs.',
-      linkText: 'Explore Academics',
+      number: '01',
+      title: 'Islamic Studies',
+      tagline: 'Classical Sharia, Hadith, Usul & Quranic Sciences',
+      image: '/MKZ01377.JPG.jpeg',
       path: '/academics',
-      badge: 'Integrated Streams',
     },
     {
-      icon: ShieldCheck,
-      title: 'Central Examination',
-      category: 'EVALUATION & GOVERNANCE',
-      description: 'Centralized examination board managing standardized assessments and unified certification.',
-      linkText: 'View Examination Board',
-      path: '/examination',
-      badge: 'Unified Board',
+      number: '02',
+      title: 'Contemporary Studies',
+      tagline: 'University Arts, Commerce, Science & Humanities',
+      image: '/campus.png',
+      path: '/academics',
     },
     {
-      icon: Building2,
-      title: 'Institution Network',
-      category: 'INSTITUTIONAL COORDINATION',
-      description: 'Coordinating member institutions and collaborating centers under Jamia Markaz governance.',
-      linkText: 'Explore Network',
-      path: '/institutions',
-      badge: 'Institutional Network',
+      number: '03',
+      title: 'Integrated Programmes',
+      tagline: 'Dual-Track Alim & Secondary / Higher Secondary Degrees',
+      image: '/DSC00390.JPG.jpeg',
+      path: '/academics',
     },
     {
-      icon: Download,
-      title: 'Resource Centre',
-      category: 'DOWNLOADS & PUBLICATIONS',
-      description: 'Access academic calendars, stream syllabi, research journals, and official documentation.',
-      linkText: 'Access Downloads',
-      path: '/downloads',
-      badge: 'Official Resources',
+      number: '04',
+      title: 'Professional Programmes',
+      tagline: 'Leadership, Pedagogical Training, Research & Languages',
+      image: '/Diwan.JPG.jpeg',
+      path: '/academics',
     },
   ];
 
   return (
-    <section className="bg-white py-12 sm:py-16 lg:py-20 border-b border-[#E2E8E0]">
+    <section className="relative bg-[#FFFFFF] text-[#132238] py-24 sm:py-32 lg:py-36 xl:py-40 border-b border-[rgba(19,34,56,0.12)]">
       <div className="misc-container">
         
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 sm:mb-20 gap-6 pb-6 border-b border-[rgba(19,34,56,0.12)]">
           <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#E6F2F1] border border-[#E2E8E0]">
-              <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
-              <span className="text-xs font-semibold tracking-wider text-[#2F7C7A] uppercase">
-                CORE PILLARS
+            <div className="flex items-center space-x-3">
+              <span className="font-mono text-xs sm:text-sm font-semibold text-[#2F7C7A] tracking-wider">
+                05
+              </span>
+              <span className="text-xs sm:text-[13px] font-mono tracking-[0.25em] text-[#667085] uppercase">
+                ACADEMIC STREAMS
               </span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#132238] tracking-tight leading-tight">
-              Academic Infrastructure & Governance
+
+            <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[#132238] leading-tight">
+              PROGRAMMES
             </h2>
-            <p className="text-[15.5px] sm:text-[16.5px] text-[#475569] font-normal leading-relaxed">
-              Centralized educational administration empowering member institutions, faculty, and students.
-            </p>
           </div>
+
+          <p className="font-serif text-xl sm:text-2xl text-[#2F7C7A] italic font-normal max-w-md">
+            “Education shaped for scholarship and the future.”
+          </p>
         </div>
 
-        {/* Editorial 4-Card Composition */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-          {services.map((service, index) => {
-            const IconComp = service.icon;
-            return (
+        {/* Two-Column Composition: Left Interactive Horizontal Rows, Right Floating Dynamic Image Preview */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          
+          {/* LEFT: Large Horizontal Editorial Rows */}
+          <div className="lg:col-span-7 divide-y divide-[rgba(19,34,56,0.12)] border-y border-[rgba(19,34,56,0.12)]">
+            {programmes.map((item) => (
               <div
-                key={index}
-                className="group relative bg-[#F7F8F5] hover:bg-white border border-[#E2E8E0] hover:border-[#2F7C7A]/40 rounded-2xl p-6 sm:p-8 transition-all duration-300 flex flex-col justify-between shadow-2xs hover:shadow-md"
+                key={item.number}
+                onMouseEnter={() => setActiveImage(item.image)}
+                onClick={() => navigate(item.path)}
+                className="group py-7 sm:py-9 lg:py-10 cursor-pointer flex items-center justify-between transition-all duration-300 relative"
               >
-                <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-11 h-11 rounded-xl bg-white border border-[#E2E8E0] text-[#2F7C7A] group-hover:bg-[#2F7C7A] group-hover:text-white flex items-center justify-center transition-colors shadow-2xs">
-                      <IconComp className="w-5 h-5" />
-                    </div>
-                    <span className="text-[10px] font-bold tracking-widest text-[#2F7C7A] bg-[#E6F2F1] px-3 py-1 rounded-full uppercase border border-[#E2E8E0]">
-                      {service.badge}
-                    </span>
-                  </div>
-
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#475569] block mb-1">
-                    {service.category}
+                <div className="flex items-baseline space-x-6 sm:space-x-10 transform group-hover:translate-x-3 transition-transform duration-300">
+                  <span className="font-mono text-xs sm:text-sm font-semibold text-[#2F7C7A] tracking-widest shrink-0">
+                    {item.number}
                   </span>
 
-                  <h3 className="font-serif text-2xl font-bold text-[#132238] mb-2 group-hover:text-[#2F7C7A] transition-colors leading-snug">
-                    {service.title}
-                  </h3>
-
-                  <p className="text-sm sm:text-[14.5px] text-[#475569] leading-relaxed font-normal mb-6">
-                    {service.description}
-                  </p>
+                  <div>
+                    <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-[#132238] group-hover:text-[#2F7C7A] transition-colors duration-200">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-[#667085] font-normal mt-1 hidden sm:block">
+                      {item.tagline}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#E2E8E0]">
-                  <button
-                    onClick={() => navigate(service.path)}
-                    className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-[#2F7C7A] hover:text-[#256664] group-hover:translate-x-1 transition-all cursor-pointer"
-                  >
-                    <span>{service.linkText}</span>
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </button>
+                <div className="pl-4">
+                  <div className="w-10 h-10 rounded-full border border-[rgba(19,34,56,0.15)] group-hover:border-[#2F7C7A] group-hover:bg-[#2F7C7A] flex items-center justify-center transition-all duration-300">
+                    <ArrowRight className="w-4 h-4 text-[#132238] group-hover:text-white transform group-hover:translate-x-0.5 transition-transform" />
+                  </div>
                 </div>
               </div>
-            );
-          })}
+            ))}
+          </div>
+
+          {/* RIGHT: High-Editorial Photographic Preview Container */}
+          <div className="lg:col-span-5 hidden lg:block">
+            <div className="relative overflow-hidden border border-[rgba(19,34,56,0.12)] shadow-sm bg-[#F7F7F3] p-3 aspect-[4/3] group">
+              <div className="relative w-full h-full overflow-hidden">
+                <img
+                  src={activeImage}
+                  alt="MISC Academic Stream Preview"
+                  className="w-full h-full object-cover object-center transition-all duration-700 ease-out transform group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-4 left-4 text-white text-[11px] font-mono tracking-widest uppercase">
+                  Academic Framework • Jamia Markaz
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
       </div>

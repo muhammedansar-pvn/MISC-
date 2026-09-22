@@ -1,97 +1,82 @@
 'use client';
 
 import React from 'react';
-import { useNavigate } from '@/hooks/useNavigate';
-import { ArrowRight, Quote } from 'lucide-react';
-import Button from '../common/Button';
-import { academicPillarsData } from '../../data/academicPillarsData';
-import { miscInfo } from '../../data/miscInfo';
 
 export const AcademicPillars = () => {
-  const navigate = useNavigate();
+  const principles = [
+    {
+      number: '01',
+      title: 'SCHOLARSHIP',
+      description: 'Preserving classical Islamic sciences alongside rigorous contemporary academic disciplines.',
+    },
+    {
+      number: '02',
+      title: 'CHARACTER',
+      description: 'Cultivating spiritual grounding, moral integrity, and deep social responsibility.',
+    },
+    {
+      number: '03',
+      title: 'EXCELLENCE',
+      description: 'Maintaining uncompromising standards in curriculum design, faculty training, and examinations.',
+    },
+    {
+      number: '04',
+      title: 'LEADERSHIP',
+      description: 'Preparing visionary thinkers capable of guiding institutions and communities into the future.',
+    },
+  ];
 
   return (
-    <section className="relative bg-white py-16 sm:py-24 border-b border-[#E2E8E0]">
+    <section className="relative bg-[#FFFFFF] text-[#132238] py-24 sm:py-32 lg:py-36 xl:py-40 border-b border-[rgba(19,34,56,0.12)]">
       <div className="misc-container">
         
-        {/* Section Header */}
-        <div className="max-w-3xl space-y-3 mb-12">
-          <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#E6F2F1] border border-[#E2E8E0]">
-            <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
-            <span className="text-xs font-semibold tracking-wider text-[#2F7C7A] uppercase">
-              VISION & MISSION
-            </span>
-          </div>
-
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#132238] tracking-tight leading-tight">
-            Vision & Mission Framework
-          </h2>
-          <p className="text-base text-[#475569]">
-            Official institutional Vision and Mission of Markaz Integrated Studies Council.
-          </p>
-        </div>
-
-        {/* 2-Column Layout: Left Vision Blockquote, Right 8 Numbered Mission Points */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        {/* Asymmetric Composition: Left Large Vision Statement, Right Vertical Principles Timeline */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 xl:gap-24 items-start">
           
-          {/* LEFT: VISION STATEMENT BLOCKQUOTE */}
-          <div className="lg:col-span-5 bg-[#F7F8F5] border border-[#E2E8E0] rounded-xl p-8 shadow-xs space-y-6 lg:sticky lg:top-24">
-            <div className="w-10 h-10 rounded-lg bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center border border-[#E2E8E0]">
-              <Quote className="w-5 h-5" />
-            </div>
-
-            <div className="space-y-3">
-              <span className="text-xs font-bold text-[#2F7C7A] uppercase tracking-wider">
+          {/* LEFT: Very Large Italic Serif Vision Statement */}
+          <div className="lg:col-span-6 lg:sticky lg:top-36 space-y-6">
+            <div className="flex items-center space-x-3">
+              <span className="font-mono text-sm sm:text-base font-semibold text-[#2F7C7A] tracking-wider">
+                02
+              </span>
+              <span className="text-xs sm:text-[13px] font-mono tracking-[0.25em] text-[#667085] uppercase">
                 VISION
               </span>
-              <blockquote className="font-serif text-lg sm:text-xl font-semibold text-[#132238] leading-relaxed italic border-l-4 border-[#2F7C7A] pl-4">
-                "{miscInfo.vision}"
-              </blockquote>
             </div>
 
-            <p className="text-sm text-[#475569] leading-relaxed border-t border-[#E2E8E0] pt-4">
-              Under the auspices of Jamia Markaz, MISC establishes a standardized framework for integrated higher education.
-            </p>
+            <blockquote className="font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-[3.5rem] italic font-normal text-[#132238] leading-[1.18] tracking-tight">
+              “To develop a generation of scholars and professionals who harmoniously combine Islamic values with contemporary knowledge.”
+            </blockquote>
 
-            <Button
-              variant="outline"
-              size="md"
-              onClick={() => navigate('/about')}
-              className="w-full justify-between group mt-2"
-            >
-              <span>EXPLORE ABOUT MISC</span>
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <p className="text-sm sm:text-base text-[#667085] font-normal leading-relaxed pt-2 max-w-lg">
+              The foundational guiding principle governing all affiliated colleges, academic streams, and educational research councils under Jamia Markaz.
+            </p>
           </div>
 
-          {/* RIGHT: 8 NUMBERED MISSION ITEMS (01-08) */}
-          <ol className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 list-none p-0 m-0">
-            {academicPillarsData.map((pillar) => (
-              <li
-                key={pillar.id || pillar.number}
-                className="bg-[#F7F8F5] p-5 rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A]/40 transition-all flex flex-col justify-between"
+          {/* RIGHT: Minimal Vertical Timeline / Principles — NO CARDS */}
+          <div className="lg:col-span-6 space-y-0 divide-y divide-[rgba(19,34,56,0.12)] border-y border-[rgba(19,34,56,0.12)]">
+            {principles.map((item) => (
+              <div
+                key={item.number}
+                className="py-8 sm:py-10 group transition-all duration-200"
               >
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between border-b border-[#E2E8E0] pb-2.5">
-                    <span className="font-serif text-sm font-bold text-[#2F7C7A] tracking-wider">
-                      {String(pillar.number).padStart(2, '0')}
-                    </span>
-                    <span className="text-[10px] uppercase tracking-wider font-semibold text-[#475569]">
-                      MISSION POINT
-                    </span>
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                  <span className="font-mono text-xs sm:text-sm font-semibold text-[#2F7C7A] tracking-widest shrink-0 sm:pt-1">
+                    {item.number}
+                  </span>
+
+                  <div className="flex-1 sm:pl-8 space-y-2">
+                    <h3 className="font-serif text-2xl sm:text-3xl font-normal tracking-wide text-[#132238] group-hover:text-[#2F7C7A] transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm sm:text-base text-[#667085] font-normal leading-relaxed max-w-lg">
+                      {item.description}
+                    </p>
                   </div>
-
-                  <h3 className="font-serif text-base font-bold text-[#132238]">
-                    {pillar.title}
-                  </h3>
-
-                  <p className="text-xs sm:text-[13px] text-[#475569] leading-relaxed">
-                    {pillar.description}
-                  </p>
                 </div>
-              </li>
+              </div>
             ))}
-          </ol>
+          </div>
 
         </div>
 
