@@ -12,17 +12,22 @@ const {
   deleteUser,
   getDashboardStats,
 } = require("./user.controller");
+const {
+  validateUserInvitation,
+  validateUpdateUser,
+  validateUpdateUserStatus,
+} = require("./user.validator");
 
 const router = express.Router();
 
 router.get("/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);
 router.get("/users", requireAuth, requireRole("ADMIN"), getUsers);
 router.get("/users/:id", requireAuth, requireRole("ADMIN"), getUserById);
-router.post("/users", requireAuth, requireRole("ADMIN"), createUserInvitation);
+router.post("/users", requireAuth, requireRole("ADMIN"), validateUserInvitation, createUserInvitation);
 router.post("/users/verify-otp", requireAuth, requireRole("ADMIN"), verifyAdminUserOtp);
 router.post("/users/resend-otp", requireAuth, requireRole("ADMIN"), resendAdminUserOtp);
-router.patch("/users/:id", requireAuth, requireRole("ADMIN"), updateUser);
-router.patch("/users/:id/status", requireAuth, requireRole("ADMIN"), updateUserStatus);
+router.patch("/users/:id", requireAuth, requireRole("ADMIN"), validateUpdateUser, updateUser);
+router.patch("/users/:id/status", requireAuth, requireRole("ADMIN"), validateUpdateUserStatus, updateUserStatus);
 router.delete("/users/:id", requireAuth, requireRole("ADMIN"), deleteUser);
 
 const { handleRegisterStudentWithAccount } = require("../students/student.controller");
