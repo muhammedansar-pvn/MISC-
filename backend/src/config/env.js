@@ -5,8 +5,8 @@ const env = {
   PORT: parseInt(process.env.PORT || "5000", 10),
   MONGODB_URI: process.env.MONGODB_URI || "mongodb://localhost:27017/misc",
   JWT_SECRET: process.env.JWT_SECRET || "default_jwt_secret_dev_key",
-  APP_URL: process.env.APP_URL || "http://localhost:5173",
-  SETUP_BASE_URL: process.env.SETUP_BASE_URL || "http://localhost:5173/account-setup",
+  APP_URL: process.env.APP_URL || "http://localhost:3000",
+  SETUP_BASE_URL: process.env.SETUP_BASE_URL || "http://localhost:3000/account-setup",
   
   // SMTP Configuration
   SMTP_HOST: process.env.SMTP_HOST || "smtp.gmail.com",
