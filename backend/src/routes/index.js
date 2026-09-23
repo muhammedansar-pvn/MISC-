@@ -1,6 +1,6 @@
 const express = require("express");
 const authRoutes = require("../modules/auth/auth.routes");
-const userRoutes = require("../modules/users/user.routes");
+const adminRoutes = require("../modules/admin/admin.routes");
 const institutionRoutes = require("../modules/institutions/institution.routes");
 const academicRoutes = require("../modules/academics/academic.routes");
 const studentRoutes = require("../modules/students/student.routes");
@@ -45,7 +45,7 @@ router.get("/test-email", async (req, res) => {
 
 // Domain Module Route Mounts
 router.use("/auth", authRoutes);
-router.use("/admin", userRoutes);
+router.use("/admin", adminRoutes);
 router.use("/institutions", institutionRoutes);
 router.use("/academic", academicRoutes);
 router.use("/students", studentRoutes);
