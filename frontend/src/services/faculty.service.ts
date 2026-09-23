@@ -1,4 +1,4 @@
-import { apiClient, API_ENDPOINTS } from '@/lib/api';
+import { apiClient, API_ENDPOINTS } from '@/api/axios';
 import { FacultyProfile, FacultyPayload, ApiResponse, PaginationParams } from '@/types';
 
 export const getFacultyMembers = async (params: PaginationParams = {}): Promise<ApiResponse<FacultyProfile[]>> => {

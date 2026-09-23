@@ -1,4 +1,4 @@
-import { apiClient, API_ENDPOINTS } from '@/lib/api';
+import { apiClient, API_ENDPOINTS } from '@/api/axios';
 import {
   LoginPayload,
   LoginResponse,
