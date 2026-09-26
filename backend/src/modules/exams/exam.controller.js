@@ -77,7 +77,14 @@ const handleRegisterStudentForExam = async (req, res) => {
   try {
     const regData = { ...req.body };
     if (req.user && req.user.role === "STUDENT") {
-      regData.studentId = req.user.studentId || req.body.studentId;
+      if (!req.user.studentId) {
+        return res.status(403).json({
+          success: false,
+          message: "No student profile associated with this account",
+        });
+      }
+      // Strictly enforce server-side authenticated studentId; ignore any client-supplied studentId
+      regData.studentId = req.user.studentId;
     }
     const registration = await examService.registerStudentForExam(regData);
     return res.status(201).json({ success: true, message: "Registered student for exam successfully", data: registration });
