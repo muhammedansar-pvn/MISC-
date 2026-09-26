@@ -9,6 +9,7 @@ const {
   setPassword,
   accountSetup,
   verifyAccountSetupToken,
+  resendAccountSetupLink,
   forgotPassword,
   resetPassword,
   sendOtp,
@@ -66,6 +67,7 @@ router.post("/resend-otp", otpLimiter, validateResendOtp, resendOtp);
 // Password Reset & Account Setup Routes
 router.get("/account-setup/:token", verifyAccountSetupToken);
 router.post("/account-setup", validateAccountSetup, accountSetup);
+router.post("/resend-setup-link", otpLimiter, resendAccountSetupLink);
 router.post("/set-password", setPassword);
 router.post("/forgot-password", passwordResetLimiter, validateForgotPassword, forgotPassword);
 router.post("/reset-password", passwordResetLimiter, validateResetPassword, resetPassword);

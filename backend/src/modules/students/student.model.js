@@ -76,6 +76,17 @@ const studentProfileSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+
+    status: {
+      type: String,
+      enum: ["ACTIVE", "INACTIVE", "SUSPENDED", "ALUMNI"],
+      default: "ACTIVE",
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -86,6 +97,7 @@ const studentProfileSchema = new mongoose.Schema(
 // Indexes
 studentProfileSchema.index({ userId: 1 }, { unique: true });
 studentProfileSchema.index({ registrationNumber: 1 }, { unique: true });
-studentProfileSchema.index({ institutionId: 1, classId: 1 });
+studentProfileSchema.index({ classId: 1 });
+studentProfileSchema.index({ institutionId: 1, classId: 1 }, { sparse: true });
 
 module.exports = mongoose.model("StudentProfile", studentProfileSchema);

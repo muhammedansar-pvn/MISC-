@@ -3,6 +3,7 @@ const {
   getFacultyMembers,
   getFacultyById,
   updateFaculty,
+  deleteFaculty,
 } = require("./faculty.service");
 
 const handleCreateFaculty = async (req, res) => {
@@ -18,11 +19,12 @@ const handleCreateFaculty = async (req, res) => {
 const handleGetFacultyMembers = async (req, res) => {
   try {
     const filter = {};
-    if (req.user.role === "INSTITUTION") {
-      filter.institutionId = req.user.institutionId;
-    }
-    const members = await getFacultyMembers(filter);
-    return res.status(200).json({ success: true, data: members });
+    if (req.query.department) filter.department = req.query.department;
+    if (req.query.status) filter.status = req.query.status.toUpperCase();
+    const search = req.query.search || "";
+
+    const members = await getFacultyMembers(filter, search);
+    return res.status(200).json({ success: true, count: members.length, data: members });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve faculty members" });
   }
@@ -48,9 +50,25 @@ const handleUpdateFaculty = async (req, res) => {
   }
 };
 
+const handleDeleteFaculty = async (req, res) => {
+  try {
+    const hardDelete = req.query.permanent === "true";
+    const result = await deleteFaculty(req.params.id, hardDelete);
+    if (!result) return res.status(404).json({ success: false, message: "Faculty member not found" });
+    return res.status(200).json({
+      success: true,
+      message: hardDelete ? "Faculty profile permanently deleted" : "Faculty profile deactivated successfully",
+      data: result,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to delete faculty member" });
+  }
+};
+
 module.exports = {
   handleCreateFaculty,
   handleGetFacultyMembers,
   handleGetFacultyById,
   handleUpdateFaculty,
+  handleDeleteFaculty,
 };

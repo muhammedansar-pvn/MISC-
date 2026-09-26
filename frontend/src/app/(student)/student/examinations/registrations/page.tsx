@@ -221,7 +221,7 @@ export default function StudentRegistrationsPage() {
               {/* Council Header */}
               <div className="text-center border-b-2 border-[#132238] pb-6 space-y-1">
                 <div className="font-bold uppercase tracking-widest text-xs text-[#2F7C7A]">
-                  Markaz Integrated Studies Council (MISC)
+                  Markaz Sanaviyya
                 </div>
                 <h2 className="text-2xl font-serif font-bold text-[#132238]">
                   EXAMINATION ADMIT CARD / HALL TICKET
@@ -257,15 +257,15 @@ export default function StudentRegistrationsPage() {
                   </p>
                 </div>
                 <div>
-                  <span className="text-slate-400">Class & Section:</span>
+                  <span className="text-slate-400">Class:</span>
                   <p className="font-bold text-slate-800 mt-0.5">
-                    {enrolledClass?.className || 'Standard'} ({enrolledClass?.section || 'Default'})
+                    {enrolledClass?.name || enrolledClass?.code || enrolledClass?.className || 'Sanaviyya Standard'}
                   </p>
                 </div>
                 <div className="sm:col-span-2">
-                  <span className="text-slate-400">Examination Centre / Institution:</span>
+                  <span className="text-slate-400">Institution:</span>
                   <p className="font-bold text-slate-800 mt-0.5">
-                    {institution?.name || 'MISC Examination Centre'} ({institution?.code || 'HQ'})
+                    Markaz Sanaviyya (SANAVIYYA)
                   </p>
                 </div>
               </div>

@@ -16,6 +16,10 @@ const createFacultySchema = Joi.object({
   previousExperience: Joi.string().trim().allow(""),
   contactNumber: Joi.string().trim().allow(""),
   photo: Joi.string().trim().allow(""),
+  department: Joi.string().trim().allow("", null),
+  assignedClasses: Joi.array().items(Joi.string().hex().length(24)).optional(),
+  assignedSubjects: Joi.array().items(Joi.string().hex().length(24)).optional(),
+  status: Joi.string().valid("ACTIVE", "INACTIVE").default("ACTIVE"),
 });
 
 const updateFacultySchema = Joi.object({
@@ -31,6 +35,10 @@ const updateFacultySchema = Joi.object({
   previousExperience: Joi.string().trim().allow(""),
   contactNumber: Joi.string().trim().allow(""),
   photo: Joi.string().trim().allow(""),
+  department: Joi.string().trim().allow("", null),
+  assignedClasses: Joi.array().items(Joi.string().hex().length(24)).optional(),
+  assignedSubjects: Joi.array().items(Joi.string().hex().length(24)).optional(),
+  status: Joi.string().valid("ACTIVE", "INACTIVE"),
 });
 
 module.exports = {

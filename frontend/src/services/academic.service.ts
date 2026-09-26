@@ -108,6 +108,16 @@ export const updateSyllabus = async (
   return response.data;
 };
 
+export const deleteSyllabus = async (
+  id: string,
+  permanent: boolean = false
+): Promise<ApiResponse<any>> => {
+  const response = await apiClient.delete<ApiResponse<any>>(
+    `${API_ENDPOINTS.academic.syllabusById(id)}${permanent ? '?permanent=true' : ''}`
+  );
+  return response.data;
+};
+
 export default {
   getAcademicYears,
   getAcademicYearById,
@@ -125,4 +135,5 @@ export default {
   getSyllabusById,
   createSyllabus,
   updateSyllabus,
+  deleteSyllabus,
 };

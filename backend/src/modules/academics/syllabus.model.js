@@ -41,7 +41,13 @@ const syllabusSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["DRAFT", "PUBLISHED", "SUPERSEDED"],
+      enum: ["DRAFT", "PUBLISHED", "SUPERSEDED", "ACTIVE", "INACTIVE"],
+      default: "ACTIVE",
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   {

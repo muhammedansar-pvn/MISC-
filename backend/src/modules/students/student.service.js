@@ -3,7 +3,9 @@ const User = require("../users/user.model");
 const StudentProfile = require("./student.model");
 const InstitutionProfile = require("../institutions/institution.model");
 const Class = require("../academics/class.model");
-const { generateAccountSetupToken, sendAndStoreOtp } = require("../auth/auth.service");
+const { generateAccountSetupToken, sendAndStoreOtp, maskEmail } = require("../auth/auth.service");
+const OtpVerification = require("../auth/otp-verification.model");
+const studentLifecycleService = require("./student-lifecycle.service");
 
 const generateRegistrationNumber = async (session = null) => {
   const year = new Date().getFullYear();
@@ -112,28 +114,152 @@ const createStudent = async (studentData) => {
   return StudentProfile.findById(studentProfile._id)
     .populate("userId", "name email username role status mobile")
     .populate("institutionId", "name code")
-    .populate("classId", "className section")
+    .populate("classId", "name code")
     .lean();
 };
 
-const getStudents = async (filter = {}) => {
-  return StudentProfile.find(filter)
-    .populate("userId", "name email username role status mobile")
+const getStudents = async (filter = {}, search = "") => {
+  const query = { isDeleted: { $ne: true }, ...filter };
+
+  if (search) {
+    const searchRegex = new RegExp(search.trim(), "i");
+    query.$or = [
+      { registrationNumber: searchRegex },
+      { nameEnglish: searchRegex },
+      { nameArabic: searchRegex },
+      { contactNumber: searchRegex },
+      { fatherName: searchRegex },
+    ];
+  }
+
+  const profiles = await StudentProfile.find(query)
+    .populate("userId", "name email username role status mobile isDeleted")
     .populate("institutionId", "name code")
-    .populate("classId", "className section")
+    .populate("classId", "name code")
+    .sort({ createdAt: -1 })
     .lean();
+
+  // Exclude orphan profiles where user is missing or marked deleted
+  return profiles.filter((p) => p.userId && p.userId.isDeleted !== true);
 };
 
 const getStudentById = async (id) => {
-  return StudentProfile.findById(id)
-    .populate("userId", "name email username role status mobile")
+  const profile = await StudentProfile.findOne({ _id: id, isDeleted: { $ne: true } })
+    .populate("userId", "name email username role status mobile isDeleted")
     .populate("institutionId", "name code")
-    .populate("classId", "className section")
+    .populate("classId", "name code")
     .lean();
+
+  if (!profile || !profile.userId || profile.userId.isDeleted === true) {
+    return null;
+  }
+  return profile;
 };
 
 const updateStudent = async (id, updateData) => {
-  return StudentProfile.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
+  const profile = await StudentProfile.findById(id);
+  if (!profile) {
+    const error = new Error("Student profile not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const { email, name, mobile, ...profileFields } = updateData;
+
+  if (profileFields.classId === "") profileFields.classId = null;
+  if (profileFields.institutionId === "") profileFields.institutionId = null;
+
+  Object.assign(profile, profileFields);
+  await profile.save();
+
+  let emailChangeData = null;
+
+  if (profile.userId) {
+    const user = await User.findById(profile.userId);
+    if (user) {
+      if (name && name.trim()) {
+        user.name = name.trim();
+      }
+      if (mobile !== undefined) {
+        user.mobile = mobile ? mobile.trim() : undefined;
+      }
+
+      if (email && email.trim()) {
+        const normalizedEmail = email.toLowerCase().trim();
+
+        if (normalizedEmail !== user.email) {
+          // Check for collision with other users
+          const existingUser = await User.findOne({
+            $or: [{ email: normalizedEmail }, { pendingEmail: normalizedEmail }],
+            _id: { $ne: user._id },
+            isDeleted: { $ne: true },
+          });
+
+          if (existingUser) {
+            const error = new Error("Another user is already registered with this email address");
+            error.statusCode = 409;
+            throw error;
+          }
+
+          // If there was a previous pending email different from this one, invalidate old pending OTP
+          if (user.pendingEmail && user.pendingEmail !== normalizedEmail) {
+            await OtpVerification.deleteMany({
+              identifier: user.pendingEmail,
+              purpose: "EMAIL_VERIFICATION",
+            });
+          }
+
+          // Save new email as pending (unverified)
+          user.pendingEmail = normalizedEmail;
+
+          // Generate and send new 6-digit OTP to the new email address
+          const otpResult = await sendAndStoreOtp(normalizedEmail, "EMAIL_VERIFICATION", {
+            userId: user._id,
+          });
+
+          emailChangeData = {
+            requiresEmailVerification: true,
+            email: normalizedEmail,
+            maskedEmail: otpResult.maskedEmail || maskEmail(normalizedEmail),
+            verificationId: otpResult.verificationId,
+            expiresAt: otpResult.expiresAt,
+          };
+        } else if (normalizedEmail === user.email && user.pendingEmail) {
+          // If reverted back to current email, cancel pending change
+          await OtpVerification.deleteMany({
+            identifier: user.pendingEmail,
+            purpose: "EMAIL_VERIFICATION",
+          });
+          user.pendingEmail = undefined;
+        }
+      }
+
+      await user.save();
+    }
+  }
+
+  const populated = await StudentProfile.findById(id)
+    .populate("userId", "name email username role status mobile emailVerified pendingEmail")
+    .populate("institutionId", "name code")
+    .populate("classId", "name code")
+    .lean();
+
+  if (emailChangeData) {
+    return {
+      ...populated,
+      ...emailChangeData,
+    };
+  }
+
+  return populated;
+};
+
+const deleteStudent = async (id, hardDelete = false, adminId = null) => {
+  return studentLifecycleService.deleteStudentLifecycle(id, { hardDelete, adminId });
+};
+
+const updateStudentStatus = async (id, status, adminId = null) => {
+  return studentLifecycleService.updateStudentStatus(id, status, { adminId });
 };
 
 const registerStudentWithAccount = async (payload, caller = null) => {
@@ -173,14 +299,9 @@ const registerStudentWithAccount = async (payload, caller = null) => {
     ? username.toLowerCase().trim()
     : normalizedEmail;
 
-  // Enforce institution scoping if caller is an INSTITUTION
-  let targetInstitutionId = payload.institutionId;
-  if (caller && caller.role === "INSTITUTION") {
-    if (!caller.institutionId) {
-      const error = new Error("Caller institution profile not found");
-      error.statusCode = 403;
-      throw error;
-    }
+  // In single-institute architecture, institutionId is optional
+  let targetInstitutionId = payload.institutionId || undefined;
+  if (caller && caller.role === "INSTITUTION" && caller.institutionId) {
     targetInstitutionId = caller.institutionId;
   }
 
@@ -333,7 +454,10 @@ const registerStudentWithAccount = async (payload, caller = null) => {
 
   return {
     student: populated,
-    ...otpData,
+    email: normalizedEmail,
+    verificationId: otpData?.verificationId || null,
+    maskedEmail: otpData?.maskedEmail || maskEmail(normalizedEmail),
+    expiresAt: otpData?.expiresAt || null,
   };
 };
 
@@ -342,6 +466,8 @@ module.exports = {
   getStudents,
   getStudentById,
   updateStudent,
+  deleteStudent,
+  updateStudentStatus,
   generateRegistrationNumber,
   registerStudentWithAccount,
 };

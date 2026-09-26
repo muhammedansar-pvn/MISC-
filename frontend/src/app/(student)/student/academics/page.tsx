@@ -105,10 +105,10 @@ export default function StudentAcademicsPage() {
               <span className="text-xs font-bold uppercase tracking-wider">Enrolled Class</span>
             </div>
             <h2 className="text-xl font-bold text-[#132238]">
-              {enrolledClass?.className || 'Standard Program'}
+              {enrolledClass?.name || enrolledClass?.className || 'Sanaviyya Standard'}
             </h2>
             <p className="text-xs text-slate-500">
-              Section: {enrolledClass?.section || 'Default'} • Year: {profile?.admissionYear || 'Current'}
+              Code: {enrolledClass?.code || 'STD'} • Admission Year: {profile?.admissionYear || 'Current'}
             </p>
           </div>
 
@@ -125,17 +125,16 @@ export default function StudentAcademicsPage() {
             </p>
           </div>
 
-
           <div className="space-y-2 pt-4 md:pt-0 md:pl-6">
             <div className="flex items-center space-x-2 text-[#2F7C7A]">
               <Building2 className="w-5 h-5" />
-              <span className="text-xs font-bold uppercase tracking-wider">Affiliated Centre</span>
+              <span className="text-xs font-bold uppercase tracking-wider">Institution</span>
             </div>
             <h2 className="text-xl font-bold text-[#132238] truncate">
-              {institution?.name || 'MISC Direct Center'}
+              Markaz Sanaviyya
             </h2>
             <p className="text-xs text-slate-500">
-              Centre Code: <span className="font-mono font-medium">{institution?.code || 'MISC-HQ'}</span>
+              Institute Code: <span className="font-mono font-medium">SANAVIYYA</span>
             </p>
           </div>
         </div>
@@ -161,7 +160,7 @@ export default function StudentAcademicsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {subjects.map((sub) => (
+            {subjects.map((sub: any) => (
               <div
                 key={sub._id}
                 className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs hover:border-[#2F7C7A] transition-all flex flex-col justify-between space-y-4"
@@ -169,12 +168,14 @@ export default function StudentAcademicsPage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-                      {sub.code || 'SUB'}
+                      {sub.subjectCode || sub.code || 'SUB'}
                     </span>
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
                   </div>
-                  <h3 className="font-bold text-sm text-[#132238]">{sub.name}</h3>
-                  <p className="text-xs text-slate-500">Credits: {sub.credits || 1} • Type: {sub.type || 'THEORY'}</p>
+                  <h3 className="font-bold text-sm text-[#132238]">{sub.subjectName || sub.name}</h3>
+                  <p className="text-xs text-slate-500">
+                    Category: <span className="font-semibold text-slate-700">{sub.category || 'GENERAL'}</span>
+                  </p>
                 </div>
 
 

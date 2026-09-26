@@ -121,8 +121,8 @@ export const StudentLayoutClient: React.FC<StudentLayoutClientProps> = ({ childr
               </div>
               {!sidebarCollapsed && (
                 <div className="flex flex-col">
-                  <span className="font-serif font-bold text-lg text-white tracking-wider leading-tight">
-                    MISC
+                  <span className="font-serif font-bold text-sm text-white tracking-wide leading-tight truncate">
+                    Markaz Sanaviyya
                   </span>
                   <span className="text-[10px] uppercase font-semibold text-[#8ebdbb] tracking-wider">
                     Student Portal

@@ -25,12 +25,19 @@ export const getRoleRedirectPath = (role?: string): string => {
   switch (role) {
     case 'ADMIN':
       return '/admin';
-    case 'INSTITUTION':
-      return '/institution/dashboard';
+    case 'PRINCIPAL':
+      return '/principal';
+    case 'HOD':
+      return '/hod';
+    case 'ASATITHA':
     case 'FACULTY':
       return '/faculty';
+    case 'PARENT':
+      return '/parent';
     case 'STUDENT':
       return '/student';
+    case 'INSTITUTION':
+      return '/admin';
     default:
       return '/login';
   }

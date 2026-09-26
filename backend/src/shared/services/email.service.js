@@ -105,26 +105,36 @@ const sendEmail = async ({ to, subject, html, emailType = "GENERIC" }) => {
 };
 
 const sendOtpEmail = async (to, otp, purpose = "EMAIL_VERIFICATION") => {
-  const subject = `MISC Verification Code - ${otp}`;
+  const subject = `Markaz Sanaviyya Verification Code - ${otp}`;
+  const verifyLink = `${env.APP_URL}/verify-email?email=${encodeURIComponent(to)}`;
   const html = `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 32px; background-color: #F7F8F5; color: #132238;">
       <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; border: 1px solid #E2E8E0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
         <div style="background-color: #2F7C7A; padding: 24px; text-align: center; color: #ffffff;">
-          <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;">MISC Portal</h1>
-          <p style="margin: 4px 0 0 0; font-size: 12px; opacity: 0.9;">Markaz Integrated Studies Council</p>
+          <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;">Markaz Sanaviyya</h1>
+          <p style="margin: 4px 0 0 0; font-size: 12px; opacity: 0.9;">Student Development & Management System</p>
         </div>
         <div style="padding: 32px;">
           <p style="font-size: 16px; margin-top: 0;">Assalamu Alaikum,</p>
           <p style="font-size: 14px; color: #475569; line-height: 1.6;">
-            Your verification code for the MISC Portal (${purpose}) is:
+            Your verification code for Markaz Sanaviyya (${purpose}) is:
           </p>
           <div style="margin: 28px 0; text-align: center;">
             <span style="display: inline-block; background-color: #F7F8F5; border: 2px dashed #2F7C7A; border-radius: 8px; padding: 14px 28px; font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #132238;">
               ${otp}
             </span>
           </div>
-          <p style="font-size: 13px; color: #64748B; line-height: 1.5;">
-            This code will expire in <strong>10 minutes</strong>. Please enter this code on the verification page to proceed.
+          <p style="font-size: 13px; color: #64748B; line-height: 1.5; text-align: center;">
+            This code will expire in <strong>10 minutes</strong>. Click below or enter this code on the verification page to proceed:
+          </p>
+          <div style="margin: 24px 0; text-align: center;">
+            <a href="${verifyLink}" style="display: inline-block; background-color: #2F7C7A; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+              Go to Verification Page
+            </a>
+          </div>
+          <p style="font-size: 12px; color: #64748B; text-align: center; word-break: break-all;">
+            Or copy and paste this link in your browser:<br />
+            <a href="${verifyLink}" style="color: #2F7C7A;">${verifyLink}</a>
           </p>
           <hr style="border: none; border-top: 1px solid #E2E8E0; margin: 24px 0;" />
           <p style="font-size: 12px; color: #94A3B8; margin-bottom: 0;">
@@ -132,7 +142,7 @@ const sendOtpEmail = async (to, otp, purpose = "EMAIL_VERIFICATION") => {
           </p>
         </div>
         <div style="background-color: #F7F8F5; padding: 16px; text-align: center; font-size: 11px; color: #64748B; border-top: 1px solid #E2E8E0;">
-          Regards,<br /><strong>Markaz Integrated Studies Council (MISC) Team</strong>
+          Regards,<br /><strong>Markaz Sanaviyya Administration</strong>
         </div>
       </div>
     </div>
@@ -216,6 +226,49 @@ const sendUserInvitationEmail = async (to, name, rawToken) => {
   return sendEmail({ to, subject, html, emailType: "ACCOUNT_SETUP" });
 };
 
+const sendPasswordSetupEmail = async (to, name, rawToken) => {
+  const setupLink = `${env.APP_URL}/account-setup/${rawToken}`;
+  const displayName = name || "Student";
+  const subject = "Markaz Sanaviyya - Set Your Account Password";
+  const html = `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 32px; background-color: #F7F8F5; color: #132238;">
+      <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; border: 1px solid #E2E8E0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div style="background-color: #2F7C7A; padding: 24px; text-align: center; color: #ffffff;">
+          <h1 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px;">Markaz Sanaviyya</h1>
+          <p style="margin: 4px 0 0 0; font-size: 12px; opacity: 0.9;">Student Development & Management System</p>
+        </div>
+        <div style="padding: 32px;">
+          <p style="font-size: 16px; margin-top: 0;">Assalamu Alaikum ${displayName},</p>
+          <p style="font-size: 14px; color: #475569; line-height: 1.6;">
+            Your email address has been verified successfully. To complete your account onboarding and activate your student portal access, please click the button below to set your account password:
+          </p>
+          <div style="margin: 28px 0; text-align: center;">
+            <a href="${setupLink}" style="display: inline-block; background-color: #2F7C7A; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+              Set Your Password
+            </a>
+          </div>
+          <p style="font-size: 13px; color: #64748B; line-height: 1.5; text-align: center;">
+            This secure link is single-use and will expire in <strong>24 hours</strong>.
+          </p>
+          <p style="font-size: 12px; color: #64748B; word-break: break-all; text-align: center;">
+            Or copy and paste this link into your browser:<br />
+            <a href="${setupLink}" style="color: #2F7C7A;">${setupLink}</a>
+          </p>
+          <hr style="border: none; border-top: 1px solid #E2E8E0; margin: 24px 0;" />
+          <p style="font-size: 12px; color: #94A3B8; margin-bottom: 0;">
+            If you did not expect this email, please contact the Markaz Sanaviyya administration immediately.
+          </p>
+        </div>
+        <div style="background-color: #F7F8F5; padding: 16px; text-align: center; font-size: 11px; color: #64748B; border-top: 1px solid #E2E8E0;">
+          Regards,<br /><strong>Markaz Sanaviyya Administration</strong>
+        </div>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({ to, subject, html, emailType: "PASSWORD_SETUP" });
+};
+
 const sendTestEmail = async (to) => {
   const recipient = to || env.SMTP_USER || env.SMTP_FROM_EMAIL;
   const subject = "MISC Portal - SMTP Email Integration Test";
@@ -237,5 +290,6 @@ module.exports = {
   sendOtpEmail,
   sendPasswordResetEmail,
   sendUserInvitationEmail,
+  sendPasswordSetupEmail,
   sendTestEmail,
 };

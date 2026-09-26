@@ -36,8 +36,8 @@ export const registerStudentFull = async (
 export const updateStudent = async (
   id: string,
   data: Partial<StudentPayload>
-): Promise<ApiResponse<StudentProfile>> => {
-  const response = await apiClient.put<ApiResponse<StudentProfile>>(API_ENDPOINTS.students.byId(id), data);
+): Promise<ApiResponse<StudentProfile & { requiresEmailVerification?: boolean; email?: string; maskedEmail?: string; verificationId?: string }>> => {
+  const response = await apiClient.put<ApiResponse<any>>(API_ENDPOINTS.students.byId(id), data);
   return response.data;
 };
 
@@ -46,11 +46,42 @@ export const getStudentProfile = async (): Promise<ApiResponse<StudentProfile>> 
   return response.data;
 };
 
+export const updateMyProfile = async (
+  data: Partial<StudentPayload>
+): Promise<ApiResponse<StudentProfile & { requiresEmailVerification?: boolean; email?: string; maskedEmail?: string; verificationId?: string }>> => {
+  const response = await apiClient.put<ApiResponse<any>>(
+    API_ENDPOINTS.students.profile,
+    data
+  );
+  return response.data;
+};
+
+export const updateStudentStatus = async (
+  id: string,
+  status: string
+): Promise<ApiResponse<any>> => {
+  const response = await apiClient.patch<ApiResponse<any>>(API_ENDPOINTS.students.status(id), { status });
+  return response.data;
+};
+
+export const deleteStudent = async (
+  id: string,
+  permanent = false
+): Promise<ApiResponse<any>> => {
+  const response = await apiClient.delete<ApiResponse<any>>(API_ENDPOINTS.students.byId(id), {
+    params: { permanent: permanent ? 'true' : 'false' },
+  });
+  return response.data;
+};
+
 export default {
   getStudents,
   getStudentById,
   getStudentProfile,
+  updateMyProfile,
   registerStudent,
   registerStudentFull,
   updateStudent,
+  updateStudentStatus,
+  deleteStudent,
 };

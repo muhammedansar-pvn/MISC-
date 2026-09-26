@@ -27,8 +27,35 @@ router.post("/users", requireAuth, requireRole("ADMIN"), validateUserInvitation,
 router.post("/users/verify-otp", requireAuth, requireRole("ADMIN"), verifyAdminUserOtp);
 router.post("/users/resend-otp", requireAuth, requireRole("ADMIN"), resendAdminUserOtp);
 router.patch("/users/:id", requireAuth, requireRole("ADMIN"), validateUpdateUser, updateUser);
+router.put("/users/:id", requireAuth, requireRole("ADMIN"), validateUpdateUser, updateUser);
 router.patch("/users/:id/status", requireAuth, requireRole("ADMIN"), validateUpdateUserStatus, updateUserStatus);
+router.put("/users/:id/status", requireAuth, requireRole("ADMIN"), validateUpdateUserStatus, updateUserStatus);
 router.delete("/users/:id", requireAuth, requireRole("ADMIN"), deleteUser);
+
+// --- INSTITUTE SETTINGS (SINGLE-INSTITUTE ARCHITECTURE) ---
+const {
+  handleGetInstituteSettings,
+  handleUpdateInstituteSettings,
+} = require("../institutions/institute-settings.controller");
+const {
+  validateUpdateInstituteSettings,
+} = require("../institutions/institute-settings.validator");
+
+router.get("/institute-settings", requireAuth, requireRole("ADMIN", "PRINCIPAL"), handleGetInstituteSettings);
+router.put(
+  "/institute-settings",
+  requireAuth,
+  requireRole("ADMIN"),
+  validateUpdateInstituteSettings,
+  handleUpdateInstituteSettings
+);
+router.patch(
+  "/institute-settings",
+  requireAuth,
+  requireRole("ADMIN"),
+  validateUpdateInstituteSettings,
+  handleUpdateInstituteSettings
+);
 
 const { handleRegisterStudentWithAccount } = require("../students/student.controller");
 const { validateRegisterStudent, validateStudent } = require("../students/student.validator");
@@ -37,7 +64,7 @@ const { validateRegisterStudent, validateStudent } = require("../students/studen
 router.post(
   "/students/register",
   requireAuth,
-  requireRole("ADMIN", "INSTITUTION"),
+  requireRole("ADMIN", "PRINCIPAL", "INSTITUTION"),
   validateRegisterStudent,
   handleRegisterStudentWithAccount
 );

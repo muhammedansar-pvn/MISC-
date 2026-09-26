@@ -13,6 +13,12 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
+    pendingEmail: {
+      type: String,
+      lowercase: true,
+      trim: true,
+    },
+
     username: {
       type: String,
       lowercase: true,
@@ -27,7 +33,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ["ADMIN", "STUDENT", "FACULTY", "INSTITUTION"],
+      enum: ["ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "STUDENT", "PARENT", "INSTITUTION"],
     },
 
     status: {

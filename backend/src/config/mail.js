@@ -13,6 +13,9 @@ const getSmtpTransporter = async () => {
     port: env.SMTP_PORT,
     secure: env.SMTP_SECURE,
     auth: env.SMTP_USER && env.SMTP_PASS ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined,
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
   });
 
   return smtpTransporter;

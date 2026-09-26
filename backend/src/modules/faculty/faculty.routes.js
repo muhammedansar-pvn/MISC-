@@ -4,6 +4,7 @@ const {
   handleGetFacultyMembers,
   handleGetFacultyById,
   handleUpdateFaculty,
+  handleDeleteFaculty,
 } = require("./faculty.controller");
 const { validateCreateFaculty, validateUpdateFaculty } = require("./faculty.validator");
 const { requireAuth } = require("../../middleware/auth.middleware");
@@ -14,7 +15,7 @@ const router = express.Router();
 router.post(
   "/",
   requireAuth,
-  requireRole("ADMIN", "INSTITUTION"),
+  requireRole("ADMIN", "PRINCIPAL", "INSTITUTION"),
   validateCreateFaculty,
   handleCreateFaculty
 );
@@ -22,23 +23,30 @@ router.post(
 router.get(
   "/",
   requireAuth,
-  requireRole("ADMIN", "INSTITUTION"),
+  requireRole("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "INSTITUTION"),
   handleGetFacultyMembers
 );
 
 router.get(
   "/:id",
   requireAuth,
-  requireRole("ADMIN", "INSTITUTION", "FACULTY"),
+  requireRole("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "INSTITUTION"),
   handleGetFacultyById
 );
 
 router.put(
   "/:id",
   requireAuth,
-  requireRole("ADMIN", "INSTITUTION"),
+  requireRole("ADMIN", "PRINCIPAL", "INSTITUTION"),
   validateUpdateFaculty,
   handleUpdateFaculty
+);
+
+router.delete(
+  "/:id",
+  requireAuth,
+  requireRole("ADMIN", "PRINCIPAL"),
+  handleDeleteFaculty
 );
 
 module.exports = router;

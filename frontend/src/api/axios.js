@@ -64,6 +64,7 @@ export const API_ENDPOINTS = {
     resetPassword: '/auth/reset-password',
     accountSetup: '/auth/account-setup',
     accountSetupToken: (token) => `/auth/account-setup/${token}`,
+    resendSetupLink: '/auth/resend-setup-link',
     sendOtp: '/auth/send-otp',
   },
 
@@ -97,6 +98,7 @@ export const API_ENDPOINTS = {
   students: {
     list: '/students',
     byId: (id) => `/students/${id}`,
+    status: (id) => `/students/${id}/status`,
     profile: '/students/profile',
   },
 
@@ -139,6 +141,12 @@ export const API_ENDPOINTS = {
     verifyMarkEntries: (scheduleId) => `/exams/mark-entries/verify/${scheduleId}`,
     generateResults: '/exams/exam-results/generate',
     results: '/exams/exam-results',
+  },
+
+  attendance: {
+    studentSummary: '/attendance/student/summary',
+    studentMonthly: '/attendance/student/monthly',
+    studentHistory: '/attendance/student/history',
   },
 };
 

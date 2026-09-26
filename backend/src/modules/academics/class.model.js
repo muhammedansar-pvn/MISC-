@@ -18,7 +18,7 @@ const classSchema = new mongoose.Schema(
     institutionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "InstitutionProfile",
-      required: true,
+      required: false,
     },
 
     academicYearId: {
@@ -40,10 +40,9 @@ const classSchema = new mongoose.Schema(
   }
 );
 
-// Compound Unique Index
+// Single-Institute Unique Index (Class code unique per academic year)
 classSchema.index(
   {
-    institutionId: 1,
     code: 1,
     academicYearId: 1,
   },

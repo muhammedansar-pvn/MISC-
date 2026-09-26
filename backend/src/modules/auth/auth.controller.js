@@ -4,13 +4,14 @@ const AccountSetupToken = require("./account-setup-token.model");
 const PasswordResetToken = require("./password-reset-token.model");
 const { comparePassword, hashPassword } = require("../../shared/utils/password");
 const { generateToken } = require("../../shared/utils/jwt");
-const { sendPasswordResetEmail } = require("../../shared/services/email.service");
+const { sendPasswordResetEmail, sendPasswordSetupEmail } = require("../../shared/services/email.service");
 const {
   sendAndStoreOtp,
   verifyOtpCode,
   verify2FAOtp,
   resend2FAOtp,
   maskEmail,
+  generateAccountSetupToken,
 } = require("./auth.service");
 
 // 1. Register User
@@ -75,22 +76,78 @@ const register = async (req, res) => {
 const verifyEmailOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: "Email address and OTP code are required" });
+    }
     const normalizedEmail = email.toLowerCase().trim();
 
-    await verifyOtpCode(normalizedEmail, otp, "EMAIL_VERIFICATION");
-
-    const user = await User.findOne({ email: normalizedEmail, isDeleted: { $ne: true } });
+    const user = await User.findOne({
+      $or: [{ email: normalizedEmail }, { pendingEmail: normalizedEmail }],
+      isDeleted: { $ne: true },
+    }).select("+passwordHash");
     if (!user) {
       return res.status(404).json({ success: false, message: "User account not found" });
     }
 
+    if (user.email === normalizedEmail && user.emailVerified === true && !user.pendingEmail) {
+      const needsPasswordSetup = user.status === "PENDING_SETUP" || !user.passwordHash;
+      return res.status(200).json({
+        success: true,
+        alreadyVerified: true,
+        requiresPasswordSetup: needsPasswordSetup,
+        message: needsPasswordSetup
+          ? "Email is already verified. Please check your email for the password setup link."
+          : "Email is already verified. You can now login.",
+      });
+    }
+
+    await verifyOtpCode(normalizedEmail, otp, "EMAIL_VERIFICATION");
+
+    const isPendingEmailChange = user.pendingEmail === normalizedEmail;
+
+    if (isPendingEmailChange) {
+      user.email = normalizedEmail;
+      user.pendingEmail = undefined;
+      user.emailVerified = true;
+      await user.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "New email address verified and updated successfully.",
+        email: normalizedEmail,
+      });
+    }
+
     user.emailVerified = true;
+
+    // Check if account onboarding requires password setup
+    const needsPasswordSetup = user.status === "PENDING_SETUP" || !user.passwordHash;
+
+    if (needsPasswordSetup) {
+      user.status = "PENDING_SETUP";
+      await user.save();
+
+      // Generate secure single-use 24h AccountSetupToken and dispatch email
+      const { rawToken } = await generateAccountSetupToken(user._id);
+      await sendPasswordSetupEmail(user.email, user.name, rawToken);
+
+      return res.status(200).json({
+        success: true,
+        requiresPasswordSetup: true,
+        message: "Email verified successfully! A secure password setup link has been sent to your email address.",
+        email: normalizedEmail,
+      });
+    }
+
+    // Direct registration with pre-existing password hash
     user.status = "ACTIVE";
     await user.save();
 
     return res.status(200).json({
       success: true,
+      requiresPasswordSetup: false,
       message: "Email verified successfully. You can now login.",
+      email: normalizedEmail,
     });
   } catch (error) {
     console.error("Verify Email OTP Error:", error);
@@ -102,17 +159,24 @@ const verifyEmailOtp = async (req, res) => {
 const resendEmailOtp = async (req, res) => {
   try {
     const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email address is required" });
+    }
     const normalizedEmail = email.toLowerCase().trim();
 
-    const user = await User.findOne({ email: normalizedEmail, isDeleted: { $ne: true } });
-    if (!user || user.emailVerified === true) {
+    const user = await User.findOne({
+      $or: [{ email: normalizedEmail }, { pendingEmail: normalizedEmail }],
+      isDeleted: { $ne: true },
+    });
+    if (!user || (user.email === normalizedEmail && user.emailVerified === true && !user.pendingEmail)) {
       return res.status(200).json({
         success: true,
+        alreadyVerified: user?.emailVerified === true && !user?.pendingEmail,
         message: "If an unverified account exists, a new verification OTP has been sent.",
       });
     }
 
-    await sendAndStoreOtp(normalizedEmail, "EMAIL_VERIFICATION");
+    await sendAndStoreOtp(normalizedEmail, "EMAIL_VERIFICATION", { userId: user._id });
 
     return res.status(200).json({
       success: true,
@@ -120,7 +184,8 @@ const resendEmailOtp = async (req, res) => {
     });
   } catch (error) {
     console.error("Resend Email OTP Error:", error);
-    return res.status(500).json({ success: false, message: error.message || "Failed to resend OTP" });
+    const statusCode = error.message && error.message.includes("wait 30 seconds") ? 429 : 400;
+    return res.status(statusCode).json({ success: false, message: error.message || "Failed to resend OTP" });
   }
 };
 
@@ -459,6 +524,72 @@ const sendOtp = async (req, res) => {
   }
 };
 
+// 12. Resend Account Setup Link
+const resendAccountSetupLink = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email address is required" });
+    }
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+      isDeleted: { $ne: true },
+    }).select("+passwordHash");
+
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        message: "If an account pending setup exists with this email, a setup link has been sent.",
+      });
+    }
+
+    if (user.emailVerified === false) {
+      return res.status(400).json({
+        success: false,
+        requiresEmailVerification: true,
+        message: "Please verify your email address first before setting up your password.",
+      });
+    }
+
+    if (user.status === "ACTIVE" && user.passwordHash) {
+      return res.status(200).json({
+        success: true,
+        message: "Account is already active. You can log in directly or use forgot password if you forgot your credentials.",
+      });
+    }
+
+    // Rate-limit check: Don't allow resending more than once every 60 seconds
+    const existingToken = await AccountSetupToken.findOne({
+      userId: user._id,
+      usedAt: null,
+    }).sort({ createdAt: -1 });
+
+    if (existingToken && existingToken.createdAt) {
+      const timeSinceLast = Date.now() - new Date(existingToken.createdAt).getTime();
+      if (timeSinceLast < 60 * 1000) {
+        const remainingSeconds = Math.ceil((60 * 1000 - timeSinceLast) / 1000);
+        return res.status(429).json({
+          success: false,
+          message: `Please wait ${remainingSeconds} seconds before requesting another setup link.`,
+        });
+      }
+    }
+
+    const { rawToken } = await generateAccountSetupToken(user._id);
+    await sendPasswordSetupEmail(user.email, user.name, rawToken);
+
+    return res.status(200).json({
+      success: true,
+      message: "A new password setup link has been sent to your email address.",
+    });
+  } catch (error) {
+    console.error("Resend setup link error:", error);
+    return res.status(500).json({ success: false, message: "Failed to resend password setup link" });
+  }
+};
+
 module.exports = {
   register,
   verifyEmailOtp,
@@ -469,6 +600,7 @@ module.exports = {
   setPassword,
   accountSetup,
   verifyAccountSetupToken,
+  resendAccountSetupLink,
   forgotPassword,
   resetPassword,
   sendOtp,

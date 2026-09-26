@@ -17,7 +17,7 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
     name: '',
     email: '',
     username: '',
-    role: 'FACULTY',
+    role: 'ASATITHA',
     department: '',
     mobile: '',
     status: 'ACTIVE',
@@ -40,7 +40,7 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
       name: '',
       email: '',
       username: '',
-      role: 'FACULTY',
+      role: 'ASATITHA',
       department: '',
       mobile: '',
       status: 'ACTIVE',
@@ -472,10 +472,17 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                     onChange={handleChange}
                     className="w-full px-4 py-2.5 rounded-lg border border-[#E2E8E0] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all"
                   >
-                    <option value="FACULTY">Faculty Member</option>
-                    <option value="STUDENT">Student</option>
-                    <option value="INSTITUTION">Institution Representative</option>
+                    <option value="ASATITHA">Asatitha / Faculty Member</option>
+                    <option value="HOD">Head of Department (HOD)</option>
+                    <option value="PRINCIPAL">Principal</option>
                     <option value="ADMIN">System Administrator</option>
+                    <option value="PARENT">Parent</option>
+                    {isEditMode && formData.role === 'STUDENT' && (
+                      <option value="STUDENT" disabled>Student (Managed via Student Directory)</option>
+                    )}
+                    {isEditMode && formData.role === 'INSTITUTION' && (
+                      <option value="INSTITUTION" disabled>Legacy Institution User</option>
+                    )}
                   </select>
                 </div>
 

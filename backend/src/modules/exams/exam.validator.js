@@ -24,7 +24,7 @@ const examScheduleSchema = Joi.object({
 const examRegistrationSchema = Joi.object({
   examId: Joi.string().hex().length(24).required(),
   studentId: Joi.string().hex().length(24).required(),
-  institutionId: Joi.string().hex().length(24).required(),
+  institutionId: Joi.string().hex().length(24).allow(null, "").optional(),
   rollNumber: Joi.string().trim().required(),
   registrationStatus: Joi.string().valid("REGISTERED", "HALL_TICKET_ISSUED", "CANCELLED").default("REGISTERED"),
   paymentId: Joi.string().hex().length(24).allow(null, ""),
@@ -45,7 +45,7 @@ const examResultSchema = Joi.object({
   examId: Joi.string().hex().length(24).required(),
   studentId: Joi.string().hex().length(24).required(),
   classId: Joi.string().hex().length(24).required(),
-  institutionId: Joi.string().hex().length(24).required(),
+  institutionId: Joi.string().hex().length(24).allow(null, "").optional(),
   totalMaxMarks: Joi.number().greater(0).required(),
   totalMarksObtained: Joi.number().min(0).required(),
   percentage: Joi.number().min(0).max(100).required(),

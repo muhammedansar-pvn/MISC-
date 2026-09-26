@@ -114,7 +114,7 @@ export default function StudentTranscriptPage() {
         {/* Document Header */}
         <div className="text-center border-b-2 border-[#132238] pb-6 space-y-2">
           <div className="font-bold uppercase tracking-widest text-xs text-[#2F7C7A]">
-            Markaz Integrated Studies Council (MISC)
+            Markaz Sanaviyya
           </div>
           <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#132238] tracking-tight">
             CONSOLIDATED STATEMENT OF ACADEMIC RECORD
@@ -146,8 +146,7 @@ export default function StudentTranscriptPage() {
           <div>
             <span className="text-slate-400 font-medium">Program / Class:</span>
             <p className="font-bold text-slate-800 mt-0.5">
-              {enrolledClass?.className || 'General Curriculum'}{' '}
-              {enrolledClass?.section ? `(${enrolledClass.section})` : ''}
+              {enrolledClass?.name || enrolledClass?.code || enrolledClass?.className || 'Sanaviyya Standard'}
             </p>
           </div>
           <div>
@@ -157,9 +156,9 @@ export default function StudentTranscriptPage() {
             </p>
           </div>
           <div className="sm:col-span-2 border-t border-slate-200 pt-3 mt-1">
-            <span className="text-slate-400 font-medium">Affiliated Center / Institution:</span>
+            <span className="text-slate-400 font-medium">Institution:</span>
             <p className="font-bold text-slate-800 mt-0.5">
-              {institution?.name || 'MISC Direct Academic Center'} ({institution?.code || 'MISC-HQ'})
+              Markaz Sanaviyya (SANAVIYYA)
             </p>
           </div>
         </div>

@@ -9,3 +9,4 @@ export * from './cms';
 export * from './event';
 export * from './exam';
 export * from './payment';
+export * from './attendance';

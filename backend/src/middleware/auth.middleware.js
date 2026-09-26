@@ -26,22 +26,27 @@ const requireAuth = async (req, res, next) => {
     const { InstitutionProfile, StudentProfile, FacultyProfile } = getModels();
 
     // Attach profile references if available for fine-grained authorization
-    if (decoded.role === "INSTITUTION") {
-      const instProfile = await InstitutionProfile.findOne({ userId: decoded.userId }).lean();
-      if (instProfile) {
-        req.user.institutionId = instProfile._id;
-      }
-    } else if (decoded.role === "STUDENT") {
+    if (decoded.role === "STUDENT") {
       const studentProfile = await StudentProfile.findOne({ userId: decoded.userId }).lean();
       if (studentProfile) {
         req.user.studentId = studentProfile._id;
-        req.user.institutionId = studentProfile.institutionId;
+        if (studentProfile.institutionId) {
+          req.user.institutionId = studentProfile.institutionId;
+        }
       }
-    } else if (decoded.role === "FACULTY") {
+    } else if (decoded.role === "FACULTY" || decoded.role === "ASATITHA") {
       const facultyProfile = await FacultyProfile.findOne({ userId: decoded.userId }).lean();
       if (facultyProfile) {
         req.user.facultyId = facultyProfile._id;
-        req.user.institutionId = facultyProfile.institutionId;
+        if (facultyProfile.institutionId) {
+          req.user.institutionId = facultyProfile.institutionId;
+        }
+      }
+    } else if (decoded.role === "INSTITUTION") {
+      // Legacy backward-compatibility for existing sessions
+      const instProfile = await InstitutionProfile.findOne({ userId: decoded.userId }).lean();
+      if (instProfile) {
+        req.user.institutionId = instProfile._id;
       }
     }
 
@@ -54,22 +59,13 @@ const requireAuth = async (req, res, next) => {
   }
 };
 
-const enforceInstitutionScope = (paramOrBodyKey = "institutionId") => {
+/**
+ * Legacy institution scope middleware:
+ * Single-institute Markaz Sanaviyya architecture does not enforce multi-tenant isolation.
+ * Preserved as pass-through for backwards compatibility with any remaining route declarations.
+ */
+const enforceInstitutionScope = () => {
   return (req, res, next) => {
-    if (req.user.role === "ADMIN") {
-      return next(); // ADMIN bypasses institution scope
-    }
-
-    if (req.user.role === "INSTITUTION") {
-      const targetInstId = req.params[paramOrBodyKey] || req.body[paramOrBodyKey] || req.query[paramOrBodyKey];
-      if (targetInstId && targetInstId.toString() !== req.user.institutionId?.toString()) {
-        return res.status(403).json({
-          success: false,
-          message: "Forbidden: You do not have permission to access another institution's resources",
-        });
-      }
-    }
-
     next();
   };
 };

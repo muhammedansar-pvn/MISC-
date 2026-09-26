@@ -261,9 +261,12 @@ export default function AdminUsersPage() {
             >
               <option value="">All Roles</option>
               <option value="ADMIN">ADMINISTRATOR</option>
-              <option value="INSTITUTION">INSTITUTION ADMIN</option>
-              <option value="FACULTY">FACULTY MEMBER</option>
+              <option value="PRINCIPAL">PRINCIPAL</option>
+              <option value="HOD">HOD</option>
+              <option value="ASATITHA">ASATITHA / FACULTY</option>
+              <option value="PARENT">PARENT</option>
               <option value="STUDENT">STUDENT</option>
+              <option value="INSTITUTION">LEGACY INSTITUTION</option>
             </select>
 
             <select
@@ -407,6 +410,15 @@ export default function AdminUsersPage() {
                       {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}
                     </td>
                     <td className="px-6 py-4 text-right space-x-1">
+                      {u.role === 'STUDENT' && (
+                        <button
+                          onClick={() => router.push(`/admin/students?search=${encodeURIComponent(u.email)}`)}
+                          className="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-[#2F7C7A] border border-teal-200 rounded-lg text-xs font-bold transition-all cursor-pointer"
+                          title="Manage Academic Student Profile"
+                        >
+                          <GraduationCap className="w-3.5 h-3.5 inline mr-1 text-[#2F7C7A]" /> Student Profile
+                        </button>
+                      )}
                       <button
                         onClick={() => setSelectedUser(u)}
                         className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-all cursor-pointer"

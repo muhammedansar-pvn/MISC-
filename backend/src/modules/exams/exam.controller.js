@@ -76,9 +76,6 @@ const handleUpdateExamSchedule = async (req, res) => {
 const handleRegisterStudentForExam = async (req, res) => {
   try {
     const regData = { ...req.body };
-    if (req.user.role === "INSTITUTION") {
-      regData.institutionId = req.user.institutionId;
-    }
     const registration = await examService.registerStudentForExam(regData);
     return res.status(201).json({ success: true, message: "Registered student for exam successfully", data: registration });
   } catch (error) {
@@ -89,9 +86,7 @@ const handleRegisterStudentForExam = async (req, res) => {
 const handleGetExamRegistrations = async (req, res) => {
   try {
     const filter = {};
-    if (req.user.role === "INSTITUTION") {
-      filter.institutionId = req.user.institutionId;
-    } else if (req.user.role === "STUDENT") {
+    if (req.user.role === "STUDENT") {
       filter.studentId = req.user.studentId;
     }
     if (req.query.examId) filter.examId = req.query.examId;
@@ -173,8 +168,6 @@ const handleGetExamResults = async (req, res) => {
     const filter = {};
     if (req.user.role === "STUDENT") {
       filter.studentId = req.user.studentId;
-    } else if (req.user.role === "INSTITUTION") {
-      filter.institutionId = req.user.institutionId;
     }
 
     if (req.query.examId) filter.examId = req.query.examId;

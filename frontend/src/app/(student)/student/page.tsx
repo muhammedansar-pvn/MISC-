@@ -104,7 +104,7 @@ export default function StudentDashboardPage() {
           <div className="space-y-2">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-xs font-semibold text-emerald-300 border border-white/10">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Markaz Integrated Studies Council</span>
+              <span>Markaz Sanaviyya</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold font-serif tracking-tight">
               Welcome, {profile?.nameEnglish || user?.name || user?.username || 'Student'}!
@@ -121,20 +121,18 @@ export default function StudentDashboardPage() {
                   <span className="text-white font-bold">{profile.registrationNumber}</span>
                 </span>
               )}
-              {enrolledClass?.className && (
+              {(enrolledClass?.name || enrolledClass?.code || enrolledClass?.className) && (
                 <span className="flex items-center space-x-1">
                   <span className="text-slate-400">Class:</span>
                   <span className="text-white font-medium">
-                    {enrolledClass.className} {enrolledClass.section ? `(${enrolledClass.section})` : ''}
+                    {enrolledClass.name || enrolledClass.className} {enrolledClass.code ? `(${enrolledClass.code})` : ''}
                   </span>
                 </span>
               )}
-              {institution?.name && (
-                <span className="flex items-center space-x-1 truncate max-w-xs">
-                  <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span className="truncate">{institution.name}</span>
-                </span>
-              )}
+              <span className="flex items-center space-x-1 truncate max-w-xs">
+                <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                <span className="truncate">Markaz Sanaviyya</span>
+              </span>
             </div>
           </div>
 
@@ -165,7 +163,7 @@ export default function StudentDashboardPage() {
           <div className="text-sm">
             <p className="font-bold">Student Profile Association Pending</p>
             <p className="text-amber-800 text-xs mt-0.5">
-              Your user account is verified as a STUDENT. However, your detailed student profile is awaiting assignment by your institution or council administrator.
+              Your user account is verified as a STUDENT. However, your detailed student profile is awaiting assignment by Markaz Sanaviyya administration.
             </p>
           </div>
         </div>
@@ -203,13 +201,13 @@ export default function StudentDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Class / Section</span>
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Class</span>
             <div className="w-8 h-8 rounded-lg bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center">
               <GraduationCap className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-lg font-bold text-[#132238]">
-            {enrolledClass?.className || 'General'} {enrolledClass?.section ? `- ${enrolledClass.section}` : ''}
+          <div className="text-lg font-bold text-[#132238] truncate">
+            {enrolledClass?.name || enrolledClass?.code || enrolledClass?.className || 'Sanaviyya'}
           </div>
           <p className="text-xs text-slate-400">
             Admission Year: {profile?.admissionYear || 'Current'}

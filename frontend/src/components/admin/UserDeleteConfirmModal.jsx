@@ -108,6 +108,18 @@ export const UserDeleteConfirmModal = ({ isOpen, onClose, onSuccess, user }) => 
                 </div>
               </div>
 
+              {user.role === 'STUDENT' && (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-1">
+                  <p className="font-bold flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    Student Lifecycle Notice:
+                  </p>
+                  <p className="text-[11px] leading-relaxed">
+                    This account is linked to a StudentProfile. Deactivating or deleting this user will synchronize their academic profile status while safely preserving historical exam results and payment records.
+                  </p>
+                </div>
+              )}
+
               <p className="text-xs font-semibold text-slate-700">
                 Are you sure you want to delete this user?
               </p>

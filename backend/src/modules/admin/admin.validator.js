@@ -4,7 +4,7 @@ const { validateSchema } = require("../../middleware/validation.middleware");
 const userInvitationSchema = Joi.object({
   name: Joi.string().trim().required(),
   email: Joi.string().email().lowercase().trim().required(),
-  role: Joi.string().valid("ADMIN", "STUDENT", "FACULTY", "INSTITUTION").required(),
+  role: Joi.string().valid("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "PARENT").required(),
   username: Joi.string().alphanum().min(3).max(30).trim().allow("", null),
   department: Joi.string().trim().allow("", null),
   mobile: Joi.string().trim().allow("", null),
@@ -13,7 +13,7 @@ const userInvitationSchema = Joi.object({
 
 const updateUserSchema = Joi.object({
   name: Joi.string().trim(),
-  role: Joi.string().valid("ADMIN", "STUDENT", "FACULTY", "INSTITUTION"),
+  role: Joi.string().valid("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "STUDENT", "PARENT", "INSTITUTION"),
   department: Joi.string().trim().allow("", null),
   mobile: Joi.string().trim().allow("", null),
   status: Joi.string().valid("PENDING_SETUP", "ACTIVE", "INVITED", "SUSPENDED", "INACTIVE"),

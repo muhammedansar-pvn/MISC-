@@ -72,6 +72,36 @@ const facultyProfileSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+
+    department: {
+      type: String,
+      trim: true,
+    },
+
+    assignedClasses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Class",
+      }
+    ],
+
+    assignedSubjects: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Subject",
+      }
+    ],
+
+    status: {
+      type: String,
+      enum: ["ACTIVE", "INACTIVE"],
+      default: "ACTIVE",
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

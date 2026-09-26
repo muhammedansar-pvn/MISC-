@@ -52,8 +52,8 @@ const handleCreateClass = async (req, res) => {
 const handleGetClasses = async (req, res) => {
   try {
     const filter = {};
-    if (req.user.role === "INSTITUTION") {
-      filter.institutionId = req.user.institutionId;
+    if (req.query.academicYearId) {
+      filter.academicYearId = req.query.academicYearId;
     }
     const records = await academicService.getClasses(filter);
     return res.status(200).json({ success: true, data: records });
@@ -137,9 +137,12 @@ const handleGetSyllabuses = async (req, res) => {
     if (req.query.classId) filter.classId = req.query.classId;
     if (req.query.subjectId) filter.subjectId = req.query.subjectId;
     if (req.query.academicYearId) filter.academicYearId = req.query.academicYearId;
+    if (req.query.status) filter.status = req.query.status.toUpperCase();
 
-    const records = await academicService.getSyllabuses(filter);
-    return res.status(200).json({ success: true, data: records });
+    const search = req.query.search || "";
+
+    const records = await academicService.getSyllabuses(filter, search);
+    return res.status(200).json({ success: true, count: records.length, data: records });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve syllabuses" });
   }
@@ -165,6 +168,21 @@ const handleUpdateSyllabus = async (req, res) => {
   }
 };
 
+const handleDeleteSyllabus = async (req, res) => {
+  try {
+    const hardDelete = req.query.permanent === "true";
+    const result = await academicService.deleteSyllabus(req.params.id, hardDelete);
+    if (!result) return res.status(404).json({ success: false, message: "Syllabus not found" });
+    return res.status(200).json({
+      success: true,
+      message: hardDelete ? "Syllabus permanently deleted" : "Syllabus deactivated successfully",
+      data: result,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to delete syllabus" });
+  }
+};
+
 module.exports = {
   handleCreateAcademicYear,
   handleGetAcademicYears,
@@ -182,4 +200,5 @@ module.exports = {
   handleGetSyllabuses,
   handleGetSyllabusById,
   handleUpdateSyllabus,
+  handleDeleteSyllabus,
 };

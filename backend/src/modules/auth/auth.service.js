@@ -208,6 +208,9 @@ const generateAccountSetupToken = async (userId, purpose = "ACCOUNT_SETUP") => {
   const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
+  // Invalidate previous unused setup tokens for this user
+  await AccountSetupToken.deleteMany({ userId });
+
   await AccountSetupToken.create({
     userId,
     tokenHash,

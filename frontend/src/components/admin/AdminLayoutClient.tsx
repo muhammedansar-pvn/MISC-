@@ -62,12 +62,18 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
       ],
     },
     {
+      title: 'INSTITUTE CONFIG',
+      items: [
+        { label: 'Institute Settings', path: '/admin/institute-settings', icon: Building2 },
+      ],
+    },
+    {
       title: 'USER MANAGEMENT',
       items: [
         { label: 'Users', path: '/admin/users', icon: Users },
-        { label: 'Institutions', path: '/admin/institutions', icon: Building2 },
         { label: 'Students', path: '/admin/students', icon: GraduationCap },
         { label: 'Faculty', path: '/admin/faculty', icon: UserCheck },
+        { label: 'Campuses', path: '/admin/institutions', icon: Building2 },
       ],
     },
     {

@@ -18,6 +18,9 @@ const createStudentSchema = Joi.object({
 });
 
 const updateStudentSchema = Joi.object({
+  email: Joi.string().email().lowercase().trim().allow("", null).optional(),
+  name: Joi.string().trim().min(2).max(100).allow("", null).optional(),
+  mobile: Joi.string().trim().allow("", null).optional(),
   nameEnglish: Joi.string().trim().min(2).max(100),
   nameArabic: Joi.string().trim().max(100).allow(""),
   placeEnglish: Joi.string().trim().max(100).allow(""),

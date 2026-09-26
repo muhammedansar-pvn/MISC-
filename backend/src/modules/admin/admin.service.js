@@ -5,6 +5,7 @@ const AccountSetupToken = require("../auth/account-setup-token.model");
 const OtpVerification = require("../auth/otp-verification.model");
 const { sendUserInvitationEmail } = require("../../shared/services/email.service");
 const { sendAndStoreOtp, verifyOtpCode } = require("../auth/auth.service");
+const studentLifecycleService = require("../students/student-lifecycle.service");
 
 // Models for stats aggregations
 const getExternalModels = () => ({
@@ -28,8 +29,14 @@ const createUserInvitation = async ({ name, email, username, role, department, m
     throw error;
   }
 
-  const allowedRoles = ["ADMIN", "STUDENT", "FACULTY", "INSTITUTION"];
-  const targetRole = role ? role.toUpperCase() : "STUDENT";
+  const allowedRoles = ["ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "PARENT"];
+  const targetRole = role ? role.toUpperCase() : "FACULTY";
+
+  if (targetRole === "STUDENT") {
+    const error = new Error("Students cannot be created through generic user creation. Please use the Student Registration workflow (Admin -> Students -> Register Student).");
+    error.statusCode = 400;
+    throw error;
+  }
 
   if (!allowedRoles.includes(targetRole)) {
     const error = new Error(`Invalid role. Allowed roles are: ${allowedRoles.join(", ")}`);
@@ -364,7 +371,7 @@ const updateUser = async (id, updateData, currentAdminId) => {
   if (department !== undefined) user.department = department ? department.trim() : undefined;
 
   if (role) {
-    const allowedRoles = ["ADMIN", "STUDENT", "FACULTY", "INSTITUTION"];
+    const allowedRoles = ["ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "STUDENT", "PARENT", "INSTITUTION"];
     const targetRole = role.toUpperCase();
     if (!allowedRoles.includes(targetRole)) {
       const error = new Error(`Invalid role. Allowed roles are: ${allowedRoles.join(", ")}`);
@@ -432,6 +439,13 @@ const updateUserStatus = async (id, status, currentAdminId) => {
     throw error;
   }
 
+  if (user.role === "STUDENT") {
+    await studentLifecycleService.updateStudentStatus(user._id, targetStatus);
+    const updatedUser = await User.findById(id).lean();
+    delete updatedUser.passwordHash;
+    return { updatedUser, targetStatus };
+  }
+
   user.status = targetStatus;
   await user.save();
 
@@ -464,6 +478,14 @@ const deleteUser = async (id, currentAdminId) => {
     const error = new Error("System administrator account cannot be deleted");
     error.statusCode = 400;
     throw error;
+  }
+
+  if (user.role === "STUDENT") {
+    await studentLifecycleService.deleteStudentLifecycle(user._id, {
+      hardDelete: false,
+      adminId: currentAdminId,
+    });
+    return true;
   }
 
   user.isDeleted = true;

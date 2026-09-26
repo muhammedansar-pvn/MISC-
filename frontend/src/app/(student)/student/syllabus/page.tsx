@@ -119,7 +119,7 @@ function SyllabusContent() {
         </div>
 
         <div className="text-xs text-slate-500 bg-white px-3.5 py-2 rounded-lg border border-[#E2E8E0] self-start sm:self-auto">
-          Enrolled: <span className="font-semibold text-slate-800">{(profile?.classId as any)?.className || 'General Curriculum'}</span>
+          Enrolled: <span className="font-semibold text-slate-800">{(profile?.classId as any)?.name || (profile?.classId as any)?.code || (profile?.classId as any)?.className || 'Markaz Sanaviyya'}</span>
         </div>
       </div>
 
@@ -144,9 +144,9 @@ function SyllabusContent() {
             className="w-full md:w-56 py-2 px-3 text-xs border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#2F7C7A] bg-white text-slate-700 font-medium"
           >
             <option value="">All Subjects</option>
-            {subjects.map((sub) => (
+            {subjects.map((sub: any) => (
               <option key={sub._id} value={sub._id}>
-                {sub.name} ({sub.code})
+                {sub.subjectName || sub.name} ({sub.subjectCode || sub.code})
               </option>
             ))}
           </select>
@@ -164,9 +164,10 @@ function SyllabusContent() {
             </p>
           </div>
         ) : (
-          filteredSyllabuses.map((syl) => {
+          filteredSyllabuses.map((syl: any) => {
             const isExpanded = expandedId === syl._id;
             const subject = (syl.subjectId as any);
+            const classObj = (syl.classId as any);
 
             return (
               <div
@@ -181,8 +182,13 @@ function SyllabusContent() {
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded bg-slate-100 text-slate-800">
-                        {subject?.code || 'SUBJECT'}
+                        {subject?.subjectCode || subject?.code || 'SUBJECT'}
                       </span>
+                      {classObj && (
+                        <span className="text-xs font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
+                          {classObj.name || classObj.code}
+                        </span>
+                      )}
                       <h3 className="font-bold text-base text-[#132238]">
                         {syl.title}
                       </h3>
@@ -193,7 +199,7 @@ function SyllabusContent() {
                       )}
                     </div>
                     <p className="text-xs text-slate-500">
-                      Subject: {subject?.name || 'General Curriculum'}
+                      Subject: {subject?.subjectName || subject?.name || 'General Curriculum'}
                     </p>
                   </div>
 

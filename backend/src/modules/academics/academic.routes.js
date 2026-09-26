@@ -16,12 +16,14 @@ const {
   handleGetSyllabuses,
   handleGetSyllabusById,
   handleUpdateSyllabus,
+  handleDeleteSyllabus,
 } = require("./academic.controller");
 const {
   validateAcademicYear,
   validateClass,
   validateSubject,
   validateSyllabus,
+  validateUpdateSyllabus,
 } = require("./academic.validator");
 const { requireAuth } = require("../../middleware/auth.middleware");
 const { requireRole } = require("../../middleware/role.middleware");
@@ -36,8 +38,8 @@ router.put("/academic-years/:id", requireAuth, requireRole("ADMIN"), validateAca
 
 // --- CLASSES ---
 router.post("/classes", requireAuth, requireRole("ADMIN"), validateClass, handleCreateClass);
-router.get("/classes", requireAuth, requireRole("ADMIN", "INSTITUTION", "FACULTY"), handleGetClasses);
-router.get("/classes/:id", requireAuth, requireRole("ADMIN", "INSTITUTION", "FACULTY"), handleGetClassById);
+router.get("/classes", requireAuth, requireRole("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "INSTITUTION"), handleGetClasses);
+router.get("/classes/:id", requireAuth, requireRole("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "INSTITUTION"), handleGetClassById);
 router.put("/classes/:id", requireAuth, requireRole("ADMIN"), validateClass, handleUpdateClass);
 
 // --- SUBJECTS ---
@@ -50,6 +52,8 @@ router.put("/subjects/:id", requireAuth, requireRole("ADMIN"), validateSubject, 
 router.post("/syllabuses", requireAuth, requireRole("ADMIN"), validateSyllabus, handleCreateSyllabus);
 router.get("/syllabuses", requireAuth, handleGetSyllabuses);
 router.get("/syllabuses/:id", requireAuth, handleGetSyllabusById);
-router.put("/syllabuses/:id", requireAuth, requireRole("ADMIN"), validateSyllabus, handleUpdateSyllabus);
+router.put("/syllabuses/:id", requireAuth, requireRole("ADMIN"), validateUpdateSyllabus, handleUpdateSyllabus);
+router.patch("/syllabuses/:id", requireAuth, requireRole("ADMIN"), validateUpdateSyllabus, handleUpdateSyllabus);
+router.delete("/syllabuses/:id", requireAuth, requireRole("ADMIN"), handleDeleteSyllabus);
 
 module.exports = router;

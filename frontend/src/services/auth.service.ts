@@ -76,6 +76,11 @@ export const verifyEmailOtp = async (payload: VerifyEmailOtpPayload): Promise<Ap
   return response.data;
 };
 
+export const resendAccountSetupLink = async (email: string): Promise<ApiResponse> => {
+  const response = await apiClient.post<ApiResponse>(API_ENDPOINTS.auth.resendSetupLink, { email });
+  return response.data;
+};
+
 export const resendEmailOtp = async (payload: ResendEmailOtpPayload): Promise<ApiResponse> => {
   const response = await apiClient.post<ApiResponse>(API_ENDPOINTS.auth.resendEmailOtp, payload);
   return response.data;
@@ -92,6 +97,7 @@ export default {
   verifyOtp,
   verifyAccountSetupToken,
   accountSetup,
+  resendAccountSetupLink,
   register,
   verifyEmailOtp,
   resendEmailOtp,

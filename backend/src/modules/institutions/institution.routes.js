@@ -12,7 +12,19 @@ const {
 const { requireAuth } = require("../../middleware/auth.middleware");
 const { requireRole } = require("../../middleware/role.middleware");
 
+const {
+  handleGetInstituteSettings,
+  handleUpdateInstituteSettings,
+} = require("./institute-settings.controller");
+const {
+  validateUpdateInstituteSettings,
+} = require("./institute-settings.validator");
+
 const router = express.Router();
+
+// --- SINGLE-INSTITUTE SETTINGS ---
+router.get("/settings", requireAuth, handleGetInstituteSettings);
+router.put("/settings", requireAuth, requireRole("ADMIN"), validateUpdateInstituteSettings, handleUpdateInstituteSettings);
 
 router.post(
   "/",
