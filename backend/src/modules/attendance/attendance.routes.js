@@ -4,6 +4,8 @@ const {
   handleGetStudentMonthly,
   handleGetStudentHistory,
   handleCreateCorrectionRequest,
+  handleApproveCorrectionRequest,
+  handleRejectCorrectionRequest,
   handleReviewCorrectionRequest,
 } = require("./attendance.controller");
 const {
@@ -22,11 +24,34 @@ router.get("/student/history", requireAuth, requireRole("STUDENT"), handleGetStu
 
 // --- ASATITHA CORRECTION REQUESTS ---
 router.post(
+  "/correction-requests",
+  requireAuth,
+  requireRole("ASATITHA", "FACULTY", "ADMIN"),
+  validateCreateCorrectionRequest,
+  handleCreateCorrectionRequest
+);
+
+router.post(
   "/corrections",
   requireAuth,
   requireRole("ASATITHA", "FACULTY", "ADMIN"),
   validateCreateCorrectionRequest,
   handleCreateCorrectionRequest
+);
+
+// --- ADMIN-ONLY CORRECTION REQUEST APPROVAL/REJECTION ---
+router.patch(
+  "/correction-requests/:id/approve",
+  requireAuth,
+  requireRole("ADMIN"),
+  handleApproveCorrectionRequest
+);
+
+router.patch(
+  "/correction-requests/:id/reject",
+  requireAuth,
+  requireRole("ADMIN"),
+  handleRejectCorrectionRequest
 );
 
 router.patch(

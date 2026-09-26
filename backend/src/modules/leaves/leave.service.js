@@ -91,6 +91,49 @@ const approveLeave = async (leaveId, facultyUserId, reviewRemarks) => {
 
   await leave.save();
 
+  // Leave -> Attendance linkage: For each date in dateRange, upsert AttendanceRecord with status=LEAVE across periods 1-7
+  const AttendanceRecord = require("../attendance/attendance-record.model");
+  const startDate = new Date(leave.dateRange.startDate);
+  const endDate = new Date(leave.dateRange.endDate);
+
+  const cur = new Date(Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), startDate.getUTCDate()));
+  const end = new Date(Date.UTC(endDate.getUTCFullYear(), endDate.getUTCMonth(), endDate.getUTCDate()));
+
+  const bulkOps = [];
+  while (cur <= end) {
+    const recordDate = new Date(cur);
+    for (let period = 1; period <= 7; period++) {
+      bulkOps.push({
+        updateOne: {
+          filter: {
+            studentId: leave.studentId,
+            date: recordDate,
+            period,
+          },
+          update: {
+            $set: {
+              studentId: leave.studentId,
+              classId: student.classId,
+              date: recordDate,
+              period,
+              sessionName: `Period ${period}`,
+              source: "MANUAL_CORRECTION",
+              status: "LEAVE",
+              isCorrected: true,
+              remarks: `Approved leave: ${leave.reason}`,
+            },
+          },
+          upsert: true,
+        },
+      });
+    }
+    cur.setUTCDate(cur.getUTCDate() + 1);
+  }
+
+  if (bulkOps.length > 0) {
+    await AttendanceRecord.bulkWrite(bulkOps);
+  }
+
   return Leave.findById(leave._id)
     .populate("studentId", "nameEnglish registrationNumber classId")
     .populate("appliedBy", "name email mobile")

@@ -172,10 +172,36 @@ const getStudentAttendanceHistory = async (studentId) => {
 /**
  * Create Attendance Correction Request (Raised by Faculty)
  */
-const createCorrectionRequest = async (data, requestedByUserId) => {
+const createCorrectionRequest = async (data, requestingUser) => {
+  const StudentProfile = require("../students/student.model");
+  const FacultyProfile = require("../faculty/faculty.model");
+
+  if (requestingUser && (requestingUser.role === "ASATITHA" || requestingUser.role === "FACULTY")) {
+    const student = await StudentProfile.findById(data.studentId).lean();
+    if (!student) {
+      const error = new Error("Student profile not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const faculty = await FacultyProfile.findOne({ userId: requestingUser.userId }).lean();
+    if (!faculty) {
+      const error = new Error("Faculty profile not found for authenticated account");
+      error.statusCode = 403;
+      throw error;
+    }
+
+    const assignedClassIds = (faculty.assignedClasses || []).map((id) => id.toString());
+    if (!student.classId || !assignedClassIds.includes(student.classId.toString())) {
+      const error = new Error("Unauthorized: student does not belong to your assigned classes");
+      error.statusCode = 403;
+      throw error;
+    }
+  }
+
   return AttendanceCorrectionRequest.create({
     ...data,
-    requestedBy: requestedByUserId,
+    requestedBy: requestingUser.userId,
     status: "PENDING",
   });
 };
@@ -186,11 +212,15 @@ const createCorrectionRequest = async (data, requestedByUserId) => {
 const reviewCorrectionRequest = async (requestId, status, reviewedByUserId, adminRemarks) => {
   const request = await AttendanceCorrectionRequest.findById(requestId);
   if (!request) {
-    throw new Error("Attendance correction request not found");
+    const error = new Error("Attendance correction request not found");
+    error.statusCode = 404;
+    throw error;
   }
 
   if (request.status !== "PENDING") {
-    throw new Error(`Correction request is already ${request.status}`);
+    const error = new Error(`Correction request is already ${request.status}`);
+    error.statusCode = 400;
+    throw error;
   }
 
   request.status = status;
@@ -200,9 +230,10 @@ const reviewCorrectionRequest = async (requestId, status, reviewedByUserId, admi
 
   await request.save();
 
+  let attendanceRecord = null;
   // If approved, update underlying AttendanceRecord
   if (status === "APPROVED") {
-    await AttendanceRecord.findOneAndUpdate(
+    attendanceRecord = await AttendanceRecord.findOneAndUpdate(
       {
         studentId: request.studentId,
         date: request.date,
@@ -210,6 +241,11 @@ const reviewCorrectionRequest = async (requestId, status, reviewedByUserId, admi
       },
       {
         $set: {
+          studentId: request.studentId,
+          classId: request.classId,
+          date: request.date,
+          period: request.period,
+          sessionName: `Period ${request.period}`,
           status: request.requestedStatus,
           isCorrected: true,
           correctionRequestId: request._id,
@@ -220,7 +256,7 @@ const reviewCorrectionRequest = async (requestId, status, reviewedByUserId, admi
     );
   }
 
-  return request;
+  return { request, attendanceRecord };
 };
 
 module.exports = {
