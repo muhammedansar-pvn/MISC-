@@ -76,6 +76,9 @@ const handleUpdateExamSchedule = async (req, res) => {
 const handleRegisterStudentForExam = async (req, res) => {
   try {
     const regData = { ...req.body };
+    if (req.user && req.user.role === "STUDENT") {
+      regData.studentId = req.user.studentId || req.body.studentId;
+    }
     const registration = await examService.registerStudentForExam(regData);
     return res.status(201).json({ success: true, message: "Registered student for exam successfully", data: registration });
   } catch (error) {

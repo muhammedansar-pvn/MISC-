@@ -23,9 +23,9 @@ const examScheduleSchema = Joi.object({
 
 const examRegistrationSchema = Joi.object({
   examId: Joi.string().hex().length(24).required(),
-  studentId: Joi.string().hex().length(24).required(),
+  studentId: Joi.string().hex().length(24).allow(null, "").optional(),
   institutionId: Joi.string().hex().length(24).allow(null, "").optional(),
-  rollNumber: Joi.string().trim().required(),
+  rollNumber: Joi.string().trim().allow(null, "").optional(),
   registrationStatus: Joi.string().valid("REGISTERED", "HALL_TICKET_ISSUED", "CANCELLED").default("REGISTERED"),
   paymentId: Joi.string().hex().length(24).allow(null, ""),
 });

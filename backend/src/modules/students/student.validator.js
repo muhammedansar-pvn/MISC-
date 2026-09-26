@@ -15,6 +15,19 @@ const createStudentSchema = Joi.object({
   fatherName: Joi.string().trim().min(2).max(100).required(),
   motherName: Joi.string().trim().min(2).max(100).required(),
   photo: Joi.string().trim().allow(""),
+  biometricId: Joi.string().trim().allow("", null).optional(),
+  house: Joi.string().valid("RED", "BLUE", "GREEN", "YELLOW").allow("", null).optional(),
+  mentorId: Joi.string().hex().length(24).allow(null, "").optional(),
+  disciplineScore: Joi.number().min(0).max(100).optional(),
+  skills: Joi.object({
+    quran: Joi.number().min(0).max(100),
+    arabic: Joi.number().min(0).max(100),
+    english: Joi.number().min(0).max(100),
+    urdu: Joi.number().min(0).max(100),
+    communication: Joi.number().min(0).max(100),
+    leadership: Joi.number().min(0).max(100),
+  }).optional(),
+  parentUserId: Joi.string().hex().length(24).allow(null, "").optional(),
 });
 
 const updateStudentSchema = Joi.object({
@@ -33,6 +46,19 @@ const updateStudentSchema = Joi.object({
   fatherName: Joi.string().trim().min(2).max(100),
   motherName: Joi.string().trim().min(2).max(100),
   photo: Joi.string().trim().allow(""),
+  biometricId: Joi.string().trim().allow("", null).optional(),
+  house: Joi.string().valid("RED", "BLUE", "GREEN", "YELLOW").allow("", null).optional(),
+  mentorId: Joi.string().hex().length(24).allow(null, "").optional(),
+  disciplineScore: Joi.number().min(0).max(100).optional(),
+  skills: Joi.object({
+    quran: Joi.number().min(0).max(100),
+    arabic: Joi.number().min(0).max(100),
+    english: Joi.number().min(0).max(100),
+    urdu: Joi.number().min(0).max(100),
+    communication: Joi.number().min(0).max(100),
+    leadership: Joi.number().min(0).max(100),
+  }).optional(),
+  parentUserId: Joi.string().hex().length(24).allow(null, "").optional(),
 });
 
 const registerStudentSchema = Joi.object({
@@ -52,6 +78,19 @@ const registerStudentSchema = Joi.object({
   fatherName: Joi.string().trim().min(2).max(100).required(),
   motherName: Joi.string().trim().min(2).max(100).required(),
   photo: Joi.string().trim().allow("").optional(),
+  biometricId: Joi.string().trim().allow("", null).optional(),
+  house: Joi.string().valid("RED", "BLUE", "GREEN", "YELLOW").allow("", null).optional(),
+  mentorId: Joi.string().hex().length(24).allow(null, "").optional(),
+  disciplineScore: Joi.number().min(0).max(100).optional(),
+  skills: Joi.object({
+    quran: Joi.number().min(0).max(100),
+    arabic: Joi.number().min(0).max(100),
+    english: Joi.number().min(0).max(100),
+    urdu: Joi.number().min(0).max(100),
+    communication: Joi.number().min(0).max(100),
+    leadership: Joi.number().min(0).max(100),
+  }).optional(),
+  parentUserId: Joi.string().hex().length(24).allow(null, "").optional(),
 });
 
 module.exports = {

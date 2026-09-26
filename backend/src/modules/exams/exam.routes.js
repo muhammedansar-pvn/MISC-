@@ -39,7 +39,7 @@ router.get("/exam-schedules", requireAuth, handleGetExamSchedules);
 router.put("/exam-schedules/:id", requireAuth, requireRole("ADMIN"), validateExamSchedule, handleUpdateExamSchedule);
 
 // --- EXAM REGISTRATIONS ---
-router.post("/exam-registrations", requireAuth, requireRole("ADMIN", "INSTITUTION"), validateExamRegistration, handleRegisterStudentForExam);
+router.post("/exam-registrations", requireAuth, requireRole("ADMIN", "STUDENT"), validateExamRegistration, handleRegisterStudentForExam);
 router.get("/exam-registrations", requireAuth, requireRole("ADMIN", "INSTITUTION", "STUDENT"), handleGetExamRegistrations);
 router.put("/exam-registrations/:id/status", requireAuth, requireRole("ADMIN"), handleUpdateExamRegistrationStatus);
 

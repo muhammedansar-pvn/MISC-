@@ -109,6 +109,12 @@ const createStudent = async (studentData) => {
     fatherName,
     motherName,
     photo,
+    biometricId: studentData.biometricId || undefined,
+    house: studentData.house || undefined,
+    mentorId: studentData.mentorId || undefined,
+    disciplineScore: studentData.disciplineScore !== undefined ? studentData.disciplineScore : 100,
+    skills: studentData.skills || undefined,
+    parentUserId: studentData.parentUserId || undefined,
   });
 
   return StudentProfile.findById(studentProfile._id)
@@ -382,6 +388,12 @@ const registerStudentWithAccount = async (payload, caller = null) => {
           fatherName: fatherName.trim(),
           motherName: motherName.trim(),
           photo: photo ? photo.trim() : undefined,
+          biometricId: payload.biometricId ? payload.biometricId.trim() : undefined,
+          house: payload.house || undefined,
+          mentorId: payload.mentorId || undefined,
+          disciplineScore: payload.disciplineScore !== undefined ? payload.disciplineScore : 100,
+          skills: payload.skills || undefined,
+          parentUserId: payload.parentUserId || undefined,
         },
       ],
       sessOpt

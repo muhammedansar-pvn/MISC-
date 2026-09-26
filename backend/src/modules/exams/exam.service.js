@@ -47,9 +47,13 @@ const registerStudentForExam = async (data) => {
     throw new Error("Student is already registered for this examination");
   }
 
-  const existingRoll = await ExamRegistration.exists({ rollNumber: data.rollNumber });
-  if (existingRoll) {
-    throw new Error("Roll number is already assigned");
+  if (data.rollNumber) {
+    const existingRoll = await ExamRegistration.exists({ rollNumber: data.rollNumber });
+    if (existingRoll) {
+      throw new Error("Roll number is already assigned");
+    }
+  } else {
+    data.rollNumber = `ROLL-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
   }
 
   return ExamRegistration.create(data);

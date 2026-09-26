@@ -15,7 +15,7 @@ const router = express.Router();
 router.post(
   "/",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL", "INSTITUTION"),
+  requireRole("ADMIN", "INSTITUTION"),
   validateCreateFaculty,
   handleCreateFaculty
 );
@@ -37,7 +37,7 @@ router.get(
 router.put(
   "/:id",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL", "INSTITUTION"),
+  requireRole("ADMIN", "INSTITUTION"),
   validateUpdateFaculty,
   handleUpdateFaculty
 );
@@ -45,7 +45,7 @@ router.put(
 router.delete(
   "/:id",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL"),
+  requireRole("ADMIN"),
   handleDeleteFaculty
 );
 

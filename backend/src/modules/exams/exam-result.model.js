@@ -23,7 +23,7 @@ const examResultSchema = new mongoose.Schema(
     institutionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "InstitutionProfile",
-      required: true,
+      required: false,
     },
 
     totalMaxMarks: {

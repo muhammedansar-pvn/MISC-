@@ -64,7 +64,7 @@ const { validateRegisterStudent, validateStudent } = require("../students/studen
 router.post(
   "/students/register",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL", "INSTITUTION"),
+  requireRole("ADMIN", "INSTITUTION"),
   validateRegisterStudent,
   handleRegisterStudentWithAccount
 );

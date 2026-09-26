@@ -18,7 +18,7 @@ const router = express.Router();
 router.post(
   "/",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL", "INSTITUTION"),
+  requireRole("ADMIN", "INSTITUTION"),
   validateStudent,
   registerStudent
 );
@@ -55,7 +55,7 @@ router.get(
 router.put(
   "/:id",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL", "INSTITUTION"),
+  requireRole("ADMIN", "INSTITUTION"),
   validateUpdateStudent,
   handleUpdateStudent
 );
@@ -63,14 +63,14 @@ router.put(
 router.patch(
   "/:id/status",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL"),
+  requireRole("ADMIN"),
   handleUpdateStudentStatus
 );
 
 router.delete(
   "/:id",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL"),
+  requireRole("ADMIN"),
   handleDeleteStudent
 );
 
