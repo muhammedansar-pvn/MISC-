@@ -57,6 +57,7 @@ const attendanceRecordSchema = new mongoose.Schema(
       trim: true,
     },
 
+    // Intentionally set to true by both admin-approved correction-requests and leave-driven attendance overrides
     isCorrected: {
       type: Boolean,
       default: false,

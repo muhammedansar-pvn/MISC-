@@ -5,6 +5,7 @@ const getModels = () => ({
   InstitutionProfile: require("../modules/institutions/institution.model"),
   StudentProfile: require("../modules/students/student.model"),
   FacultyProfile: require("../modules/faculty/faculty.model"),
+  ParentProfile: require("../modules/parents/parent.model"),
 });
 
 const requireAuth = async (req, res, next) => {
@@ -23,7 +24,7 @@ const requireAuth = async (req, res, next) => {
 
     req.user = decoded;
 
-    const { InstitutionProfile, StudentProfile, FacultyProfile } = getModels();
+    const { InstitutionProfile, StudentProfile, FacultyProfile, ParentProfile } = getModels();
 
     // Attach profile references if available for fine-grained authorization
     if (decoded.role === "STUDENT") {
@@ -41,6 +42,12 @@ const requireAuth = async (req, res, next) => {
         if (facultyProfile.institutionId) {
           req.user.institutionId = facultyProfile.institutionId;
         }
+      }
+    } else if (decoded.role === "PARENT") {
+      const parentProfile = await ParentProfile.findOne({ userId: decoded.userId }).lean();
+      if (parentProfile) {
+        req.user.parentId = parentProfile._id;
+        req.user.parentStudentIds = parentProfile.studentIds || [];
       }
     } else if (decoded.role === "INSTITUTION") {
       // Legacy backward-compatibility for existing sessions

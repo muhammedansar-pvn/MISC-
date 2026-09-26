@@ -13,6 +13,10 @@ const downloadRoutes = require("../modules/downloads/download.routes");
 const enquiryRoutes = require("../modules/enquiries/enquiry.routes");
 const attendanceRoutes = require("../modules/attendance/attendance.routes");
 const leaveRoutes = require("../modules/leaves/leave.routes");
+const mentorshipRoutes = require("../modules/mentorship/mentor.routes");
+const developmentRoutes = require("../modules/development/development.routes");
+const activityRoutes = require("../modules/activities/activity.routes");
+const disciplineRoutes = require("../modules/discipline/discipline.routes");
 const { sendTestEmail } = require("../shared/services/email.service");
 
 const router = express.Router();
@@ -57,6 +61,10 @@ router.use("/events", eventRoutes);
 router.use("/payments", paymentRoutes);
 router.use("/attendance", attendanceRoutes);
 router.use("/leaves", leaveRoutes);
+router.use("/mentorship", mentorshipRoutes);
+router.use("/development", developmentRoutes);
+router.use("/activities", activityRoutes);
+router.use("/discipline", disciplineRoutes);
 
 // CMS, Downloads & Enquiries Mounts (Retaining 100% frontend API compatibility)
 router.use("/cms", cmsRoutes);
