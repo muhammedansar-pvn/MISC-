@@ -5,6 +5,7 @@ const {
   handleGetFacultyById,
   handleUpdateFaculty,
   handleDeleteFaculty,
+  handleGetFacultyDashboard,
 } = require("./faculty.controller");
 const { validateCreateFaculty, validateUpdateFaculty } = require("./faculty.validator");
 const { requireAuth } = require("../../middleware/auth.middleware");
@@ -25,6 +26,13 @@ router.get(
   requireAuth,
   requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "INSTITUTION"),
   handleGetFacultyMembers
+);
+
+router.get(
+  "/dashboard-stats",
+  requireAuth,
+  requireRole("FACULTY"),
+  handleGetFacultyDashboard
 );
 
 router.get(

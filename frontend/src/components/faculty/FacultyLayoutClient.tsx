@@ -22,6 +22,7 @@ import {
   CheckSquare,
   Layers,
   Building2,
+  CalendarCheck,
 } from 'lucide-react';
 
 interface FacultyLayoutClientProps {
@@ -63,12 +64,14 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
       title: 'ACADEMICS',
       items: [
         { label: 'Academic Overview', path: '/faculty/academics', icon: GraduationCap, exact: true },
+        { label: 'Attendance Marking', path: '/faculty/attendance', icon: CalendarCheck, exact: true },
         { label: 'Assigned Classes', path: '/faculty/classes', icon: Building2, exact: true },
         { label: 'Curriculum Subjects', path: '/faculty/subjects', icon: Layers, exact: true },
         { label: 'Syllabus Explorer', path: '/faculty/syllabus', icon: BookOpen, exact: true },
         { label: 'Academic Resources', path: '/faculty/resources', icon: FileText, exact: true },
       ],
     },
+
     {
       title: 'EXAMINATIONS & EVALUATION',
       items: [

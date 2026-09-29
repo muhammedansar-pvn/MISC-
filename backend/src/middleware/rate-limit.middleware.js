@@ -47,9 +47,17 @@ const enquiryLimiter = createRateLimiter({
   message: "Too many enquiry submissions from this IP. Please wait before submitting again.",
 });
 
+// Admin Password Reset Limiter (20 requests per 15 min window)
+const adminPasswordResetLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: "Too many password reset requests initiated. Please try again after 15 minutes.",
+});
+
 module.exports = {
   createRateLimiter,
   globalApiLimiter,
   accountSetupLimiter,
   enquiryLimiter,
+  adminPasswordResetLimiter,
 };

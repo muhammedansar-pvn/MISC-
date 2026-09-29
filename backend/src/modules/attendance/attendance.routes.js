@@ -7,15 +7,35 @@ const {
   handleApproveCorrectionRequest,
   handleRejectCorrectionRequest,
   handleReviewCorrectionRequest,
+  handleMarkClassAttendance,
+  handleGetClassAttendanceRecords,
 } = require("./attendance.controller");
 const {
   validateCreateCorrectionRequest,
   validateReviewCorrectionRequest,
+  validateMarkClassAttendance,
 } = require("./attendance.validator");
 const { requireAuth } = require("../../middleware/auth.middleware");
 const { requireRole } = require("../../middleware/role.middleware");
 
 const router = express.Router();
+
+// --- CLASS ROSTER ATTENDANCE MARKING (FACULTY / ADMIN) ---
+router.post(
+  "/mark-class",
+  requireAuth,
+  requireRole("FACULTY", "ADMIN"),
+  validateMarkClassAttendance,
+  handleMarkClassAttendance
+);
+
+router.get(
+  "/class-records",
+  requireAuth,
+  requireRole("FACULTY", "ADMIN"),
+  handleGetClassAttendanceRecords
+);
+
 
 // --- STUDENT PORTAL READ-ONLY ATTENDANCE ENDPOINTS ---
 router.get("/student/summary", requireAuth, requireRole("STUDENT"), handleGetStudentSummary);

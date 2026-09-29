@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { getClasses, getSubjects } from '@/services/academic.service';
 import { getExams, getExamSchedules, getMarkEntries } from '@/services/exam.service';
+import { getFacultyDashboardStats } from '@/services/faculty.service';
 import { ClassModel, Subject, Exam, ExamSchedule, MarkEntry } from '@/types';
 import {
   GraduationCap,
@@ -20,6 +21,7 @@ import {
   Clock,
   Sparkles,
   AlertCircle,
+  CalendarCheck,
 } from 'lucide-react';
 
 export default function FacultyDashboardPage() {
@@ -30,18 +32,24 @@ export default function FacultyDashboardPage() {
   const [exams, setExams] = useState<Exam[]>([]);
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
   const [markEntries, setMarkEntries] = useState<MarkEntry[]>([]);
+  const [dashboardStats, setDashboardStats] = useState<{
+    unmarkedAttendanceCount: number;
+    pendingLeavesCount: number;
+    assignedClassesCount: number;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadDashboard() {
       try {
         setLoading(true);
-        const [clsRes, subRes, exmRes, schRes, mrkRes] = await Promise.allSettled([
+        const [clsRes, subRes, exmRes, schRes, mrkRes, statsRes] = await Promise.allSettled([
           getClasses(),
           getSubjects(),
           getExams(),
           getExamSchedules(),
           getMarkEntries(),
+          getFacultyDashboardStats(),
         ]);
 
         if (clsRes.status === 'fulfilled' && clsRes.value.success && Array.isArray(clsRes.value.data)) {
@@ -62,6 +70,10 @@ export default function FacultyDashboardPage() {
 
         if (mrkRes.status === 'fulfilled' && mrkRes.value.success && Array.isArray(mrkRes.value.data)) {
           setMarkEntries(mrkRes.value.data);
+        }
+
+        if (statsRes.status === 'fulfilled' && statsRes.value.success && statsRes.value.data) {
+          setDashboardStats(statsRes.value.data);
         }
       } catch (err) {
         console.error('Failed to load faculty dashboard:', err);
@@ -139,6 +151,121 @@ export default function FacultyDashboardPage() {
 
         {/* Decorative background geometry */}
         <div className="absolute right-0 top-0 bottom-0 w-96 bg-radial from-white/5 to-transparent pointer-events-none" />
+      </div>
+
+      {/* Action Items Section (Dynamic Faculty Action Cards) */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <AlertCircle className="w-4 h-4 text-[#2F7C7A]" />
+            <h2 className="text-sm font-bold font-serif uppercase tracking-wider text-[#132238]">
+              Daily Action Items
+            </h2>
+          </div>
+          <span className="text-xs text-slate-500 font-medium">
+            Assigned Cohorts: {dashboardStats?.assignedClassesCount ?? classes.length}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Action Card 1: Today's Unmarked Attendance (Active Link) */}
+          <Link
+            href="/faculty/attendance"
+            className="block relative p-5 rounded-xl border bg-white shadow-2xs border-[#E2E8E0] space-y-3 transition-all hover:border-[#2F7C7A] hover:shadow-sm cursor-pointer group"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center space-x-3">
+                <div
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                    (dashboardStats?.unmarkedAttendanceCount || 0) > 0
+                      ? 'bg-amber-50 text-amber-700 border border-amber-200 group-hover:bg-amber-100'
+                      : 'bg-emerald-50 text-emerald-700 border border-emerald-200 group-hover:bg-emerald-100'
+                  }`}
+                >
+                  <CalendarCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-[#132238] group-hover:text-[#2F7C7A] transition-colors">
+                    Today&apos;s Attendance Marking
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {(dashboardStats?.unmarkedAttendanceCount || 0) > 0
+                      ? 'Scheduled class periods awaiting attendance'
+                      : 'All assigned class periods marked today'}
+                  </p>
+                </div>
+              </div>
+              {(dashboardStats?.unmarkedAttendanceCount || 0) > 0 ? (
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
+                  Action Needed
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  Up to Date
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-baseline space-x-2 pt-1">
+              <span className="text-2xl font-bold font-mono text-[#132238]">
+                {dashboardStats?.unmarkedAttendanceCount ?? 0}
+              </span>
+              <span className="text-xs text-slate-500">
+                periods pending marking today
+              </span>
+            </div>
+
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-600 transition-colors">
+              <span>Open 7-period quick-marking table &rarr;</span>
+              <span className="font-semibold text-[#2F7C7A] group-hover:underline">/faculty/attendance</span>
+            </div>
+          </Link>
+
+
+          {/* Action Card 2: Pending Leave Requests */}
+          <div className="relative p-5 rounded-xl border bg-white shadow-2xs border-[#E2E8E0] space-y-3 transition-all">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center space-x-3">
+                <div
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                    (dashboardStats?.pendingLeavesCount || 0) > 0
+                      ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                      : 'bg-slate-50 text-slate-600 border border-slate-200'
+                  }`}
+                >
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-[#132238]">
+                    Student Leave Approvals
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {(dashboardStats?.pendingLeavesCount || 0) > 0
+                      ? 'Student leave requests awaiting review'
+                      : 'No pending leave requests for your classes'}
+                  </p>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200">
+                Approvals UI Coming Soon
+              </span>
+            </div>
+
+            <div className="flex items-baseline space-x-2 pt-1">
+              <span className="text-2xl font-bold font-mono text-[#132238]">
+                {dashboardStats?.pendingLeavesCount ?? 0}
+              </span>
+              <span className="text-xs text-slate-500">
+                pending student applications
+              </span>
+            </div>
+
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+              <span>Approval workspace will be available in next update</span>
+              <span className="font-medium text-slate-400">/faculty/leaves</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Metrics Grid */}

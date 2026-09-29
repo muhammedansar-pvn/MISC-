@@ -186,6 +186,25 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+const handleResetUserPassword = async (req, res) => {
+  try {
+    const result = await adminService.triggerUserPasswordReset(req.params.id);
+    return res.status(200).json({
+      success: true,
+      message: "Password reset link has been emailed to the user.",
+      data: result,
+    });
+  } catch (error) {
+    if (!error.statusCode || error.statusCode >= 500) {
+      console.error("Admin Reset User Password Error:", error);
+    }
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Failed to initiate password reset",
+    });
+  }
+};
+
 module.exports = {
   createUserInvitation,
   verifyAdminUserOtp,
@@ -196,4 +215,5 @@ module.exports = {
   updateUserStatus,
   deleteUser,
   getDashboardStats,
+  handleResetUserPassword,
 };

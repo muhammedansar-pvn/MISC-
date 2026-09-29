@@ -24,9 +24,19 @@ export const updateFaculty = async (
   return response.data;
 };
 
+export const getFacultyDashboardStats = async (): Promise<ApiResponse<{
+  unmarkedAttendanceCount: number;
+  pendingLeavesCount: number;
+  assignedClassesCount: number;
+}>> => {
+  const response = await apiClient.get<ApiResponse<any>>(API_ENDPOINTS.faculty.dashboardStats);
+  return response.data;
+};
+
 export default {
   getFacultyMembers,
   getFacultyById,
   createFaculty,
   updateFaculty,
+  getFacultyDashboardStats,
 };

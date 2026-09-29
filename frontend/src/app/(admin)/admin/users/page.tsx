@@ -24,6 +24,8 @@ import {
   MoreVertical,
   Mail,
   Phone,
+  KeyRound,
+  CheckCircle2,
 } from 'lucide-react';
 import RoleBadge from '@/components/admin/RoleBadge';
 import StatusBadge from '@/components/admin/StatusBadge';
@@ -32,6 +34,7 @@ import { UserCardSkeleton, StatCardSkeleton } from '@/components/admin/SkeletonL
 import UserFormModal from '@/components/admin/UserFormModal';
 import UserDetailsModal from '@/components/admin/UserDetailsModal';
 import UserDeleteConfirmModal from '@/components/admin/UserDeleteConfirmModal';
+import UserPasswordResetModal from '@/components/admin/UserPasswordResetModal';
 import { getUsers, getDashboardStats, updateUserStatus } from '@/services/admin.service';
 import { User, DashboardStats } from '@/types';
 
@@ -40,6 +43,7 @@ export default function AdminUsersPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   // Filters & View Mode
   const [search, setSearch] = useState('');
@@ -60,6 +64,7 @@ export default function AdminUsersPage() {
   const [userToEdit, setUserToEdit] = useState<User | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [userToResetPassword, setUserToResetPassword] = useState<User | null>(null);
 
   const router = useRouter();
 
@@ -640,6 +645,18 @@ export default function AdminUsersPage() {
                                   )}
                                 </button>
 
+                                {/* Reset Password */}
+                                <button
+                                  onClick={() => {
+                                    setActiveMenuId(null);
+                                    setUserToResetPassword(u);
+                                  }}
+                                  className="w-full px-3.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors"
+                                >
+                                  <KeyRound className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                                  <span>Reset Password</span>
+                                </button>
+
                                 <div className="my-1 border-t border-slate-100" />
 
                                 {/* Delete User */}
@@ -730,6 +747,7 @@ export default function AdminUsersPage() {
         isOpen={!!selectedUser}
         onClose={() => setSelectedUser(null)}
         user={selectedUser}
+        onResetPassword={(u: User) => setUserToResetPassword(u)}
       />
 
       {/* Delete Confirmation & Dependency Safeguard Modal */}
@@ -739,6 +757,35 @@ export default function AdminUsersPage() {
         onSuccess={fetchData}
         user={userToDelete}
       />
+
+      {/* Password Reset Confirmation Modal */}
+      <UserPasswordResetModal
+        isOpen={Boolean(userToResetPassword)}
+        onClose={() => setUserToResetPassword(null)}
+        onSuccess={(msg: string) => {
+          setToast({ message: msg, type: 'success' });
+          setTimeout(() => setToast(null), 4000);
+        }}
+        user={userToResetPassword}
+      />
+
+      {/* Floating Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-xl border bg-white text-slate-800 border-slate-200 animate-in fade-in slide-in-from-bottom-5 duration-200">
+          <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
+            <CheckCircle2 className="w-4 h-4" />
+          </div>
+          <div className="text-xs font-semibold text-slate-800 pr-2">
+            {toast.message}
+          </div>
+          <button
+            onClick={() => setToast(null)}
+            className="text-slate-400 hover:text-slate-600 p-1 rounded-md cursor-pointer ml-auto"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

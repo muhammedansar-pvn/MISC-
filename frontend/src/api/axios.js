@@ -75,6 +75,7 @@ export const API_ENDPOINTS = {
     verifyOtp: '/admin/users/verify-otp',
     resendOtp: '/admin/users/resend-otp',
     userStatus: (id) => `/admin/users/${id}/status`,
+    resetPassword: (id) => `/admin/users/${id}/reset-password`,
     registerStudent: '/admin/students/register',
   },
 
@@ -109,6 +110,7 @@ export const API_ENDPOINTS = {
   faculty: {
     list: '/faculty',
     byId: (id) => `/faculty/${id}`,
+    dashboardStats: '/faculty/dashboard-stats',
   },
 
   cms: {
@@ -151,7 +153,10 @@ export const API_ENDPOINTS = {
     studentSummary: '/attendance/student/summary',
     studentMonthly: '/attendance/student/monthly',
     studentHistory: '/attendance/student/history',
+    markClass: '/attendance/mark-class',
+    classRecords: '/attendance/class-records',
   },
+
 
   leaves: {
     list: '/leaves',

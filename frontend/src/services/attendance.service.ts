@@ -40,8 +40,49 @@ export const getStudentAttendanceHistory = async (): Promise<ApiResponse<Monthly
   return response.data;
 };
 
+export interface MarkClassAttendancePayload {
+  classId: string;
+  date: string;
+  period: number;
+  records: Array<{
+    studentId: string;
+    status: 'PRESENT' | 'ABSENT' | 'LATE' | 'LEAVE' | 'EXCUSED';
+  }>;
+}
+
+/**
+ * Submit or update attendance marks for an entire class roster
+ */
+export const markClassAttendance = async (
+  payload: MarkClassAttendancePayload
+): Promise<ApiResponse<{ classId: string; date: string; period: number; totalMarked: number }>> => {
+  const response = await apiClient.post<ApiResponse<any>>(
+    API_ENDPOINTS.attendance.markClass,
+    payload
+  );
+  return response.data;
+};
+
+/**
+ * Fetch existing attendance marks for a class on a specific date and optional period
+ */
+export const getClassAttendanceRecords = async (params: {
+  classId: string;
+  date: string;
+  period?: number;
+}): Promise<ApiResponse<any[]>> => {
+  const response = await apiClient.get<ApiResponse<any[]>>(
+    API_ENDPOINTS.attendance.classRecords,
+    { params }
+  );
+  return response.data;
+};
+
 export default {
   getStudentAttendanceOverview,
   getStudentMonthlyAttendance,
   getStudentAttendanceHistory,
+  markClassAttendance,
+  getClassAttendanceRecords,
 };
+

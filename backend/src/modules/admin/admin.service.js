@@ -2,8 +2,9 @@ const crypto = require("crypto");
 const mongoose = require("mongoose");
 const User = require("../users/user.model");
 const AccountSetupToken = require("../auth/account-setup-token.model");
+const PasswordResetToken = require("../auth/password-reset-token.model");
 const OtpVerification = require("../auth/otp-verification.model");
-const { sendUserInvitationEmail } = require("../../shared/services/email.service");
+const { sendUserInvitationEmail, sendPasswordResetEmail } = require("../../shared/services/email.service");
 const { sendAndStoreOtp, verifyOtpCode } = require("../auth/auth.service");
 const { escapeRegex } = require("../../shared/utils/regex");
 const studentLifecycleService = require("../students/student-lifecycle.service");
@@ -528,6 +529,51 @@ const getDashboardStats = async () => {
   };
 };
 
+const triggerUserPasswordReset = async (userId) => {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    const error = new Error("Invalid user ID");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const user = await User.findOne({ _id: userId, isDeleted: { $ne: true } });
+  if (!user) {
+    const error = new Error("User account not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (!user.email) {
+    const error = new Error("User does not have a registered email address for password reset");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // Delete existing unused reset tokens for this user
+  await PasswordResetToken.deleteMany({ userId: user._id, usedAt: null });
+
+  // Generate cryptographic token
+  const rawToken = crypto.randomBytes(32).toString("hex");
+  const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24-hour expiry
+
+  await PasswordResetToken.create({
+    userId: user._id,
+    tokenHash,
+    expiresAt,
+  });
+
+  // Dispatch password reset email
+  await sendPasswordResetEmail(user.email, rawToken);
+
+  return {
+    userId: user._id,
+    name: user.name,
+    email: user.email,
+    maskedEmail: user.email.replace(/^(.)(.*)(@.*)$/, (m, a, b, c) => `${a}***${c}`),
+  };
+};
+
 module.exports = {
   createUserInvitation,
   verifyAdminUserOtp,
@@ -538,4 +584,5 @@ module.exports = {
   updateUserStatus,
   deleteUser,
   getDashboardStats,
+  triggerUserPasswordReset,
 };

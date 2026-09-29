@@ -4,6 +4,7 @@ const {
   getFacultyById,
   updateFaculty,
   deleteFaculty,
+  getFacultyDashboardStats,
 } = require("./faculty.service");
 
 const handleCreateFaculty = async (req, res) => {
@@ -80,10 +81,22 @@ const handleDeleteFaculty = async (req, res) => {
   }
 };
 
+const handleGetFacultyDashboard = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.user?.id;
+    const stats = await getFacultyDashboardStats(userId);
+    return res.status(200).json({ success: true, data: stats });
+  } catch (error) {
+    console.error("Get Faculty Dashboard Error:", error);
+    return res.status(500).json({ success: false, message: "Failed to retrieve faculty dashboard statistics" });
+  }
+};
+
 module.exports = {
   handleCreateFaculty,
   handleGetFacultyMembers,
   handleGetFacultyById,
   handleUpdateFaculty,
   handleDeleteFaculty,
+  handleGetFacultyDashboard,
 };

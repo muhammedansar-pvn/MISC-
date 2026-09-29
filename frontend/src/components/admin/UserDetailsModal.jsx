@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { X, User, Mail, Phone, Building, Calendar, Hash, Shield } from 'lucide-react';
+import { X, User, Mail, Phone, Building, Calendar, Hash, Shield, KeyRound } from 'lucide-react';
 import RoleBadge from './RoleBadge';
 import StatusBadge from './StatusBadge';
 
-export const UserDetailsModal = ({ isOpen, onClose, user }) => {
+export const UserDetailsModal = ({ isOpen, onClose, user, onResetPassword }) => {
   if (!isOpen || !user) return null;
 
   const formatDate = (dateStr) => {
@@ -96,10 +96,25 @@ export const UserDetailsModal = ({ isOpen, onClose, user }) => {
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end border-t border-[#E2E8E0]">
+          <div className="pt-4 flex items-center justify-between border-t border-[#E2E8E0]">
+            {onResetPassword ? (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onResetPassword(user);
+                }}
+                className="px-3.5 py-2 bg-teal-50 hover:bg-teal-100 text-[#2F7C7A] border border-teal-200/80 font-bold rounded-xl text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <KeyRound className="w-3.5 h-3.5" />
+                <span>Reset Password</span>
+              </button>
+            ) : (
+              <div />
+            )}
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-sm transition-all"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition-all cursor-pointer"
             >
               Close
             </button>

@@ -1,6 +1,7 @@
 const express = require("express");
 const { requireAuth } = require("../../middleware/auth.middleware");
 const { requireRole } = require("../../middleware/role.middleware");
+const { adminPasswordResetLimiter } = require("../../middleware/rate-limit.middleware");
 const {
   createUserInvitation,
   verifyAdminUserOtp,
@@ -11,6 +12,7 @@ const {
   updateUserStatus,
   deleteUser,
   getDashboardStats,
+  handleResetUserPassword,
 } = require("./admin.controller");
 const {
   validateUserInvitation,
@@ -30,6 +32,13 @@ router.patch("/users/:id", requireAuth, requireRole("ADMIN"), validateUpdateUser
 router.put("/users/:id", requireAuth, requireRole("ADMIN"), validateUpdateUser, updateUser);
 router.patch("/users/:id/status", requireAuth, requireRole("ADMIN"), validateUpdateUserStatus, updateUserStatus);
 router.put("/users/:id/status", requireAuth, requireRole("ADMIN"), validateUpdateUserStatus, updateUserStatus);
+router.post(
+  "/users/:id/reset-password",
+  requireAuth,
+  requireRole("ADMIN"),
+  adminPasswordResetLimiter,
+  handleResetUserPassword
+);
 router.delete("/users/:id", requireAuth, requireRole("ADMIN"), deleteUser);
 
 // --- INSTITUTE SETTINGS (SINGLE-INSTITUTE ARCHITECTURE) ---

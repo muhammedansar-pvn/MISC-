@@ -115,6 +115,52 @@ const handleReviewCorrectionRequest = async (req, res) => {
   }
 };
 
+const handleMarkClassAttendance = async (req, res) => {
+  try {
+    const result = await attendanceService.markClassAttendance(req.body, req.user);
+    return res.status(200).json({
+      success: true,
+      message: "Attendance marked successfully",
+      data: result,
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 400;
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message || "Failed to mark class attendance",
+    });
+  }
+};
+
+const handleGetClassAttendanceRecords = async (req, res) => {
+  try {
+    const { classId, date, period } = req.query;
+    if (!classId || !date) {
+      return res.status(400).json({
+        success: false,
+        message: "classId and date query parameters are required",
+      });
+    }
+
+    const records = await attendanceService.getClassAttendanceRecords(
+      classId,
+      date,
+      period,
+      req.user
+    );
+    return res.status(200).json({
+      success: true,
+      data: records,
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 400;
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message || "Failed to retrieve class attendance records",
+    });
+  }
+};
+
 module.exports = {
   handleGetStudentSummary,
   handleGetStudentMonthly,
@@ -123,4 +169,7 @@ module.exports = {
   handleApproveCorrectionRequest,
   handleRejectCorrectionRequest,
   handleReviewCorrectionRequest,
+  handleMarkClassAttendance,
+  handleGetClassAttendanceRecords,
 };
+

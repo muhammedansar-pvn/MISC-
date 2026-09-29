@@ -55,6 +55,15 @@ export const deleteUser = async (id: string): Promise<ApiResponse> => {
   return response.data;
 };
 
+export const resetUserPassword = async (
+  id: string
+): Promise<ApiResponse<{ userId: string; name?: string; email: string; maskedEmail: string }>> => {
+  const response = await apiClient.post<
+    ApiResponse<{ userId: string; name?: string; email: string; maskedEmail: string }>
+  >(API_ENDPOINTS.admin.resetPassword(id));
+  return response.data;
+};
+
 export default {
   getDashboardStats,
   getUsers,
@@ -65,4 +74,5 @@ export default {
   updateUser,
   updateUserStatus,
   deleteUser,
+  resetUserPassword,
 };

@@ -40,7 +40,7 @@ const createFaculty = async (facultyData) => {
     .lean();
 };
 
-const getFacultyMembers = async (filter = {}, search = "") => {
+const getFacultyMembers = async (filter = {}, search = "", pagination = null) => {
   const query = { isDeleted: { $ne: true }, ...filter };
 
   if (search) {
@@ -150,6 +150,102 @@ const deleteFaculty = async (id, hardDelete = false) => {
   );
 };
 
+/**
+ * Compute faculty dashboard action counters:
+ * 1. Today's scheduled periods not yet marked for attendance across assigned classes
+ * 2. Pending leave requests awaiting this faculty's approval
+ */
+const getFacultyDashboardStats = async (userId) => {
+  const faculty = await FacultyProfile.findOne({
+    userId,
+    isDeleted: { $ne: true },
+  }).lean();
+
+  if (!faculty || !Array.isArray(faculty.assignedClasses) || faculty.assignedClasses.length === 0) {
+    return {
+      unmarkedAttendanceCount: 0,
+      pendingLeavesCount: 0,
+      assignedClassesCount: 0,
+    };
+  }
+
+  const assignedClassIds = faculty.assignedClasses.map((id) =>
+    id._id ? id._id : id
+  );
+
+  // Day of week determination matching TimetableEntry DAYS_OF_WEEK enum exactly
+  // TimetableEntry enum: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
+  const DAYS_OF_WEEK_MAP = [
+    "SUNDAY",
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY",
+  ];
+  const now = new Date();
+  const todayDayOfWeek = DAYS_OF_WEEK_MAP[now.getUTCDay()];
+
+  // Start and end of today in UTC matching AttendanceRecord storage convention
+  const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+  const endOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+
+  const Timetable = require("../academics/timetable.model");
+  const AttendanceRecord = require("../attendance/attendance-record.model");
+  const StudentProfile = require("../students/student.model");
+  const Leave = require("../leaves/leave.model");
+
+  let unmarkedAttendanceCount = 0;
+
+  for (const classId of assignedClassIds) {
+    // Query actual scheduled periods for this class on today's day of week
+    const scheduledEntries = await Timetable.find({
+      classId,
+      dayOfWeek: todayDayOfWeek,
+      status: "ACTIVE",
+      isDeleted: { $ne: true },
+    }).select("periodNumber").lean();
+
+    if (!scheduledEntries || scheduledEntries.length === 0) {
+      continue; // 0 scheduled periods today -> contributes 0
+    }
+
+    const scheduledPeriods = [...new Set(scheduledEntries.map((e) => e.periodNumber))];
+
+    // Query periods already marked in AttendanceRecord for this class today
+    const markedPeriods = await AttendanceRecord.distinct("period", {
+      classId,
+      date: { $gte: startOfDay, $lte: endOfDay },
+    });
+
+    const unmarkedForClass = scheduledPeriods.filter(
+      (p) => !markedPeriods.includes(p)
+    ).length;
+
+    unmarkedAttendanceCount += Math.max(0, unmarkedForClass);
+  }
+
+  // Pending Leaves count awaiting this faculty's approval
+  const studentsInAssignedClasses = await StudentProfile.find({
+    classId: { $in: assignedClassIds },
+    isDeleted: { $ne: true },
+  }).select("_id").lean();
+
+  const studentIds = studentsInAssignedClasses.map((s) => s._id);
+
+  const pendingLeavesCount = await Leave.countDocuments({
+    studentId: { $in: studentIds },
+    status: "PENDING",
+  });
+
+  return {
+    unmarkedAttendanceCount,
+    pendingLeavesCount,
+    assignedClassesCount: assignedClassIds.length,
+  };
+};
+
 module.exports = {
   createFaculty,
   getFacultyMembers,
@@ -157,4 +253,5 @@ module.exports = {
   ensureFacultyProfileForUser,
   updateFaculty,
   deleteFaculty,
+  getFacultyDashboardStats,
 };
