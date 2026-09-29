@@ -18,8 +18,10 @@ const createPaymentSchema = Joi.object({
 const verifyPaymentSchema = Joi.object({
   transactionId: Joi.string().trim().required(),
   gateway: Joi.string().valid("RAZORPAY", "STRIPE", "BANK_TRANSFER", "MANUAL").required(),
-  gatewaySignature: Joi.string().trim().allow(""),
-  status: Joi.string().valid("SUCCESS", "FAILED", "REFUNDED").required(),
+  gatewaySignature: Joi.string().trim().allow("").optional(),
+  razorpayPaymentId: Joi.string().trim().allow("").optional(),
+  razorpayOrderId: Joi.string().trim().allow("").optional(),
+  status: Joi.string().valid("SUCCESS", "FAILED", "REFUNDED").optional(),
 });
 
 module.exports = {

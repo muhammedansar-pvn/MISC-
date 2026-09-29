@@ -1,5 +1,6 @@
 const FacultyProfile = require("./faculty.model");
 const User = require("../users/user.model");
+const { escapeRegex } = require("../../shared/utils/regex");
 
 const createFaculty = async (facultyData) => {
   const user = await User.findById(facultyData.userId);
@@ -43,7 +44,7 @@ const getFacultyMembers = async (filter = {}, search = "") => {
   const query = { isDeleted: { $ne: true }, ...filter };
 
   if (search) {
-    const searchRegex = new RegExp(search.trim(), "i");
+    const searchRegex = new RegExp(escapeRegex(search.trim()), "i");
     query.$or = [
       { facultyId: searchRegex },
       { nameEnglish: searchRegex },

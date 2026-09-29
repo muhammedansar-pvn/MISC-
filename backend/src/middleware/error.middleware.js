@@ -6,12 +6,19 @@ const notFoundHandler = (req, res, next) => {
 };
 
 const globalErrorHandler = (err, req, res, next) => {
-  console.error("Server Error:", err.message);
-
   const statusCode = err.statusCode || err.status || 500;
+
+  // Log error details for server-side debugging
+  console.error("Server Error:", err.stack || err.message);
+
+  const isProduction = process.env.NODE_ENV === "production";
+  const safeMessage = (statusCode >= 500 && isProduction)
+    ? "Internal Server Error"
+    : (err.message || "Internal Server Error");
+
   const responsePayload = {
     success: false,
-    message: err.message || "Internal Server Error",
+    message: safeMessage,
   };
 
   if (err.errors) {

@@ -42,9 +42,7 @@ const register = async (req, res) => {
     }
 
     const passwordHash = await hashPassword(password);
-    const targetRole = role && ["STUDENT", "FACULTY", "INSTITUTION"].includes(role.toUpperCase())
-      ? role.toUpperCase()
-      : "STUDENT";
+    const targetRole = "STUDENT";
 
     await User.create({
       name,

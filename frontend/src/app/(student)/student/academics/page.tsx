@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getStudentProfile } from '@/services/student.service';
+import { getStudentProfile, getMyTeachers } from '@/services/student.service';
 import { getSubjects, getAcademicYears } from '@/services/academic.service';
-import { StudentProfile, Subject, AcademicYear } from '@/types';
+import { StudentProfile, Subject, AcademicYear, SubjectTeacherItem } from '@/types';
 import {
   GraduationCap,
   BookOpen,
@@ -19,6 +19,7 @@ import {
 export default function StudentAcademicsPage() {
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [subjectTeachers, setSubjectTeachers] = useState<SubjectTeacherItem[]>([]);
   const [academicYears, setAcademicYears] = useState<AcademicYear[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,10 +27,11 @@ export default function StudentAcademicsPage() {
     async function loadAcademicData() {
       try {
         setLoading(true);
-        const [profileRes, subjectsRes, yearsRes] = await Promise.allSettled([
+        const [profileRes, subjectsRes, yearsRes, teachersRes] = await Promise.allSettled([
           getStudentProfile(),
           getSubjects(),
           getAcademicYears(),
+          getMyTeachers(),
         ]);
 
         if (profileRes.status === 'fulfilled' && profileRes.value.success && profileRes.value.data) {
@@ -42,6 +44,10 @@ export default function StudentAcademicsPage() {
 
         if (yearsRes.status === 'fulfilled' && yearsRes.value.success && Array.isArray(yearsRes.value.data)) {
           setAcademicYears(yearsRes.value.data);
+        }
+
+        if (teachersRes.status === 'fulfilled' && teachersRes.value.success && Array.isArray(teachersRes.value.data)) {
+          setSubjectTeachers(teachersRes.value.data);
         }
       } catch (err) {
         console.error('Failed to load academic details:', err);
@@ -70,6 +76,16 @@ export default function StudentAcademicsPage() {
   const enrolledClass = (profile?.classId as any);
   const institution = (profile?.institutionId as any);
   const activeAcademicYear = academicYears.find((y) => y.isCurrent || y.status === 'ACTIVE') || academicYears[0];
+
+  const items: SubjectTeacherItem[] = subjectTeachers.length > 0
+    ? subjectTeachers
+    : subjects.map((s) => ({
+        subjectId: s._id,
+        subjectName: s.name || (s as any).subjectName || 'Subject',
+        subjectCode: s.code || (s as any).subjectCode || 'SUB',
+        category: (s as any).category,
+        teacher: null,
+      }));
 
   return (
     <div className="space-y-8">
@@ -146,43 +162,63 @@ export default function StudentAcademicsPage() {
           <div>
             <h2 className="text-lg font-bold font-serif text-[#132238]">Curriculum Subjects</h2>
             <p className="text-xs text-slate-500">
-              Official subjects and syllabus modules authorized under this academic structure.
+              Official subjects and assigned teachers for your enrolled academic class.
             </p>
           </div>
           <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">
-            {subjects.length} Subjects
+            {items.length} Subjects
           </span>
         </div>
 
-        {subjects.length === 0 ? (
+        {items.length === 0 ? (
           <div className="p-8 rounded-xl bg-white border border-[#E2E8E0] text-center text-xs text-slate-500">
             No subjects listed for this academic curriculum yet.
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {subjects.map((sub: any) => (
+            {items.map((sub) => (
               <div
-                key={sub._id}
+                key={sub.subjectId}
                 className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs hover:border-[#2F7C7A] transition-all flex flex-col justify-between space-y-4"
               >
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-                      {sub.subjectCode || sub.code || 'SUB'}
+                      {sub.subjectCode || 'SUB'}
                     </span>
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
                   </div>
-                  <h3 className="font-bold text-sm text-[#132238]">{sub.subjectName || sub.name}</h3>
-                  <p className="text-xs text-slate-500">
-                    Category: <span className="font-semibold text-slate-700">{sub.category || 'GENERAL'}</span>
-                  </p>
-                </div>
 
+                  <div>
+                    <h3 className="font-bold text-base text-[#132238]">{sub.subjectName}</h3>
+                    {sub.category && (
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Category: <span className="font-semibold text-slate-600">{sub.category}</span>
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Teacher & Designation */}
+                  <div className="p-3 bg-slate-50/80 rounded-lg border border-slate-100 space-y-1">
+                    <div className="text-xs flex items-center justify-between">
+                      <span className="text-slate-400 font-medium">Teacher</span>
+                      <span className="font-semibold text-slate-800">
+                        {sub.teacher?.nameEnglish || 'To be assigned'}
+                      </span>
+                    </div>
+                    <div className="text-xs flex items-center justify-between pt-1 border-t border-slate-100/80">
+                      <span className="text-slate-400 font-medium">Designation</span>
+                      <span className="text-slate-600 font-medium">
+                        {sub.teacher?.designation || 'Usthad'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                   <span className="text-slate-400">Curriculum Module</span>
                   <Link
-                    href={`/student/syllabus?subjectId=${sub._id}`}
+                    href={`/student/syllabus?subjectId=${sub.subjectId}`}
                     className="inline-flex items-center font-semibold text-[#2F7C7A] hover:underline"
                   >
                     Syllabus <ArrowRight className="w-3 h-3 ml-1" />

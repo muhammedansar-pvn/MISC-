@@ -63,3 +63,16 @@ export interface RegisterStudentFullResponse {
   expiresAt?: string;
 }
 
+export interface SubjectTeacherInfo {
+  nameEnglish: string;
+  designation: string;
+}
+
+export interface SubjectTeacherItem {
+  subjectId: string;
+  subjectName: string;
+  subjectCode: string;
+  category?: string;
+  teacher: SubjectTeacherInfo | null;
+}
+

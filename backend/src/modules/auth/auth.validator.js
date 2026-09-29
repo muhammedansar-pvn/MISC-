@@ -47,7 +47,7 @@ const registerSchema = Joi.object({
   email: Joi.string().email().lowercase().trim().required(),
   password: Joi.string().min(6).max(100).required(),
   mobile: Joi.string().trim().allow("", null),
-  role: Joi.string().valid("STUDENT", "FACULTY", "INSTITUTION").default("STUDENT"),
+  role: Joi.string().valid("STUDENT").default("STUDENT"),
 });
 
 const resendEmailOtpSchema = Joi.object({

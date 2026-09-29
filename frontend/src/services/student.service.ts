@@ -6,6 +6,7 @@ import {
   RegisterStudentFullResponse,
   ApiResponse,
   PaginationParams,
+  SubjectTeacherItem,
 } from '@/types';
 
 export const getStudents = async (params: PaginationParams = {}): Promise<ApiResponse<StudentProfile[]>> => {
@@ -74,6 +75,11 @@ export const deleteStudent = async (
   return response.data;
 };
 
+export const getMyTeachers = async (): Promise<ApiResponse<SubjectTeacherItem[]>> => {
+  const response = await apiClient.get<ApiResponse<SubjectTeacherItem[]>>(API_ENDPOINTS.students.teachers);
+  return response.data;
+};
+
 export default {
   getStudents,
   getStudentById,
@@ -84,4 +90,5 @@ export default {
   updateStudent,
   updateStudentStatus,
   deleteStudent,
+  getMyTeachers,
 };

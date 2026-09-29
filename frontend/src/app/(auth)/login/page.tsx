@@ -24,6 +24,10 @@ function LoginForm() {
 
   const from = searchParams?.get('redirect') || searchParams?.get('from');
 
+  const isValidRedirect = (url: string | null | undefined): boolean => {
+    return Boolean(url && url.startsWith('/') && !url.startsWith('//') && !url.includes('\\'));
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -47,7 +51,8 @@ function LoginForm() {
       setMaskedEmail(result.email || '');
       setStep2FA(true);
     } else if (result.success) {
-      router.replace(from || result.redirectTo || '/admin');
+      const destination = isValidRedirect(from) ? (from as string) : (result.redirectTo || '/admin');
+      router.replace(destination);
     } else if (result.requiresEmailVerification) {
       const targetEmail = result.email || formData.username;
       router.push(`/verify-email?email=${encodeURIComponent(targetEmail)}`);

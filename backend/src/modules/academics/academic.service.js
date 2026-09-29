@@ -2,6 +2,7 @@ const AcademicYear = require("./academic-year.model");
 const Class = require("./class.model");
 const Subject = require("./subject.model");
 const Syllabus = require("./syllabus.model");
+const { escapeRegex } = require("../../shared/utils/regex");
 
 // AcademicYear
 const createAcademicYear = async (data) => {
@@ -63,7 +64,11 @@ const updateSubject = async (id, data) => {
 
 // Syllabus
 const createSyllabus = async (data) => {
-  const syllabus = await Syllabus.create(data);
+  const payload = { ...data };
+  if (!payload.title && payload.kitabName) {
+    payload.title = payload.kitabName;
+  }
+  const syllabus = await Syllabus.create(payload);
   return Syllabus.findById(syllabus._id)
     .populate("subjectId", "subjectName subjectCode category")
     .populate("classId", "name code")
@@ -75,9 +80,11 @@ const getSyllabuses = async (filter = {}, search = "") => {
   const query = { isDeleted: { $ne: true }, ...filter };
 
   if (search) {
-    const searchRegex = new RegExp(search.trim(), "i");
+    const searchRegex = new RegExp(escapeRegex(search.trim()), "i");
     query.$or = [
+      { kitabName: searchRegex },
       { title: searchRegex },
+      { "units.title": searchRegex },
       { version: searchRegex },
     ];
   }
@@ -97,12 +104,17 @@ const getSyllabusById = async (id) =>
     .populate("academicYearId", "yearName yearCode")
     .lean();
 
-const updateSyllabus = async (id, data) =>
-  Syllabus.findByIdAndUpdate(id, data, { new: true })
+const updateSyllabus = async (id, data) => {
+  const payload = { ...data };
+  if (!payload.title && payload.kitabName) {
+    payload.title = payload.kitabName;
+  }
+  return Syllabus.findByIdAndUpdate(id, payload, { new: true })
     .populate("subjectId", "subjectName subjectCode category")
     .populate("classId", "name code")
     .populate("academicYearId", "yearName yearCode")
     .lean();
+};
 
 const deleteSyllabus = async (id, hardDelete = false) => {
   if (hardDelete) {

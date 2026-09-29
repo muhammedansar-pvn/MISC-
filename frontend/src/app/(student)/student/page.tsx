@@ -6,7 +6,8 @@ import { useAuth } from '@/context/AuthContext';
 import { getStudentProfile } from '@/services/student.service';
 import { getExamRegistrations, getExamResults } from '@/services/exam.service';
 import { getPayments } from '@/services/payment.service';
-import { StudentProfile, ExamRegistration, ExamResult, PaymentRecord } from '@/types';
+import { getMyTimetable } from '@/services/timetable.service';
+import { StudentProfile, ExamRegistration, ExamResult, PaymentRecord, TimetableEntry, DayOfWeek } from '@/types';
 import {
   GraduationCap,
   Calendar,
@@ -21,6 +22,7 @@ import {
   CheckCircle2,
   Clock,
   Sparkles,
+  MapPin,
 } from 'lucide-react';
 
 export default function StudentDashboardPage() {
@@ -30,6 +32,7 @@ export default function StudentDashboardPage() {
   const [registrations, setRegistrations] = useState<ExamRegistration[]>([]);
   const [results, setResults] = useState<ExamResult[]>([]);
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
+  const [timetableEntries, setTimetableEntries] = useState<TimetableEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,11 +42,12 @@ export default function StudentDashboardPage() {
         setLoading(true);
         setError(null);
 
-        const [profileRes, regRes, resRes, payRes] = await Promise.allSettled([
+        const [profileRes, regRes, resRes, payRes, timetableRes] = await Promise.allSettled([
           getStudentProfile(),
           getExamRegistrations(),
           getExamResults(),
           getPayments(),
+          getMyTimetable(),
         ]);
 
         if (profileRes.status === 'fulfilled' && profileRes.value.success && profileRes.value.data) {
@@ -60,6 +64,15 @@ export default function StudentDashboardPage() {
 
         if (payRes.status === 'fulfilled' && payRes.value.success && Array.isArray(payRes.value.data)) {
           setPayments(payRes.value.data);
+        }
+
+        if (
+          timetableRes.status === 'fulfilled' &&
+          timetableRes.value.success &&
+          timetableRes.value.data?.entries &&
+          Array.isArray(timetableRes.value.data.entries)
+        ) {
+          setTimetableEntries(timetableRes.value.data.entries);
         }
       } catch (err: any) {
         console.error('Error loading student dashboard:', err);
@@ -95,6 +108,26 @@ export default function StudentDashboardPage() {
     (r) => r.registrationStatus === 'HALL_TICKET_ISSUED'
   );
   const latestResult = results.length > 0 ? results[0] : null;
+
+  const dayNames: DayOfWeek[] = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+  const todayDayOfWeek = dayNames[new Date().getDay()];
+  const todaySessions = timetableEntries
+    .filter((e) => e.dayOfWeek === todayDayOfWeek && e.status === 'ACTIVE')
+    .sort((a, b) => a.periodNumber - b.periodNumber);
+
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const isPeriodNow = (start: string, end: string) => {
+    try {
+      const [sh, sm] = start.split(':').map(Number);
+      const [eh, em] = end.split(':').map(Number);
+      const sMin = sh * 60 + sm;
+      const eMin = eh * 60 + em;
+      return currentMinutes >= sMin && currentMinutes < eMin;
+    } catch {
+      return false;
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -254,10 +287,141 @@ export default function StudentDashboardPage() {
         </div>
       </div>
 
+      {/* Today's Timetable Widget */}
+      <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
+        <div className="px-6 py-4.5 border-b border-[#E2E8E0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-slate-50 to-white">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-[#2F7C7A] shrink-0">
+              <Clock className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <h2 className="font-bold text-[#132238] font-serif text-base">Today&apos;s Timetable</h2>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-teal-100 text-[#2F7C7A]">
+                  {todayDayOfWeek}
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {todaySessions.length > 0
+                  ? `${todaySessions.length} sessions scheduled for today`
+                  : `No class sessions scheduled for ${todayDayOfWeek.toLowerCase()}`}
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/student/timetable"
+            className="inline-flex items-center text-xs font-semibold text-[#2F7C7A] hover:text-[#235e5d] transition-colors"
+          >
+            <span>View Full Timetable</span>
+            <ArrowRight className="w-3.5 h-3.5 ml-1" />
+          </Link>
+        </div>
+
+        <div className="p-5">
+          {todaySessions.length === 0 ? (
+            <div className="text-center py-8 px-4">
+              <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                <Calendar className="w-6 h-6" />
+              </div>
+              <h3 className="text-sm font-semibold text-slate-700">No Classes Scheduled Today</h3>
+              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                There are no active timetable entries for {todayDayOfWeek.charAt(0) + todayDayOfWeek.slice(1).toLowerCase()}. You can view your full weekly schedule anytime.
+              </p>
+              <Link
+                href="/student/timetable"
+                className="mt-4 inline-flex items-center px-3.5 py-1.5 rounded-lg border border-slate-300 hover:border-slate-400 bg-white text-xs font-medium text-slate-700 shadow-2xs hover:bg-slate-50 transition-colors"
+              >
+                Open Weekly Timetable
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              {todaySessions.map((session) => {
+                const activeNow = isPeriodNow(session.startTime, session.endTime);
+                return (
+                  <div
+                    key={session._id}
+                    className={`relative p-4 rounded-xl border transition-all ${
+                      activeNow
+                        ? 'border-[#2F7C7A] bg-teal-50/40 ring-1 ring-[#2F7C7A]/30 shadow-xs'
+                        : 'border-[#E2E8E0] bg-white hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-1.5">
+                        <span className="text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-mono">
+                          Period {session.periodNumber}
+                        </span>
+                        {activeNow && (
+                          <span className="flex items-center space-x-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping inline-block" />
+                            <span>Now</span>
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[11px] font-medium text-slate-500 font-mono">
+                        {session.startTime} - {session.endTime}
+                      </span>
+                    </div>
+
+                    {(() => {
+                      const subject = session.subjectId as any;
+                      const faculty = session.facultyId as any;
+                      return (
+                        <>
+                          <h4 className="font-bold text-sm text-[#132238] line-clamp-1">
+                            {subject?.name || 'Subject'}
+                          </h4>
+
+                          {subject?.arabicName && (
+                            <p className="font-arabic text-xs text-slate-600 line-clamp-1 mt-0.5" dir="rtl">
+                              {subject.arabicName}
+                            </p>
+                          )}
+
+                          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                            <span className="truncate max-w-[130px]" title={faculty?.fullName || faculty?.nameEnglish || 'Faculty'}>
+                              {faculty?.fullName || faculty?.nameEnglish || 'Teacher'}
+                            </span>
+                            {session.room && (
+                              <span className="flex items-center text-[11px] text-slate-400 shrink-0 font-medium">
+                                <MapPin className="w-3 h-3 mr-0.5 text-slate-400" />
+                                {session.room}
+                              </span>
+                            )}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Quick Navigation Cards */}
       <div className="space-y-4">
         <h2 className="text-lg font-bold font-serif text-[#132238]">Academic & Examination Services</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Link
+            href="/student/timetable"
+            className="group p-5 bg-white rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A] hover:shadow-sm transition-all flex items-start space-x-4"
+          >
+            <div className="w-10 h-10 rounded-lg bg-teal-50 text-[#2F7C7A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Clock className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-sm text-[#132238] group-hover:text-[#2F7C7A] transition-colors">
+                Class Timetable
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                View daily 7-period schedules, assigned teachers, subject hours, and rooms.
+              </p>
+            </div>
+          </Link>
+
           <Link
             href="/student/academics"
             className="group p-5 bg-white rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A] hover:shadow-sm transition-all flex items-start space-x-4"

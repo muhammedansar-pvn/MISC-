@@ -45,6 +45,7 @@ export type SubjectType = 'THEORY' | 'PRACTICAL' | 'BOTH';
 export interface Subject {
   _id: string;
   name: string;
+  arabicName?: string;
   code: string;
   type: SubjectType;
   credits: number;
@@ -61,13 +62,27 @@ export interface SubjectPayload {
   status?: string;
 }
 
+export type SyllabusExamType = 'HALF_YEARLY' | 'ANNUAL';
+
+export interface SyllabusUnit {
+  unitNumber?: number;
+  title: string;
+  unitTitle?: string;
+  topics?: string | string[];
+  [key: string]: any;
+}
+
 export interface Syllabus {
   _id: string;
-  title: string;
+  title?: string;
+  kitabName: string;
+  examType: SyllabusExamType;
+  units: SyllabusUnit[];
   academicYearId?: string | AcademicYear;
   classId?: string | ClassModel;
   subjectId?: string | Subject;
   fileUrl?: string;
+  fileName?: string;
   version?: string;
   status: string;
   createdAt?: string;
@@ -75,12 +90,16 @@ export interface Syllabus {
   [key: string]: any;
 }
 
-
 export interface SyllabusPayload {
-  title: string;
+  kitabName: string;
+  title?: string;
+  examType: SyllabusExamType;
+  units?: SyllabusUnit[];
   academicYearId?: string;
   classId?: string;
   subjectId?: string;
   fileUrl?: string;
+  fileName?: string;
+  version?: string;
   status?: string;
 }

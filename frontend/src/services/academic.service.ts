@@ -108,12 +108,18 @@ export const updateSyllabus = async (
   return response.data;
 };
 
-export const deleteSyllabus = async (
-  id: string,
-  permanent: boolean = false
-): Promise<ApiResponse<any>> => {
-  const response = await apiClient.delete<ApiResponse<any>>(
-    `${API_ENDPOINTS.academic.syllabusById(id)}${permanent ? '?permanent=true' : ''}`
+export const deleteSyllabus = async (id: string): Promise<ApiResponse<null>> => {
+  const response = await apiClient.delete<ApiResponse<null>>(API_ENDPOINTS.academic.syllabusById(id));
+  return response.data;
+};
+
+export const uploadSyllabusFile = async (payload: {
+  fileName: string;
+  fileData: string;
+}): Promise<ApiResponse<{ fileUrl: string; fileName: string; fileSize?: number }>> => {
+  const response = await apiClient.post<ApiResponse<{ fileUrl: string; fileName: string; fileSize?: number }>>(
+    '/academic/syllabuses/upload',
+    payload
   );
   return response.data;
 };
@@ -136,4 +142,5 @@ export default {
   createSyllabus,
   updateSyllabus,
   deleteSyllabus,
+  uploadSyllabusFile,
 };

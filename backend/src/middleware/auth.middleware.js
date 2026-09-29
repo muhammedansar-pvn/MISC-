@@ -31,6 +31,9 @@ const requireAuth = async (req, res, next) => {
       const studentProfile = await StudentProfile.findOne({ userId: decoded.userId }).lean();
       if (studentProfile) {
         req.user.studentId = studentProfile._id;
+        if (studentProfile.classId) {
+          req.user.classId = studentProfile.classId;
+        }
         if (studentProfile.institutionId) {
           req.user.institutionId = studentProfile.institutionId;
         }

@@ -6,6 +6,7 @@ const {
   deleteStudent,
   updateStudentStatus,
   registerStudentWithAccount,
+  getStudentTeachers,
 } = require("./student.service");
 const StudentProfile = require("./student.model");
 
@@ -175,6 +176,22 @@ const handleDeleteStudent = async (req, res) => {
   }
 };
 
+const handleGetMyTeachers = async (req, res) => {
+  try {
+    const userId = req.user.userId || req.user.id;
+    const subjectsWithTeachers = await getStudentTeachers(userId);
+    return res.status(200).json({
+      success: true,
+      data: subjectsWithTeachers,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to retrieve teachers for your class",
+    });
+  }
+};
+
 module.exports = {
   registerStudent,
   handleRegisterStudentWithAccount,
@@ -185,5 +202,6 @@ module.exports = {
   handleUpdateStudentStatus,
   handleUpdateMyProfile,
   handleDeleteStudent,
+  handleGetMyTeachers,
 };
 

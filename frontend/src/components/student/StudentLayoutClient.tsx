@@ -21,6 +21,12 @@ import {
   Clock,
   ShieldCheck,
   FileCheck,
+  CalendarCheck,
+  CalendarDays,
+  UserCheck,
+  TrendingUp,
+  Scale,
+  Trophy,
 } from 'lucide-react';
 
 interface StudentLayoutClientProps {
@@ -62,8 +68,20 @@ export const StudentLayoutClient: React.FC<StudentLayoutClientProps> = ({ childr
       title: 'ACADEMICS',
       items: [
         { label: 'Academic Overview', path: '/student/academics', icon: GraduationCap },
+        { label: 'Class Timetable', path: '/student/timetable', icon: Clock },
+        { label: 'Attendance', path: '/student/attendance', icon: CalendarCheck },
         { label: 'Syllabus Explorer', path: '/student/syllabus', icon: BookOpen },
         { label: 'Academic Resources', path: '/student/resources', icon: FileText },
+      ],
+    },
+    {
+      title: 'STUDENT LIFE & GUIDANCE',
+      items: [
+        { label: 'My Mentor', path: '/student/mentor', icon: UserCheck },
+        { label: 'Leave Requests', path: '/student/leave', icon: CalendarDays },
+        { label: 'Progress & Development', path: '/student/progress', icon: TrendingUp },
+        { label: 'Conduct & Discipline', path: '/student/discipline', icon: Scale },
+        { label: 'Activities & Achievements', path: '/student/activities', icon: Trophy },
       ],
     },
     {

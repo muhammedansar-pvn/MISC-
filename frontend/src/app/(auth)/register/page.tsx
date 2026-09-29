@@ -166,13 +166,11 @@ export default function RegisterPage() {
             <select
               id="role"
               name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full px-3 py-2.5 rounded-xl border border-[#E2E8E0] bg-white text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all cursor-pointer"
+              value="STUDENT"
+              disabled
+              className="w-full px-3 py-2.5 rounded-xl border border-[#E2E8E0] bg-gray-50 text-slate-800 text-sm focus:outline-none cursor-not-allowed"
             >
               <option value="STUDENT">Student</option>
-              <option value="FACULTY">Faculty</option>
-              <option value="INSTITUTION">Institution</option>
             </select>
           </div>
         </div>

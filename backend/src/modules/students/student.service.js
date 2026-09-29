@@ -3,9 +3,12 @@ const User = require("../users/user.model");
 const StudentProfile = require("./student.model");
 const InstitutionProfile = require("../institutions/institution.model");
 const Class = require("../academics/class.model");
+const Timetable = require("../academics/timetable.model");
+const FacultyProfile = require("../faculty/faculty.model");
 const { generateAccountSetupToken, sendAndStoreOtp, maskEmail } = require("../auth/auth.service");
 const OtpVerification = require("../auth/otp-verification.model");
 const studentLifecycleService = require("./student-lifecycle.service");
+const { escapeRegex } = require("../../shared/utils/regex");
 
 const generateRegistrationNumber = async (session = null) => {
   const year = new Date().getFullYear();
@@ -128,7 +131,7 @@ const getStudents = async (filter = {}, search = "") => {
   const query = { isDeleted: { $ne: true }, ...filter };
 
   if (search) {
-    const searchRegex = new RegExp(search.trim(), "i");
+    const searchRegex = new RegExp(escapeRegex(search.trim()), "i");
     query.$or = [
       { registrationNumber: searchRegex },
       { nameEnglish: searchRegex },
@@ -473,6 +476,93 @@ const registerStudentWithAccount = async (payload, caller = null) => {
   };
 };
 
+const getStudentTeachers = async (userId) => {
+  const student = await StudentProfile.findOne({ userId }).select("classId");
+  if (!student || !student.classId) {
+    return [];
+  }
+
+  const classId = student.classId;
+
+  // 1. Fetch active Timetable entries for this class
+  const timetableEntries = await Timetable.find({
+    classId,
+    status: "ACTIVE",
+    isDeleted: { $ne: true },
+  })
+    .populate("subjectId", "subjectName subjectCode category")
+    .populate("facultyId", "nameEnglish designation")
+    .lean();
+
+  // 2. Fetch faculty assigned directly to this class
+  const assignedFaculty = await FacultyProfile.find({
+    assignedClasses: classId,
+    status: "ACTIVE",
+    isDeleted: { $ne: true },
+  })
+    .populate("assignedSubjects", "subjectName subjectCode category")
+    .select("nameEnglish designation assignedSubjects")
+    .lean();
+
+  // Distinct subjects map
+  const subjectMap = new Map();
+
+  // Process timetable entries
+  for (const entry of timetableEntries) {
+    if (!entry.subjectId) continue;
+    const subIdStr = entry.subjectId._id.toString();
+
+    if (!subjectMap.has(subIdStr)) {
+      subjectMap.set(subIdStr, {
+        subjectId: subIdStr,
+        subjectName: entry.subjectId.subjectName || "Subject",
+        subjectCode: entry.subjectId.subjectCode || "SUB",
+        category: entry.subjectId.category || "GENERAL",
+        teacher: entry.facultyId
+          ? {
+              nameEnglish: entry.facultyId.nameEnglish || "Faculty Member",
+              designation: entry.facultyId.designation || "Usthad",
+            }
+          : null,
+      });
+    } else if (entry.facultyId && !subjectMap.get(subIdStr).teacher) {
+      subjectMap.get(subIdStr).teacher = {
+        nameEnglish: entry.facultyId.nameEnglish || "Faculty Member",
+        designation: entry.facultyId.designation || "Usthad",
+      };
+    }
+  }
+
+  // Next incorporate directly assigned faculty
+  for (const faculty of assignedFaculty) {
+    const subjects = faculty.assignedSubjects || [];
+    for (const sub of subjects) {
+      const subIdStr = sub._id.toString();
+      if (!subjectMap.has(subIdStr)) {
+        subjectMap.set(subIdStr, {
+          subjectId: subIdStr,
+          subjectName: sub.subjectName || "Subject",
+          subjectCode: sub.subjectCode || "SUB",
+          category: sub.category || "GENERAL",
+          teacher: {
+            nameEnglish: faculty.nameEnglish || "Faculty Member",
+            designation: faculty.designation || "Usthad",
+          },
+        });
+      } else if (!subjectMap.get(subIdStr).teacher) {
+        subjectMap.get(subIdStr).teacher = {
+          nameEnglish: faculty.nameEnglish || "Faculty Member",
+          designation: faculty.designation || "Usthad",
+        };
+      }
+    }
+  }
+
+  return Array.from(subjectMap.values()).sort((a, b) =>
+    a.subjectName.localeCompare(b.subjectName)
+  );
+};
+
 module.exports = {
   createStudent,
   getStudents,
@@ -482,5 +572,6 @@ module.exports = {
   updateStudentStatus,
   generateRegistrationNumber,
   registerStudentWithAccount,
+  getStudentTeachers,
 };
 

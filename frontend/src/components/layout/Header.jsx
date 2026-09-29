@@ -62,7 +62,7 @@ export const Header = () => {
             <span className={`font-serif text-lg sm:text-xl font-bold tracking-tight leading-none transition-colors ${
               isTransparent ? 'text-white' : 'text-[#132238]'
             }`}>
-              MISC
+              SANAVIYYA
             </span>
             <span className={`text-[9px] sm:text-[10px] font-mono tracking-[0.2em] uppercase mt-1 transition-colors ${
               isTransparent ? 'text-[#F7F5EF]/80' : 'text-[#667085]'

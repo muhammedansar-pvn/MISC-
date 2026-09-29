@@ -30,24 +30,37 @@ const subjectSchema = Joi.object({
   status: Joi.string().valid("ACTIVE", "INACTIVE").default("ACTIVE"),
 }).or("subjectName", "name").or("subjectCode", "code");
 
-const syllabusSchema = Joi.object({
+const unitItemSchema = Joi.object({
+  unitNumber: Joi.number().optional().allow(null),
   title: Joi.string().trim().required(),
+});
+
+const syllabusSchema = Joi.object({
+  kitabName: Joi.string().trim().required(),
+  title: Joi.string().trim().allow("").optional(),
+  examType: Joi.string().valid("HALF_YEARLY", "ANNUAL").required(),
+  units: Joi.array().items(unitItemSchema).default([]),
   subjectId: Joi.string().hex().length(24).required(),
   classId: Joi.string().hex().length(24).required(),
   academicYearId: Joi.string().hex().length(24).required(),
-  fileUrl: Joi.string().trim().required(),
+  fileUrl: Joi.string().trim().allow("").optional(),
+  fileName: Joi.string().trim().allow("").optional(),
   version: Joi.string().trim().default("1.0"),
   status: Joi.string().valid("DRAFT", "PUBLISHED", "SUPERSEDED", "ACTIVE", "INACTIVE").default("ACTIVE"),
 });
 
 const updateSyllabusSchema = Joi.object({
-  title: Joi.string().trim(),
-  subjectId: Joi.string().hex().length(24),
-  classId: Joi.string().hex().length(24),
-  academicYearId: Joi.string().hex().length(24),
-  fileUrl: Joi.string().trim(),
-  version: Joi.string().trim(),
-  status: Joi.string().valid("DRAFT", "PUBLISHED", "SUPERSEDED", "ACTIVE", "INACTIVE"),
+  kitabName: Joi.string().trim().optional(),
+  title: Joi.string().trim().allow("").optional(),
+  examType: Joi.string().valid("HALF_YEARLY", "ANNUAL").optional(),
+  units: Joi.array().items(unitItemSchema).optional(),
+  subjectId: Joi.string().hex().length(24).optional(),
+  classId: Joi.string().hex().length(24).optional(),
+  academicYearId: Joi.string().hex().length(24).optional(),
+  fileUrl: Joi.string().trim().allow("").optional(),
+  fileName: Joi.string().trim().allow("").optional(),
+  version: Joi.string().trim().optional(),
+  status: Joi.string().valid("DRAFT", "PUBLISHED", "SUPERSEDED", "ACTIVE", "INACTIVE").optional(),
 });
 
 module.exports = {

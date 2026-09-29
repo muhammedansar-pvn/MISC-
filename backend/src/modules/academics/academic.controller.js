@@ -134,10 +134,27 @@ const handleCreateSyllabus = async (req, res) => {
 const handleGetSyllabuses = async (req, res) => {
   try {
     const filter = {};
-    if (req.query.classId) filter.classId = req.query.classId;
+
+    // Strict Class Scoping for Students
+    if (req.user?.role === "STUDENT") {
+      let classId = req.user.classId;
+      if (!classId) {
+        const StudentProfile = require("../students/student.model");
+        const profile = await StudentProfile.findOne({ userId: req.user.userId || req.user.id }).lean();
+        classId = profile?.classId;
+      }
+      if (!classId) {
+        return res.status(200).json({ success: true, count: 0, data: [] });
+      }
+      filter.classId = classId;
+      filter.status = "ACTIVE";
+    } else {
+      if (req.query.classId) filter.classId = req.query.classId;
+      if (req.query.status) filter.status = req.query.status.toUpperCase();
+    }
+
     if (req.query.subjectId) filter.subjectId = req.query.subjectId;
     if (req.query.academicYearId) filter.academicYearId = req.query.academicYearId;
-    if (req.query.status) filter.status = req.query.status.toUpperCase();
 
     const search = req.query.search || "";
 
@@ -152,6 +169,24 @@ const handleGetSyllabusById = async (req, res) => {
   try {
     const record = await academicService.getSyllabusById(req.params.id);
     if (!record) return res.status(404).json({ success: false, message: "Syllabus not found" });
+
+    // Enforce class isolation for students
+    if (req.user?.role === "STUDENT") {
+      let classId = req.user.classId;
+      if (!classId) {
+        const StudentProfile = require("../students/student.model");
+        const profile = await StudentProfile.findOne({ userId: req.user.userId || req.user.id }).lean();
+        classId = profile?.classId;
+      }
+      const recordClassId = record.classId?._id?.toString() || record.classId?.toString();
+      if (!classId || recordClassId !== classId.toString()) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: Syllabus does not belong to your enrolled class",
+        });
+      }
+    }
+
     return res.status(200).json({ success: true, data: record });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve syllabus" });
@@ -183,6 +218,69 @@ const handleDeleteSyllabus = async (req, res) => {
   }
 };
 
+const fs = require("fs");
+const path = require("path");
+const crypto = require("crypto");
+
+const handleUploadSyllabusFile = async (req, res) => {
+  try {
+    const { fileName, fileData } = req.body;
+
+    if (!fileData) {
+      return res.status(400).json({ success: false, message: "No file data provided" });
+    }
+
+    let base64Content = fileData;
+    if (fileData.includes(";base64,")) {
+      base64Content = fileData.split(";base64,")[1];
+    }
+
+    const buffer = Buffer.from(base64Content, "base64");
+
+    // Validate file size (max 15MB)
+    const MAX_SIZE = 15 * 1024 * 1024;
+    if (buffer.length > MAX_SIZE) {
+      return res.status(400).json({ success: false, message: "File exceeds 15MB size limit" });
+    }
+
+    // Validate extension
+    const originalExt = path.extname(fileName || "").toLowerCase() || ".pdf";
+    const allowedExts = [".pdf", ".doc", ".docx"];
+    if (!allowedExts.includes(originalExt)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid file format. Only PDF, DOC, and DOCX files are allowed.",
+      });
+    }
+
+    // Ensure uploads directory exists
+    const uploadsDir = path.join(__dirname, "../../../uploads/syllabuses");
+    await fs.promises.mkdir(uploadsDir, { recursive: true });
+
+    // Generate safe unique filename
+    const safeName = path.basename(fileName || "syllabus", originalExt).replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 50);
+    const uniqueFileName = `${safeName}-${Date.now()}-${crypto.randomBytes(4).toString("hex")}${originalExt}`;
+    const filePath = path.join(uploadsDir, uniqueFileName);
+
+    await fs.promises.writeFile(filePath, buffer);
+
+    const fileUrl = `/uploads/syllabuses/${uniqueFileName}`;
+
+    return res.status(200).json({
+      success: true,
+      message: "File uploaded successfully",
+      data: {
+        fileUrl,
+        fileName: fileName || uniqueFileName,
+        fileSize: buffer.length,
+      },
+    });
+  } catch (error) {
+    console.error("Upload syllabus file error:", error);
+    return res.status(500).json({ success: false, message: "Failed to upload syllabus file: " + error.message });
+  }
+};
+
 module.exports = {
   handleCreateAcademicYear,
   handleGetAcademicYears,
@@ -201,4 +299,5 @@ module.exports = {
   handleGetSyllabusById,
   handleUpdateSyllabus,
   handleDeleteSyllabus,
+  handleUploadSyllabusFile,
 };

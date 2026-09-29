@@ -27,7 +27,7 @@ const {
   validateAccountSetup,
 } = require("./auth.validator");
 
-const { createRateLimiter } = require("../../middleware/rate-limit.middleware");
+const { createRateLimiter, accountSetupLimiter } = require("../../middleware/rate-limit.middleware");
 
 const router = express.Router();
 
@@ -65,10 +65,10 @@ router.post("/verify-otp", otpLimiter, validateVerifyOtp, verifyOtp);
 router.post("/resend-otp", otpLimiter, validateResendOtp, resendOtp);
 
 // Password Reset & Account Setup Routes
-router.get("/account-setup/:token", verifyAccountSetupToken);
-router.post("/account-setup", validateAccountSetup, accountSetup);
+router.get("/account-setup/:token", accountSetupLimiter, verifyAccountSetupToken);
+router.post("/account-setup", accountSetupLimiter, validateAccountSetup, accountSetup);
 router.post("/resend-setup-link", otpLimiter, resendAccountSetupLink);
-router.post("/set-password", setPassword);
+router.post("/set-password", accountSetupLimiter, validateAccountSetup, setPassword);
 router.post("/forgot-password", passwordResetLimiter, validateForgotPassword, forgotPassword);
 router.post("/reset-password", passwordResetLimiter, validateResetPassword, resetPassword);
 router.post("/send-otp", otpLimiter, validateSendOtp, sendOtp);

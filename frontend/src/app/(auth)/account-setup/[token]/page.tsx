@@ -1,20 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { UserCheck, Lock, Eye, EyeOff, CheckCircle, AlertTriangle, User } from 'lucide-react';
 import { verifyAccountSetupToken, accountSetup } from '@/services/auth.service';
 
-interface AccountSetupPageProps {
-  params: Promise<{
-    token: string;
-  }>;
-}
-
-export default function AccountSetupPage({ params }: AccountSetupPageProps) {
-  const resolvedParams = use(params);
-  const token = resolvedParams?.token || '';
+export default function AccountSetupPage() {
+  const routeParams = useParams();
+  const token = (routeParams?.token as string) || '';
   const router = useRouter();
 
   const [verifying, setVerifying] = useState(true);
@@ -36,26 +30,30 @@ export default function AccountSetupPage({ params }: AccountSetupPageProps) {
   useEffect(() => {
     const verifyToken = async () => {
       if (!token) {
-        setTokenError('Setup token is missing');
+        setTokenError('This link is invalid or has expired');
         setVerifying(false);
         return;
       }
 
       try {
         const res: any = await verifyAccountSetupToken(token);
-        if (res.success || res.valid) {
+        if (res && (res.success || res.valid)) {
           setTokenValid(true);
-          const userData = res.user || res.data?.user || {};
+          const userData = res.user || res.data?.user || res.data || {};
           setUserInfo(userData);
           setFormData((prev) => ({
             ...prev,
             username: userData.username || userData.email || '',
           }));
         } else {
-          setTokenError(res.message || 'Invitation token is invalid or expired');
+          setTokenError(res?.message || 'This link is invalid or has expired');
         }
       } catch (err: any) {
-        setTokenError(err.response?.data?.message || 'Invalid or expired invitation token');
+        const message =
+          err?.response?.data?.message ||
+          err?.message ||
+          'This link is invalid or has expired';
+        setTokenError(message);
       } finally {
         setVerifying(false);
       }

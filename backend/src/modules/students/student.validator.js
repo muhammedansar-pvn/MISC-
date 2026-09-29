@@ -93,9 +93,35 @@ const registerStudentSchema = Joi.object({
   parentUserId: Joi.string().hex().length(24).allow(null, "").optional(),
 });
 
+const studentSelfProfileSchema = Joi.object({
+  email: Joi.string().email().lowercase().trim().allow("", null).optional(),
+  name: Joi.string().trim().min(2).max(100).allow("", null).optional(),
+  mobile: Joi.string().trim().allow("", null).optional(),
+  nameEnglish: Joi.string().trim().min(2).max(100).optional(),
+  nameArabic: Joi.string().trim().max(100).allow("").optional(),
+  placeEnglish: Joi.string().trim().max(100).allow("").optional(),
+  placeArabic: Joi.string().trim().max(100).allow("").optional(),
+  contactNumber: Joi.string().trim().allow("").optional(),
+  photo: Joi.string().trim().allow("").optional(),
+
+  // Explicitly reject administrative and academic placement fields
+  classId: Joi.forbidden().messages({ "any.unknown": "Updating classId is not permitted for students" }),
+  institutionId: Joi.forbidden().messages({ "any.unknown": "Updating institutionId is not permitted for students" }),
+  mentorId: Joi.forbidden().messages({ "any.unknown": "Updating mentorId is not permitted for students" }),
+  disciplineScore: Joi.forbidden().messages({ "any.unknown": "Updating disciplineScore is not permitted for students" }),
+  house: Joi.forbidden().messages({ "any.unknown": "Updating house is not permitted for students" }),
+  skills: Joi.forbidden().messages({ "any.unknown": "Updating skills is not permitted for students" }),
+  admissionYear: Joi.forbidden().messages({ "any.unknown": "Updating admissionYear is not permitted for students" }),
+  parentUserId: Joi.forbidden().messages({ "any.unknown": "Updating parentUserId is not permitted for students" }),
+  biometricId: Joi.forbidden().messages({ "any.unknown": "Updating biometricId is not permitted for students" }),
+  status: Joi.forbidden().messages({ "any.unknown": "Updating status is not permitted for students" }),
+  isDeleted: Joi.forbidden().messages({ "any.unknown": "Updating isDeleted is not permitted for students" }),
+}).unknown(false);
+
 module.exports = {
   validateStudent: validateSchema(createStudentSchema),
   validateUpdateStudent: validateSchema(updateStudentSchema),
   validateRegisterStudent: validateSchema(registerStudentSchema),
+  validateUpdateMyProfile: validateSchema(studentSelfProfileSchema),
 };
 

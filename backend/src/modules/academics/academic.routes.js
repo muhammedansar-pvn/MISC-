@@ -17,6 +17,7 @@ const {
   handleGetSyllabusById,
   handleUpdateSyllabus,
   handleDeleteSyllabus,
+  handleUploadSyllabusFile,
 } = require("./academic.controller");
 const {
   validateAcademicYear,
@@ -49,11 +50,31 @@ router.get("/subjects/:id", requireAuth, handleGetSubjectById);
 router.put("/subjects/:id", requireAuth, requireRole("ADMIN"), validateSubject, handleUpdateSubject);
 
 // --- SYLLABUSES ---
+router.post("/syllabuses/upload", requireAuth, requireRole("ADMIN"), handleUploadSyllabusFile);
 router.post("/syllabuses", requireAuth, requireRole("ADMIN"), validateSyllabus, handleCreateSyllabus);
 router.get("/syllabuses", requireAuth, handleGetSyllabuses);
 router.get("/syllabuses/:id", requireAuth, handleGetSyllabusById);
 router.put("/syllabuses/:id", requireAuth, requireRole("ADMIN"), validateUpdateSyllabus, handleUpdateSyllabus);
 router.patch("/syllabuses/:id", requireAuth, requireRole("ADMIN"), validateUpdateSyllabus, handleUpdateSyllabus);
 router.delete("/syllabuses/:id", requireAuth, requireRole("ADMIN"), handleDeleteSyllabus);
+
+// --- TIMETABLES ---
+const {
+  handleCreateTimetableEntry,
+  handleGetTimetableEntries,
+  handleGetTimetableEntryById,
+  handleUpdateTimetableEntry,
+  handleDeleteTimetableEntry,
+} = require("./timetable.controller");
+const {
+  validateCreateTimetableEntry,
+  validateUpdateTimetableEntry,
+} = require("./timetable.validator");
+
+router.post("/timetables", requireAuth, requireRole("ADMIN", "INSTITUTION"), validateCreateTimetableEntry, handleCreateTimetableEntry);
+router.get("/timetables", requireAuth, handleGetTimetableEntries);
+router.get("/timetables/:id", requireAuth, handleGetTimetableEntryById);
+router.put("/timetables/:id", requireAuth, requireRole("ADMIN", "INSTITUTION"), validateUpdateTimetableEntry, handleUpdateTimetableEntry);
+router.delete("/timetables/:id", requireAuth, requireRole("ADMIN", "INSTITUTION"), handleDeleteTimetableEntry);
 
 module.exports = router;

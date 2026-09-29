@@ -29,25 +29,31 @@ router.get("/health", (req, res) => {
   });
 });
 
-// Dev/Test Email Endpoint
-router.get("/test-email", async (req, res) => {
-  try {
-    const recipient = req.query.to || process.env.SMTP_USER || process.env.SMTP_FROM_EMAIL;
-    const result = await sendTestEmail(recipient);
+const { requireAuth } = require("../middleware/auth.middleware");
+const { requireRole } = require("../middleware/role.middleware");
+const env = require("../config/env");
 
-    return res.status(200).json({
-      success: true,
-      message: "Test email sent successfully",
-      data: result,
-    });
-  } catch (error) {
-    console.error("Test Email Route Error:", error.message);
-    return res.status(500).json({
-      success: false,
-      message: `Failed to send test email: ${error.message}`,
-    });
-  }
-});
+// Dev/Test Email Endpoint (Restricted to non-production and ADMIN only)
+if (env.NODE_ENV !== "production") {
+  router.get("/test-email", requireAuth, requireRole("ADMIN"), async (req, res) => {
+    try {
+      const recipient = req.query.to || process.env.SMTP_USER || process.env.SMTP_FROM_EMAIL;
+      const result = await sendTestEmail(recipient);
+
+      return res.status(200).json({
+        success: true,
+        message: "Test email sent successfully",
+        data: result,
+      });
+    } catch (error) {
+      console.error("Test Email Route Error:", error.message);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to send test email: ${error.message}`,
+      });
+    }
+  });
+}
 
 // Domain Module Route Mounts
 router.use("/auth", authRoutes);

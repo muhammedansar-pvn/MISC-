@@ -27,3 +27,24 @@ export { default as examService } from './exam.service';
 
 export * from './payment.service';
 export { default as paymentService } from './payment.service';
+
+export * from './attendance.service';
+export { default as attendanceService } from './attendance.service';
+
+export * from './leave.service';
+export { default as leaveService } from './leave.service';
+
+export * from './mentor.service';
+export { default as mentorService } from './mentor.service';
+
+export * from './development.service';
+export { default as developmentService } from './development.service';
+
+export * from './discipline.service';
+export { default as disciplineService } from './discipline.service';
+
+export * from './activity.service';
+export { default as activityService } from './activity.service';
+
+export * from './timetable.service';
+export { default as timetableService } from './timetable.service';

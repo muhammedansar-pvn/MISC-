@@ -15,10 +15,11 @@ const handleCreatePayment = async (req, res) => {
 
 const handleVerifyPayment = async (req, res) => {
   try {
-    const payment = await paymentService.verifyAndProcessPayment(req.body);
+    const payment = await paymentService.verifyAndProcessPayment(req.body, req.user);
     return res.status(200).json({ success: true, message: "Payment status verified successfully", data: payment });
   } catch (error) {
-    return res.status(400).json({ success: false, message: error.message || "Payment verification failed" });
+    const statusCode = error.statusCode || 400;
+    return res.status(statusCode).json({ success: false, message: error.message || "Payment verification failed" });
   }
 };
 
@@ -39,6 +40,15 @@ const handleGetPaymentByTransactionId = async (req, res) => {
   try {
     const payment = await paymentService.getPaymentByTransactionId(req.params.transactionId);
     if (!payment) return res.status(404).json({ success: false, message: "Payment record not found" });
+
+    const ownerId = payment.userId?._id ? payment.userId._id.toString() : payment.userId?.toString();
+    if (req.user?.role !== "ADMIN" && ownerId !== req.user?.userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied: You can only view your own payment records",
+      });
+    }
+
     return res.status(200).json({ success: true, data: payment });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve payment record" });

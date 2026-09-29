@@ -8,10 +8,15 @@ const {
   handleUpdateStudentStatus,
   handleUpdateMyProfile,
   handleDeleteStudent,
+  handleGetMyTeachers,
 } = require("./student.controller");
-const { validateStudent, validateUpdateStudent } = require("./student.validator");
+const { validateStudent, validateUpdateStudent, validateUpdateMyProfile } = require("./student.validator");
 const { requireAuth } = require("../../middleware/auth.middleware");
 const { requireRole } = require("../../middleware/role.middleware");
+
+const {
+  handleGetMyTimetable,
+} = require("../academics/timetable.controller");
 
 const router = express.Router();
 
@@ -30,11 +35,25 @@ router.get(
   getStudentProfile
 );
 
+router.get(
+  "/timetable",
+  requireAuth,
+  requireRole("STUDENT"),
+  handleGetMyTimetable
+);
+
+router.get(
+  "/teachers",
+  requireAuth,
+  requireRole("STUDENT"),
+  handleGetMyTeachers
+);
+
 router.put(
   "/profile",
   requireAuth,
   requireRole("STUDENT"),
-  validateUpdateStudent,
+  validateUpdateMyProfile,
   handleUpdateMyProfile
 );
 

@@ -1,12 +1,40 @@
 const mongoose = require("mongoose");
 
-const syllabusSchema = new mongoose.Schema(
+const unitSchema = new mongoose.Schema(
   {
+    unitNumber: {
+      type: Number,
+    },
     title: {
       type: String,
       required: true,
       trim: true,
     },
+  },
+  { _id: false }
+);
+
+const syllabusSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      trim: true,
+    },
+
+    kitabName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    examType: {
+      type: String,
+      required: true,
+      enum: ["HALF_YEARLY", "ANNUAL"],
+      default: "ANNUAL",
+    },
+
+    units: [unitSchema],
 
     subjectId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -28,14 +56,20 @@ const syllabusSchema = new mongoose.Schema(
 
     fileUrl: {
       type: String,
-      required: true,
       trim: true,
+      default: "",
+    },
+
+    fileName: {
+      type: String,
+      trim: true,
+      default: "",
     },
 
     version: {
       type: String,
-      required: true,
       trim: true,
+      default: "1.0",
     },
 
     status: {
@@ -55,5 +89,13 @@ const syllabusSchema = new mongoose.Schema(
     collection: "syllabuses",
   }
 );
+
+// Fallback title to kitabName if not provided
+syllabusSchema.pre("save", function (next) {
+  if (!this.title && this.kitabName) {
+    this.title = this.kitabName;
+  }
+  next();
+});
 
 module.exports = mongoose.model("Syllabus", syllabusSchema);

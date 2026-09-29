@@ -88,6 +88,8 @@ export const API_ENDPOINTS = {
     subjectById: (id) => `/academic/subjects/${id}`,
     syllabuses: '/academic/syllabuses',
     syllabusById: (id) => `/academic/syllabuses/${id}`,
+    timetables: '/academic/timetables',
+    timetableById: (id) => `/academic/timetables/${id}`,
   },
 
   institutions: {
@@ -100,6 +102,8 @@ export const API_ENDPOINTS = {
     byId: (id) => `/students/${id}`,
     status: (id) => `/students/${id}/status`,
     profile: '/students/profile',
+    timetable: '/students/timetable',
+    teachers: '/students/teachers',
   },
 
   faculty: {
@@ -147,6 +151,26 @@ export const API_ENDPOINTS = {
     studentSummary: '/attendance/student/summary',
     studentMonthly: '/attendance/student/monthly',
     studentHistory: '/attendance/student/history',
+  },
+
+  leaves: {
+    list: '/leaves',
+  },
+
+  mentorship: {
+    myMentor: '/mentorship/my-mentor',
+  },
+
+  development: {
+    myScores: '/development/my-scores',
+  },
+
+  discipline: {
+    myRecords: '/discipline/my-records',
+  },
+
+  activities: {
+    myAchievements: '/activities/achievements/my',
   },
 };
 

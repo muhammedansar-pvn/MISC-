@@ -1,10 +1,19 @@
 require("dotenv").config();
 
+const DEV_DEFAULT_JWT_SECRET = "default_jwt_secret_dev_key";
+
+if (
+  process.env.NODE_ENV === "production" &&
+  (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim() === "" || process.env.JWT_SECRET === DEV_DEFAULT_JWT_SECRET)
+) {
+  throw new Error("FATAL: JWT_SECRET must be explicitly set to a secure string in production and cannot equal the dev default.");
+}
+
 const env = {
   NODE_ENV: process.env.NODE_ENV || "development",
   PORT: parseInt(process.env.PORT || "5000", 10),
   MONGODB_URI: process.env.MONGODB_URI || "mongodb://localhost:27017/misc",
-  JWT_SECRET: process.env.JWT_SECRET || "default_jwt_secret_dev_key",
+  JWT_SECRET: process.env.JWT_SECRET || DEV_DEFAULT_JWT_SECRET,
   APP_URL: process.env.APP_URL || "http://localhost:3000",
   SETUP_BASE_URL: process.env.SETUP_BASE_URL || "http://localhost:3000/account-setup",
   

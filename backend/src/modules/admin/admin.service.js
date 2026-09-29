@@ -5,6 +5,7 @@ const AccountSetupToken = require("../auth/account-setup-token.model");
 const OtpVerification = require("../auth/otp-verification.model");
 const { sendUserInvitationEmail } = require("../../shared/services/email.service");
 const { sendAndStoreOtp, verifyOtpCode } = require("../auth/auth.service");
+const { escapeRegex } = require("../../shared/utils/regex");
 const studentLifecycleService = require("../students/student-lifecycle.service");
 
 // Models for stats aggregations
@@ -249,7 +250,7 @@ const getUsers = async ({ role, status, search, page, limit }) => {
   if (status) filter.status = status.toUpperCase();
 
   if (search) {
-    const searchRegex = new RegExp(search.trim(), "i");
+    const searchRegex = new RegExp(escapeRegex(search.trim()), "i");
     filter.$or = [
       { name: searchRegex },
       { email: searchRegex },

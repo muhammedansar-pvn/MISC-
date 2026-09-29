@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import {
@@ -14,6 +14,7 @@ import {
   UserCheck,
   FileText,
   Calendar,
+  Layers,
   CreditCard,
   FileCheck,
   Award,
@@ -29,6 +30,89 @@ import {
 
 interface AdminLayoutClientProps {
   children: React.ReactNode;
+}
+
+interface NavCategoryItem {
+  label: string;
+  path: string;
+  icon: any;
+  exact?: boolean;
+}
+
+interface NavCategory {
+  title: string | null;
+  items: NavCategoryItem[];
+}
+
+function AdminSidebarNavLinks({
+  navCategories,
+  sidebarCollapsed,
+  setSidebarOpen,
+}: {
+  navCategories: NavCategory[];
+  sidebarCollapsed: boolean;
+  setSidebarOpen: (open: boolean) => void;
+}) {
+  const pathname = usePathname() || '';
+  const searchParams = useSearchParams();
+  const currentTab = searchParams?.get('tab');
+
+  const checkIsActive = (itemPath: string, exact?: boolean) => {
+    // If the item has query params (e.g. /admin/academic?tab=classes)
+    if (itemPath.includes('?')) {
+      const [pathPart, queryPart] = itemPath.split('?');
+      if (pathname !== pathPart) return false;
+      const itemTab = new URLSearchParams(queryPart).get('tab');
+      return currentTab === itemTab;
+    }
+
+    // If the item is /admin/academic (Academic Years)
+    if (itemPath === '/admin/academic') {
+      if (pathname !== '/admin/academic') return false;
+      return !currentTab || currentTab === 'academic-years';
+    }
+
+    // Standard path comparison
+    if (exact) {
+      return pathname === itemPath;
+    }
+    return pathname === itemPath || pathname.startsWith(itemPath + '/');
+  };
+
+  return (
+    <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+      {navCategories.map((category, catIdx) => (
+        <div key={catIdx} className="space-y-1">
+          {category.title && !sidebarCollapsed && (
+            <p className="px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-1.5">
+              {category.title}
+            </p>
+          )}
+          {category.items.map((item) => {
+            const Icon = item.icon;
+            const isActive = checkIsActive(item.path, item.exact);
+
+            return (
+              <Link
+                key={item.path}
+                href={item.path}
+                onClick={() => setSidebarOpen(false)}
+                className={`flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  isActive
+                    ? 'bg-[#2F7C7A] text-white font-bold shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-[#132238]'
+                }`}
+                title={sidebarCollapsed ? item.label : undefined}
+              >
+                <Icon className="w-4 h-4 flex-shrink-0" />
+                {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
+              </Link>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }) => {
@@ -62,7 +146,7 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
       ],
     },
     {
-      title: 'INSTITUTE CONFIG',
+      title: 'INSTITUTION',
       items: [
         { label: 'Institute Settings', path: '/admin/institute-settings', icon: Building2 },
       ],
@@ -73,20 +157,23 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
         { label: 'Users', path: '/admin/users', icon: Users },
         { label: 'Students', path: '/admin/students', icon: GraduationCap },
         { label: 'Faculty', path: '/admin/faculty', icon: UserCheck },
-        { label: 'Campuses', path: '/admin/institutions', icon: Building2 },
       ],
     },
     {
       title: 'ACADEMIC MANAGEMENT',
       items: [
-        { label: 'Academic Years', path: '/admin/academic', icon: BookOpen },
+        { label: 'Academic Years', path: '/admin/academic', icon: Calendar, exact: true },
+        { label: 'Classes', path: '/admin/academic?tab=classes', icon: Layers },
+        { label: 'Subjects', path: '/admin/academic?tab=subjects', icon: BookOpen },
+        { label: 'Syllabus', path: '/admin/academic/syllabus', icon: FileText },
+        { label: 'Class Timetable', path: '/admin/academic/timetable', icon: ClockIcon },
       ],
     },
     {
       title: 'EXAMINATION',
       items: [
-        { label: 'Exams', path: '/admin/exams', icon: FileCheck },
-        { label: 'Results', path: '/admin/results', icon: Award },
+        { label: 'Exams & Timetables', path: '/admin/exams', icon: FileCheck },
+        { label: 'Results & Transcripts', path: '/admin/results', icon: Award },
       ],
     },
     {
@@ -97,9 +184,9 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
       ],
     },
     {
-      title: 'CMS & RESOURCES',
+      title: 'CONTENT & RESOURCES',
       items: [
-        { label: 'CMS Articles', path: '/admin/cms', icon: FileText },
+        { label: 'Articles & CMS', path: '/admin/cms', icon: FileText },
       ],
     },
   ];
@@ -162,40 +249,13 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
           </div>
 
           {/* Sidebar Nav Items */}
-          <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
-            {navCategories.map((category, catIdx) => (
-              <div key={catIdx} className="space-y-1">
-                {category.title && !sidebarCollapsed && (
-                  <p className="px-3 text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-1.5">
-                    {category.title}
-                  </p>
-                )}
-                {category.items.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = item.exact
-                    ? pathname === item.path
-                    : pathname === item.path || pathname.startsWith(item.path + '/');
-
-                  return (
-                    <Link
-                      key={item.path}
-                      href={item.path}
-                      onClick={() => setSidebarOpen(false)}
-                      className={`flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
-                        isActive
-                          ? 'bg-[#2F7C7A] text-white font-bold shadow-xs'
-                          : 'text-slate-600 hover:bg-slate-100 hover:text-[#132238]'
-                      }`}
-                      title={sidebarCollapsed ? item.label : undefined}
-                    >
-                      <Icon className="w-4 h-4 flex-shrink-0" />
-                      {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
-                    </Link>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
+          <Suspense fallback={<div className="flex-1 px-3 py-4 space-y-4 animate-pulse" />}>
+            <AdminSidebarNavLinks
+              navCategories={navCategories}
+              sidebarCollapsed={sidebarCollapsed}
+              setSidebarOpen={setSidebarOpen}
+            />
+          </Suspense>
 
           {/* Sidebar Footer User Info */}
           <div className="p-3.5 border-t border-[#E2E8E0] bg-[#F7F8F5] flex-shrink-0">
