@@ -2,8 +2,7 @@ const ROLES = Object.freeze({
   ADMIN: "ADMIN",
   PRINCIPAL: "PRINCIPAL",
   HOD: "HOD",
-  ASATITHA: "ASATITHA",
-  FACULTY: "FACULTY", // Preserved as alias/backward compatibility for Asatitha
+  FACULTY: "FACULTY",
   STUDENT: "STUDENT",
   PARENT: "PARENT",
 });

@@ -60,14 +60,14 @@ router.put(
 router.get(
   "/",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "INSTITUTION"),
+  requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "INSTITUTION"),
   handleGetStudents
 );
 
 router.get(
   "/:id",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "INSTITUTION"),
+  requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "INSTITUTION"),
   handleGetStudentById
 );
 

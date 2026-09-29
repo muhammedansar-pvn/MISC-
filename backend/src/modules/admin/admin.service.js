@@ -30,7 +30,7 @@ const createUserInvitation = async ({ name, email, username, role, department, m
     throw error;
   }
 
-  const allowedRoles = ["ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "PARENT"];
+  const allowedRoles = ["ADMIN", "PRINCIPAL", "HOD", "FACULTY", "PARENT"];
   const targetRole = role ? role.toUpperCase() : "FACULTY";
 
   if (targetRole === "STUDENT") {
@@ -361,7 +361,7 @@ const updateUser = async (id, updateData, currentAdminId) => {
   if (department !== undefined) user.department = department ? department.trim() : undefined;
 
   if (role) {
-    const allowedRoles = ["ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "STUDENT", "PARENT", "INSTITUTION"];
+    const allowedRoles = ["ADMIN", "PRINCIPAL", "HOD", "FACULTY", "STUDENT", "PARENT", "INSTITUTION"];
     const targetRole = role.toUpperCase();
     if (!allowedRoles.includes(targetRole)) {
       const error = new Error(`Invalid role. Allowed roles are: ${allowedRoles.join(", ")}`);

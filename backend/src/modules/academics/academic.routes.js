@@ -39,8 +39,8 @@ router.put("/academic-years/:id", requireAuth, requireRole("ADMIN"), validateAca
 
 // --- CLASSES ---
 router.post("/classes", requireAuth, requireRole("ADMIN"), validateClass, handleCreateClass);
-router.get("/classes", requireAuth, requireRole("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "INSTITUTION"), handleGetClasses);
-router.get("/classes/:id", requireAuth, requireRole("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "INSTITUTION"), handleGetClassById);
+router.get("/classes", requireAuth, requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "INSTITUTION"), handleGetClasses);
+router.get("/classes/:id", requireAuth, requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "INSTITUTION"), handleGetClassById);
 router.put("/classes/:id", requireAuth, requireRole("ADMIN"), validateClass, handleUpdateClass);
 
 // --- SUBJECTS ---

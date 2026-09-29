@@ -46,7 +46,7 @@ const assignMentor = async ({
 };
 
 /**
- * Retrieves all mentees assigned to the authenticated Asatitha/Faculty.
+ * Retrieves all mentees assigned to the authenticated Faculty.
  */
 const getMyMentees = async (userId) => {
   const faculty = await FacultyProfile.findOne({ userId });
@@ -96,7 +96,7 @@ const updateMenteeMonitoring = async (assignmentId, reqUser, { monitoringCategor
 
 /**
  * Retrieves mentor assignment for a student.
- * Validates requester's relationship (Student self, Parent child, or assigned Asatitha).
+ * Validates requester's relationship (Student self, Parent child, or assigned Faculty).
  */
 const getStudentMentor = async (studentId, reqUser) => {
   if (reqUser.role === "STUDENT") {

@@ -139,11 +139,11 @@ async function runPhase2Verification() {
     });
     cleanupParentIds.push(profileParent1._id);
 
-    // Asatitha 1 (assigned to Class A)
+    // Faculty 1 (assigned to Class A)
     const userUsthad1 = await User.create({
       name: "Usthad Ahmad",
       email: `ahmad.${timestamp}@markaz.in`,
-      role: "ASATITHA",
+      role: "FACULTY",
       status: "ACTIVE",
       emailVerified: true,
     });
@@ -156,11 +156,11 @@ async function runPhase2Verification() {
     });
     cleanupFacultyIds.push(profileUsthad1._id);
 
-    // Asatitha 2 (assigned to Class B)
+    // Faculty 2 (assigned to Class B)
     const userUsthad2 = await User.create({
       name: "Usthad Bilal",
       email: `bilal.${timestamp}@markaz.in`,
-      role: "ASATITHA",
+      role: "FACULTY",
       status: "ACTIVE",
       emailVerified: true,
     });
@@ -188,8 +188,8 @@ async function runPhase2Verification() {
     // Generate JWTs
     const tokenStudent1 = generateToken({ userId: userStudent1._id.toString(), role: "STUDENT" });
     const tokenParent1 = generateToken({ userId: userParent1._id.toString(), role: "PARENT" });
-    const tokenUsthad1 = generateToken({ userId: userUsthad1._id.toString(), role: "ASATITHA" });
-    const tokenUsthad2 = generateToken({ userId: userUsthad2._id.toString(), role: "ASATITHA" });
+    const tokenUsthad1 = generateToken({ userId: userUsthad1._id.toString(), role: "FACULTY" });
+    const tokenUsthad2 = generateToken({ userId: userUsthad2._id.toString(), role: "FACULTY" });
     const tokenAdmin = generateToken({ userId: userAdmin._id.toString(), role: "ADMIN" });
 
     // =========================================================================
@@ -223,7 +223,7 @@ async function runPhase2Verification() {
     console.log(`StudentProfile.mentorId synced: ${mentorIdSynced}`);
 
     // 13b. Usthad 1 checks my mentees
-    console.log(`\n--- 13b. GET /api/mentorship/my-mentees as ASATITHA 1 ---`);
+    console.log(`\n--- 13b. GET /api/mentorship/my-mentees as FACULTY 1 ---`);
     const resMyMentees = await fetch(`${baseUrl}/mentorship/my-mentees`, {
       headers: { Authorization: `Bearer ${tokenUsthad1}` },
     });

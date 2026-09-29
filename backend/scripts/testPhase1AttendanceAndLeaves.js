@@ -137,12 +137,12 @@ async function runPhase1Verification() {
     });
     cleanupParentIds.push(parentProfile1._id);
 
-    // 4. Establish Asatitha 1 (Assigned to Class A) and Asatitha 2 (Assigned to Class B)
+    // 4. Establish Faculty 1 (Assigned to Class A) and Faculty 2 (Assigned to Class B)
     const userUsthad1 = await User.create({
       name: "Usthad Class A",
       email: `usthad.a.${timestamp}@markaz.in`,
       username: `usthad.a.${timestamp}`,
-      role: "ASATITHA",
+      role: "FACULTY",
       status: "ACTIVE",
       emailVerified: true,
     });
@@ -160,7 +160,7 @@ async function runPhase1Verification() {
       name: "Usthad Class B",
       email: `usthad.b.${timestamp}@markaz.in`,
       username: `usthad.b.${timestamp}`,
-      role: "ASATITHA",
+      role: "FACULTY",
       status: "ACTIVE",
       emailVerified: true,
     });
@@ -185,8 +185,8 @@ async function runPhase1Verification() {
     // Generate JWTs
     const tokenStudent1 = generateToken({ userId: userStudent1._id.toString(), role: "STUDENT" });
     const tokenParent1 = generateToken({ userId: userParent1._id.toString(), role: "PARENT" });
-    const tokenUsthad1 = generateToken({ userId: userUsthad1._id.toString(), role: "ASATITHA" });
-    const tokenUsthad2 = generateToken({ userId: userUsthad2._id.toString(), role: "ASATITHA" });
+    const tokenUsthad1 = generateToken({ userId: userUsthad1._id.toString(), role: "FACULTY" });
+    const tokenUsthad2 = generateToken({ userId: userUsthad2._id.toString(), role: "FACULTY" });
 
     // -------------------------------------------------------------------------
     // TEST 1: Read-Only Attendance Endpoints for Student (404 Resolution)
@@ -328,8 +328,8 @@ async function runPhase1Verification() {
       bodyUsthad2Approve.success === false &&
       bodyUsthad2Approve.message.includes("not belong to your assigned classes");
 
-    console.log(`Test 5 Result: ${test5Passed ? "PASSED (Rejected unassigned Asatitha approval with HTTP 403)" : "FAILED"}`);
-    if (!test5Passed) throw new Error("Test 5 Failed: Unassigned Asatitha was allowed to approve leave");
+    console.log(`Test 5 Result: ${test5Passed ? "PASSED (Rejected unassigned Faculty approval with HTTP 403)" : "FAILED"}`);
+    if (!test5Passed) throw new Error("Test 5 Failed: Unassigned Faculty was allowed to approve leave");
 
     // -------------------------------------------------------------------------
     // TEST 6: Usthad 1 (assigned to Class A) approves Class A student's leave (MUST SUCCEED 200)

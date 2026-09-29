@@ -7,17 +7,17 @@ const router = express.Router();
 
 router.use(requireAuth);
 
-// Record disciplinary incident (Admin, Asatitha, Faculty)
+// Record disciplinary incident (Admin, Faculty)
 router.post(
   "/records",
-  requireRole("ADMIN", "ASATITHA", "FACULTY"),
+  requireRole("ADMIN", "FACULTY"),
   disciplineController.handleRecordIncident
 );
 
-// Resolve disciplinary incident (Admin, Asatitha, Faculty)
+// Resolve disciplinary incident (Admin, Faculty)
 router.patch(
   "/records/:id/resolve",
-  requireRole("ADMIN", "ASATITHA", "FACULTY"),
+  requireRole("ADMIN", "FACULTY"),
   disciplineController.handleResolveIncident
 );
 
@@ -28,10 +28,10 @@ router.get(
   disciplineController.handleGetMyDisciplineRecords
 );
 
-// Parent / Admin / Asatitha gets student discipline records
+// Parent / Admin / Faculty gets student discipline records
 router.get(
   "/student/:studentId",
-  requireRole("PARENT", "ADMIN", "ASATITHA", "FACULTY"),
+  requireRole("PARENT", "ADMIN", "FACULTY"),
   disciplineController.handleGetStudentDisciplineRecords
 );
 

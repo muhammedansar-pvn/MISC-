@@ -133,11 +133,11 @@ async function runGapsVerification() {
     });
     cleanupParentIds.push(parentProfile1._id);
 
-    // 4. Setup Asatitha 1 (Class A) & Asatitha 2 (Class B)
+    // 4. Setup Faculty 1 (Class A) & Faculty 2 (Class B)
     const userUsthad1 = await User.create({
       name: "Usthad A",
       email: `usthad.a.${timestamp}@markaz.in`,
-      role: "ASATITHA",
+      role: "FACULTY",
       status: "ACTIVE",
       emailVerified: true,
     });
@@ -153,7 +153,7 @@ async function runGapsVerification() {
     const userUsthad2 = await User.create({
       name: "Usthad B",
       email: `usthad.b.${timestamp}@markaz.in`,
-      role: "ASATITHA",
+      role: "FACULTY",
       status: "ACTIVE",
       emailVerified: true,
     });
@@ -196,8 +196,8 @@ async function runGapsVerification() {
     // Generate JWTs
     const tokenStudent1 = generateToken({ userId: userStudent1._id.toString(), role: "STUDENT" });
     const tokenParent1 = generateToken({ userId: userParent1._id.toString(), role: "PARENT" });
-    const tokenUsthad1 = generateToken({ userId: userUsthad1._id.toString(), role: "ASATITHA" });
-    const tokenUsthad2 = generateToken({ userId: userUsthad2._id.toString(), role: "ASATITHA" });
+    const tokenUsthad1 = generateToken({ userId: userUsthad1._id.toString(), role: "FACULTY" });
+    const tokenUsthad2 = generateToken({ userId: userUsthad2._id.toString(), role: "FACULTY" });
     const tokenAdmin = generateToken({ userId: userAdmin._id.toString(), role: "ADMIN" });
 
     // =========================================================================
@@ -207,8 +207,8 @@ async function runGapsVerification() {
     console.log(`GAP 1 VERIFICATION: AttendanceCorrectionRequest Workflow`);
     console.log(`==================================================================`);
 
-    // 1a. POST /api/attendance/correction-requests as Asatitha 2 for Student 1 (NOT in assigned class) -> MUST REJECT (403)
-    console.log(`\n--- 1a. POST /correction-requests by Asatitha 2 for Student 1 (Not in assigned class) ---`);
+    // 1a. POST /api/attendance/correction-requests as Faculty 2 for Student 1 (NOT in assigned class) -> MUST REJECT (403)
+    console.log(`\n--- 1a. POST /correction-requests by Faculty 2 for Student 1 (Not in assigned class) ---`);
     const resCorrUnassigned = await fetch(`${baseUrl}/attendance/correction-requests`, {
       method: "POST",
       headers: {
@@ -233,11 +233,11 @@ async function runGapsVerification() {
       resCorrUnassigned.status === 403 &&
       bodyCorrUnassigned.success === false &&
       bodyCorrUnassigned.message.includes("not belong to your assigned classes");
-    console.log(`Result 1a: ${test1aPassed ? "PASSED (Class assignment check rejected unauthorized Asatitha)" : "FAILED"}`);
-    if (!test1aPassed) throw new Error("1a Failed: Unauthorized Asatitha was allowed to submit correction request");
+    console.log(`Result 1a: ${test1aPassed ? "PASSED (Class assignment check rejected unauthorized Faculty)" : "FAILED"}`);
+    if (!test1aPassed) throw new Error("1a Failed: Unauthorized Faculty was allowed to submit correction request");
 
-    // 1b. POST /api/attendance/correction-requests as Asatitha 1 for Student 1 (In assigned class) -> MUST SUCCEED (201)
-    console.log(`\n--- 1b. POST /correction-requests by Asatitha 1 for Student 1 (In assigned class) ---`);
+    // 1b. POST /api/attendance/correction-requests as Faculty 1 for Student 1 (In assigned class) -> MUST SUCCEED (201)
+    console.log(`\n--- 1b. POST /correction-requests by Faculty 1 for Student 1 (In assigned class) ---`);
     const resCorrAssigned = await fetch(`${baseUrl}/attendance/correction-requests`, {
       method: "POST",
       headers: {
@@ -268,13 +268,13 @@ async function runGapsVerification() {
       bodyCorrAssigned.success === true &&
       bodyCorrAssigned.data &&
       bodyCorrAssigned.data.status === "PENDING";
-    console.log(`Result 1b: ${test1bPassed ? "PASSED (Assigned Asatitha created correction request)" : "FAILED"}`);
-    if (!test1bPassed) throw new Error("1b Failed: Assigned Asatitha could not submit correction request");
+    console.log(`Result 1b: ${test1bPassed ? "PASSED (Assigned Faculty created correction request)" : "FAILED"}`);
+    if (!test1bPassed) throw new Error("1b Failed: Assigned Faculty could not submit correction request");
 
     const correctionId = bodyCorrAssigned.data._id;
 
-    // 1c. PATCH /api/attendance/correction-requests/:id/approve attempted by ASATITHA -> MUST REJECT (403)
-    console.log(`\n--- 1c. PATCH /correction-requests/:id/approve attempted by ASATITHA ---`);
+    // 1c. PATCH /api/attendance/correction-requests/:id/approve attempted by FACULTY -> MUST REJECT (403)
+    console.log(`\n--- 1c. PATCH /correction-requests/:id/approve attempted by FACULTY ---`);
     const resApproveByUsthad = await fetch(`${baseUrl}/attendance/correction-requests/${correctionId}/approve`, {
       method: "PATCH",
       headers: {
@@ -288,8 +288,8 @@ async function runGapsVerification() {
     console.log(`Response:`, JSON.stringify(bodyApproveByUsthad, null, 2));
 
     const test1cPassed = resApproveByUsthad.status === 403 && bodyApproveByUsthad.success === false;
-    console.log(`Result 1c: ${test1cPassed ? "PASSED (Asatitha barred from approving correction request)" : "FAILED"}`);
-    if (!test1cPassed) throw new Error("1c Failed: Asatitha was allowed to approve correction request");
+    console.log(`Result 1c: ${test1cPassed ? "PASSED (Faculty barred from approving correction request)" : "FAILED"}`);
+    if (!test1cPassed) throw new Error("1c Failed: Faculty was allowed to approve correction request");
 
     // 1d. PATCH /api/attendance/correction-requests/:id/approve attempted by STUDENT -> MUST REJECT (403)
     console.log(`\n--- 1d. PATCH /correction-requests/:id/approve attempted by STUDENT ---`);

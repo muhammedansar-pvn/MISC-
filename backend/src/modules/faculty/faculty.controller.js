@@ -35,9 +35,21 @@ const handleGetFacultyMembers = async (req, res) => {
 
 const handleGetFacultyById = async (req, res) => {
   try {
-    const member = await getFacultyById(req.params.id);
-    if (!member) return res.status(404).json({ success: false, message: "Faculty member not found" });
-    return res.status(200).json({ success: true, data: member });
+    let targetId = req.params.id;
+    if (targetId === "profile" || targetId === "me" || !targetId) {
+      targetId = req.user?.facultyId || req.user?.userId || req.user?.id;
+    }
+
+    const member = await getFacultyById(targetId);
+    if (!member) {
+      return res.status(200).json({
+        success: true,
+        isSetupPending: true,
+        data: null,
+        message: "Faculty profile not yet set up",
+      });
+    }
+    return res.status(200).json({ success: true, isSetupPending: false, data: member });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve faculty member" });
   }

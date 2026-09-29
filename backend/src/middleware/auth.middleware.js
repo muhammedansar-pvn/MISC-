@@ -23,6 +23,7 @@ const requireAuth = async (req, res, next) => {
     const decoded = verifyToken(token);
 
     req.user = decoded;
+    req.user.id = decoded.userId; // Ensure req.user.id is consistently populated across controllers
 
     const { InstitutionProfile, StudentProfile, FacultyProfile, ParentProfile } = getModels();
 
@@ -47,7 +48,7 @@ const requireAuth = async (req, res, next) => {
           req.user.institutionId = studentProfile.institutionId;
         }
       }
-    } else if (decoded.role === "FACULTY" || decoded.role === "ASATITHA") {
+    } else if (decoded.role === "FACULTY") {
       const facultyProfile = await FacultyProfile.findOne({ userId: decoded.userId }).lean();
       if (facultyProfile) {
         req.user.facultyId = facultyProfile._id;

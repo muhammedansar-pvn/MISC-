@@ -52,7 +52,7 @@ const applyLeave = async (parentUserId, { studentId, dateRange, reason }) => {
 };
 
 /**
- * Asatitha approves leave for a student in their assigned class
+ * Faculty approves leave for a student in their assigned class
  */
 const approveLeave = async (leaveId, facultyUserId, reviewRemarks) => {
   const leave = await Leave.findById(leaveId);
@@ -142,7 +142,7 @@ const approveLeave = async (leaveId, facultyUserId, reviewRemarks) => {
 };
 
 /**
- * Asatitha rejects leave for a student in their assigned class
+ * Faculty rejects leave for a student in their assigned class
  */
 const rejectLeave = async (leaveId, facultyUserId, reviewRemarks) => {
   const leave = await Leave.findById(leaveId);

@@ -39,3 +39,10 @@ pnpm-debug.log*
 *.sw?
 # Scratch
 scratch/
+
+# Uploads and User-Generated Files
+uploads/*
+!uploads/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+

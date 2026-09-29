@@ -176,7 +176,7 @@ const createCorrectionRequest = async (data, requestingUser) => {
   const StudentProfile = require("../students/student.model");
   const FacultyProfile = require("../faculty/faculty.model");
 
-  if (requestingUser && (requestingUser.role === "ASATITHA" || requestingUser.role === "FACULTY")) {
+  if (requestingUser && requestingUser.role === "FACULTY") {
     const student = await StudentProfile.findById(data.studentId).lean();
     if (!student) {
       const error = new Error("Student profile not found");

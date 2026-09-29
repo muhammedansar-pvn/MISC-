@@ -9,7 +9,6 @@ export const RoleBadge = ({ role }) => {
         return 'bg-rose-100 text-rose-800 border-rose-200';
       case 'HOD':
         return 'bg-indigo-100 text-indigo-800 border-indigo-200';
-      case 'ASATITHA':
       case 'FACULTY':
         return 'bg-teal-100 text-teal-800 border-teal-200';
       case 'PARENT':
