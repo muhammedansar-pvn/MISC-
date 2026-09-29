@@ -444,6 +444,12 @@ const accountSetup = async (req, res) => {
     setupTokenDoc.usedAt = new Date();
     await setupTokenDoc.save();
 
+    // Auto-provision FacultyProfile if user.role === "FACULTY"
+    if (user.role === "FACULTY") {
+      const { ensureFacultyProfileForUser } = require("../faculty/faculty.service");
+      await ensureFacultyProfileForUser(user._id);
+    }
+
     return res.status(200).json({ success: true, message: "Account setup successful. You can now login." });
   } catch (error) {
     console.error("Account setup error:", error);

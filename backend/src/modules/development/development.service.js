@@ -5,7 +5,7 @@ const ParentProfile = require("../parents/parent.model");
 
 /**
  * Records or updates a student's development score for an academic term.
- * Enforces server-side authorization: Asatitha must be assigned to student's class or be their mentor.
+ * Enforces server-side authorization: Faculty must be assigned to student's class or be their mentor.
  */
 const recordDevelopmentScore = async (scoreData, reqUser) => {
   const {
@@ -150,7 +150,7 @@ const getStudentDevelopmentScores = async (studentId, reqUser) => {
       err.statusCode = 403;
       throw err;
     }
-  } else if (reqUser.role === "ASATITHA" || reqUser.role === "FACULTY") {
+  } else if (reqUser.role === "FACULTY") {
     const faculty = await FacultyProfile.findOne({ userId: reqUser.userId });
     const student = await StudentProfile.findById(studentId);
     if (!faculty || !student) {

@@ -7,27 +7,27 @@ const router = express.Router();
 
 router.use(requireAuth);
 
-// Create activity catalog item (Admin, Asatitha)
+// Create activity catalog item (Admin, Faculty)
 router.post(
   "/",
-  requireRole("ADMIN", "ASATITHA", "FACULTY"),
+  requireRole("ADMIN", "FACULTY"),
   activityController.handleCreateActivity
 );
 
 // List activities
 router.get("/", activityController.handleListActivities);
 
-// Record student achievement (Student self, Asatitha, Admin)
+// Record student achievement (Student self, Faculty, Admin)
 router.post(
   "/achievements",
-  requireRole("STUDENT", "ASATITHA", "FACULTY", "ADMIN"),
+  requireRole("STUDENT", "FACULTY", "ADMIN"),
   activityController.handleRecordAchievement
 );
 
-// Verify achievement (Admin, Asatitha)
+// Verify achievement (Admin, Faculty)
 router.patch(
   "/achievements/:id/verify",
-  requireRole("ADMIN", "ASATITHA", "FACULTY"),
+  requireRole("ADMIN", "FACULTY"),
   activityController.handleVerifyAchievement
 );
 
@@ -38,10 +38,10 @@ router.get(
   activityController.handleGetMyAchievements
 );
 
-// Parent / Admin / Asatitha gets student achievements
+// Parent / Admin / Faculty gets student achievements
 router.get(
   "/achievements/student/:studentId",
-  requireRole("PARENT", "ADMIN", "ASATITHA", "FACULTY"),
+  requireRole("PARENT", "ADMIN", "FACULTY"),
   activityController.handleGetStudentAchievements
 );
 

@@ -23,14 +23,28 @@ router.post(
 router.get(
   "/",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "INSTITUTION"),
+  requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "INSTITUTION"),
   handleGetFacultyMembers
+);
+
+router.get(
+  "/profile",
+  requireAuth,
+  requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "INSTITUTION"),
+  handleGetFacultyById
+);
+
+router.get(
+  "/me",
+  requireAuth,
+  requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "INSTITUTION"),
+  handleGetFacultyById
 );
 
 router.get(
   "/:id",
   requireAuth,
-  requireRole("ADMIN", "PRINCIPAL", "HOD", "ASATITHA", "FACULTY", "INSTITUTION"),
+  requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "INSTITUTION"),
   handleGetFacultyById
 );
 

@@ -6,6 +6,7 @@ const facultyProfileSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      unique: true,
     },
 
     facultyId: {
@@ -110,7 +111,6 @@ const facultyProfileSchema = new mongoose.Schema(
 );
 
 // Indexes
-facultyProfileSchema.index({ userId: 1 }, { unique: true });
 facultyProfileSchema.index({ facultyId: 1 }, { unique: true });
 
 module.exports = mongoose.model("FacultyProfile", facultyProfileSchema);

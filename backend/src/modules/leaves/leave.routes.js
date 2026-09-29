@@ -23,11 +23,11 @@ router.post(
   handleApplyLeave
 );
 
-// --- ASATITHA LEAVE APPROVAL & REJECTION ---
+// --- FACULTY LEAVE APPROVAL & REJECTION ---
 router.patch(
   "/:id/approve",
   requireAuth,
-  requireRole("ASATITHA", "FACULTY"),
+  requireRole("FACULTY"),
   validateReviewLeave,
   handleApproveLeave
 );
@@ -35,7 +35,7 @@ router.patch(
 router.patch(
   "/:id/reject",
   requireAuth,
-  requireRole("ASATITHA", "FACULTY"),
+  requireRole("FACULTY"),
   validateReviewLeave,
   handleRejectLeave
 );
@@ -44,7 +44,7 @@ router.patch(
 router.get(
   "/",
   requireAuth,
-  requireRole("PARENT", "ASATITHA", "FACULTY", "ADMIN", "STUDENT"),
+  requireRole("PARENT", "FACULTY", "ADMIN", "STUDENT"),
   handleGetLeaves
 );
 

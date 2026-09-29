@@ -17,6 +17,8 @@ const mentorshipRoutes = require("../modules/mentorship/mentor.routes");
 const developmentRoutes = require("../modules/development/development.routes");
 const activityRoutes = require("../modules/activities/activity.routes");
 const disciplineRoutes = require("../modules/discipline/discipline.routes");
+const assignmentRoutes = require("../modules/assignments/assignment.routes");
+const studyMaterialRoutes = require("../modules/study-materials/study-material.routes");
 const { sendTestEmail } = require("../shared/services/email.service");
 
 const router = express.Router();
@@ -71,6 +73,8 @@ router.use("/mentorship", mentorshipRoutes);
 router.use("/development", developmentRoutes);
 router.use("/activities", activityRoutes);
 router.use("/discipline", disciplineRoutes);
+router.use("/assignments", assignmentRoutes);
+router.use("/study-materials", studyMaterialRoutes);
 
 // CMS, Downloads & Enquiries Mounts (Retaining 100% frontend API compatibility)
 router.use("/cms", cmsRoutes);

@@ -27,7 +27,7 @@ const listActivities = async (query = {}, pagination = null) => {
  * Records a student achievement.
  * STRICT RBAC:
  * - If STUDENT role: ignores/overrides client studentId with reqUser.studentId; sets status=PENDING.
- * - If ASATITHA role: checks that student belongs to Asatitha's assigned classes.
+ * - If FACULTY role: checks that student belongs to Faculty's assigned classes.
  */
 const recordAchievement = async (achievementData, reqUser) => {
   let targetStudentId;
@@ -43,7 +43,7 @@ const recordAchievement = async (achievementData, reqUser) => {
     }
     // Anti-spoofing: ignore client studentId
     targetStudentId = reqUser.studentId;
-  } else if (reqUser.role === "ASATITHA" || reqUser.role === "FACULTY") {
+  } else if (reqUser.role === "FACULTY") {
     if (!achievementData.studentId) {
       const err = new Error("studentId is required");
       err.statusCode = 400;
@@ -125,7 +125,7 @@ const recordAchievement = async (achievementData, reqUser) => {
 
 /**
  * Verifies or rejects an achievement.
- * ADMIN or assigned ASATITHA only.
+ * ADMIN or assigned FACULTY only.
  */
 const verifyAchievement = async (achievementId, reqUser, { status, remarks }) => {
   const achievement = await StudentAchievement.findById(achievementId).populate("studentId");

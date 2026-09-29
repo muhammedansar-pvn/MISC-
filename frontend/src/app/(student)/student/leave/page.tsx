@@ -235,7 +235,7 @@ export default function StudentLeavePage() {
               <span>Leave Application History</span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Review history and decision remarks from assigned Asatitha.
+              Review history and decision remarks from assigned Faculty.
             </p>
           </div>
 

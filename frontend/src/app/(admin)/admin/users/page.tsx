@@ -338,7 +338,6 @@ export default function AdminUsersPage() {
                 <option value="ADMIN">ADMINISTRATOR</option>
                 <option value="PRINCIPAL">PRINCIPAL</option>
                 <option value="HOD">HOD</option>
-                <option value="ASATITHA">ASATITHA / FACULTY</option>
                 <option value="FACULTY">FACULTY</option>
                 <option value="PARENT">PARENT</option>
                 <option value="STUDENT">STUDENT</option>

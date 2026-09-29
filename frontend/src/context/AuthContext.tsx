@@ -29,7 +29,6 @@ export const getRoleRedirectPath = (role?: string): string => {
       return '/principal';
     case 'HOD':
       return '/hod';
-    case 'ASATITHA':
     case 'FACULTY':
       return '/faculty';
     case 'PARENT':

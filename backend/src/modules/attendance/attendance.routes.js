@@ -22,11 +22,11 @@ router.get("/student/summary", requireAuth, requireRole("STUDENT"), handleGetStu
 router.get("/student/monthly", requireAuth, requireRole("STUDENT"), handleGetStudentMonthly);
 router.get("/student/history", requireAuth, requireRole("STUDENT"), handleGetStudentHistory);
 
-// --- ASATITHA CORRECTION REQUESTS ---
+// --- FACULTY CORRECTION REQUESTS ---
 router.post(
   "/correction-requests",
   requireAuth,
-  requireRole("ASATITHA", "FACULTY", "ADMIN"),
+  requireRole("FACULTY", "ADMIN"),
   validateCreateCorrectionRequest,
   handleCreateCorrectionRequest
 );
@@ -34,7 +34,7 @@ router.post(
 router.post(
   "/corrections",
   requireAuth,
-  requireRole("ASATITHA", "FACULTY", "ADMIN"),
+  requireRole("FACULTY", "ADMIN"),
   validateCreateCorrectionRequest,
   handleCreateCorrectionRequest
 );

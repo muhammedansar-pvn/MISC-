@@ -7,10 +7,10 @@ const router = express.Router();
 
 router.use(requireAuth);
 
-// Record or update student development score (Admin, Asatitha, Faculty)
+// Record or update student development score (Admin, Faculty)
 router.post(
   "/scores",
-  requireRole("ADMIN", "ASATITHA", "FACULTY"),
+  requireRole("ADMIN", "FACULTY"),
   developmentController.handleRecordScore
 );
 
@@ -21,10 +21,10 @@ router.get(
   developmentController.handleGetMyScores
 );
 
-// Parent / Admin / Asatitha gets scores for a student
+// Parent / Admin / Faculty gets scores for a student
 router.get(
   "/student/:studentId",
-  requireRole("PARENT", "ADMIN", "ASATITHA", "FACULTY"),
+  requireRole("PARENT", "ADMIN", "FACULTY"),
   developmentController.handleGetStudentScores
 );
 

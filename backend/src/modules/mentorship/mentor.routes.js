@@ -14,17 +14,17 @@ router.post(
   mentorController.handleAssignMentor
 );
 
-// Asatitha / Faculty gets their assigned mentees
+// Faculty gets their assigned mentees
 router.get(
   "/my-mentees",
-  requireRole("ASATITHA", "FACULTY", "ADMIN"),
+  requireRole("FACULTY", "ADMIN"),
   mentorController.handleGetMyMentees
 );
 
 // Mentor or Admin updates mentee monitoring status
 router.patch(
   "/assignments/:id",
-  requireRole("ASATITHA", "FACULTY", "ADMIN"),
+  requireRole("FACULTY", "ADMIN"),
   mentorController.handleUpdateMenteeMonitoring
 );
 
@@ -35,10 +35,10 @@ router.get(
   mentorController.handleGetMyMentor
 );
 
-// Parent / Admin / Asatitha gets student mentor
+// Parent / Admin / Faculty gets student mentor
 router.get(
   "/student/:studentId",
-  requireRole("PARENT", "ADMIN", "ASATITHA", "FACULTY"),
+  requireRole("PARENT", "ADMIN", "FACULTY"),
   mentorController.handleGetStudentMentor
 );
 

@@ -1,4 +1,4 @@
-export type UserRole = 'ADMIN' | 'PRINCIPAL' | 'HOD' | 'ASATITHA' | 'FACULTY' | 'STUDENT' | 'PARENT' | 'INSTITUTION';
+export type UserRole = 'ADMIN' | 'PRINCIPAL' | 'HOD' | 'FACULTY' | 'STUDENT' | 'PARENT' | 'INSTITUTION';
 
 export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'INVITED' | 'PENDING_SETUP' | 'BLOCKED' | 'SUSPENDED';
 

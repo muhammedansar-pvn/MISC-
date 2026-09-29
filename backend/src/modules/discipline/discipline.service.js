@@ -5,7 +5,7 @@ const ParentProfile = require("../parents/parent.model");
 
 /**
  * Records a new disciplinary incident.
- * Enforces class-assignment check for ASATITHA role.
+ * Enforces class-assignment check for FACULTY role.
  * Automatically deducts demerit points from student's disciplineScore.
  */
 const recordIncident = async (incidentData, reqUser) => {

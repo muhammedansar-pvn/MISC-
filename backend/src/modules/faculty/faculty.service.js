@@ -10,7 +10,7 @@ const createFaculty = async (facultyData) => {
     throw err;
   }
 
-  const allowedRoles = ["ASATITHA", "FACULTY", "HOD", "PRINCIPAL"];
+  const allowedRoles = ["FACULTY", "HOD", "PRINCIPAL"];
   if (!allowedRoles.includes(user.role)) {
     const err = new Error(`Selected user must have one of the following roles: ${allowedRoles.join(", ")}`);
     err.statusCode = 400;
@@ -80,12 +80,54 @@ const getFacultyMembers = async (filter = {}, search = "") => {
 };
 
 const getFacultyById = async (id) => {
-  return FacultyProfile.findOne({ _id: id, isDeleted: { $ne: true } })
+  if (!id) return null;
+  const mongoose = require("mongoose");
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
+
+  return FacultyProfile.findOne({
+    $or: [{ _id: id }, { userId: id }],
+    isDeleted: { $ne: true },
+  })
     .populate("userId", "name email username role status mobile")
     .populate("institutionId", "name code")
     .populate("assignedClasses", "name code")
     .populate("assignedSubjects", "subjectName subjectCode category")
     .lean();
+};
+
+const ensureFacultyProfileForUser = async (userId) => {
+  let profile = await FacultyProfile.findOne({ userId, isDeleted: { $ne: true } });
+  if (profile) return profile;
+
+  const user = await User.findById(userId);
+  if (!user || user.role !== "FACULTY" || user.isDeleted === true) {
+    return null;
+  }
+
+  const facultyId = `FAC-${user._id.toString().slice(-6).toUpperCase()}`;
+
+  try {
+    profile = await FacultyProfile.create({
+      userId: user._id,
+      facultyId,
+      nameEnglish: user.name || "Faculty Member",
+      department: user.department || undefined,
+      contactNumber: user.mobile || undefined,
+      status: user.status === "ACTIVE" ? "ACTIVE" : "INACTIVE",
+      assignedClasses: [],
+      assignedSubjects: [],
+      isDeleted: false,
+    });
+    return profile;
+  } catch (err) {
+    if (err.code === 11000) {
+      profile = await FacultyProfile.findOne({ userId: user._id, isDeleted: { $ne: true } });
+      if (profile) return profile;
+    }
+    throw err;
+  }
 };
 
 const updateFaculty = async (id, updateData) => {
@@ -112,6 +154,7 @@ module.exports = {
   createFaculty,
   getFacultyMembers,
   getFacultyById,
+  ensureFacultyProfileForUser,
   updateFaculty,
   deleteFaculty,
 };
