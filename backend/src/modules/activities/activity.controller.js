@@ -1,4 +1,5 @@
 const activityService = require("./activity.service");
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 const handleCreateActivity = async (req, res, next) => {
   try {
@@ -29,11 +30,9 @@ const handleCreateActivity = async (req, res, next) => {
 
 const handleListActivities = async (req, res, next) => {
   try {
-    const activities = await activityService.listActivities(req.query);
-    return res.status(200).json({
-      success: true,
-      data: activities,
-    });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await activityService.listActivities(req.query, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return next(error);
   }

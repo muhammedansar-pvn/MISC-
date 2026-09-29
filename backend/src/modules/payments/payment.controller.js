@@ -23,14 +23,17 @@ const handleVerifyPayment = async (req, res) => {
   }
 };
 
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
+
 const handleGetPayments = async (req, res) => {
   try {
     const filter = {};
     if (req.user.role !== "ADMIN") {
       filter.userId = req.user.userId;
     }
-    const payments = await paymentService.getPayments(filter);
-    return res.status(200).json({ success: true, data: payments });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await paymentService.getPayments(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve payments" });
   }

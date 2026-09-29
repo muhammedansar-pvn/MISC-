@@ -258,40 +258,29 @@ const getUsers = async ({ role, status, search, page, limit }) => {
     ];
   }
 
-  if (page || limit) {
-    const pageNum = parseInt(page, 10) || 1;
-    const limitNum = parseInt(limit, 10) || 20;
-    const skip = (pageNum - 1) * limitNum;
+  const pageNum = Math.max(1, parseInt(page, 10) || 1);
+  const requestedLimit = parseInt(limit, 10);
+  const limitNum = Math.min(100, Math.max(1, isNaN(requestedLimit) ? 50 : requestedLimit));
+  const skip = (pageNum - 1) * limitNum;
 
-    const [users, total] = await Promise.all([
-      User.find(filter)
-        .select("-passwordHash")
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limitNum)
-        .lean(),
-      User.countDocuments(filter),
-    ]);
-
-    return {
-      users,
-      count: users.length,
-      total,
-      page: pageNum,
-      totalPages: Math.ceil(total / limitNum) || 1,
-      isPaginated: true,
-    };
-  }
-
-  const users = await User.find(filter)
-    .select("-passwordHash")
-    .sort({ createdAt: -1 })
-    .lean();
+  const [users, total] = await Promise.all([
+    User.find(filter)
+      .select("-passwordHash")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum)
+      .lean(),
+    User.countDocuments(filter),
+  ]);
 
   return {
     users,
     count: users.length,
-    isPaginated: false,
+    total,
+    page: pageNum,
+    totalPages: Math.ceil(total / limitNum) || 1,
+    limit: limitNum,
+    isPaginated: true,
   };
 };
 

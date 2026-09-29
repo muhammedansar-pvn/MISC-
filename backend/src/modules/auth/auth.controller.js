@@ -141,6 +141,15 @@ const verifyEmailOtp = async (req, res) => {
     user.status = "ACTIVE";
     await user.save();
 
+    if (user.role === "STUDENT") {
+      try {
+        const { ensureStudentProfileForUser } = require("../students/student.service");
+        await ensureStudentProfileForUser(user._id);
+      } catch (e) {
+        console.error("Auto-provision profile warning:", e.message);
+      }
+    }
+
     return res.status(200).json({
       success: true,
       requiresPasswordSetup: false,

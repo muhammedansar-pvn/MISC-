@@ -7,8 +7,10 @@ const {
   updateStudentStatus,
   registerStudentWithAccount,
   getStudentTeachers,
+  ensureStudentProfileForUser,
 } = require("./student.service");
 const StudentProfile = require("./student.model");
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 const handleRegisterStudentWithAccount = async (req, res) => {
   try {
@@ -46,12 +48,22 @@ const registerStudent = async (req, res) => {
 
 const getStudentProfile = async (req, res) => {
   try {
-    const studentProfile = await StudentProfile.findOne({
+    let studentProfile = await StudentProfile.findOne({
       userId: req.user.userId,
     })
       .populate("userId", "name email pendingEmail username role status mobile emailVerified")
       .populate("institutionId")
       .populate("classId");
+
+    if (!studentProfile && req.user.role === "STUDENT") {
+      await ensureStudentProfileForUser(req.user.userId);
+      studentProfile = await StudentProfile.findOne({
+        userId: req.user.userId,
+      })
+        .populate("userId", "name email pendingEmail username role status mobile emailVerified")
+        .populate("institutionId")
+        .populate("classId");
+    }
 
     if (!studentProfile) {
       return res.status(404).json({ success: false, message: "Student profile not found" });
@@ -77,8 +89,9 @@ const handleGetStudents = async (req, res) => {
     }
     const search = req.query.search || "";
 
-    const students = await getStudents(filter, search);
-    return res.status(200).json({ success: true, count: students.length, data: students });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await getStudents(filter, search, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve students" });
   }

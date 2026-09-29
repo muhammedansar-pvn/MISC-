@@ -1,4 +1,5 @@
 const timetableService = require("./timetable.service");
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 const handleCreateTimetableEntry = async (req, res) => {
   try {
@@ -28,12 +29,9 @@ const handleGetTimetableEntries = async (req, res) => {
     if (req.query.status) filter.status = req.query.status;
     if (req.query.institutionId) filter.institutionId = req.query.institutionId;
 
-    const entries = await timetableService.getTimetableEntries(filter);
-    return res.status(200).json({
-      success: true,
-      count: entries.length,
-      data: entries,
-    });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await timetableService.getTimetableEntries(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({
       success: false,

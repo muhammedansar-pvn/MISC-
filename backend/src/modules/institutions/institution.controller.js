@@ -34,14 +34,17 @@ const handleCreateInstitution = async (req, res) => {
   }
 };
 
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
+
 const handleGetInstitutions = async (req, res) => {
   try {
     const filter = {};
     if (req.user.role === "INSTITUTION") {
       filter._id = req.user.institutionId;
     }
-    const institutions = await getInstitutions(filter);
-    return res.status(200).json({ success: true, data: institutions });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await getInstitutions(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve institutions" });
   }

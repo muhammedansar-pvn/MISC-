@@ -1,4 +1,5 @@
 const cmsService = require("./cms.service");
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 const handleCreateArticle = async (req, res) => {
   try {
@@ -14,8 +15,9 @@ const handleGetArticles = async (req, res) => {
     const filter = {};
     if (req.query.category) filter.category = req.query.category;
     if (req.query.status) filter.status = req.query.status;
-    const articles = await cmsService.getArticles(filter);
-    return res.status(200).json({ success: true, data: articles });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await cmsService.getArticles(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve articles" });
   }

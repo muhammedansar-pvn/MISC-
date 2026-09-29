@@ -12,8 +12,16 @@ const createAcademicYear = async (data) => {
   return AcademicYear.create(data);
 };
 
-const getAcademicYears = async (filter = {}) =>
-  AcademicYear.find(filter).sort({ startDate: -1 }).lean();
+const getAcademicYears = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      AcademicYear.find(filter).sort({ startDate: -1 }).skip(pagination.skip).limit(pagination.limit).lean(),
+      AcademicYear.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
+  return AcademicYear.find(filter).sort({ startDate: -1 }).lean();
+};
 
 const getAcademicYearById = async (id) => AcademicYear.findById(id).lean();
 
@@ -27,11 +35,24 @@ const updateAcademicYear = async (id, data) => {
 // Class
 const createClass = async (data) => Class.create(data);
 
-const getClasses = async (filter = {}) =>
-  Class.find(filter)
+const getClasses = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      Class.find(filter)
+        .populate("institutionId", "name code")
+        .populate("academicYearId", "yearCode title")
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      Class.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
+  return Class.find(filter)
     .populate("institutionId", "name code")
     .populate("academicYearId", "yearCode title")
     .lean();
+};
 
 const getClassById = async (id) =>
   Class.findById(id)
@@ -51,7 +72,16 @@ const createSubject = async (data) => {
   return Subject.create(payload);
 };
 
-const getSubjects = async (filter = {}) => Subject.find(filter).sort({ subjectCode: 1 }).lean();
+const getSubjects = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      Subject.find(filter).sort({ subjectCode: 1 }).skip(pagination.skip).limit(pagination.limit).lean(),
+      Subject.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
+  return Subject.find(filter).sort({ subjectCode: 1 }).lean();
+};
 
 const getSubjectById = async (id) => Subject.findById(id).lean();
 
@@ -76,7 +106,7 @@ const createSyllabus = async (data) => {
     .lean();
 };
 
-const getSyllabuses = async (filter = {}, search = "") => {
+const getSyllabuses = async (filter = {}, search = "", pagination = null) => {
   const query = { isDeleted: { $ne: true }, ...filter };
 
   if (search) {
@@ -87,6 +117,21 @@ const getSyllabuses = async (filter = {}, search = "") => {
       { "units.title": searchRegex },
       { version: searchRegex },
     ];
+  }
+
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      Syllabus.find(query)
+        .populate("subjectId", "subjectName subjectCode category")
+        .populate("classId", "name code")
+        .populate("academicYearId", "yearName yearCode")
+        .sort({ createdAt: -1 })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      Syllabus.countDocuments(query),
+    ]);
+    return { data, total };
   }
 
   return Syllabus.find(query)

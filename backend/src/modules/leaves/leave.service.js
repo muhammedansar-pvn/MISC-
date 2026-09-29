@@ -191,7 +191,21 @@ const rejectLeave = async (leaveId, facultyUserId, reviewRemarks) => {
 /**
  * Retrieve leaves with optional filtering
  */
-const getLeaves = async (filter = {}) => {
+const getLeaves = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      Leave.find(filter)
+        .populate("studentId", "nameEnglish registrationNumber classId")
+        .populate("appliedBy", "name email mobile")
+        .populate("approvedBy", "nameEnglish facultyId")
+        .sort({ createdAt: -1 })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      Leave.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
   return Leave.find(filter)
     .populate("studentId", "nameEnglish registrationNumber classId")
     .populate("appliedBy", "name email mobile")

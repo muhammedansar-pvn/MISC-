@@ -127,7 +127,34 @@ const createStudent = async (studentData) => {
     .lean();
 };
 
-const getStudents = async (filter = {}, search = "") => {
+const ensureStudentProfileForUser = async (userId) => {
+  let profile = await StudentProfile.findOne({ userId, isDeleted: { $ne: true } });
+  if (profile) return profile;
+
+  const user = await User.findById(userId);
+  if (!user || user.role !== "STUDENT" || user.isDeleted === true) {
+    return null;
+  }
+
+  const regNum = await generateRegistrationNumber();
+  const currentYear = new Date().getFullYear();
+
+  profile = await StudentProfile.create({
+    userId: user._id,
+    registrationNumber: regNum,
+    nameEnglish: user.name || "Student",
+    fatherName: "Pending Update",
+    motherName: "Pending Update",
+    dateOfBirth: new Date("2000-01-01"),
+    admissionYear: currentYear,
+    contactNumber: user.mobile || "",
+    status: "ACTIVE",
+  });
+
+  return profile;
+};
+
+const getStudents = async (filter = {}, search = "", pagination = null) => {
   const query = { isDeleted: { $ne: true }, ...filter };
 
   if (search) {
@@ -139,6 +166,23 @@ const getStudents = async (filter = {}, search = "") => {
       { contactNumber: searchRegex },
       { fatherName: searchRegex },
     ];
+  }
+
+  if (pagination) {
+    const [profiles, total] = await Promise.all([
+      StudentProfile.find(query)
+        .populate("userId", "name email username role status mobile isDeleted")
+        .populate("institutionId", "name code")
+        .populate("classId", "name code")
+        .sort({ createdAt: -1 })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      StudentProfile.countDocuments(query),
+    ]);
+
+    const activeProfiles = profiles.filter((p) => p.userId && p.userId.isDeleted !== true);
+    return { data: activeProfiles, total };
   }
 
   const profiles = await StudentProfile.find(query)
@@ -573,5 +617,6 @@ module.exports = {
   generateRegistrationNumber,
   registerStudentWithAccount,
   getStudentTeachers,
+  ensureStudentProfileForUser,
 };
 

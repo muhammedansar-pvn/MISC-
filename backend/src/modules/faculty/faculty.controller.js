@@ -16,6 +16,8 @@ const handleCreateFaculty = async (req, res) => {
   }
 };
 
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
+
 const handleGetFacultyMembers = async (req, res) => {
   try {
     const filter = {};
@@ -23,8 +25,9 @@ const handleGetFacultyMembers = async (req, res) => {
     if (req.query.status) filter.status = req.query.status.toUpperCase();
     const search = req.query.search || "";
 
-    const members = await getFacultyMembers(filter, search);
-    return res.status(200).json({ success: true, count: members.length, data: members });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await getFacultyMembers(filter, search, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve faculty members" });
   }

@@ -4,7 +4,8 @@ const nextConfig = {
   devIndicators: false,
   pageExtensions: ['tsx', 'ts'],
   images: {
-    unoptimized: true,
+    unoptimized: false,
+    formats: ['image/avif', 'image/webp'],
   },
 };
 

@@ -1,4 +1,5 @@
 const enquiryService = require("./enquiry.service");
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 const handleCreateEnquiry = async (req, res) => {
   try {
@@ -14,8 +15,9 @@ const handleGetEnquiries = async (req, res) => {
     const filter = {};
     if (req.query.status) filter.status = req.query.status;
     if (req.query.subject) filter.subject = req.query.subject;
-    const enquiries = await enquiryService.getEnquiries(filter);
-    return res.status(200).json({ success: true, data: enquiries });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await enquiryService.getEnquiries(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve enquiries" });
   }

@@ -8,10 +8,18 @@ const createActivity = async (activityData) => {
   return Activity.create(activityData);
 };
 
-const listActivities = async (query = {}) => {
+const listActivities = async (query = {}, pagination = null) => {
   const filter = { isActive: true };
   if (query.category) filter.category = query.category;
   if (query.academicYearId) filter.academicYearId = query.academicYearId;
+
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      Activity.find(filter).sort({ name: 1 }).skip(pagination.skip).limit(pagination.limit).lean(),
+      Activity.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
   return Activity.find(filter).sort({ name: 1 });
 };
 

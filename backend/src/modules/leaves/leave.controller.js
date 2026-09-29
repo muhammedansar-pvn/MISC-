@@ -1,4 +1,5 @@
 const leaveService = require("./leave.service");
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 const handleApplyLeave = async (req, res) => {
   try {
@@ -79,8 +80,9 @@ const handleGetLeaves = async (req, res) => {
       filter.status = req.query.status.toUpperCase();
     }
 
-    const leaves = await leaveService.getLeaves(filter);
-    return res.status(200).json({ success: true, count: leaves.length, data: leaves });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await leaveService.getLeaves(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message || "Failed to retrieve leaves" });
   }

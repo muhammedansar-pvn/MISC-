@@ -28,7 +28,16 @@ const requireAuth = async (req, res, next) => {
 
     // Attach profile references if available for fine-grained authorization
     if (decoded.role === "STUDENT") {
-      const studentProfile = await StudentProfile.findOne({ userId: decoded.userId }).lean();
+      let studentProfile = await StudentProfile.findOne({ userId: decoded.userId }).lean();
+      if (!studentProfile) {
+        try {
+          const { ensureStudentProfileForUser } = require("../modules/students/student.service");
+          const doc = await ensureStudentProfileForUser(decoded.userId);
+          if (doc) studentProfile = doc.toObject ? doc.toObject() : doc;
+        } catch (e) {
+          // Non-fatal fallback
+        }
+      }
       if (studentProfile) {
         req.user.studentId = studentProfile._id;
         if (studentProfile.classId) {

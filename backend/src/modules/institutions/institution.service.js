@@ -22,7 +22,18 @@ const createInstitution = async (data) => {
   return institution;
 };
 
-const getInstitutions = async (filter = {}) => {
+const getInstitutions = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      InstitutionProfile.find(filter)
+        .populate("userId", "name email username role status")
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      InstitutionProfile.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
   return InstitutionProfile.find(filter)
     .populate("userId", "name email username role status")
     .lean();

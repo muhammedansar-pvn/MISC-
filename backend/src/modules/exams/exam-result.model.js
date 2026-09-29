@@ -73,5 +73,6 @@ examResultSchema.index(
     unique: true,
   }
 );
+examResultSchema.index({ studentId: 1 });
 
 module.exports = mongoose.model("ExamResult", examResultSchema);

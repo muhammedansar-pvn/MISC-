@@ -8,11 +8,24 @@ const ExamResult = require("./exam-result.model");
 // Exam
 const createExam = async (data) => Exam.create(data);
 
-const getExams = async (filter = {}) =>
-  Exam.find(filter)
+const getExams = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      Exam.find(filter)
+        .populate("academicYearId", "yearCode title status")
+        .sort({ startDate: -1 })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      Exam.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
+  return Exam.find(filter)
     .populate("academicYearId", "yearCode title status")
     .sort({ startDate: -1 })
     .lean();
+};
 
 const getExamById = async (id) =>
   Exam.findById(id)
@@ -24,12 +37,26 @@ const updateExam = async (id, data) => Exam.findByIdAndUpdate(id, data, { new: t
 // ExamSchedule
 const createExamSchedule = async (data) => ExamSchedule.create(data);
 
-const getExamSchedules = async (filter = {}) =>
-  ExamSchedule.find(filter)
+const getExamSchedules = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      ExamSchedule.find(filter)
+        .populate("examId", "title examCode startDate endDate")
+        .populate("classId", "className section")
+        .populate("subjectId", "subjectName subjectCode")
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      ExamSchedule.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
+  return ExamSchedule.find(filter)
     .populate("examId", "title examCode startDate endDate")
     .populate("classId", "className section")
     .populate("subjectId", "subjectName subjectCode")
     .lean();
+};
 
 const getExamScheduleById = async (id) =>
   ExamSchedule.findById(id)
@@ -59,7 +86,21 @@ const registerStudentForExam = async (data) => {
   return ExamRegistration.create(data);
 };
 
-const getExamRegistrations = async (filter = {}) => {
+const getExamRegistrations = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      ExamRegistration.find(filter)
+        .populate("examId", "title examCode startDate endDate")
+        .populate("studentId", "name registrationNumber classId")
+        .populate("institutionId", "name code")
+        .populate("paymentId", "transactionId status amount")
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      ExamRegistration.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
   return ExamRegistration.find(filter)
     .populate("examId", "title examCode startDate endDate")
     .populate("studentId", "name registrationNumber classId")
@@ -90,7 +131,22 @@ const submitOrUpdateMarkEntry = async (data) => {
   );
 };
 
-const getMarkEntries = async (filter = {}) => {
+const getMarkEntries = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      MarkEntry.find(filter)
+        .populate("examId", "title examCode")
+        .populate("examScheduleId", "maxMarks passMarks examDate")
+        .populate("studentId", "name registrationNumber")
+        .populate("subjectId", "subjectName subjectCode")
+        .populate("evaluatorId", "name")
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      MarkEntry.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
   return MarkEntry.find(filter)
     .populate("examId", "title examCode")
     .populate("examScheduleId", "maxMarks passMarks examDate")
@@ -245,7 +301,21 @@ const aggregateAndGenerateResults = async (examId, classId) => {
     .lean();
 };
 
-const getExamResults = async (filter = {}) => {
+const getExamResults = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      ExamResult.find(filter)
+        .populate("examId", "title examCode")
+        .populate("studentId", "name registrationNumber")
+        .populate("classId", "className section")
+        .populate("institutionId", "name code")
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      ExamResult.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
   return ExamResult.find(filter)
     .populate("examId", "title examCode")
     .populate("studentId", "name registrationNumber")

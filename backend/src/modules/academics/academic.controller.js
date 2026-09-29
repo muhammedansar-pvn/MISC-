@@ -1,4 +1,5 @@
 const academicService = require("./academic.service");
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 // Academic Year Controllers
 const handleCreateAcademicYear = async (req, res) => {
@@ -12,8 +13,9 @@ const handleCreateAcademicYear = async (req, res) => {
 
 const handleGetAcademicYears = async (req, res) => {
   try {
-    const records = await academicService.getAcademicYears();
-    return res.status(200).json({ success: true, data: records });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await academicService.getAcademicYears({}, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve academic years" });
   }
@@ -55,8 +57,9 @@ const handleGetClasses = async (req, res) => {
     if (req.query.academicYearId) {
       filter.academicYearId = req.query.academicYearId;
     }
-    const records = await academicService.getClasses(filter);
-    return res.status(200).json({ success: true, data: records });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await academicService.getClasses(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve classes" });
   }
@@ -94,8 +97,9 @@ const handleCreateSubject = async (req, res) => {
 
 const handleGetSubjects = async (req, res) => {
   try {
-    const records = await academicService.getSubjects();
-    return res.status(200).json({ success: true, data: records });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await academicService.getSubjects({}, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve subjects" });
   }
@@ -144,7 +148,7 @@ const handleGetSyllabuses = async (req, res) => {
         classId = profile?.classId;
       }
       if (!classId) {
-        return res.status(200).json({ success: true, count: 0, data: [] });
+        return res.status(200).json(formatPaginatedResponse({ data: [], total: 0 }));
       }
       filter.classId = classId;
       filter.status = "ACTIVE";
@@ -157,9 +161,10 @@ const handleGetSyllabuses = async (req, res) => {
     if (req.query.academicYearId) filter.academicYearId = req.query.academicYearId;
 
     const search = req.query.search || "";
+    const { page, limit, skip } = parsePagination(req.query);
 
-    const records = await academicService.getSyllabuses(filter, search);
-    return res.status(200).json({ success: true, count: records.length, data: records });
+    const { data, total } = await academicService.getSyllabuses(filter, search, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve syllabuses" });
   }

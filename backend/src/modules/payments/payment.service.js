@@ -142,11 +142,26 @@ const verifyAndProcessPayment = async (
   return payment;
 };
 
-const getPayments = async (filter = {}) => {
+const getPayments = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      Payment.find(filter)
+        .populate("userId", "name email username role")
+        .populate("eventRegistrationId", "registrationStatus eventId")
+        .populate("examRegistrationId", "registrationStatus rollNumber examId")
+        .sort({ createdAt: -1 })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      Payment.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
   return Payment.find(filter)
     .populate("userId", "name email username role")
     .populate("eventRegistrationId", "registrationStatus eventId")
     .populate("examRegistrationId", "registrationStatus rollNumber examId")
+    .sort({ createdAt: -1 })
     .lean();
 };
 

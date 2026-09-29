@@ -71,7 +71,7 @@ const createTimetableEntry = async (data) => {
     .lean();
 };
 
-const getTimetableEntries = async (filter = {}) => {
+const getTimetableEntries = async (filter = {}, pagination = null) => {
   const query = { isDeleted: { $ne: true } };
 
   if (filter.classId) query.classId = filter.classId;
@@ -89,11 +89,19 @@ const getTimetableEntries = async (filter = {}) => {
     .populate("academicYearId", "yearName yearCode")
     .lean();
 
-  return entries.sort((a, b) => {
+  const sorted = entries.sort((a, b) => {
     const dayDiff = (DAY_ORDER[a.dayOfWeek] || 99) - (DAY_ORDER[b.dayOfWeek] || 99);
     if (dayDiff !== 0) return dayDiff;
     return a.periodNumber - b.periodNumber;
   });
+
+  if (pagination) {
+    const total = sorted.length;
+    const paged = sorted.slice(pagination.skip, pagination.skip + pagination.limit);
+    return { data: paged, total };
+  }
+
+  return sorted;
 };
 
 const getTimetableEntryById = async (id) => {

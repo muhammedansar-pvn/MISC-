@@ -1,4 +1,5 @@
 const eventService = require("./event.service");
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 const handleCreateEvent = async (req, res) => {
   try {
@@ -13,8 +14,9 @@ const handleGetEvents = async (req, res) => {
   try {
     const filter = {};
     if (req.query.status) filter.status = req.query.status;
-    const events = await eventService.getEvents(filter);
-    return res.status(200).json({ success: true, data: events });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await eventService.getEvents(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve events" });
   }
@@ -57,8 +59,9 @@ const handleGetEventRegistrations = async (req, res) => {
   try {
     const filter = {};
     if (req.query.eventId) filter.eventId = req.query.eventId;
-    const registrations = await eventService.getEventRegistrations(filter);
-    return res.status(200).json({ success: true, data: registrations });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await eventService.getEventRegistrations(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve event registrations" });
   }

@@ -3,7 +3,16 @@ const EventRegistration = require("./event-registration.model");
 
 // Events
 const createEvent = async (data) => Event.create(data);
-const getEvents = async (filter = {}) => Event.find(filter).sort({ eventDate: 1 }).lean();
+const getEvents = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      Event.find(filter).sort({ eventDate: 1 }).skip(pagination.skip).limit(pagination.limit).lean(),
+      Event.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
+  return Event.find(filter).sort({ eventDate: 1 }).lean();
+};
 const getEventBySlug = async (slug) => Event.findOne({ slug }).lean();
 const updateEvent = async (id, data) => Event.findByIdAndUpdate(id, data, { new: true });
 
@@ -19,7 +28,20 @@ const registerForEvent = async (data) => {
   return EventRegistration.create(data);
 };
 
-const getEventRegistrations = async (filter = {}) => {
+const getEventRegistrations = async (filter = {}, pagination = null) => {
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      EventRegistration.find(filter)
+        .populate("eventId", "title slug eventDate location venue")
+        .populate("userId", "name email username role")
+        .populate("paymentId", "transactionId status amount")
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      EventRegistration.countDocuments(filter),
+    ]);
+    return { data, total };
+  }
   return EventRegistration.find(filter)
     .populate("eventId", "title slug eventDate location venue")
     .populate("userId", "name email username role")

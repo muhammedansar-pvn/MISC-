@@ -1,4 +1,5 @@
 const examService = require("./exam.service");
+const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 // Exams
 const handleCreateExam = async (req, res) => {
@@ -12,8 +13,9 @@ const handleCreateExam = async (req, res) => {
 
 const handleGetExams = async (req, res) => {
   try {
-    const exams = await examService.getExams();
-    return res.status(200).json({ success: true, data: exams });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await examService.getExams({}, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve exams" });
   }
@@ -55,8 +57,9 @@ const handleGetExamSchedules = async (req, res) => {
     if (req.query.examId) filter.examId = req.query.examId;
     if (req.query.classId) filter.classId = req.query.classId;
 
-    const schedules = await examService.getExamSchedules(filter);
-    return res.status(200).json({ success: true, data: schedules });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await examService.getExamSchedules(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve exam schedules" });
   }
@@ -101,8 +104,9 @@ const handleGetExamRegistrations = async (req, res) => {
     }
     if (req.query.examId) filter.examId = req.query.examId;
 
-    const registrations = await examService.getExamRegistrations(filter);
-    return res.status(200).json({ success: true, data: registrations });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await examService.getExamRegistrations(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve exam registrations" });
   }
@@ -139,8 +143,9 @@ const handleGetMarkEntries = async (req, res) => {
     if (req.query.examScheduleId) filter.examScheduleId = req.query.examScheduleId;
     if (req.query.studentId) filter.studentId = req.query.studentId;
 
-    const records = await examService.getMarkEntries(filter);
-    return res.status(200).json({ success: true, data: records });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await examService.getMarkEntries(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve mark entries" });
   }
@@ -183,8 +188,9 @@ const handleGetExamResults = async (req, res) => {
     if (req.query.examId) filter.examId = req.query.examId;
     if (req.query.classId) filter.classId = req.query.classId;
 
-    const results = await examService.getExamResults(filter);
-    return res.status(200).json({ success: true, data: results });
+    const { page, limit, skip } = parsePagination(req.query);
+    const { data, total } = await examService.getExamResults(filter, { page, limit, skip });
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve exam results" });
   }

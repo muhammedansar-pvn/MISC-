@@ -54,6 +54,22 @@ const getFacultyMembers = async (filter = {}, search = "") => {
     ];
   }
 
+  if (pagination) {
+    const [data, total] = await Promise.all([
+      FacultyProfile.find(query)
+        .populate("userId", "name email username role status mobile")
+        .populate("institutionId", "name code")
+        .populate("assignedClasses", "name code")
+        .populate("assignedSubjects", "subjectName subjectCode category")
+        .sort({ createdAt: -1 })
+        .skip(pagination.skip)
+        .limit(pagination.limit)
+        .lean(),
+      FacultyProfile.countDocuments(query),
+    ]);
+    return { data, total };
+  }
+
   return FacultyProfile.find(query)
     .populate("userId", "name email username role status mobile")
     .populate("institutionId", "name code")
