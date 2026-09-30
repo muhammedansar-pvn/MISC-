@@ -70,6 +70,7 @@ export const StudentLayoutClient: React.FC<StudentLayoutClientProps> = ({ childr
         { label: 'Academic Overview', path: '/student/academics', icon: GraduationCap },
         { label: 'Class Timetable', path: '/student/timetable', icon: Clock },
         { label: 'Attendance', path: '/student/attendance', icon: CalendarCheck },
+        { label: 'Assignments', path: '/student/assignments', icon: Award },
         { label: 'Syllabus Explorer', path: '/student/syllabus', icon: BookOpen },
         { label: 'Academic Resources', path: '/student/resources', icon: FileText },
       ],

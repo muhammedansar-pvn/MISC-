@@ -3,10 +3,12 @@ const {
   handleCreateAssignment,
   handleGetAssignments,
   handleGetAssignmentById,
+  handleUpdateAssignment,
   handleDeleteAssignment,
   handleSubmitAssignment,
   handleGetSubmissions,
   handleGetMySubmission,
+  handleGradeSubmission,
 } = require("./assignment.controller");
 const { requireAuth } = require("../../middleware/auth.middleware");
 const { requireRole } = require("../../middleware/role.middleware");
@@ -14,24 +16,24 @@ const { uploadArray, uploadSingle } = require("../../middleware/upload.middlewar
 
 const router = express.Router();
 
-// List assignments (filterable by classId, subjectId, facultyId)
+// List assignments (filterable by classId, subjectId, facultyId, academicYearId; scoped by role)
 router.get(
   "/",
   requireAuth,
-  requireRole("ADMIN", "FACULTY", "STUDENT", "PARENT"),
+  requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "STUDENT", "PARENT"),
   handleGetAssignments
 );
 
-// Create assignment with attachments (FACULTY, ADMIN)
+// Create assignment with attachments (FACULTY, ADMIN, PRINCIPAL, HOD)
 router.post(
   "/",
   requireAuth,
-  requireRole("FACULTY", "ADMIN"),
+  requireRole("FACULTY", "ADMIN", "PRINCIPAL", "HOD"),
   uploadArray("attachments", 5),
   handleCreateAssignment
 );
 
-// Get student's own submission for an assignment (must precede /:id to avoid collision if named)
+// Get student's own submission for an assignment
 router.get(
   "/:id/my-submission",
   requireAuth,
@@ -39,11 +41,11 @@ router.get(
   handleGetMySubmission
 );
 
-// List all submissions for an assignment (FACULTY, ADMIN)
+// List all submissions for an assignment (FACULTY, ADMIN, PRINCIPAL, HOD)
 router.get(
   "/:id/submissions",
   requireAuth,
-  requireRole("FACULTY", "ADMIN"),
+  requireRole("FACULTY", "ADMIN", "PRINCIPAL", "HOD"),
   handleGetSubmissions
 );
 
@@ -56,19 +58,35 @@ router.post(
   handleSubmitAssignment
 );
 
+// Grade a student submission (FACULTY, ADMIN, PRINCIPAL, HOD)
+router.post(
+  "/:id/submissions/:submissionId/grade",
+  requireAuth,
+  requireRole("FACULTY", "ADMIN", "PRINCIPAL", "HOD"),
+  handleGradeSubmission
+);
+
 // Get single assignment by ID
 router.get(
   "/:id",
   requireAuth,
-  requireRole("ADMIN", "FACULTY", "STUDENT", "PARENT"),
+  requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "STUDENT", "PARENT"),
   handleGetAssignmentById
 );
 
-// Delete assignment (FACULTY owner, ADMIN)
+// Update assignment details (FACULTY owner, ADMIN, PRINCIPAL, HOD)
+router.put(
+  "/:id",
+  requireAuth,
+  requireRole("FACULTY", "ADMIN", "PRINCIPAL", "HOD"),
+  handleUpdateAssignment
+);
+
+// Delete assignment (FACULTY owner, ADMIN, PRINCIPAL, HOD)
 router.delete(
   "/:id",
   requireAuth,
-  requireRole("FACULTY", "ADMIN"),
+  requireRole("FACULTY", "ADMIN", "PRINCIPAL", "HOD"),
   handleDeleteAssignment
 );
 

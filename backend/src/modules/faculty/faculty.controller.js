@@ -5,6 +5,11 @@ const {
   updateFaculty,
   deleteFaculty,
   getFacultyDashboardStats,
+  getFacultyMyTimetable,
+  getFacultyMyStudents,
+  getFacultyStudent360,
+  createFacultyRemark,
+  getFacultyRemarks,
 } = require("./faculty.service");
 
 const handleCreateFaculty = async (req, res) => {
@@ -92,6 +97,60 @@ const handleGetFacultyDashboard = async (req, res) => {
   }
 };
 
+const handleGetFacultyMyTimetable = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.user?.id;
+    const timetable = await getFacultyMyTimetable(userId);
+    return res.status(200).json({ success: true, data: timetable });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ success: false, message: error.message || "Failed to retrieve timetable" });
+  }
+};
+
+const handleGetFacultyMyStudents = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.user?.id;
+    const classId = req.query.classId || null;
+    const students = await getFacultyMyStudents(userId, classId);
+    return res.status(200).json({ success: true, data: students });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ success: false, message: error.message || "Failed to retrieve students" });
+  }
+};
+
+const handleGetFacultyStudent360 = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.user?.id;
+    const studentId = req.params.id;
+    const result = await getFacultyStudent360(userId, studentId);
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ success: false, message: error.message || "Failed to retrieve student profile" });
+  }
+};
+
+const handleCreateFacultyRemark = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.user?.id;
+    const studentId = req.params.id;
+    const remark = await createFacultyRemark(userId, studentId, req.body);
+    return res.status(201).json({ success: true, message: "Remark added successfully", data: remark });
+  } catch (error) {
+    return res.status(error.statusCode || 400).json({ success: false, message: error.message || "Failed to add remark" });
+  }
+};
+
+const handleGetFacultyRemarks = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.user?.id;
+    const studentId = req.params.id;
+    const remarks = await getFacultyRemarks(userId, studentId);
+    return res.status(200).json({ success: true, data: remarks });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ success: false, message: error.message || "Failed to retrieve remarks" });
+  }
+};
+
 module.exports = {
   handleCreateFaculty,
   handleGetFacultyMembers,
@@ -99,4 +158,9 @@ module.exports = {
   handleUpdateFaculty,
   handleDeleteFaculty,
   handleGetFacultyDashboard,
+  handleGetFacultyMyTimetable,
+  handleGetFacultyMyStudents,
+  handleGetFacultyStudent360,
+  handleCreateFacultyRemark,
+  handleGetFacultyRemarks,
 };

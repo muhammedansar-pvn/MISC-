@@ -77,7 +77,9 @@ export const API_ENDPOINTS = {
     userStatus: (id) => `/admin/users/${id}/status`,
     resetPassword: (id) => `/admin/users/${id}/reset-password`,
     registerStudent: '/admin/students/register',
+    bulkAssignStudents: '/admin/students/bulk-assign',
   },
+
 
   // NOTE: Express backend mounts at /academic/* (singular). Corrected from legacy /academics/*
   academic: {
@@ -91,6 +93,8 @@ export const API_ENDPOINTS = {
     syllabusById: (id) => `/academic/syllabuses/${id}`,
     timetables: '/academic/timetables',
     timetableById: (id) => `/academic/timetables/${id}`,
+    facultyAssignments: '/academic/faculty-assignments',
+    facultyAssignmentById: (id) => `/academic/faculty-assignments/${id}`,
   },
 
   institutions: {
@@ -111,6 +115,26 @@ export const API_ENDPOINTS = {
     list: '/faculty',
     byId: (id) => `/faculty/${id}`,
     dashboardStats: '/faculty/dashboard-stats',
+    myAssignments: '/faculty/my-assignments',
+    myClasses: '/faculty/my-classes',
+    myTimetable: '/faculty/my-timetable',
+    myStudents: '/faculty/my-students',
+    student360: (id) => `/faculty/students/${id}/360`,
+    studentRemarks: (id) => `/faculty/students/${id}/remarks`,
+  },
+
+  assignments: {
+    list: '/assignments',
+    byId: (id) => `/assignments/${id}`,
+    submissions: (id) => `/assignments/${id}/submissions`,
+    mySubmission: (id) => `/assignments/${id}/my-submission`,
+    submit: (id) => `/assignments/${id}/submit`,
+    grade: (id, submissionId) => `/assignments/${id}/submissions/${submissionId}/grade`,
+  },
+
+  studyMaterials: {
+    list: '/study-materials',
+    byId: (id) => `/study-materials/${id}`,
   },
 
   cms: {
@@ -141,10 +165,15 @@ export const API_ENDPOINTS = {
     byId: (id) => `/exams/exams/${id}`,
     schedules: '/exams/exam-schedules',
     scheduleById: (id) => `/exams/exam-schedules/${id}`,
+    facultySchedules: '/exams/faculty/schedules',
+    scheduleRoster: (id) => `/exams/exam-schedules/${id}/roster`,
+    submitRosterMarks: (id) => `/exams/exam-schedules/${id}/roster-marks`,
     registrations: '/exams/exam-registrations',
     registrationStatus: (id) => `/exams/exam-registrations/${id}/status`,
     markEntries: '/exams/mark-entries',
     verifyMarkEntries: (scheduleId) => `/exams/mark-entries/verify/${scheduleId}`,
+    markCorrections: '/exams/mark-corrections',
+    reviewMarkCorrection: (id) => `/exams/mark-corrections/${id}/review`,
     generateResults: '/exams/exam-results/generate',
     results: '/exams/exam-results',
   },
@@ -153,8 +182,15 @@ export const API_ENDPOINTS = {
     studentSummary: '/attendance/student/summary',
     studentMonthly: '/attendance/student/monthly',
     studentHistory: '/attendance/student/history',
+    studentSubjects: '/attendance/student/subjects',
+    studentSessions: '/attendance/student/sessions',
     markClass: '/attendance/mark-class',
     classRecords: '/attendance/class-records',
+    classSummary: '/attendance/class-summary',
+    facultyHistory: '/attendance/faculty-history',
+    correctionRequests: '/attendance/correction-requests',
+    approveCorrection: (id) => `/attendance/correction-requests/${id}/approve`,
+    rejectCorrection: (id) => `/attendance/correction-requests/${id}/reject`,
   },
 
 

@@ -574,6 +574,109 @@ const triggerUserPasswordReset = async (userId) => {
   };
 };
 
+/**
+ * Bulk assign students to a class cohort
+ */
+const bulkAssignStudentsToClass = async (payload) => {
+  const { classId, studentIds } = payload;
+  const Class = require("../academics/class.model");
+  const StudentProfile = require("../students/student.model");
+
+  if (!classId || !mongoose.Types.ObjectId.isValid(classId)) {
+    const error = new Error("Invalid classId");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const targetClass = await Class.findById(classId);
+  if (!targetClass) {
+    const error = new Error("Class not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (targetClass.status !== "ACTIVE") {
+    const error = new Error("Class is inactive");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (!Array.isArray(studentIds) || studentIds.length === 0) {
+    const error = new Error("studentIds must be a non-empty array");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (studentIds.length > 200) {
+    const error = new Error("Maximum batch size is 200 students");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // Deduplicate incoming studentIds while preserving order
+  const uniqueRawIds = [...new Set(studentIds.map(String))];
+
+  const skipped = [];
+  const validFormatIds = [];
+
+  for (const rawId of uniqueRawIds) {
+    if (!rawId || !mongoose.Types.ObjectId.isValid(rawId)) {
+      skipped.push({ studentId: rawId, reason: "INVALID_ID" });
+    } else {
+      validFormatIds.push(new mongoose.Types.ObjectId(rawId));
+    }
+  }
+
+  const validStudentIdsToUpdate = [];
+
+  if (validFormatIds.length > 0) {
+    const profiles = await StudentProfile.find({
+      _id: { $in: validFormatIds },
+    }).select("_id classId isDeleted");
+
+    const profileMap = new Map();
+    profiles.forEach((p) => profileMap.set(p._id.toString(), p));
+
+    for (const objId of validFormatIds) {
+      const idStr = objId.toString();
+      const profile = profileMap.get(idStr);
+
+      if (!profile) {
+        skipped.push({ studentId: idStr, reason: "NOT_FOUND" });
+      } else if (profile.isDeleted === true) {
+        skipped.push({ studentId: idStr, reason: "DELETED" });
+      } else if (profile.classId && profile.classId.toString() === classId.toString()) {
+        skipped.push({ studentId: idStr, reason: "ALREADY_IN_CLASS" });
+      } else {
+        validStudentIdsToUpdate.push(profile._id);
+      }
+    }
+  }
+
+  if (validStudentIdsToUpdate.length > 0) {
+    const updateDoc = {
+      $set: {
+        classId: targetClass._id,
+      },
+    };
+    if (targetClass.institutionId) {
+      updateDoc.$set.institutionId = targetClass.institutionId;
+    }
+
+    await StudentProfile.updateMany(
+      { _id: { $in: validStudentIdsToUpdate } },
+      updateDoc
+    );
+  }
+
+  return {
+    classId: targetClass._id.toString(),
+    className: targetClass.name,
+    updatedCount: validStudentIdsToUpdate.length,
+    skipped,
+  };
+};
+
 module.exports = {
   createUserInvitation,
   verifyAdminUserOtp,
@@ -585,4 +688,6 @@ module.exports = {
   deleteUser,
   getDashboardStats,
   triggerUserPasswordReset,
+  bulkAssignStudentsToClass,
 };
+

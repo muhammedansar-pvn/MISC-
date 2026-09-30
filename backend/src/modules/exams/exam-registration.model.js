@@ -30,6 +30,7 @@ const examRegistrationSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: ["REGISTERED", "HALL_TICKET_ISSUED", "CANCELLED"],
+      default: "REGISTERED",
     },
 
     paymentId: {

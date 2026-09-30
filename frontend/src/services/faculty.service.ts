@@ -1,5 +1,12 @@
 import { apiClient, API_ENDPOINTS } from '@/api/axios';
-import { FacultyProfile, FacultyPayload, ApiResponse, PaginationParams } from '@/types';
+import {
+  FacultyProfile,
+  FacultyPayload,
+  FacultyAssignment,
+  FacultyClassView,
+  ApiResponse,
+  PaginationParams,
+} from '@/types';
 
 export const getFacultyMembers = async (params: PaginationParams = {}): Promise<ApiResponse<FacultyProfile[]>> => {
   const response = await apiClient.get<ApiResponse<FacultyProfile[]>>(API_ENDPOINTS.faculty.list, { params });
@@ -25,11 +32,73 @@ export const updateFaculty = async (
 };
 
 export const getFacultyDashboardStats = async (): Promise<ApiResponse<{
-  unmarkedAttendanceCount: number;
-  pendingLeavesCount: number;
   assignedClassesCount: number;
+  assignedSubjectsCount: number;
+  totalStudentsCount: number;
+  todayClassesCount: number;
+  todayTimetable: any[];
+  unmarkedAttendanceCount: number;
+  pendingAssignmentsCount: number;
+  pendingLeavesCount: number;
+  todayDayOfWeek: string;
 }>> => {
   const response = await apiClient.get<ApiResponse<any>>(API_ENDPOINTS.faculty.dashboardStats);
+  return response.data;
+};
+
+export const getMyAssignments = async (
+  academicYearId?: string
+): Promise<ApiResponse<FacultyAssignment[]>> => {
+  const response = await apiClient.get<ApiResponse<FacultyAssignment[]>>(
+    API_ENDPOINTS.faculty.myAssignments,
+    { params: academicYearId ? { academicYearId } : {} }
+  );
+  return response.data;
+};
+
+export const getMyClasses = async (
+  academicYearId?: string
+): Promise<ApiResponse<FacultyClassView[]>> => {
+  const response = await apiClient.get<ApiResponse<FacultyClassView[]>>(
+    API_ENDPOINTS.faculty.myClasses,
+    { params: academicYearId ? { academicYearId } : {} }
+  );
+  return response.data;
+};
+
+export const getFacultyMyTimetable = async (): Promise<ApiResponse<any[]>> => {
+  const response = await apiClient.get<ApiResponse<any[]>>(API_ENDPOINTS.faculty.myTimetable);
+  return response.data;
+};
+
+export const getMyStudents = async (classId?: string): Promise<ApiResponse<any[]>> => {
+  const response = await apiClient.get<ApiResponse<any[]>>(
+    API_ENDPOINTS.faculty.myStudents,
+    { params: classId ? { classId } : {} }
+  );
+  return response.data;
+};
+
+export const getFacultyStudent360 = async (id: string): Promise<ApiResponse<any>> => {
+  const response = await apiClient.get<ApiResponse<any>>(API_ENDPOINTS.faculty.student360(id));
+  return response.data;
+};
+
+export const createFacultyRemark = async (
+  id: string,
+  data: { category?: string; remark: string; subjectId?: string }
+): Promise<ApiResponse<any>> => {
+  const response = await apiClient.post<ApiResponse<any>>(
+    API_ENDPOINTS.faculty.studentRemarks(id),
+    data
+  );
+  return response.data;
+};
+
+export const getFacultyRemarks = async (id: string): Promise<ApiResponse<any[]>> => {
+  const response = await apiClient.get<ApiResponse<any[]>>(
+    API_ENDPOINTS.faculty.studentRemarks(id)
+  );
   return response.data;
 };
 
@@ -39,4 +108,11 @@ export default {
   createFaculty,
   updateFaculty,
   getFacultyDashboardStats,
+  getMyAssignments,
+  getMyClasses,
+  getFacultyMyTimetable,
+  getMyStudents,
+  getFacultyStudent360,
+  createFacultyRemark,
+  getFacultyRemarks,
 };

@@ -77,4 +77,43 @@ router.get("/timetables/:id", requireAuth, handleGetTimetableEntryById);
 router.put("/timetables/:id", requireAuth, requireRole("ADMIN", "INSTITUTION"), validateUpdateTimetableEntry, handleUpdateTimetableEntry);
 router.delete("/timetables/:id", requireAuth, requireRole("ADMIN", "INSTITUTION"), handleDeleteTimetableEntry);
 
+// --- FACULTY ASSIGNMENTS ---
+const {
+  handleCreateAssignment,
+  handleGetAssignments,
+  handleGetAssignmentById,
+  handleDeleteAssignment,
+} = require("./faculty-assignment.controller");
+const {
+  validateCreateAssignment,
+  validateQueryAssignment,
+} = require("./faculty-assignment.validator");
+
+router.post(
+  "/faculty-assignments",
+  requireAuth,
+  requireRole("ADMIN"),
+  validateCreateAssignment,
+  handleCreateAssignment
+);
+router.get(
+  "/faculty-assignments",
+  requireAuth,
+  requireRole("ADMIN", "PRINCIPAL", "HOD"),
+  validateQueryAssignment,
+  handleGetAssignments
+);
+router.get(
+  "/faculty-assignments/:id",
+  requireAuth,
+  requireRole("ADMIN", "PRINCIPAL", "HOD"),
+  handleGetAssignmentById
+);
+router.delete(
+  "/faculty-assignments/:id",
+  requireAuth,
+  requireRole("ADMIN"),
+  handleDeleteAssignment
+);
+
 module.exports = router;

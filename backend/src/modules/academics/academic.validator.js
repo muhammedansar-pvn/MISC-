@@ -15,6 +15,7 @@ const classSchema = Joi.object({
   code: Joi.string().trim().uppercase().required(),
   institutionId: Joi.string().hex().length(24).allow(null, "").optional(),
   academicYearId: Joi.string().hex().length(24).required(),
+  department: Joi.string().trim().optional(),
   status: Joi.string().valid("ACTIVE", "INACTIVE").default("ACTIVE"),
 });
 

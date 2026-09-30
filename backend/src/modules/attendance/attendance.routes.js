@@ -3,6 +3,10 @@ const {
   handleGetStudentSummary,
   handleGetStudentMonthly,
   handleGetStudentHistory,
+  handleGetStudentSubjectAttendance,
+  handleGetStudentSessionAttendance,
+  handleGetClassAttendanceSummary,
+  handleGetFacultyAttendanceSummary,
   handleCreateCorrectionRequest,
   handleApproveCorrectionRequest,
   handleRejectCorrectionRequest,
@@ -20,7 +24,7 @@ const { requireRole } = require("../../middleware/role.middleware");
 
 const router = express.Router();
 
-// --- CLASS ROSTER ATTENDANCE MARKING (FACULTY / ADMIN) ---
+// --- CLASS ROSTER ATTENDANCE MARKING & SUMMARIES (FACULTY / ADMIN) ---
 router.post(
   "/mark-class",
   requireAuth,
@@ -36,11 +40,26 @@ router.get(
   handleGetClassAttendanceRecords
 );
 
+router.get(
+  "/class-summary",
+  requireAuth,
+  requireRole("FACULTY", "ADMIN"),
+  handleGetClassAttendanceSummary
+);
 
-// --- STUDENT PORTAL READ-ONLY ATTENDANCE ENDPOINTS ---
-router.get("/student/summary", requireAuth, requireRole("STUDENT"), handleGetStudentSummary);
-router.get("/student/monthly", requireAuth, requireRole("STUDENT"), handleGetStudentMonthly);
-router.get("/student/history", requireAuth, requireRole("STUDENT"), handleGetStudentHistory);
+router.get(
+  "/faculty-history",
+  requireAuth,
+  requireRole("FACULTY"),
+  handleGetFacultyAttendanceSummary
+);
+
+// --- STUDENT PORTAL READ-ONLY & 360 ATTENDANCE ENDPOINTS ---
+router.get("/student/summary", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentSummary);
+router.get("/student/monthly", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentMonthly);
+router.get("/student/history", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentHistory);
+router.get("/student/subjects", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentSubjectAttendance);
+router.get("/student/sessions", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentSessionAttendance);
 
 // --- FACULTY CORRECTION REQUESTS ---
 router.post(

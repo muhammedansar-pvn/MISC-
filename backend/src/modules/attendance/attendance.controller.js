@@ -2,9 +2,9 @@ const attendanceService = require("./attendance.service");
 
 const handleGetStudentSummary = async (req, res) => {
   try {
-    const studentId = req.user.studentId;
+    const studentId = req.query.studentId || req.user.studentId;
     if (!studentId) {
-      return res.status(403).json({ success: false, message: "No student profile linked to user" });
+      return res.status(400).json({ success: false, message: "studentId is required" });
     }
 
     const data = await attendanceService.getStudentAttendanceOverview(studentId);
@@ -16,9 +16,9 @@ const handleGetStudentSummary = async (req, res) => {
 
 const handleGetStudentMonthly = async (req, res) => {
   try {
-    const studentId = req.user.studentId;
+    const studentId = req.query.studentId || req.user.studentId;
     if (!studentId) {
-      return res.status(403).json({ success: false, message: "No student profile linked to user" });
+      return res.status(400).json({ success: false, message: "studentId is required" });
     }
 
     const filter = {
@@ -37,15 +37,81 @@ const handleGetStudentMonthly = async (req, res) => {
 
 const handleGetStudentHistory = async (req, res) => {
   try {
-    const studentId = req.user.studentId;
+    const studentId = req.query.studentId || req.user.studentId;
     if (!studentId) {
-      return res.status(403).json({ success: false, message: "No student profile linked to user" });
+      return res.status(400).json({ success: false, message: "studentId is required" });
     }
 
     const data = await attendanceService.getStudentAttendanceHistory(studentId);
     return res.status(200).json({ success: true, data });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message || "Failed to retrieve attendance history" });
+  }
+};
+
+const handleGetStudentSubjectAttendance = async (req, res) => {
+  try {
+    const studentId = req.query.studentId || req.user.studentId;
+    if (!studentId) {
+      return res.status(400).json({ success: false, message: "studentId is required" });
+    }
+
+    const filter = {
+      academicYearId: req.query.academicYearId,
+      startDate: req.query.startDate,
+      endDate: req.query.endDate,
+    };
+
+    const data = await attendanceService.getStudentSubjectAttendance(studentId, filter);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message || "Failed to retrieve subject attendance" });
+  }
+};
+
+const handleGetStudentSessionAttendance = async (req, res) => {
+  try {
+    const studentId = req.query.studentId || req.user.studentId;
+    if (!studentId) {
+      return res.status(400).json({ success: false, message: "studentId is required" });
+    }
+
+    const filter = {
+      academicYearId: req.query.academicYearId,
+      startDate: req.query.startDate,
+      endDate: req.query.endDate,
+    };
+
+    const data = await attendanceService.getStudentSessionAttendance(studentId, filter);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message || "Failed to retrieve session attendance" });
+  }
+};
+
+const handleGetClassAttendanceSummary = async (req, res) => {
+  try {
+    const classId = req.query.classId || req.params.classId;
+    if (!classId) {
+      return res.status(400).json({ success: false, message: "classId is required" });
+    }
+
+    const data = await attendanceService.getClassAttendanceSummary(classId, req.query, req.user);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ success: false, message: error.message || "Failed to retrieve class attendance summary" });
+  }
+};
+
+const handleGetFacultyAttendanceSummary = async (req, res) => {
+  try {
+    const facultyUserId = req.user.userId;
+    const data = await attendanceService.getFacultyAttendanceSummary(facultyUserId, req.query);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ success: false, message: error.message || "Failed to retrieve faculty attendance summary" });
   }
 };
 
@@ -134,7 +200,7 @@ const handleMarkClassAttendance = async (req, res) => {
 
 const handleGetClassAttendanceRecords = async (req, res) => {
   try {
-    const { classId, date, period } = req.query;
+    const { classId, subjectId, date, period } = req.query;
     if (!classId || !date) {
       return res.status(400).json({
         success: false,
@@ -144,6 +210,7 @@ const handleGetClassAttendanceRecords = async (req, res) => {
 
     const records = await attendanceService.getClassAttendanceRecords(
       classId,
+      subjectId,
       date,
       period,
       req.user
@@ -165,6 +232,10 @@ module.exports = {
   handleGetStudentSummary,
   handleGetStudentMonthly,
   handleGetStudentHistory,
+  handleGetStudentSubjectAttendance,
+  handleGetStudentSessionAttendance,
+  handleGetClassAttendanceSummary,
+  handleGetFacultyAttendanceSummary,
   handleCreateCorrectionRequest,
   handleApproveCorrectionRequest,
   handleRejectCorrectionRequest,

@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { getFacultyById } from '@/services/faculty.service';
+import { getMyAssignments } from '@/services/faculty.service';
 import { getStudents } from '@/services/student.service';
 import { markClassAttendance, getClassAttendanceRecords } from '@/services/attendance.service';
-import { StudentProfile, ClassModel } from '@/types';
+import { StudentProfile, FacultyAssignment } from '@/types';
 import {
   CalendarCheck,
   ArrowLeft,
@@ -20,16 +21,21 @@ import {
   Check,
   Building2,
   RotateCcw,
+  BookOpen,
+  Info,
+  ShieldAlert,
 } from 'lucide-react';
 
 type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LATE' | 'LEAVE' | 'EXCUSED';
 
-export default function FacultyAttendanceMarkingPage() {
+function AttendanceMarkingContent() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
 
-  // Assigned classes state
-  const [assignedClasses, setAssignedClasses] = useState<ClassModel[]>([]);
+  // Faculty Allocations
+  const [assignments, setAssignments] = useState<FacultyAssignment[]>([]);
   const [selectedClassId, setSelectedClassId] = useState<string>('');
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string>('');
 
   // Date and Period state
   const todayIso = new Date().toISOString().split('T')[0];
@@ -39,6 +45,7 @@ export default function FacultyAttendanceMarkingPage() {
   // Class roster and marks state
   const [students, setStudents] = useState<StudentProfile[]>([]);
   const [attendanceMarks, setAttendanceMarks] = useState<Record<string, AttendanceStatus>>({});
+  const [studentRemarks, setStudentRemarks] = useState<Record<string, string>>({});
   const [isExistingRecord, setIsExistingRecord] = useState<boolean>(false);
 
   // Loading and submission states
@@ -46,46 +53,106 @@ export default function FacultyAttendanceMarkingPage() {
   const [loadingRoster, setLoadingRoster] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<{
-    type: 'success' | 'error';
+    type: 'success' | 'error' | 'warning';
     message: string;
   } | null>(null);
 
-  // 1. Load authenticated faculty's assigned classes
+  // Check if date is within 7-day window
+  const isDateWithin7Days = (dateStr: string) => {
+    const target = new Date(dateStr);
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    const diffDays = Math.floor((today.getTime() - target.getTime()) / (1000 * 60 * 60 * 24));
+    return diffDays <= 7;
+  };
+
+  const isLockedByWindow = !isDateWithin7Days(selectedDate);
+
+  // 1. Load authenticated faculty's allocations
   useEffect(() => {
-    async function loadFacultyProfile() {
+    async function loadAllocations() {
       try {
         setLoadingInitial(true);
-        const profileRes = await getFacultyById('profile');
-        if (profileRes.success && profileRes.data) {
-          const classes = (profileRes.data.assignedClasses || []) as unknown as ClassModel[];
-          setAssignedClasses(classes);
-          if (classes.length > 0) {
-            setSelectedClassId(classes[0]._id);
+        const res = await getMyAssignments();
+        if (res.success && Array.isArray(res.data)) {
+          const allocs = res.data;
+          setAssignments(allocs);
+
+          // Read URL params if provided
+          const paramClassId = searchParams.get('classId');
+          const paramSubjectId = searchParams.get('subjectId');
+          const paramPeriod = searchParams.get('period');
+
+          if (paramPeriod) {
+            const pNum = parseInt(paramPeriod, 10);
+            if (pNum >= 1 && pNum <= 7) setSelectedPeriod(pNum);
+          }
+
+          if (allocs.length > 0) {
+            const matchedAlloc = paramClassId
+              ? allocs.find((a) => a.classId?._id === paramClassId && (!paramSubjectId || a.subjectId?._id === paramSubjectId))
+              : allocs[0];
+
+            if (matchedAlloc) {
+              setSelectedClassId(matchedAlloc.classId._id);
+              setSelectedSubjectId(matchedAlloc.subjectId._id);
+            } else {
+              setSelectedClassId(allocs[0].classId._id);
+              setSelectedSubjectId(allocs[0].subjectId._id);
+            }
           }
         }
       } catch (err) {
-        console.error('Failed to load faculty assigned classes:', err);
+        console.error('Failed to load faculty allocations:', err);
       } finally {
         setLoadingInitial(false);
       }
     }
 
-    loadFacultyProfile();
-  }, [user]);
+    loadAllocations();
+  }, [user, searchParams]);
 
-  // 2. Load students roster and existing attendance marks for the selected class, date, and period
+  // Distinct classes from allocations
+  const distinctClassesMap = new Map<string, { _id: string; name: string; code: string }>();
+  assignments.forEach((a) => {
+    if (a.classId) {
+      distinctClassesMap.set(a.classId._id, a.classId);
+    }
+  });
+  const distinctClasses = Array.from(distinctClassesMap.values());
+
+  // Subjects for the currently selected class
+  const availableSubjects = assignments
+    .filter((a) => a.classId?._id === selectedClassId)
+    .map((a) => a.subjectId)
+    .filter(Boolean);
+
+  // When class changes, ensure selectedSubjectId is valid for that class
+  const handleClassChange = (newClassId: string) => {
+    setSelectedClassId(newClassId);
+    const subjsForClass = assignments
+      .filter((a) => a.classId?._id === newClassId)
+      .map((a) => a.subjectId);
+    if (subjsForClass.length > 0 && subjsForClass[0]) {
+      setSelectedSubjectId(subjsForClass[0]._id);
+    } else {
+      setSelectedSubjectId('');
+    }
+  };
+
+  // 2. Load roster and existing attendance marks
   const loadRosterAndMarks = useCallback(async () => {
-    if (!selectedClassId) return;
+    if (!selectedClassId || !selectedSubjectId) return;
 
     try {
       setLoadingRoster(true);
       setFeedback(null);
 
-      // Fetch enrolled students and existing records in parallel
       const [studentsRes, recordsRes] = await Promise.allSettled([
         getStudents({ classId: selectedClassId, limit: 100 }),
         getClassAttendanceRecords({
           classId: selectedClassId,
+          subjectId: selectedSubjectId,
           date: selectedDate,
           period: selectedPeriod,
         }),
@@ -99,8 +166,8 @@ export default function FacultyAttendanceMarkingPage() {
         setStudents([]);
       }
 
-      // Map existing records by studentId
       const existingMap: Record<string, AttendanceStatus> = {};
+      const remarksMap: Record<string, string> = {};
       let hasExisting = false;
 
       if (recordsRes.status === 'fulfilled' && recordsRes.value.success && Array.isArray(recordsRes.value.data)) {
@@ -111,6 +178,7 @@ export default function FacultyAttendanceMarkingPage() {
             const sId = rec.studentId?._id || rec.studentId;
             if (sId) {
               existingMap[sId.toString()] = rec.status;
+              if (rec.remarks) remarksMap[sId.toString()] = rec.remarks;
             }
           });
         }
@@ -118,39 +186,38 @@ export default function FacultyAttendanceMarkingPage() {
 
       setIsExistingRecord(hasExisting);
 
-      // Populate attendance marks: default to PRESENT if not previously recorded
+      // Default to PRESENT for unmarked students
       const initialMarks: Record<string, AttendanceStatus> = {};
       roster.forEach((student) => {
         const sId = student._id.toString();
-        if (existingMap[sId]) {
-          initialMarks[sId] = existingMap[sId];
-        } else {
-          initialMarks[sId] = 'PRESENT';
-        }
+        initialMarks[sId] = existingMap[sId] || 'PRESENT';
       });
 
       setAttendanceMarks(initialMarks);
+      setStudentRemarks(remarksMap);
     } catch (err) {
       console.error('Error loading class roster and attendance marks:', err);
     } finally {
       setLoadingRoster(false);
     }
-  }, [selectedClassId, selectedDate, selectedPeriod]);
+  }, [selectedClassId, selectedSubjectId, selectedDate, selectedPeriod]);
 
   useEffect(() => {
     loadRosterAndMarks();
   }, [loadRosterAndMarks]);
 
-  // Set individual student status
+  // Status toggle
   const handleStatusChange = (studentId: string, status: AttendanceStatus) => {
+    if (isLockedByWindow) return;
     setAttendanceMarks((prev) => ({
       ...prev,
       [studentId]: status,
     }));
   };
 
-  // Bulk actions: Mark All Present / Mark All Absent
+  // Bulk actions
   const handleMarkAll = (status: AttendanceStatus) => {
+    if (isLockedByWindow) return;
     const updated: Record<string, AttendanceStatus> = {};
     students.forEach((s) => {
       updated[s._id.toString()] = status;
@@ -160,8 +227,16 @@ export default function FacultyAttendanceMarkingPage() {
 
   // Submit attendance marks
   const handleSubmitAttendance = async () => {
-    if (!selectedClassId) {
-      setFeedback({ type: 'error', message: 'Please select a valid class' });
+    if (isLockedByWindow) {
+      setFeedback({
+        type: 'error',
+        message: 'Attendance older than 7 days is locked from manual editing. Please contact Admin for a correction request.',
+      });
+      return;
+    }
+
+    if (!selectedClassId || !selectedSubjectId) {
+      setFeedback({ type: 'error', message: 'Please select both class and subject' });
       return;
     }
 
@@ -177,10 +252,12 @@ export default function FacultyAttendanceMarkingPage() {
       const recordsPayload = students.map((s) => ({
         studentId: s._id.toString(),
         status: attendanceMarks[s._id.toString()] || 'PRESENT',
+        remarks: studentRemarks[s._id.toString()] || undefined,
       }));
 
       const res = await markClassAttendance({
         classId: selectedClassId,
+        subjectId: selectedSubjectId,
         date: selectedDate,
         period: selectedPeriod,
         records: recordsPayload,
@@ -190,7 +267,7 @@ export default function FacultyAttendanceMarkingPage() {
         setIsExistingRecord(true);
         setFeedback({
           type: 'success',
-          message: `Period ${selectedPeriod} attendance recorded successfully (${res.data?.totalMarked ?? recordsPayload.length} students marked).`,
+          message: `Period ${selectedPeriod} attendance recorded successfully (${res.data?.totalMarked ?? recordsPayload.length} students marked). Source: MANUAL.`,
         });
       } else {
         setFeedback({
@@ -206,7 +283,7 @@ export default function FacultyAttendanceMarkingPage() {
     }
   };
 
-  // Quick stats
+  // Metrics
   const presentCount = Object.values(attendanceMarks).filter((s) => s === 'PRESENT').length;
   const absentCount = Object.values(attendanceMarks).filter((s) => s === 'ABSENT').length;
   const lateCount = Object.values(attendanceMarks).filter((s) => s === 'LATE').length;
@@ -222,7 +299,7 @@ export default function FacultyAttendanceMarkingPage() {
     );
   }
 
-  if (assignedClasses.length === 0) {
+  if (assignments.length === 0) {
     return (
       <div className="space-y-6">
         <div className="flex items-center space-x-2 text-xs text-slate-500">
@@ -237,9 +314,9 @@ export default function FacultyAttendanceMarkingPage() {
           <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
             <Building2 className="w-7 h-7" />
           </div>
-          <h2 className="text-xl font-bold font-serif text-[#132238]">No Assigned Classes Found</h2>
+          <h2 className="text-xl font-bold font-serif text-[#132238]">No Teaching Allocations Found</h2>
           <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-            Your faculty account does not have any assigned classes or cohorts. Please contact the institution administrator to assign classes to your profile before marking attendance.
+            Your faculty account does not have any active class and subject assignments. The administrator must link you to classes and subjects via Faculty Assignments before you can mark attendance.
           </p>
           <div className="pt-2">
             <Link
@@ -253,8 +330,6 @@ export default function FacultyAttendanceMarkingPage() {
       </div>
     );
   }
-
-  const selectedClass = assignedClasses.find((c) => c._id === selectedClassId) || assignedClasses[0];
 
   return (
     <div className="space-y-6">
@@ -270,10 +345,10 @@ export default function FacultyAttendanceMarkingPage() {
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238] flex items-center gap-2">
             <CalendarCheck className="w-7 h-7 text-[#2F7C7A]" />
-            7-Period Attendance Marking
+            7-Period Manual Attendance Workspace
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Official period attendance roster for authorized classes. Changes update atomically.
+            Mark daily subject-level student attendance across 7 daily sessions. Attributed to your teaching allocation.
           </p>
         </div>
 
@@ -285,28 +360,46 @@ export default function FacultyAttendanceMarkingPage() {
         </Link>
       </div>
 
-      {/* Control Bar: Class, Date, Period Selectors */}
+      {/* Control Bar: Class, Subject, Date, Period Selectors */}
       <div className="p-5 bg-white rounded-2xl border border-[#E2E8E0] shadow-2xs space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* 1. Class Selector */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
-              Assigned Class / Cohort
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 flex items-center gap-1.5">
+              <Building2 className="w-3.5 h-3.5 text-[#2F7C7A]" /> Assigned Class
             </label>
             <select
               value={selectedClassId}
-              onChange={(e) => setSelectedClassId(e.target.value)}
+              onChange={(e) => handleClassChange(e.target.value)}
               className="w-full text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[#132238] focus:outline-hidden focus:border-[#2F7C7A] focus:bg-white transition-all"
             >
-              {assignedClasses.map((cls) => (
+              {distinctClasses.map((cls) => (
                 <option key={cls._id} value={cls._id}>
-                  {cls.name || (cls as any).className} ({cls.code || 'CLS'})
+                  {cls.name} ({cls.code || 'CLS'})
                 </option>
               ))}
             </select>
           </div>
 
-          {/* 2. Date Picker */}
+          {/* 2. Subject Selector */}
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 flex items-center gap-1.5">
+              <BookOpen className="w-3.5 h-3.5 text-[#2F7C7A]" /> Assigned Subject
+            </label>
+            <select
+              value={selectedSubjectId}
+              onChange={(e) => setSelectedSubjectId(e.target.value)}
+              className="w-full text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[#132238] focus:outline-hidden focus:border-[#2F7C7A] focus:bg-white transition-all"
+            >
+              {availableSubjects.map((sub: any) => (
+                <option key={sub._id} value={sub._id}>
+                  {sub.name || sub.subjectName} ({sub.code || 'SUB'})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* 3. Date Picker */}
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5 flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-[#2F7C7A]" /> Attendance Date
@@ -320,35 +413,50 @@ export default function FacultyAttendanceMarkingPage() {
             />
           </div>
 
-          {/* 3. Class Summary Info */}
+          {/* 4. Enrolled Students Count */}
           <div className="flex flex-col justify-end">
             <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 flex items-center justify-between text-xs">
               <div className="flex items-center space-x-2">
                 <Users className="w-4 h-4 text-[#2F7C7A]" />
-                <span className="font-semibold text-slate-700">Enrolled Students:</span>
+                <span className="font-semibold text-slate-700">Enrolled Cohort:</span>
               </div>
               <span className="font-mono font-bold text-[#132238] px-2 py-0.5 rounded bg-white border border-slate-200">
-                {students.length}
+                {students.length} Students
               </span>
             </div>
           </div>
         </div>
 
+        {/* 7-Day Window Warning if Date is Older than 7 Days */}
+        {isLockedByWindow && (
+          <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center space-x-3">
+            <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0" />
+            <div>
+              <span className="font-bold">7-Day Attendance Editing Window Expired:</span> Selected date is older than 7 days. Changes cannot be saved directly by faculty. Please contact the administrator or submit an attendance correction request.
+            </div>
+          </div>
+        )}
+
         {/* Period Selector Tabs (Periods 1 - 7) */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-[#2F7C7A]" /> Select Period (1 - 7)
+              <Clock className="w-3.5 h-3.5 text-[#2F7C7A]" /> Select Daily Period (1 - 7)
             </label>
-            {isExistingRecord ? (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <Check className="w-3 h-3 mr-1" /> Editing Saved Marks
+            <div className="flex items-center space-x-2">
+              <span className="text-[11px] font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                Source: MANUAL
               </span>
-            ) : (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                <Clock className="w-3 h-3 mr-1" /> New Period Entry
-              </span>
-            )}
+              {isExistingRecord ? (
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <Check className="w-3 h-3 mr-1" /> Saved Records Present
+                </span>
+              ) : (
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                  <Clock className="w-3 h-3 mr-1" /> New Period Entry
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-7 gap-2">
@@ -406,7 +514,7 @@ export default function FacultyAttendanceMarkingPage() {
         <div className="p-4 bg-slate-50/60 border-b border-[#E2E8E0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-3 text-xs">
             <span className="font-bold text-[#132238] uppercase tracking-wider font-mono">
-              {selectedClass.name || (selectedClass as any).className} • Period {selectedPeriod}
+              Period {selectedPeriod} • {selectedDate}
             </span>
             <span className="text-slate-300">|</span>
             <div className="flex items-center space-x-2 text-[11px] font-medium">
@@ -431,15 +539,17 @@ export default function FacultyAttendanceMarkingPage() {
           <div className="flex items-center space-x-2">
             <button
               type="button"
+              disabled={isLockedByWindow}
               onClick={() => handleMarkAll('PRESENT')}
-              className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-all flex items-center"
+              className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-all flex items-center disabled:opacity-50"
             >
               <Check className="w-3 h-3 mr-1" /> All Present
             </button>
             <button
               type="button"
+              disabled={isLockedByWindow}
               onClick={() => handleMarkAll('ABSENT')}
-              className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition-all flex items-center"
+              className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition-all flex items-center disabled:opacity-50"
             >
               <XCircle className="w-3 h-3 mr-1" /> All Absent
             </button>
@@ -458,12 +568,12 @@ export default function FacultyAttendanceMarkingPage() {
         {loadingRoster ? (
           <div className="p-8 text-center space-y-3">
             <div className="w-6 h-6 border-2 border-[#2F7C7A] border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs text-slate-500">Loading student class roster & attendance marks...</p>
+            <p className="text-xs text-slate-500">Loading student roster and attendance status...</p>
           </div>
         ) : students.length === 0 ? (
           <div className="p-12 text-center space-y-2">
             <Users className="w-8 h-8 text-slate-300 mx-auto" />
-            <p className="text-sm font-bold text-slate-700">No students found in this class</p>
+            <p className="text-sm font-bold text-slate-700">No students enrolled in this class</p>
             <p className="text-xs text-slate-400">
               There are currently no active students assigned to this class cohort.
             </p>
@@ -477,6 +587,7 @@ export default function FacultyAttendanceMarkingPage() {
                   <th className="py-3 px-4 w-32">Reg Number</th>
                   <th className="py-3 px-4">Student Name</th>
                   <th className="py-3 px-6 text-center w-72">Attendance Status</th>
+                  <th className="py-3 px-4 w-52">Remarks (Optional)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -493,9 +604,12 @@ export default function FacultyAttendanceMarkingPage() {
                         {student.registrationNumber || 'N/A'}
                       </td>
                       <td className="py-3 px-4">
-                        <div className="font-semibold text-[#132238]">
+                        <Link
+                          href={`/faculty/students/${student._id}`}
+                          className="font-semibold text-[#132238] hover:text-[#2F7C7A] hover:underline"
+                        >
                           {student.nameEnglish || (student.userId as any)?.name || 'Student'}
-                        </div>
+                        </Link>
                         {student.nameArabic && (
                           <div className="text-[11px] text-slate-400 font-serif">
                             {student.nameArabic}
@@ -507,6 +621,7 @@ export default function FacultyAttendanceMarkingPage() {
                           {/* PRESENT Button */}
                           <button
                             type="button"
+                            disabled={isLockedByWindow}
                             onClick={() => handleStatusChange(sId, 'PRESENT')}
                             className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
                               currentStatus === 'PRESENT'
@@ -520,6 +635,7 @@ export default function FacultyAttendanceMarkingPage() {
                           {/* ABSENT Button */}
                           <button
                             type="button"
+                            disabled={isLockedByWindow}
                             onClick={() => handleStatusChange(sId, 'ABSENT')}
                             className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
                               currentStatus === 'ABSENT'
@@ -533,6 +649,7 @@ export default function FacultyAttendanceMarkingPage() {
                           {/* LATE Button */}
                           <button
                             type="button"
+                            disabled={isLockedByWindow}
                             onClick={() => handleStatusChange(sId, 'LATE')}
                             className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
                               currentStatus === 'LATE'
@@ -546,6 +663,7 @@ export default function FacultyAttendanceMarkingPage() {
                           {/* LEAVE Button */}
                           <button
                             type="button"
+                            disabled={isLockedByWindow}
                             onClick={() => handleStatusChange(sId, 'LEAVE')}
                             className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
                               currentStatus === 'LEAVE' || currentStatus === 'EXCUSED'
@@ -556,6 +674,21 @@ export default function FacultyAttendanceMarkingPage() {
                             LV
                           </button>
                         </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <input
+                          type="text"
+                          disabled={isLockedByWindow}
+                          placeholder="Optional note..."
+                          value={studentRemarks[sId] || ''}
+                          onChange={(e) =>
+                            setStudentRemarks((prev) => ({
+                              ...prev,
+                              [sId]: e.target.value,
+                            }))
+                          }
+                          className="w-full text-xs px-2.5 py-1 bg-white border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#2F7C7A]"
+                        />
                       </td>
                     </tr>
                   );
@@ -568,15 +701,15 @@ export default function FacultyAttendanceMarkingPage() {
         {/* Footer / Submit Action Bar */}
         <div className="p-4 bg-slate-50 border-t border-[#E2E8E0] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="text-xs text-slate-500">
-            Clicking Save will update attendance for <span className="font-bold text-slate-700">{students.length} students</span> for Period {selectedPeriod} on {selectedDate}.
+            Attendance marks will be recorded as <span className="font-bold text-slate-700">source: MANUAL</span> for Period {selectedPeriod} on {selectedDate}.
           </div>
 
           <button
             type="button"
-            disabled={submitting || students.length === 0}
+            disabled={submitting || students.length === 0 || isLockedByWindow}
             onClick={handleSubmitAttendance}
             className={`inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-xs font-bold text-white transition-all shadow-sm ${
-              submitting || students.length === 0
+              submitting || students.length === 0 || isLockedByWindow
                 ? 'bg-slate-400 cursor-not-allowed'
                 : 'bg-[#2F7C7A] hover:bg-[#286b69] shadow-[#2F7C7A]/20'
             }`}
@@ -595,5 +728,21 @@ export default function FacultyAttendanceMarkingPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function FacultyAttendanceMarkingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="space-y-6">
+          <div className="h-8 w-60 bg-slate-200/70 animate-pulse rounded-lg" />
+          <div className="h-28 bg-slate-200/70 animate-pulse rounded-xl" />
+          <div className="h-96 bg-slate-200/70 animate-pulse rounded-xl" />
+        </div>
+      }
+    >
+      <AttendanceMarkingContent />
+    </Suspense>
   );
 }

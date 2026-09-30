@@ -26,6 +26,7 @@ export interface ClassModel {
   name: string;
   className?: string;
   code: string;
+  department?: string;
   academicYearId?: string | AcademicYear;
   institutionId?: string | any;
   status: string;
@@ -36,6 +37,7 @@ export interface ClassModel {
 export interface ClassPayload {
   name: string;
   code: string;
+  department?: string;
   academicYearId?: string;
   status?: string;
 }
@@ -47,6 +49,8 @@ export interface Subject {
   name: string;
   arabicName?: string;
   code: string;
+  category?: string;
+  description?: string;
   type: SubjectType;
   credits: number;
   status: string;
@@ -57,6 +61,8 @@ export interface Subject {
 export interface SubjectPayload {
   name: string;
   code: string;
+  category?: string;
+  description?: string;
   type: SubjectType;
   credits: number;
   status?: string;
@@ -102,4 +108,80 @@ export interface SyllabusPayload {
   fileName?: string;
   version?: string;
   status?: string;
+}
+
+export interface FacultyAssignment {
+  _id: string;
+  facultyId: {
+    _id: string;
+    facultyId?: string;
+    nameEnglish?: string;
+    nameArabic?: string;
+    designation?: string;
+    contactNumber?: string;
+    photo?: string;
+    department?: string;
+  } | any;
+  academicYearId: {
+    _id: string;
+    yearName?: string;
+    yearCode?: string;
+    isCurrent?: boolean;
+    status?: string;
+  } | any;
+  classId: {
+    _id: string;
+    name?: string;
+    code?: string;
+    department?: string;
+    status?: string;
+  } | any;
+  subjectId: {
+    _id: string;
+    name?: string;
+    subjectName?: string;
+    code?: string;
+    subjectCode?: string;
+    category?: string;
+    type?: string;
+    credits?: number;
+  } | any;
+  status: 'ACTIVE' | 'INACTIVE';
+  isPrimary?: boolean;
+  notes?: string;
+  assignedBy?: {
+    _id: string;
+    name?: string;
+    email?: string;
+  };
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface FacultyAssignmentPayload {
+  facultyId: string;
+  academicYearId: string;
+  classId: string;
+  subjectId: string;
+  isPrimary?: boolean;
+  status?: 'ACTIVE' | 'INACTIVE';
+  notes?: string;
+}
+
+export interface FacultyClassView {
+  _id: string;
+  classId: string;
+  name: string;
+  code: string;
+  department?: string;
+  academicYear?: any;
+  studentCount: number;
+  subjects: Array<{
+    _id: string;
+    name: string;
+    code: string;
+    category?: string;
+    credits?: number;
+    assignmentId?: string;
+  }>;
 }

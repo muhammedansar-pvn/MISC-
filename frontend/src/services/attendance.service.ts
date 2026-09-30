@@ -42,11 +42,13 @@ export const getStudentAttendanceHistory = async (): Promise<ApiResponse<Monthly
 
 export interface MarkClassAttendancePayload {
   classId: string;
+  subjectId: string;
   date: string;
   period: number;
   records: Array<{
     studentId: string;
     status: 'PRESENT' | 'ABSENT' | 'LATE' | 'LEAVE' | 'EXCUSED';
+    remarks?: string;
   }>;
 }
 
@@ -55,7 +57,7 @@ export interface MarkClassAttendancePayload {
  */
 export const markClassAttendance = async (
   payload: MarkClassAttendancePayload
-): Promise<ApiResponse<{ classId: string; date: string; period: number; totalMarked: number }>> => {
+): Promise<ApiResponse<{ classId: string; subjectId?: string; date: string; period: number; totalMarked: number }>> => {
   const response = await apiClient.post<ApiResponse<any>>(
     API_ENDPOINTS.attendance.markClass,
     payload
@@ -64,10 +66,11 @@ export const markClassAttendance = async (
 };
 
 /**
- * Fetch existing attendance marks for a class on a specific date and optional period
+ * Fetch existing attendance marks for a class on a specific date, period, and optional subject
  */
 export const getClassAttendanceRecords = async (params: {
   classId: string;
+  subjectId?: string;
   date: string;
   period?: number;
 }): Promise<ApiResponse<any[]>> => {
@@ -78,11 +81,104 @@ export const getClassAttendanceRecords = async (params: {
   return response.data;
 };
 
+export interface CreateCorrectionRequestPayload {
+  studentId: string;
+  classId: string;
+  subjectId?: string;
+  academicYearId?: string;
+  date: string;
+  period: number;
+  currentStatus: 'PRESENT' | 'ABSENT' | 'LATE' | 'LEAVE' | 'EXCUSED';
+  requestedStatus: 'PRESENT' | 'ABSENT' | 'LATE' | 'LEAVE' | 'EXCUSED';
+  reason: string;
+}
+
+/**
+ * Fetch subject-wise aggregated attendance for a student
+ */
+export const getStudentSubjectAttendance = async (params?: {
+  studentId?: string;
+  academicYearId?: string;
+  startDate?: string;
+  endDate?: string;
+}): Promise<ApiResponse<any[]>> => {
+  const response = await apiClient.get<ApiResponse<any[]>>(
+    API_ENDPOINTS.attendance.studentSubjects,
+    { params }
+  );
+  return response.data;
+};
+
+/**
+ * Fetch session-wise (Period 1..7) aggregated attendance for a student
+ */
+export const getStudentSessionAttendance = async (params?: {
+  studentId?: string;
+  academicYearId?: string;
+  startDate?: string;
+  endDate?: string;
+}): Promise<ApiResponse<any[]>> => {
+  const response = await apiClient.get<ApiResponse<any[]>>(
+    API_ENDPOINTS.attendance.studentSessions,
+    { params }
+  );
+  return response.data;
+};
+
+/**
+ * Fetch aggregate class attendance statistics
+ */
+export const getClassAttendanceSummary = async (params: {
+  classId: string;
+  subjectId?: string;
+  date?: string;
+  period?: number;
+}): Promise<ApiResponse<any>> => {
+  const response = await apiClient.get<ApiResponse<any>>(
+    API_ENDPOINTS.attendance.classSummary,
+    { params }
+  );
+  return response.data;
+};
+
+/**
+ * Fetch faculty attendance submission history
+ */
+export const getFacultyAttendanceSummary = async (params?: {
+  startDate?: string;
+  endDate?: string;
+  classId?: string;
+}): Promise<ApiResponse<any>> => {
+  const response = await apiClient.get<ApiResponse<any>>(
+    API_ENDPOINTS.attendance.facultyHistory,
+    { params }
+  );
+  return response.data;
+};
+
+/**
+ * Submit an attendance correction request
+ */
+export const createCorrectionRequest = async (
+  payload: CreateCorrectionRequestPayload
+): Promise<ApiResponse<any>> => {
+  const response = await apiClient.post<ApiResponse<any>>(
+    API_ENDPOINTS.attendance.correctionRequests,
+    payload
+  );
+  return response.data;
+};
+
 export default {
   getStudentAttendanceOverview,
   getStudentMonthlyAttendance,
   getStudentAttendanceHistory,
+  getStudentSubjectAttendance,
+  getStudentSessionAttendance,
   markClassAttendance,
   getClassAttendanceRecords,
+  getClassAttendanceSummary,
+  getFacultyAttendanceSummary,
+  createCorrectionRequest,
 };
 

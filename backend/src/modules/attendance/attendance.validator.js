@@ -19,6 +19,7 @@ const reviewCorrectionRequestSchema = Joi.object({
 
 const markClassAttendanceSchema = Joi.object({
   classId: Joi.string().hex().length(24).required(),
+  subjectId: Joi.string().hex().length(24).required(),
   date: Joi.alternatives().try(Joi.date().iso(), Joi.string().regex(/^\d{4}-\d{2}-\d{2}/)).required(),
   period: Joi.number().integer().min(1).max(7).required(),
   records: Joi.array()
@@ -26,6 +27,7 @@ const markClassAttendanceSchema = Joi.object({
       Joi.object({
         studentId: Joi.string().hex().length(24).required(),
         status: Joi.string().valid("PRESENT", "ABSENT", "LATE", "LEAVE", "EXCUSED").required(),
+        remarks: Joi.string().trim().allow("").optional(),
       })
     )
     .min(1)

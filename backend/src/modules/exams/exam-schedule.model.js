@@ -8,6 +8,12 @@ const examScheduleSchema = new mongoose.Schema(
       required: true,
     },
 
+    academicYearId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicYear",
+      required: true,
+    },
+
     classId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Class",
@@ -46,6 +52,12 @@ const examScheduleSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+
+    status: {
+      type: String,
+      enum: ["SCHEDULED", "ONGOING", "COMPLETED", "CANCELLED"],
+      default: "SCHEDULED",
+    },
   },
   {
     timestamps: true,
@@ -53,7 +65,7 @@ const examScheduleSchema = new mongoose.Schema(
   }
 );
 
-// Compound Unique Index
+// Compound Unique Index: One schedule per exam, class, and subject
 examScheduleSchema.index(
   {
     examId: 1,
@@ -64,5 +76,9 @@ examScheduleSchema.index(
     unique: true,
   }
 );
+
+examScheduleSchema.index({ academicYearId: 1, classId: 1 });
+examScheduleSchema.index({ classId: 1, subjectId: 1 });
+examScheduleSchema.index({ examDate: 1 });
 
 module.exports = mongoose.model("ExamSchedule", examScheduleSchema);

@@ -111,10 +111,24 @@ export interface MarkEntryPayload {
   [key: string]: any;
 }
 
+export interface SubjectResultItem {
+  subjectId: string | Subject | any;
+  subjectName: string;
+  subjectCode?: string;
+  marksObtained: number;
+  maxMarks: number;
+  passMarks: number;
+  grade: string;
+  isAbsent?: boolean;
+  resultStatus: 'PASSED' | 'FAILED' | string;
+}
+
 export interface ExamResult {
   _id: string;
   studentId?: string | StudentProfile | any;
   examId?: string | Exam | any;
+  classId?: string | ClassModel | any;
+  academicYearId?: string | AcademicYear | any;
   totalMarks?: number;
   totalMarksObtained?: number;
   totalMaxMarks?: number;
@@ -122,6 +136,9 @@ export interface ExamResult {
   grade: string;
   sgpa?: number | string;
   resultStatus?: 'PASSED' | 'FAILED' | 'WITHHELD' | 'PASS' | 'FAIL' | string;
+  subjectResults?: SubjectResultItem[];
+  status?: string;
+  publishedAt?: string;
   createdAt?: string;
   updatedAt?: string;
 }

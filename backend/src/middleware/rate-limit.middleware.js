@@ -54,10 +54,19 @@ const adminPasswordResetLimiter = createRateLimiter({
   message: "Too many password reset requests initiated. Please try again after 15 minutes.",
 });
 
+// Admin Bulk Action Limiter (30 requests per 15 min window)
+const adminBulkActionLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  message: "Too many bulk actions initiated. Please try again after 15 minutes.",
+});
+
 module.exports = {
   createRateLimiter,
   globalApiLimiter,
   accountSetupLimiter,
   enquiryLimiter,
   adminPasswordResetLimiter,
+  adminBulkActionLimiter,
 };
+

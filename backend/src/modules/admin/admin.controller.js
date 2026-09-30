@@ -205,6 +205,25 @@ const handleResetUserPassword = async (req, res) => {
   }
 };
 
+const handleBulkAssignStudents = async (req, res) => {
+  try {
+    const result = await adminService.bulkAssignStudentsToClass(req.body);
+    return res.status(200).json({
+      success: true,
+      message: `Assigned ${result.updatedCount} students to class successfully`,
+      data: result,
+    });
+  } catch (error) {
+    if (!error.statusCode || error.statusCode >= 500) {
+      console.error("Bulk Assign Students Error:", error);
+    }
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Failed to bulk assign students",
+    });
+  }
+};
+
 module.exports = {
   createUserInvitation,
   verifyAdminUserOtp,
@@ -216,4 +235,6 @@ module.exports = {
   deleteUser,
   getDashboardStats,
   handleResetUserPassword,
+  handleBulkAssignStudents,
 };
+

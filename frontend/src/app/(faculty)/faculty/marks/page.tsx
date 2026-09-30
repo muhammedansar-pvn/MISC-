@@ -3,198 +3,278 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { getExams, getExamSchedules, getMarkEntries, submitMarkEntry } from '@/services/exam.service';
-import { Exam, ExamSchedule, MarkEntry } from '@/types';
+import {
+  getFacultyExamSchedules,
+  getExamScheduleRoster,
+  submitRosterMarks,
+  createMarkCorrectionRequest,
+  ExamScheduleRosterResponse,
+} from '@/services/exam.service';
+import { ExamSchedule } from '@/types';
 import {
   CheckSquare,
-  Filter,
   CheckCircle2,
   Clock,
   AlertCircle,
-  Plus,
   Save,
   ArrowLeft,
-  Calendar,
-  Layers,
-  Building2,
   Users,
+  Award,
+  TrendingUp,
+  FileCheck,
+  ShieldAlert,
+  Send,
 } from 'lucide-react';
+
+interface RosterRowState {
+  studentId: string;
+  studentName: string;
+  registrationNumber: string;
+  admissionNumber: string;
+  markEntryId: string | null;
+  marksObtained: string;
+  isAbsent: boolean;
+  status: 'NOT_ENTERED' | 'DRAFT' | 'SUBMITTED' | 'VERIFIED' | 'PUBLISHED';
+  remarks: string;
+}
 
 function FacultyMarksContent() {
   const searchParams = useSearchParams();
   const initialScheduleId = searchParams?.get('examScheduleId') || '';
 
-  const [exams, setExams] = useState<Exam[]>([]);
   const [schedules, setSchedules] = useState<ExamSchedule[]>([]);
-  const [selectedExamId, setSelectedExamId] = useState<string>('');
   const [selectedScheduleId, setSelectedScheduleId] = useState<string>(initialScheduleId);
-  const [markEntries, setMarkEntries] = useState<MarkEntry[]>([]);
+  const [rosterData, setRosterData] = useState<ExamScheduleRosterResponse | null>(null);
+  const [rows, setRows] = useState<RosterRowState[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingEntries, setLoadingEntries] = useState(false);
+  const [loadingRoster, setLoadingRoster] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // Form State
-  const [studentIdInput, setStudentIdInput] = useState('');
-  const [marksInput, setMarksInput] = useState('');
-  const [isAbsentInput, setIsAbsentInput] = useState(false);
-  const [statusInput, setStatusInput] = useState<'DRAFT' | 'SUBMITTED'>('SUBMITTED');
-  const [formError, setFormError] = useState<string | null>(null);
-  const [formSuccess, setFormSuccess] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  // Correction request modal state
+  const [correctionTarget, setCorrectionTarget] = useState<RosterRowState | null>(null);
+  const [correctionNewMarks, setCorrectionNewMarks] = useState<string>('');
+  const [correctionReason, setCorrectionReason] = useState<string>('');
+  const [submittingCorrection, setSubmittingCorrection] = useState(false);
 
-  // Initial load
+  // Initial load: Fetch only schedules assigned to this faculty
   useEffect(() => {
-    async function loadMetadata() {
+    async function loadFacultySchedules() {
       try {
         setLoading(true);
-        const [examsRes, schedulesRes] = await Promise.allSettled([
-          getExams(),
-          getExamSchedules(),
-        ]);
-
-        if (examsRes.status === 'fulfilled' && examsRes.value.success && Array.isArray(examsRes.value.data)) {
-          setExams(examsRes.value.data);
-          if (examsRes.value.data.length > 0) {
-            setSelectedExamId(examsRes.value.data[0]._id);
-          }
-        }
-
-        if (schedulesRes.status === 'fulfilled' && schedulesRes.value.success && Array.isArray(schedulesRes.value.data)) {
-          setSchedules(schedulesRes.value.data);
+        const res = await getFacultyExamSchedules();
+        if (res.success && Array.isArray(res.data)) {
+          setSchedules(res.data);
           if (initialScheduleId) {
-            const matched = schedulesRes.value.data.find((s) => s._id === initialScheduleId);
-            if (matched) {
-              const examId = (matched.examId as any)?._id || matched.examId;
-              if (examId) setSelectedExamId(examId);
-              setSelectedScheduleId(initialScheduleId);
-            }
-          } else if (schedulesRes.value.data.length > 0) {
-            setSelectedScheduleId(schedulesRes.value.data[0]._id);
+            const match = res.data.find((s) => s._id === initialScheduleId);
+            if (match) setSelectedScheduleId(initialScheduleId);
+            else if (res.data.length > 0) setSelectedScheduleId(res.data[0]._id);
+          } else if (res.data.length > 0) {
+            setSelectedScheduleId(res.data[0]._id);
           }
         }
-      } catch (err) {
-        console.error('Failed to load marks workspace:', err);
+      } catch (err: any) {
+        console.error('Failed to load faculty schedules:', err);
+        setErrorMsg('Failed to load your assigned examination schedules.');
       } finally {
         setLoading(false);
       }
     }
 
-    loadMetadata();
+    loadFacultySchedules();
   }, [initialScheduleId]);
 
-  // Load mark entries when schedule changes
+  // Load roster when schedule changes
   useEffect(() => {
     if (!selectedScheduleId) {
-      setMarkEntries([]);
+      setRosterData(null);
+      setRows([]);
       return;
     }
 
-    async function loadEntries() {
+    async function loadRoster() {
       try {
-        setLoadingEntries(true);
-        setFormError(null);
-        setFormSuccess(null);
-        const res = await getMarkEntries({ examScheduleId: selectedScheduleId });
-        if (res.success && Array.isArray(res.data)) {
-          setMarkEntries(res.data);
-        } else {
-          setMarkEntries([]);
+        setLoadingRoster(true);
+        setErrorMsg(null);
+        setSuccessMsg(null);
+        const res = await getExamScheduleRoster(selectedScheduleId);
+        if (res.success && res.data) {
+          setRosterData(res.data);
+          setRows(
+            res.data.roster.map((r) => ({
+              studentId: r.studentId,
+              studentName: r.studentName,
+              registrationNumber: r.registrationNumber,
+              admissionNumber: r.admissionNumber,
+              markEntryId: r.markEntryId,
+              marksObtained: r.marksObtained !== null && r.marksObtained !== undefined ? r.marksObtained.toString() : '',
+              isAbsent: r.isAbsent,
+              status: r.status,
+              remarks: r.remarks || '',
+            }))
+          );
         }
-      } catch (err) {
-        console.error('Failed to load mark entries:', err);
-        setMarkEntries([]);
+      } catch (err: any) {
+        console.error('Failed to load schedule roster:', err);
+        setErrorMsg(err.response?.data?.message || 'Failed to load candidate roster.');
       } finally {
-        setLoadingEntries(false);
+        setLoadingRoster(false);
       }
     }
 
-    loadEntries();
+    loadRoster();
   }, [selectedScheduleId]);
 
   const activeSchedule = schedules.find((s) => s._id === selectedScheduleId);
-  const activeExam = exams.find((e) => e._id === selectedExamId);
-  const scheduleSubject = (activeSchedule?.subjectId as any);
-  const scheduleClass = (activeSchedule?.classId as any);
+  const maxMarks = activeSchedule?.maxMarks || 100;
+  const passMarks = activeSchedule?.passMarks || 40;
 
-  // Handle Mark Entry Submission
-  const handleSubmitMark = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormError(null);
-    setFormSuccess(null);
+  // Handle Mark Change
+  const handleMarkChange = (index: number, val: string) => {
+    const updated = [...rows];
+    updated[index].marksObtained = val;
+    setRows(updated);
+  };
 
-    if (!selectedScheduleId || !activeSchedule) {
-      setFormError('Please select an active examination schedule.');
-      return;
+  // Handle Absent Toggle
+  const handleAbsentToggle = (index: number, checked: boolean) => {
+    const updated = [...rows];
+    updated[index].isAbsent = checked;
+    if (checked) {
+      updated[index].marksObtained = '0';
+    }
+    setRows(updated);
+  };
+
+  // Submit/Save Marks
+  const handleSaveMarks = async (targetStatus: 'DRAFT' | 'SUBMITTED') => {
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    if (!selectedScheduleId) return;
+
+    // Validate marks
+    for (const r of rows) {
+      if (!r.isAbsent && r.marksObtained !== '') {
+        const val = parseFloat(r.marksObtained);
+        if (isNaN(val) || val < 0) {
+          setErrorMsg(`Invalid mark for candidate ${r.studentName}. Must be a non-negative number.`);
+          return;
+        }
+        if (val > maxMarks) {
+          setErrorMsg(`Mark for candidate ${r.studentName} cannot exceed maximum marks (${maxMarks}).`);
+          return;
+        }
+      }
     }
 
-    if (!studentIdInput.trim()) {
-      setFormError('Student ID (24-character hexadecimal ObjectId) is required.');
-      return;
-    }
+    const payloadMarks = rows
+      .filter((r) => r.isAbsent || r.marksObtained !== '')
+      .map((r) => ({
+        studentId: r.studentId,
+        marksObtained: r.isAbsent ? 0 : parseFloat(r.marksObtained),
+        isAbsent: r.isAbsent,
+        remarks: r.remarks,
+      }));
 
-    // Validate 24 hex chars
-    if (!/^[0-9a-fA-F]{24}$/.test(studentIdInput.trim())) {
-      setFormError('Student ID must be a valid 24-character hex ID.');
-      return;
-    }
-
-    const marksNum = parseFloat(marksInput);
-    if (!isAbsentInput && (isNaN(marksNum) || marksNum < 0)) {
-      setFormError('Marks obtained must be a valid non-negative number.');
-      return;
-    }
-
-    if (!isAbsentInput && activeSchedule.maxMarks && marksNum > activeSchedule.maxMarks) {
-      setFormError(`Marks obtained cannot exceed schedule maximum marks (${activeSchedule.maxMarks}).`);
+    if (payloadMarks.length === 0) {
+      setErrorMsg('Please enter marks for at least one student before saving.');
       return;
     }
 
     try {
-      setSubmitting(true);
-      const examId = (activeSchedule.examId as any)?._id || activeSchedule.examId;
-      const subjectId = (activeSchedule.subjectId as any)?._id || activeSchedule.subjectId;
+      setSaving(true);
+      const res = await submitRosterMarks(selectedScheduleId, {
+        status: targetStatus,
+        marks: payloadMarks,
+      });
 
-      const payload = {
-        examId,
-        examScheduleId: activeSchedule._id,
-        studentId: studentIdInput.trim(),
-        subjectId,
-        marksObtained: isAbsentInput ? 0 : marksNum,
-        isAbsent: isAbsentInput,
-        status: statusInput,
-      };
-
-      const res = await submitMarkEntry(payload);
       if (res.success) {
-        setFormSuccess('Mark entry successfully recorded.');
-        setStudentIdInput('');
-        setMarksInput('');
-        setIsAbsentInput(false);
+        setSuccessMsg(
+          targetStatus === 'SUBMITTED'
+            ? `Marks successfully submitted for ${res.data?.totalProcessed || payloadMarks.length} candidate(s). Ready for administrative verification.`
+            : `Draft marks saved for ${res.data?.totalProcessed || payloadMarks.length} candidate(s).`
+        );
 
-        // Reload mark entries
-        const reloadRes = await getMarkEntries({ examScheduleId: activeSchedule._id });
-        if (reloadRes.success && Array.isArray(reloadRes.data)) {
-          setMarkEntries(reloadRes.data);
+        // Reload roster to reflect new statuses
+        const reload = await getExamScheduleRoster(selectedScheduleId);
+        if (reload.success && reload.data) {
+          setRosterData(reload.data);
+          setRows(
+            reload.data.roster.map((r) => ({
+              studentId: r.studentId,
+              studentName: r.studentName,
+              registrationNumber: r.registrationNumber,
+              admissionNumber: r.admissionNumber,
+              markEntryId: r.markEntryId,
+              marksObtained: r.marksObtained !== null && r.marksObtained !== undefined ? r.marksObtained.toString() : '',
+              isAbsent: r.isAbsent,
+              status: r.status,
+              remarks: r.remarks || '',
+            }))
+          );
         }
-      } else {
-        setFormError(res.message || 'Failed to submit mark entry.');
       }
     } catch (err: any) {
-      console.error('Error submitting marks:', err);
-      setFormError(err.response?.data?.message || 'Error recording marks.');
+      console.error('Save roster marks error:', err);
+      setErrorMsg(err.response?.data?.message || 'Failed to record marks.');
     } finally {
-      setSubmitting(false);
+      setSaving(false);
     }
   };
+
+  // Correction request submission
+  const handleSubmitCorrection = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!correctionTarget || !correctionTarget.markEntryId) return;
+
+    const num = parseFloat(correctionNewMarks);
+    if (isNaN(num) || num < 0 || num > maxMarks) {
+      alert(`New mark must be between 0 and ${maxMarks}`);
+      return;
+    }
+
+    try {
+      setSubmittingCorrection(true);
+      const res = await createMarkCorrectionRequest({
+        markEntryId: correctionTarget.markEntryId,
+        newMarks: num,
+        reason: correctionReason,
+      });
+
+      if (res.success) {
+        alert('Correction request submitted for administrative review.');
+        setCorrectionTarget(null);
+        setCorrectionNewMarks('');
+        setCorrectionReason('');
+      }
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to submit correction request');
+    } finally {
+      setSubmittingCorrection(false);
+    }
+  };
+
+  // Statistical calculations
+  const totalStudents = rows.length;
+  const enteredRows = rows.filter((r) => r.isAbsent || r.marksObtained !== '');
+  const enteredCount = enteredRows.length;
+  const scoredRows = rows.filter((r) => !r.isAbsent && r.marksObtained !== '' && !isNaN(parseFloat(r.marksObtained)));
+  const scoredValues = scoredRows.map((r) => parseFloat(r.marksObtained));
+
+  const averageScore = scoredValues.length > 0
+    ? Math.round((scoredValues.reduce((a, b) => a + b, 0) / scoredValues.length) * 10) / 10
+    : 0;
+  const highestScore = scoredValues.length > 0 ? Math.max(...scoredValues) : 0;
+  const lowestScore = scoredValues.length > 0 ? Math.min(...scoredValues) : 0;
 
   if (loading) {
     return (
       <div className="space-y-6">
         <div className="h-8 w-48 bg-slate-200/70 animate-pulse rounded-lg" />
-        <div className="h-32 bg-slate-200/70 animate-pulse rounded-2xl" />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="h-64 bg-slate-200/70 animate-pulse rounded-xl" />
-          <div className="lg:col-span-2 h-64 bg-slate-200/70 animate-pulse rounded-xl" />
-        </div>
+        <div className="h-28 bg-slate-200/70 animate-pulse rounded-2xl" />
+        <div className="h-96 bg-slate-200/70 animate-pulse rounded-xl" />
       </div>
     );
   }
@@ -212,7 +292,7 @@ function FacultyMarksContent() {
             <span className="text-slate-900 font-semibold">Mark Entry Workspace</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
-            Candidate Mark Entry & Evaluation
+            Class Candidate Mark Entry
           </h1>
         </div>
 
@@ -224,275 +304,316 @@ function FacultyMarksContent() {
         </Link>
       </div>
 
-      {/* Schedule Selection Bar */}
+      {/* Schedule Selector Card */}
       <div className="bg-white p-5 rounded-2xl border border-[#E2E8E0] shadow-2xs space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700">1. Select Examination Term</label>
-            <select
-              value={selectedExamId}
-              onChange={(e) => {
-                setSelectedExamId(e.target.value);
-                // auto-select first schedule of that exam
-                const firstMatching = schedules.find((s) => {
-                  const exId = (s.examId as any)?._id || s.examId;
-                  return exId === e.target.value;
-                });
-                if (firstMatching) setSelectedScheduleId(firstMatching._id);
-              }}
-              className="w-full py-2 px-3 text-xs border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#2F7C7A] bg-white font-medium text-slate-800"
-            >
-              {exams.map((exam) => (
-                <option key={exam._id} value={exam._id}>
-                  {exam.title || exam.name} ({exam.examCode || exam.code || 'EXAM'})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700">2. Select Scheduled Paper</label>
+            <label className="text-xs font-bold text-slate-700">
+              Select Your Authorized Examination Paper
+            </label>
             <select
               value={selectedScheduleId}
               onChange={(e) => setSelectedScheduleId(e.target.value)}
-              className="w-full py-2 px-3 text-xs border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#2F7C7A] bg-white font-medium text-slate-800"
+              className="w-full py-2.5 px-3 text-xs border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#2F7C7A] bg-white font-medium text-slate-800"
             >
-              {schedules
-                .filter((s) => {
-                  if (!selectedExamId) return true;
-                  const exId = (s.examId as any)?._id || s.examId;
-                  return exId === selectedExamId;
-                })
-                .map((sch) => {
+              {schedules.length === 0 ? (
+                <option value="">No assigned exam papers found</option>
+              ) : (
+                schedules.map((sch) => {
+                  const exam = (sch.examId as any);
                   const sub = (sch.subjectId as any);
                   const cls = (sch.classId as any);
                   return (
                     <option key={sch._id} value={sch._id}>
-                      {sub?.name || 'Subject'} ({cls?.name || cls?.className || 'Class'}) • Max: {sch.maxMarks}
+                      {exam?.title || 'Exam'} • {sub?.subjectName || sub?.name || 'Subject'} ({cls?.name || cls?.className || 'Class'}) — Max: {sch.maxMarks}
                     </option>
                   );
-                })}
+                })
+              )}
             </select>
+          </div>
+
+          {activeSchedule && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
+              <div>
+                <span className="text-slate-400">Class:</span>
+                <p className="font-bold text-slate-800 mt-0.5">
+                  {(activeSchedule.classId as any)?.name || (activeSchedule.classId as any)?.className || 'Class'}
+                </p>
+              </div>
+              <div>
+                <span className="text-slate-400">Maximum Marks:</span>
+                <p className="font-mono font-bold text-slate-900 mt-0.5">{maxMarks}</p>
+              </div>
+              <div>
+                <span className="text-slate-400">Passing Threshold:</span>
+                <p className="font-mono font-bold text-emerald-700 mt-0.5">{passMarks}</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Live Evaluation Statistics */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-3 border-t border-slate-100 text-xs">
+          <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+            <span className="text-[10px] uppercase font-bold text-slate-400">Roster Total</span>
+            <p className="text-lg font-bold text-slate-900">{totalStudents}</p>
+          </div>
+          <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+            <span className="text-[10px] uppercase font-bold text-slate-400">Marks Entered</span>
+            <p className="text-lg font-bold text-[#2F7C7A]">
+              {enteredCount} <span className="text-xs font-normal text-slate-400">/ {totalStudents}</span>
+            </p>
+          </div>
+          <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+            <span className="text-[10px] uppercase font-bold text-slate-400">Class Average</span>
+            <p className="text-lg font-bold text-slate-800 font-mono">{averageScore}</p>
+          </div>
+          <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+            <span className="text-[10px] uppercase font-bold text-slate-400">Highest Score</span>
+            <p className="text-lg font-bold text-emerald-700 font-mono">{highestScore}</p>
+          </div>
+          <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+            <span className="text-[10px] uppercase font-bold text-slate-400">Lowest Score</span>
+            <p className="text-lg font-bold text-rose-700 font-mono">{lowestScore}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Notifications */}
+      {errorMsg && (
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start space-x-2">
+          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+
+      {successMsg && (
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start space-x-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+          <span>{successMsg}</span>
+        </div>
+      )}
+
+      {/* Student Roster Table */}
+      <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
+        <div className="p-5 border-b border-[#E2E8E0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center space-x-2">
+            <Users className="w-4 h-4 text-[#2F7C7A]" />
+            <h3 className="font-bold text-sm text-[#132238]">
+              Candidate Roster Evaluation ({rows.length})
+            </h3>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => handleSaveMarks('DRAFT')}
+              disabled={saving || loadingRoster || rows.length === 0}
+              className="inline-flex items-center px-3.5 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold text-xs transition-all shadow-2xs disabled:opacity-50"
+            >
+              <Save className="w-3.5 h-3.5 mr-1.5" /> Save Draft
+            </button>
+            <button
+              onClick={() => handleSaveMarks('SUBMITTED')}
+              disabled={saving || loadingRoster || rows.length === 0}
+              className="inline-flex items-center px-4 py-2 rounded-lg bg-[#2F7C7A] hover:bg-[#286b69] text-white font-semibold text-xs transition-all shadow-2xs disabled:opacity-50"
+            >
+              <Send className="w-3.5 h-3.5 mr-1.5" /> Submit Marks
+            </button>
           </div>
         </div>
 
-        {/* Selected Schedule Banner */}
-        {activeSchedule && (
-          <div className="pt-4 border-t border-slate-100 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-            <div>
-              <span className="text-slate-400">Subject Paper:</span>
-              <p className="font-bold text-slate-800 mt-0.5">{scheduleSubject?.name || 'Subject'}</p>
-            </div>
-            <div>
-              <span className="text-slate-400">Class Cohort:</span>
-              <p className="font-bold text-slate-800 mt-0.5">{scheduleClass?.name || scheduleClass?.className || 'Class'}</p>
-            </div>
-            <div>
-              <span className="text-slate-400">Maximum Marks:</span>
-              <p className="font-mono font-bold text-[#132238] text-sm mt-0.5">{activeSchedule.maxMarks}</p>
-            </div>
-            <div>
-              <span className="text-slate-400">Passing Threshold:</span>
-              <p className="font-mono font-bold text-emerald-700 mt-0.5">
-                {activeSchedule.passMarks || activeSchedule.passingMarks || '-'}
-              </p>
-            </div>
+        {loadingRoster ? (
+          <div className="p-12 text-center text-slate-400 text-xs">
+            Loading candidate roster...
+          </div>
+        ) : rows.length === 0 ? (
+          <div className="p-12 text-center text-slate-400 text-xs space-y-2">
+            <CheckSquare className="w-8 h-8 text-slate-300 mx-auto" />
+            <p className="font-bold text-slate-700">No candidates enrolled in this class cohort.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-[#E2E8E0] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                  <th className="p-3.5 w-12 text-center">#</th>
+                  <th className="p-3.5">Candidate Name</th>
+                  <th className="p-3.5">Registration</th>
+                  <th className="p-3.5 w-40">Marks Scored (Max: {maxMarks})</th>
+                  <th className="p-3.5 w-32 text-center">Absent?</th>
+                  <th className="p-3.5 w-28">Status</th>
+                  <th className="p-3.5 text-right w-32">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {rows.map((row, idx) => {
+                  const isLocked = row.status === 'VERIFIED' || row.status === 'PUBLISHED';
+                  const isSubmitted = row.status === 'SUBMITTED';
+
+                  return (
+                    <tr
+                      key={row.studentId}
+                      className={`hover:bg-slate-50/60 transition-colors ${
+                        row.isAbsent ? 'bg-rose-50/20' : ''
+                      }`}
+                    >
+                      <td className="p-3.5 text-center text-slate-400 font-mono text-[11px]">
+                        {idx + 1}
+                      </td>
+                      <td className="p-3.5 font-bold text-slate-900">
+                        {row.studentName}
+                      </td>
+                      <td className="p-3.5 font-mono text-slate-600">
+                        {row.registrationNumber}
+                      </td>
+                      <td className="p-3.5">
+                        <input
+                          type="number"
+                          step="0.5"
+                          min="0"
+                          max={maxMarks}
+                          placeholder="Score"
+                          value={row.marksObtained}
+                          onChange={(e) => handleMarkChange(idx, e.target.value)}
+                          disabled={row.isAbsent || isLocked || saving}
+                          className="w-full px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#2F7C7A] font-mono text-xs font-bold text-slate-900 disabled:bg-slate-100 disabled:text-slate-400"
+                        />
+                      </td>
+                      <td className="p-3.5 text-center">
+                        <label className="inline-flex items-center space-x-1.5 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={row.isAbsent}
+                            onChange={(e) => handleAbsentToggle(idx, e.target.checked)}
+                            disabled={isLocked || saving}
+                            className="rounded text-[#2F7C7A] focus:ring-0 w-3.5 h-3.5 disabled:opacity-50"
+                          />
+                          <span className={`text-[11px] font-semibold ${row.isAbsent ? 'text-rose-600' : 'text-slate-500'}`}>
+                            Absent
+                          </span>
+                        </label>
+                      </td>
+                      <td className="p-3.5">
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            row.status === 'VERIFIED'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : row.status === 'PUBLISHED'
+                              ? 'bg-blue-100 text-blue-800'
+                              : row.status === 'SUBMITTED'
+                              ? 'bg-amber-100 text-amber-800'
+                              : row.status === 'DRAFT'
+                              ? 'bg-slate-100 text-slate-700'
+                              : 'bg-slate-50 text-slate-400 border border-slate-200'
+                          }`}
+                        >
+                          {row.status}
+                        </span>
+                      </td>
+                      <td className="p-3.5 text-right">
+                        {isLocked ? (
+                          <button
+                            onClick={() => {
+                              setCorrectionTarget(row);
+                              setCorrectionNewMarks(row.marksObtained || '0');
+                              setCorrectionReason('');
+                            }}
+                            className="text-xs font-semibold text-amber-700 hover:underline inline-flex items-center space-x-1"
+                          >
+                            <ShieldAlert className="w-3 h-3" />
+                            <span>Request Edit</span>
+                          </button>
+                        ) : (
+                          <span className="text-[11px] text-slate-400 italic">Editable</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
 
-      {/* Main Workspace: Entry Form & Existing Records */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Form */}
-        <div className="bg-white rounded-xl border border-[#E2E8E0] p-5 sm:p-6 shadow-2xs space-y-4 h-fit">
-          <div className="flex items-center space-x-2 border-b border-[#E2E8E0] pb-3">
-            <CheckSquare className="w-5 h-5 text-[#2F7C7A]" />
-            <h2 className="font-bold text-sm text-[#132238]">Record Candidate Marks</h2>
-          </div>
-
-          {formError && (
-            <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start space-x-2">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-              <span>{formError}</span>
-            </div>
-          )}
-
-          {formSuccess && (
-            <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start space-x-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span>{formSuccess}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmitMark} className="space-y-4 text-xs">
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">
-                Student ID <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="24-char ObjectId (e.g. from existing entry)"
-                value={studentIdInput}
-                onChange={(e) => setStudentIdInput(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#2F7C7A] font-mono text-xs"
-                required
-              />
-              <p className="text-[10px] text-slate-400">
-                Click a student from the evaluated list below to auto-fill.
-              </p>
+      {/* Mark Correction Modal */}
+      {correctionTarget && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl border border-slate-200">
+            <div className="flex items-center space-x-2 border-b border-slate-100 pb-3">
+              <ShieldAlert className="w-5 h-5 text-amber-600" />
+              <h3 className="font-bold text-sm text-slate-900">
+                Submit Mark Correction Request
+              </h3>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">
-                Marks Scored (Max: {activeSchedule?.maxMarks || 100}) <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="number"
-                step="0.5"
-                min="0"
-                max={activeSchedule?.maxMarks || 100}
-                placeholder="Enter score"
-                value={marksInput}
-                onChange={(e) => setMarksInput(e.target.value)}
-                disabled={isAbsentInput}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#2F7C7A] font-mono text-xs disabled:bg-slate-100"
-                required={!isAbsentInput}
-              />
-            </div>
+            <p className="text-xs text-slate-600">
+              Marks for <span className="font-bold">{correctionTarget.studentName}</span> are currently{' '}
+              <span className="font-bold text-emerald-700">{correctionTarget.status}</span>.
+              Direct modifications are locked. Please provide the corrected score and justification for administrative review.
+            </p>
 
-            <div className="flex items-center space-x-2 pt-1">
-              <input
-                type="checkbox"
-                id="isAbsentCheck"
-                checked={isAbsentInput}
-                onChange={(e) => setIsAbsentInput(e.target.checked)}
-                className="rounded text-[#2F7C7A] focus:ring-0"
-              />
-              <label htmlFor="isAbsentCheck" className="text-xs text-slate-700 font-medium">
-                Mark candidate as ABSENT
-              </label>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Submission Status</label>
-              <select
-                value={statusInput}
-                onChange={(e) => setStatusInput(e.target.value as any)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#2F7C7A] bg-white font-medium text-slate-800 text-xs"
-              >
-                <option value="SUBMITTED">SUBMITTED (Ready for Admin Verification)</option>
-                <option value="DRAFT">DRAFT (Saved as Working Draft)</option>
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-[#2F7C7A] hover:bg-[#286b69] text-white font-semibold text-xs transition-all shadow-2xs disabled:opacity-50"
-            >
-              {submitting ? (
-                <span>Recording Marks...</span>
-              ) : (
-                <>
-                  <Save className="w-3.5 h-3.5 mr-1.5" /> Submit Evaluation
-                </>
-              )}
-            </button>
-          </form>
-        </div>
-
-        {/* Right Column: Existing Evaluated Records */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden flex flex-col justify-between">
-          <div>
-            <div className="p-5 border-b border-[#E2E8E0] flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4 text-[#2F7C7A]" />
-                <h3 className="font-bold text-sm text-[#132238]">
-                  Evaluated Marks for this Paper ({markEntries.length})
-                </h3>
+            <form onSubmit={handleSubmitCorrection} className="space-y-3 text-xs">
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">Current Score</label>
+                <input
+                  type="text"
+                  value={correctionTarget.marksObtained || '0'}
+                  disabled
+                  className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg font-mono text-xs text-slate-600"
+                />
               </div>
-            </div>
 
-            {loadingEntries ? (
-              <div className="p-8 text-center text-slate-400 text-xs">
-                Loading evaluation records...
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">
+                  Requested New Score (Max: {maxMarks}) *
+                </label>
+                <input
+                  type="number"
+                  step="0.5"
+                  min="0"
+                  max={maxMarks}
+                  value={correctionNewMarks}
+                  onChange={(e) => setCorrectionNewMarks(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg font-mono text-xs focus:outline-hidden focus:border-[#2F7C7A]"
+                  required
+                />
               </div>
-            ) : markEntries.length === 0 ? (
-              <div className="p-12 text-center text-slate-400 text-xs space-y-2">
-                <CheckSquare className="w-8 h-8 text-slate-300 mx-auto" />
-                <p className="font-bold text-slate-700">No marks recorded yet for this paper.</p>
-                <p className="text-[11px] max-w-sm mx-auto">
-                  Use the entry form on the left to record and submit student marks.
-                </p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-[#E2E8E0] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
-                      <th className="p-3.5">Candidate Student</th>
-                      <th className="p-3.5">Registration</th>
-                      <th className="p-3.5">Score</th>
-                      <th className="p-3.5">Status</th>
-                      <th className="p-3.5 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {markEntries.map((entry) => {
-                      const student = (entry.studentId as any);
-                      const sId = student?._id || entry.studentId;
-                      const isVerified = entry.status === 'VERIFIED';
 
-                      return (
-                        <tr key={entry._id} className="hover:bg-slate-50/60 transition-colors">
-                          <td className="p-3.5 font-bold text-slate-900">
-                            {student?.name || 'Student Candidate'}
-                          </td>
-                          <td className="p-3.5 font-mono text-slate-600">
-                            {student?.registrationNumber || 'N/A'}
-                          </td>
-                          <td className="p-3.5 font-mono font-bold text-slate-900 text-sm">
-                            {entry.isAbsent ? (
-                              <span className="text-rose-600 font-bold text-xs">ABSENT</span>
-                            ) : (
-                              <span>
-                                {entry.marksObtained} <span className="text-xs text-slate-400">/ {activeSchedule?.maxMarks}</span>
-                              </span>
-                            )}
-                          </td>
-                          <td className="p-3.5">
-                            <span
-                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                isVerified
-                                  ? 'bg-emerald-100 text-emerald-800'
-                                  : 'bg-amber-100 text-amber-800'
-                              }`}
-                            >
-                              {entry.status || 'RECORDED'}
-                            </span>
-                          </td>
-                          <td className="p-3.5 text-right">
-                            <button
-                              onClick={() => {
-                                if (sId) setStudentIdInput(typeof sId === 'string' ? sId : sId._id);
-                                setMarksInput(entry.marksObtained?.toString() || '');
-                                setIsAbsentInput(!!entry.isAbsent);
-                              }}
-                              className="text-xs font-semibold text-[#2F7C7A] hover:underline"
-                            >
-                              Edit Score
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">Reason for Correction *</label>
+                <textarea
+                  rows={3}
+                  value={correctionReason}
+                  onChange={(e) => setCorrectionReason(e.target.value)}
+                  placeholder="Explain why this mark must be changed (e.g., retotalling, re-evaluation)..."
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-hidden focus:border-[#2F7C7A]"
+                  required
+                />
               </div>
-            )}
+
+              <div className="flex items-center justify-end space-x-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setCorrectionTarget(null)}
+                  disabled={submittingCorrection}
+                  className="px-3 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingCorrection}
+                  className="px-4 py-2 rounded-lg bg-[#2F7C7A] hover:bg-[#286b69] text-white font-semibold shadow-2xs"
+                >
+                  {submittingCorrection ? 'Submitting...' : 'Submit for Review'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

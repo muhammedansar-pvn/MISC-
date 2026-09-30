@@ -19,6 +19,18 @@ const attendanceCorrectionRequestSchema = new mongoose.Schema(
       required: true,
     },
 
+    subjectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subject",
+      required: false,
+    },
+
+    academicYearId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicYear",
+      required: false,
+    },
+
     date: {
       type: Date,
       required: true,

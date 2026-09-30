@@ -50,6 +50,11 @@ const studentProfileSchema = new mongoose.Schema(
       ref: "Class",
     },
 
+    academicYearId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicYear",
+    },
+
     institutionId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "InstitutionProfile",
@@ -136,6 +141,7 @@ studentProfileSchema.index({ userId: 1 }, { unique: true });
 studentProfileSchema.index({ registrationNumber: 1 }, { unique: true });
 studentProfileSchema.index({ biometricId: 1 }, { unique: true, sparse: true });
 studentProfileSchema.index({ classId: 1 });
+studentProfileSchema.index({ academicYearId: 1 });
 studentProfileSchema.index({ mentorId: 1 });
 studentProfileSchema.index({ parentUserId: 1 });
 studentProfileSchema.index({ institutionId: 1, classId: 1 }, { sparse: true });

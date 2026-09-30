@@ -20,6 +20,18 @@ const markEntrySchema = new mongoose.Schema(
       required: true,
     },
 
+    academicYearId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicYear",
+      required: true,
+    },
+
+    classId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Class",
+      required: true,
+    },
+
     subjectId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Subject",
@@ -29,6 +41,7 @@ const markEntrySchema = new mongoose.Schema(
     marksObtained: {
       type: Number,
       required: true,
+      min: 0,
     },
 
     isAbsent: {
@@ -45,8 +58,40 @@ const markEntrySchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["DRAFT", "SUBMITTED", "VERIFIED"],
+      enum: ["DRAFT", "SUBMITTED", "VERIFIED", "PUBLISHED"],
       default: "DRAFT",
+    },
+
+    remarks: {
+      type: String,
+      default: "",
+    },
+
+    submittedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    submittedAt: {
+      type: Date,
+    },
+
+    verifiedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    verifiedAt: {
+      type: Date,
+    },
+
+    publishedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    publishedAt: {
+      type: Date,
     },
   },
   {
@@ -55,7 +100,7 @@ const markEntrySchema = new mongoose.Schema(
   }
 );
 
-// Compound Unique Index
+// Compound Unique Indexes
 markEntrySchema.index(
   {
     examScheduleId: 1,
@@ -65,7 +110,22 @@ markEntrySchema.index(
     unique: true,
   }
 );
+
+markEntrySchema.index(
+  {
+    examId: 1,
+    classId: 1,
+    subjectId: 1,
+    studentId: 1,
+  },
+  {
+    unique: true,
+  }
+);
+
 markEntrySchema.index({ examId: 1, studentId: 1 });
 markEntrySchema.index({ examScheduleId: 1, status: 1 });
+markEntrySchema.index({ classId: 1, academicYearId: 1, status: 1 });
+markEntrySchema.index({ evaluatorId: 1, examId: 1 });
 
 module.exports = mongoose.model("MarkEntry", markEntrySchema);

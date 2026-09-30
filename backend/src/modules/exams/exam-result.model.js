@@ -14,6 +14,12 @@ const examResultSchema = new mongoose.Schema(
       required: true,
     },
 
+    academicYearId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicYear",
+      required: true,
+    },
+
     classId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Class",
@@ -25,6 +31,49 @@ const examResultSchema = new mongoose.Schema(
       ref: "InstitutionProfile",
       required: false,
     },
+
+    subjectResults: [
+      {
+        subjectId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Subject",
+          required: true,
+        },
+        subjectName: {
+          type: String,
+          required: true,
+        },
+        subjectCode: {
+          type: String,
+          default: "",
+        },
+        marksObtained: {
+          type: Number,
+          required: true,
+        },
+        maxMarks: {
+          type: Number,
+          required: true,
+        },
+        passMarks: {
+          type: Number,
+          required: true,
+        },
+        grade: {
+          type: String,
+          required: true,
+        },
+        isAbsent: {
+          type: Boolean,
+          default: false,
+        },
+        resultStatus: {
+          type: String,
+          enum: ["PASSED", "FAILED"],
+          required: true,
+        },
+      },
+    ],
 
     totalMaxMarks: {
       type: Number,
@@ -51,6 +100,17 @@ const examResultSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: ["PASSED", "FAILED", "WITHHELD"],
+    },
+
+    status: {
+      type: String,
+      enum: ["DRAFT", "PUBLISHED"],
+      default: "PUBLISHED",
+    },
+
+    publishedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
 
     publishedAt: {

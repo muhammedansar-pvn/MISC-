@@ -27,6 +27,7 @@ import {
   AlertTriangle,
   MoreVertical,
   Filter,
+  Check,
 } from 'lucide-react';
 import StatusBadge from '@/components/admin/StatusBadge';
 import {
@@ -39,10 +40,12 @@ import {
 import { getInstitutions } from '@/services/institution.service';
 import { getClasses } from '@/services/academic.service';
 import { verifyEmailOtp, resendEmailOtp } from '@/services/auth.service';
+import { bulkAssignStudents, BulkAssignStudentsResponse } from '@/services/admin.service';
 import { StudentProfile, Institution, ClassModel, User } from '@/types';
 
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<StudentProfile[]>([]);
+
   const [institutions, setInstitutions] = useState<Institution[]>([]);
   const [classesList, setClassesList] = useState<ClassModel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +82,16 @@ export default function AdminStudentsPage() {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState('');
 
+  // Bulk Assign Class State
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+  const [bulkAssignModalOpen, setBulkAssignModalOpen] = useState(false);
+  const [targetClassId, setTargetClassId] = useState('');
+  const [bulkAssignSubmitting, setBulkAssignSubmitting] = useState(false);
+  const [bulkAssignResult, setBulkAssignResult] = useState<BulkAssignStudentsResponse | null>(null);
+  const [bulkAssignError, setBulkAssignError] = useState('');
+
   // Close More Menu on outside click
+
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -542,6 +554,42 @@ export default function AdminStudentsPage() {
         </div>
       </div>
 
+      {/* Bulk Action Bar (Visible when students are selected) */}
+      {selectedStudentIds.length > 0 && (
+        <div className="flex items-center justify-between p-3.5 bg-[#132238] text-white rounded-2xl shadow-md animate-in fade-in slide-in-from-top-2 duration-150">
+          <div className="flex items-center space-x-3 text-xs">
+            <span className="font-bold bg-[#2F7C7A] text-white px-2.5 py-1 rounded-md">
+              {selectedStudentIds.length} Selected
+            </span>
+            <span className="text-slate-300 hidden sm:inline">
+              Choose an action to apply to the selected students
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button
+              type="button"
+              onClick={() => {
+                setBulkAssignModalOpen(true);
+                setBulkAssignResult(null);
+                setBulkAssignError('');
+                setTargetClassId(classesList[0]?._id || '');
+              }}
+              className="px-3.5 py-1.5 bg-[#2F7C7A] hover:bg-[#286b69] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Assign to Class</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedStudentIds([])}
+              className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition-all cursor-pointer"
+            >
+              Deselect All
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 3. Students Table Card */}
       <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs overflow-hidden">
         {loading ? (
@@ -618,6 +666,21 @@ export default function AdminStudentsPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E2E8E0]">
                 <tr>
+                  <th className="w-10 px-4 py-3.5 text-center">
+                    <input
+                      type="checkbox"
+                      checked={filtered.length > 0 && selectedStudentIds.length === filtered.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedStudentIds(filtered.map((s) => s._id));
+                        } else {
+                          setSelectedStudentIds([]);
+                        }
+                      }}
+                      className="rounded border-slate-300 text-[#2F7C7A] focus:ring-[#2F7C7A] cursor-pointer"
+                      title="Select all students"
+                    />
+                  </th>
                   <th className="px-5 py-3.5">Student</th>
                   <th className="px-5 py-3.5">Registration Number</th>
                   <th className="px-5 py-3.5">Class / Cohort</th>
@@ -633,11 +696,27 @@ export default function AdminStudentsPage() {
                   const className = (std.classId as any)?.name || (std.classId as any)?.code || (std.classId as any)?.className || 'General Cohort';
                   const batchYear = std.admissionYear ? `Batch of ${std.admissionYear}` : 'No cohort year';
                   const status = (std.userId as any)?.status || std.status || 'ACTIVE';
+                  const isSelected = selectedStudentIds.includes(std._id);
 
                   return (
-                    <tr key={std._id} className="hover:bg-slate-50/80 transition-colors">
+                    <tr key={std._id} className={`hover:bg-slate-50/80 transition-colors ${isSelected ? 'bg-teal-50/40' : ''}`}>
+                      <td className="w-10 px-4 py-3.5 text-center">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedStudentIds((prev) => [...prev, std._id]);
+                            } else {
+                              setSelectedStudentIds((prev) => prev.filter((id) => id !== std._id));
+                            }
+                          }}
+                          className="rounded border-slate-300 text-[#2F7C7A] focus:ring-[#2F7C7A] cursor-pointer"
+                        />
+                      </td>
                       {/* Column 1: Student */}
                       <td className="px-5 py-3.5">
+
                         <div className="flex items-center space-x-3">
                           <div className="w-9 h-9 rounded-full bg-[#E6F2F1] border border-teal-100 text-[#2F7C7A] flex items-center justify-center font-bold text-xs shrink-0">
                             {initial}
@@ -1444,6 +1523,173 @@ export default function AdminStudentsPage() {
           </div>
         </div>
       )}
+
+      {/* 5. Bulk Assign Class Modal */}
+      {bulkAssignModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+            {/* Modal Header */}
+            <div className="px-6 py-4 bg-[#132238] text-white flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <BookOpen className="w-5 h-5 text-teal-400" />
+                <h3 className="font-serif font-bold text-base">Bulk Assign Students to Class</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setBulkAssignModalOpen(false);
+                  if (bulkAssignResult && bulkAssignResult.updatedCount > 0) {
+                    fetchData();
+                    setSelectedStudentIds([]);
+                  }
+                }}
+                className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4">
+              {bulkAssignResult ? (
+                /* Result Summary State */
+                <div className="space-y-4">
+                  <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 space-y-1">
+                    <div className="flex items-center font-bold gap-1.5 text-emerald-900">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      <span>Assignment Completed</span>
+                    </div>
+                    <p>
+                      Successfully assigned <strong>{bulkAssignResult.updatedCount}</strong> student(s) to <strong>{bulkAssignResult.className}</strong>.
+                    </p>
+                  </div>
+
+                  {bulkAssignResult.skipped && bulkAssignResult.skipped.length > 0 && (
+                    <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 space-y-2">
+                      <div className="flex items-center font-bold gap-1.5 text-amber-900">
+                        <AlertTriangle className="w-4 h-4 text-amber-600" />
+                        <span>{bulkAssignResult.skipped.length} Student(s) Skipped</span>
+                      </div>
+                      <div className="max-h-36 overflow-y-auto space-y-1 divide-y divide-amber-100 font-mono text-[11px]">
+                        {bulkAssignResult.skipped.map((item, idx) => (
+                          <div key={idx} className="flex items-center justify-between pt-1">
+                            <span className="truncate max-w-[240px] text-slate-700">ID: {item.studentId}</span>
+                            <span className="font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px]">
+                              {item.reason.replace(/_/g, ' ')}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="pt-2 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBulkAssignModalOpen(false);
+                        fetchData();
+                        setSelectedStudentIds([]);
+                      }}
+                      className="px-4 py-2 bg-[#2F7C7A] hover:bg-[#286b69] text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer"
+                    >
+                      Done & Refresh Roster
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Initial Confirmation State */
+                <div className="space-y-4">
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    You have selected <strong className="text-[#132238] font-bold">{selectedStudentIds.length}</strong> student(s). Select the target class cohort below to assign or transfer them.
+                  </p>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                      Target Class Cohort
+                    </label>
+                    <select
+                      value={targetClassId}
+                      onChange={(e) => setTargetClassId(e.target.value)}
+                      className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl font-semibold text-[#132238] focus:outline-hidden focus:border-[#2F7C7A] cursor-pointer"
+                    >
+                      {classesList.map((cls) => (
+                        <option key={cls._id} value={cls._id}>
+                          {cls.name || (cls as any).className} ({cls.code || 'CLS'})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {bulkAssignError && (
+                    <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                      <span>{bulkAssignError}</span>
+                    </div>
+                  )}
+
+                  <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-1">
+                    <p className="font-semibold text-amber-900">Confirmation Note:</p>
+                    <p className="text-[11px] text-amber-700">
+                      Students already enrolled in this class will be safely skipped without interruption.
+                    </p>
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-end space-x-2">
+                    <button
+                      type="button"
+                      disabled={bulkAssignSubmitting}
+                      onClick={() => setBulkAssignModalOpen(false)}
+                      className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold transition-all cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      disabled={bulkAssignSubmitting || !targetClassId}
+                      onClick={async () => {
+                        try {
+                          setBulkAssignSubmitting(true);
+                          setBulkAssignError('');
+                          const res = await bulkAssignStudents({
+                            classId: targetClassId,
+                            studentIds: selectedStudentIds,
+                          });
+                          if (res.success && res.data) {
+                            setBulkAssignResult(res.data);
+                          } else {
+                            setBulkAssignError(res.message || 'Failed to assign students to class');
+                          }
+                        } catch (err: any) {
+                          setBulkAssignError(
+                            err.response?.data?.message || err.message || 'Failed to bulk assign students'
+                          );
+                        } finally {
+                          setBulkAssignSubmitting(false);
+                        }
+                      }}
+                      className="px-5 py-2 bg-[#2F7C7A] hover:bg-[#286b69] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    >
+                      {bulkAssignSubmitting ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Assigning...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Confirm Assignment</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

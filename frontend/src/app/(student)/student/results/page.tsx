@@ -13,11 +13,15 @@ import {
   TrendingUp,
   FileText,
   AlertCircle,
+  ChevronDown,
+  ChevronUp,
+  BookOpen,
 } from 'lucide-react';
 
 export default function StudentResultsPage() {
   const [results, setResults] = useState<ExamResult[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [expandedResultId, setExpandedResultId] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadResults() {
@@ -26,6 +30,10 @@ export default function StudentResultsPage() {
         const res = await getExamResults();
         if (res.success && Array.isArray(res.data)) {
           setResults(res.data);
+          // auto-expand the first term if available
+          if (res.data.length > 0) {
+            setExpandedResultId(res.data[0]._id);
+          }
         }
       } catch (err) {
         console.error('Failed to load student results:', err);
@@ -36,6 +44,10 @@ export default function StudentResultsPage() {
 
     loadResults();
   }, []);
+
+  const toggleExpand = (id: string) => {
+    setExpandedResultId((prev) => (prev === id ? null : id));
+  };
 
   if (loading) {
     return (
@@ -76,7 +88,7 @@ export default function StudentResultsPage() {
             <span className="text-slate-900 font-semibold">Results</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
-            Examination Results & Grades
+            Examination Results & Academic Scorecards
           </h1>
         </div>
 
@@ -129,48 +141,64 @@ export default function StudentResultsPage() {
       ) : (
         <div className="space-y-4">
           <h2 className="text-lg font-bold font-serif text-[#132238]">Term Scorecards</h2>
-          <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-50 border-b border-[#E2E8E0] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
-                  <th className="p-4">Examination</th>
-                  <th className="p-4">Marks Obtained</th>
-                  <th className="p-4">Total Marks</th>
-                  <th className="p-4">Percentage</th>
-                  <th className="p-4">Grade</th>
-                  <th className="p-4">Result Status</th>
-                  <th className="p-4">Publication Date</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {results.map((res) => {
-                  const exam = (res.examId as any);
-                  const isPassed = res.resultStatus === 'PASSED' || res.resultStatus === 'PASS';
-                  const isFailed = res.resultStatus === 'FAILED' || res.resultStatus === 'FAIL';
+          <div className="space-y-4">
+            {results.map((res) => {
+              const exam = (res.examId as any);
+              const isPassed = res.resultStatus === 'PASSED' || res.resultStatus === 'PASS';
+              const isFailed = res.resultStatus === 'FAILED' || res.resultStatus === 'FAIL';
+              const isExpanded = expandedResultId === res._id;
+              const subjects: any[] = (res as any).subjectResults || [];
 
-                  return (
-                    <tr key={res._id} className="hover:bg-slate-50/60 transition-colors">
-                      <td className="p-4">
-                        <div className="font-bold text-slate-900">{exam?.title || 'Examination'}</div>
-                        <div className="font-mono text-[11px] text-slate-400">{exam?.examCode || 'EXAM'}</div>
-                      </td>
-                      <td className="p-4 font-mono font-bold text-slate-900 text-sm">
-                        {res.totalMarksObtained}
-                      </td>
-                      <td className="p-4 font-mono text-slate-500">
-                        {res.totalMaxMarks}
-                      </td>
-                      <td className="p-4 font-mono font-semibold text-slate-800">
-                        {res.percentage}%
-                      </td>
-                      <td className="p-4">
-                        <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 border border-slate-200">
+              return (
+                <div
+                  key={res._id}
+                  className="bg-white rounded-2xl border border-[#E2E8E0] shadow-2xs overflow-hidden transition-all"
+                >
+                  {/* Summary Bar */}
+                  <div
+                    onClick={() => toggleExpand(res._id)}
+                    className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-slate-50/50 transition-colors"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-bold text-base text-[#132238]">
+                          {exam?.title || 'Examination'}
+                        </span>
+                        <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
+                          {exam?.examCode || exam?.code || 'TERM'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400">
+                        Published:{' '}
+                        {res.publishedAt || res.createdAt
+                          ? new Date((res.publishedAt || res.createdAt)!).toLocaleDateString('en-GB')
+                          : 'Official'}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center space-x-4 sm:space-x-6">
+                      <div className="text-right">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Marks</span>
+                        <p className="font-mono font-bold text-slate-900 text-sm">
+                          {res.totalMarksObtained} <span className="text-xs text-slate-400">/ {res.totalMaxMarks}</span>
+                        </p>
+                      </div>
+
+                      <div className="text-right">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">Percentage</span>
+                        <p className="font-mono font-bold text-slate-900 text-sm">{res.percentage}%</p>
+                      </div>
+
+                      <div className="text-center">
+                        <span className="text-[10px] uppercase font-bold text-slate-400 block">Grade</span>
+                        <span className="font-mono font-bold text-xs px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-900 border border-slate-200 block mt-0.5">
                           {res.grade}
                         </span>
-                      </td>
-                      <td className="p-4">
+                      </div>
+
+                      <div>
                         <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
                             isPassed
                               ? 'bg-emerald-100 text-emerald-800'
                               : isFailed
@@ -179,25 +207,107 @@ export default function StudentResultsPage() {
                           }`}
                         >
                           {isPassed ? (
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
+                            <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
                           ) : isFailed ? (
-                            <XCircle className="w-3 h-3 mr-1" />
+                            <XCircle className="w-3.5 h-3.5 mr-1" />
                           ) : (
-                            <Clock className="w-3 h-3 mr-1" />
+                            <Clock className="w-3.5 h-3.5 mr-1" />
                           )}
                           {res.resultStatus}
                         </span>
-                      </td>
-                      <td className="p-4 text-slate-500 font-mono">
-                        {res.createdAt
-                          ? new Date(res.createdAt).toLocaleDateString('en-GB')
-                          : 'Official'}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="text-slate-400 hover:text-slate-600 p-1"
+                        aria-label="Toggle subject details"
+                      >
+                        {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Expandable Subject-wise Scorecard */}
+                  {isExpanded && (
+                    <div className="border-t border-[#E2E8E0] bg-slate-50/50 p-5 space-y-3">
+                      <div className="flex items-center space-x-2 text-xs font-bold text-slate-700">
+                        <BookOpen className="w-4 h-4 text-[#2F7C7A]" />
+                        <span>Subject-wise Breakdown</span>
+                      </div>
+
+                      {subjects.length === 0 ? (
+                        <p className="text-xs text-slate-400 italic">
+                          Detailed subject breakdown pending official publication.
+                        </p>
+                      ) : (
+                        <div className="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-2xs">
+                          <table className="w-full text-left text-xs border-collapse">
+                            <thead>
+                              <tr className="bg-slate-100/70 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                                <th className="p-3">#</th>
+                                <th className="p-3">Curriculum Subject</th>
+                                <th className="p-3 text-center">Marks Obtained</th>
+                                <th className="p-3 text-center">Max Marks</th>
+                                <th className="p-3 text-center">Passing Threshold</th>
+                                <th className="p-3 text-center">Subject Grade</th>
+                                <th className="p-3 text-right">Outcome</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                              {subjects.map((sub, sIdx) => {
+                                const subPassed = sub.resultStatus === 'PASSED';
+                                return (
+                                  <tr key={sub.subjectId || sIdx} className="hover:bg-slate-50/50">
+                                    <td className="p-3 text-slate-400 font-mono text-[11px]">
+                                      {sIdx + 1}
+                                    </td>
+                                    <td className="p-3">
+                                      <div className="font-bold text-slate-900">{sub.subjectName}</div>
+                                      {sub.subjectCode && (
+                                        <div className="font-mono text-[10px] text-slate-400">{sub.subjectCode}</div>
+                                      )}
+                                    </td>
+                                    <td className="p-3 text-center font-mono font-bold text-slate-900 text-sm">
+                                      {sub.isAbsent ? (
+                                        <span className="text-rose-600 font-bold text-xs">ABSENT</span>
+                                      ) : (
+                                        sub.marksObtained
+                                      )}
+                                    </td>
+                                    <td className="p-3 text-center font-mono text-slate-500">
+                                      {sub.maxMarks}
+                                    </td>
+                                    <td className="p-3 text-center font-mono text-slate-500">
+                                      {sub.passMarks}
+                                    </td>
+                                    <td className="p-3 text-center">
+                                      <span className="font-mono font-bold text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200">
+                                        {sub.grade}
+                                      </span>
+                                    </td>
+                                    <td className="p-3 text-right">
+                                      <span
+                                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                          subPassed
+                                            ? 'bg-emerald-100 text-emerald-800'
+                                            : 'bg-rose-100 text-rose-800'
+                                        }`}
+                                      >
+                                        {subPassed ? 'PASS' : 'FAIL'}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
