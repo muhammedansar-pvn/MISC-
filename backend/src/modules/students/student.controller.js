@@ -10,6 +10,7 @@ const {
   ensureStudentProfileForUser,
 } = require("./student.service");
 const StudentProfile = require("./student.model");
+const attendanceService = require("../attendance/attendance.service");
 const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 const handleRegisterStudentWithAccount = async (req, res) => {
@@ -55,6 +56,7 @@ const getStudentProfile = async (req, res) => {
       .populate("institutionId")
       .populate("classId");
 
+    // Fallback path: ensure profile if newly verified student without profile
     if (!studentProfile && req.user.role === "STUDENT") {
       await ensureStudentProfileForUser(req.user.userId);
       studentProfile = await StudentProfile.findOne({
@@ -69,8 +71,15 @@ const getStudentProfile = async (req, res) => {
       return res.status(404).json({ success: false, message: "Student profile not found" });
     }
 
-    return res.status(200).json({ success: true, data: studentProfile });
+    // Attach today's attendance status to profile response (covers both initial and fallback paths)
+    const todayAttendance = await attendanceService.getStudentDailyAttendance(studentProfile._id);
+
+    const profileData = studentProfile.toObject ? studentProfile.toObject() : { ...studentProfile };
+    profileData.todayAttendance = todayAttendance;
+
+    return res.status(200).json({ success: true, data: profileData });
   } catch (error) {
+    console.error("Get Student Profile Error:", error);
     return res.status(500).json({ success: false, message: "Failed to retrieve student profile" });
   }
 };
@@ -90,63 +99,36 @@ const handleGetStudents = async (req, res) => {
     const search = req.query.search || "";
 
     const { page, limit, skip } = parsePagination(req.query);
-    const { data, total } = await getStudents(filter, search, { page, limit, skip });
-    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
+
+    const { students, total } = await getStudents(filter, search, { skip, limit });
+
+    return res.status(200).json(formatPaginatedResponse(students, total, page, limit));
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Failed to retrieve students" });
+    return res.status(500).json({ success: false, message: error.message || "Failed to retrieve students" });
   }
 };
 
 const handleGetStudentById = async (req, res) => {
   try {
     const student = await getStudentById(req.params.id);
-    if (!student) return res.status(404).json({ success: false, message: "Student not found" });
+    if (!student) {
+      return res.status(404).json({ success: false, message: "Student not found" });
+    }
     return res.status(200).json({ success: true, data: student });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Failed to retrieve student" });
+    return res.status(500).json({ success: false, message: error.message || "Failed to retrieve student" });
   }
 };
 
 const handleUpdateStudent = async (req, res) => {
   try {
     const student = await updateStudent(req.params.id, req.body);
-    if (!student) return res.status(404).json({ success: false, message: "Student not found" });
-    const requiresOtp = !!student.requiresEmailVerification;
-    return res.status(200).json({
-      success: true,
-      message: requiresOtp
-        ? "Student profile updated. Verification code sent to the new email address."
-        : "Student updated successfully",
-      data: student,
-      requiresEmailVerification: requiresOtp,
-    });
-  } catch (error) {
-    const statusCode = error.statusCode || 400;
-    return res.status(statusCode).json({ success: false, message: error.message || "Failed to update student" });
-  }
-};
-
-const handleUpdateMyProfile = async (req, res) => {
-  try {
-    const targetUserId = req.user.userId || req.user._id || req.user.id;
-    const studentProfile = await StudentProfile.findOne({ userId: targetUserId });
-    if (!studentProfile) {
-      return res.status(404).json({ success: false, message: "Student profile not found" });
+    if (!student) {
+      return res.status(404).json({ success: false, message: "Student not found" });
     }
-
-    const result = await updateStudent(studentProfile._id, req.body);
-    const requiresOtp = !!result.requiresEmailVerification;
-    return res.status(200).json({
-      success: true,
-      message: requiresOtp
-        ? "Email change requested. Verification code sent to your new email address."
-        : "Profile updated successfully",
-      data: result,
-      requiresEmailVerification: requiresOtp,
-    });
+    return res.status(200).json({ success: true, message: "Student updated successfully", data: student });
   } catch (error) {
-    const statusCode = error.statusCode || 400;
-    return res.status(statusCode).json({ success: false, message: error.message || "Failed to update profile" });
+    return res.status(400).json({ success: false, message: error.message || "Failed to update student" });
   }
 };
 
@@ -156,51 +138,107 @@ const handleUpdateStudentStatus = async (req, res) => {
     if (!status) {
       return res.status(400).json({ success: false, message: "Status is required" });
     }
-    const result = await updateStudentStatus(req.params.id, status, req.user?.userId);
+
+    const student = await updateStudentStatus(req.params.id, status);
+    if (!student) {
+      return res.status(404).json({ success: false, message: "Student not found" });
+    }
+
     return res.status(200).json({
       success: true,
-      message: result.message,
-      data: result,
+      message: `Student status updated to ${status}`,
+      data: student,
     });
   } catch (error) {
-    const statusCode = error.statusCode || 500;
-    return res.status(statusCode).json({
+    return res.status(error.statusCode || 400).json({
       success: false,
       message: error.message || "Failed to update student status",
     });
   }
 };
 
-const handleDeleteStudent = async (req, res) => {
+const handleUpdateMyProfile = async (req, res) => {
   try {
-    const hardDelete = req.query.permanent === "true";
-    const result = await deleteStudent(req.params.id, hardDelete, req.user?.userId);
+    const student = await StudentProfile.findOne({ userId: req.user.userId });
+    if (!student) {
+      return res.status(404).json({ success: false, message: "Student profile not found" });
+    }
+
+    const allowedUpdates = [
+      "emergencyContact",
+      "address",
+      "phone",
+      "bloodGroup",
+      "dateOfBirth",
+      "gender",
+    ];
+
+    const updates = {};
+    for (const key of allowedUpdates) {
+      if (req.body[key] !== undefined) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    const updated = await StudentProfile.findByIdAndUpdate(
+      student._id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    )
+      .populate("userId", "name email username role status")
+      .populate("institutionId")
+      .populate("classId");
+
     return res.status(200).json({
       success: true,
-      message: result.message,
-      data: result,
+      message: "Profile updated successfully",
+      data: updated,
     });
   } catch (error) {
-    const statusCode = error.statusCode || 500;
-    return res.status(statusCode).json({
+    return res.status(400).json({
       success: false,
-      message: error.message || "Failed to delete/deactivate student",
+      message: error.message || "Failed to update profile",
     });
+  }
+};
+
+const handleDeleteStudent = async (req, res) => {
+  try {
+    const student = await deleteStudent(req.params.id);
+    if (!student) {
+      return res.status(404).json({ success: false, message: "Student not found" });
+    }
+    return res.status(200).json({ success: true, message: "Student deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message || "Failed to delete student" });
   }
 };
 
 const handleGetMyTeachers = async (req, res) => {
   try {
-    const userId = req.user.userId || req.user.id;
-    const subjectsWithTeachers = await getStudentTeachers(userId);
+    const student = await StudentProfile.findOne({ userId: req.user.userId });
+    if (!student) {
+      return res.status(404).json({ success: false, message: "Student profile not found" });
+    }
+
+    if (!student.classId) {
+      return res.status(200).json({
+        success: true,
+        message: "No class assigned yet",
+        data: [],
+      });
+    }
+
+    const teachers = await getStudentTeachers(student.classId);
     return res.status(200).json({
       success: true,
-      data: subjectsWithTeachers,
+      count: teachers.length,
+      data: teachers,
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: error.message || "Failed to retrieve teachers for your class",
+      message: error.message || "Failed to retrieve assigned teachers",
     });
   }
 };
@@ -217,4 +255,3 @@ module.exports = {
   handleDeleteStudent,
   handleGetMyTeachers,
 };
-

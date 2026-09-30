@@ -3,24 +3,63 @@ const {
   handleGetStudentSummary,
   handleGetStudentMonthly,
   handleGetStudentHistory,
+  handleGetStudentSubjectAttendance,
+  handleGetStudentSessionAttendance,
+  handleGetClassAttendanceSummary,
+  handleGetFacultyAttendanceSummary,
   handleCreateCorrectionRequest,
   handleApproveCorrectionRequest,
   handleRejectCorrectionRequest,
   handleReviewCorrectionRequest,
+  handleMarkClassAttendance,
+  handleGetClassAttendanceRecords,
 } = require("./attendance.controller");
 const {
   validateCreateCorrectionRequest,
   validateReviewCorrectionRequest,
+  validateMarkClassAttendance,
 } = require("./attendance.validator");
 const { requireAuth } = require("../../middleware/auth.middleware");
 const { requireRole } = require("../../middleware/role.middleware");
 
 const router = express.Router();
 
-// --- STUDENT PORTAL READ-ONLY ATTENDANCE ENDPOINTS ---
-router.get("/student/summary", requireAuth, requireRole("STUDENT"), handleGetStudentSummary);
-router.get("/student/monthly", requireAuth, requireRole("STUDENT"), handleGetStudentMonthly);
-router.get("/student/history", requireAuth, requireRole("STUDENT"), handleGetStudentHistory);
+// --- CLASS ROSTER ATTENDANCE MARKING & SUMMARIES (FACULTY / ADMIN) ---
+router.post(
+  "/mark-class",
+  requireAuth,
+  requireRole("FACULTY", "ADMIN"),
+  validateMarkClassAttendance,
+  handleMarkClassAttendance
+);
+
+router.get(
+  "/class-records",
+  requireAuth,
+  requireRole("FACULTY", "ADMIN"),
+  handleGetClassAttendanceRecords
+);
+
+router.get(
+  "/class-summary",
+  requireAuth,
+  requireRole("FACULTY", "ADMIN"),
+  handleGetClassAttendanceSummary
+);
+
+router.get(
+  "/faculty-history",
+  requireAuth,
+  requireRole("FACULTY"),
+  handleGetFacultyAttendanceSummary
+);
+
+// --- STUDENT PORTAL READ-ONLY & 360 ATTENDANCE ENDPOINTS ---
+router.get("/student/summary", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentSummary);
+router.get("/student/monthly", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentMonthly);
+router.get("/student/history", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentHistory);
+router.get("/student/subjects", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentSubjectAttendance);
+router.get("/student/sessions", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentSessionAttendance);
 
 // --- FACULTY CORRECTION REQUESTS ---
 router.post(

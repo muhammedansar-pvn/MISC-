@@ -1,6 +1,7 @@
 const express = require("express");
 const { requireAuth } = require("../../middleware/auth.middleware");
 const { requireRole } = require("../../middleware/role.middleware");
+const { adminPasswordResetLimiter, adminBulkActionLimiter } = require("../../middleware/rate-limit.middleware");
 const {
   createUserInvitation,
   verifyAdminUserOtp,
@@ -11,14 +12,18 @@ const {
   updateUserStatus,
   deleteUser,
   getDashboardStats,
+  handleResetUserPassword,
+  handleBulkAssignStudents,
 } = require("./admin.controller");
 const {
   validateUserInvitation,
   validateUpdateUser,
   validateUpdateUserStatus,
+  validateBulkAssignStudents,
 } = require("./admin.validator");
 
 const router = express.Router();
+
 
 router.get("/stats", requireAuth, requireRole("ADMIN"), getDashboardStats);
 router.get("/users", requireAuth, requireRole("ADMIN"), getUsers);
@@ -30,6 +35,13 @@ router.patch("/users/:id", requireAuth, requireRole("ADMIN"), validateUpdateUser
 router.put("/users/:id", requireAuth, requireRole("ADMIN"), validateUpdateUser, updateUser);
 router.patch("/users/:id/status", requireAuth, requireRole("ADMIN"), validateUpdateUserStatus, updateUserStatus);
 router.put("/users/:id/status", requireAuth, requireRole("ADMIN"), validateUpdateUserStatus, updateUserStatus);
+router.post(
+  "/users/:id/reset-password",
+  requireAuth,
+  requireRole("ADMIN"),
+  adminPasswordResetLimiter,
+  handleResetUserPassword
+);
 router.delete("/users/:id", requireAuth, requireRole("ADMIN"), deleteUser);
 
 // --- INSTITUTE SETTINGS (SINGLE-INSTITUTE ARCHITECTURE) ---
@@ -75,4 +87,15 @@ router.post("/students", requireAuth, requireRole("ADMIN"), (req, res, next) => 
   return validateStudent(req, res, () => registerStudent(req, res, next));
 });
 
+// Bulk Student Class Assignment: POST /api/admin/students/bulk-assign
+router.post(
+  "/students/bulk-assign",
+  requireAuth,
+  requireRole("ADMIN"),
+  adminBulkActionLimiter,
+  validateBulkAssignStudents,
+  handleBulkAssignStudents
+);
+
 module.exports = router;
+

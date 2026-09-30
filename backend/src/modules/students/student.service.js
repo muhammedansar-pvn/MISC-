@@ -4,6 +4,7 @@ const StudentProfile = require("./student.model");
 const InstitutionProfile = require("../institutions/institution.model");
 const Class = require("../academics/class.model");
 const Timetable = require("../academics/timetable.model");
+const FacultyAssignment = require("../academics/faculty-assignment.model");
 const FacultyProfile = require("../faculty/faculty.model");
 const { generateAccountSetupToken, sendAndStoreOtp, maskEmail } = require("../auth/auth.service");
 const OtpVerification = require("../auth/otp-verification.model");
@@ -86,12 +87,16 @@ const createStudent = async (studentData) => {
     }
   }
 
+  let resolvedAcademicYearId = studentData.academicYearId || undefined;
   if (classId) {
-    const classExists = await Class.exists({ _id: classId });
-    if (!classExists) {
+    const classDoc = await Class.findById(classId);
+    if (!classDoc) {
       const err = new Error("Class not found");
       err.statusCode = 404;
       throw err;
+    }
+    if (!resolvedAcademicYearId && classDoc.academicYearId) {
+      resolvedAcademicYearId = classDoc.academicYearId;
     }
   }
 
@@ -107,6 +112,7 @@ const createStudent = async (studentData) => {
     dateOfBirth,
     admissionYear,
     classId: classId || undefined,
+    academicYearId: resolvedAcademicYearId,
     institutionId: institutionId || undefined,
     contactNumber: contactNumber || user.mobile || "",
     fatherName,
@@ -221,6 +227,15 @@ const updateStudent = async (id, updateData) => {
 
   if (profileFields.classId === "") profileFields.classId = null;
   if (profileFields.institutionId === "") profileFields.institutionId = null;
+
+  if (profileFields.classId) {
+    const classDoc = await Class.findById(profileFields.classId);
+    if (classDoc && classDoc.academicYearId) {
+      profileFields.academicYearId = classDoc.academicYearId;
+    }
+  } else if (profileFields.classId === null) {
+    profileFields.academicYearId = null;
+  }
 
   Object.assign(profile, profileFields);
   await profile.save();
@@ -393,6 +408,14 @@ const registerStudentWithAccount = async (payload, caller = null) => {
     throw error;
   }
 
+  let resolvedAcademicYearId = payload.academicYearId || undefined;
+  if (classId) {
+    const classDoc = await Class.findById(classId);
+    if (classDoc && classDoc.academicYearId) {
+      resolvedAcademicYearId = classDoc.academicYearId;
+    }
+  }
+
   const session = await mongoose.startSession();
   let createdUser = null;
   let createdStudentProfile = null;
@@ -430,6 +453,7 @@ const registerStudentWithAccount = async (payload, caller = null) => {
           dateOfBirth: new Date(dateOfBirth),
           admissionYear: parseInt(admissionYear, 10),
           classId: classId || undefined,
+          academicYearId: resolvedAcademicYearId,
           institutionId: targetInstitutionId || undefined,
           contactNumber: contactNumber ? contactNumber.trim() : (mobile ? mobile.trim() : ""),
           fatherName: fatherName.trim(),
@@ -520,38 +544,73 @@ const registerStudentWithAccount = async (payload, caller = null) => {
   };
 };
 
-const getStudentTeachers = async (userId) => {
-  const student = await StudentProfile.findOne({ userId }).select("classId");
-  if (!student || !student.classId) {
+const getStudentTeachers = async (identifier) => {
+  let classId = null;
+
+  if (mongoose.Types.ObjectId.isValid(identifier)) {
+    // Check if identifier is directly a Class _id
+    const classDoc = await Class.findById(identifier).select("_id");
+    if (classDoc) {
+      classId = classDoc._id;
+    } else {
+      // Check if it's a student userId or StudentProfile _id
+      const student = await StudentProfile.findOne({
+        $or: [{ userId: identifier }, { _id: identifier }],
+      }).select("classId");
+      if (student && student.classId) {
+        classId = student.classId;
+      }
+    }
+  }
+
+  if (!classId) {
     return [];
   }
 
-  const classId = student.classId;
+  const subjectMap = new Map();
 
-  // 1. Fetch active Timetable entries for this class
+  // 1. Primary Source of Truth: FacultyAssignment (Phase 1)
+  const assignments = await FacultyAssignment.find({
+    classId,
+    status: "ACTIVE",
+  })
+    .populate("subjectId", "name subjectName code subjectCode category")
+    .populate("facultyId", "nameEnglish nameArabic designation photo contactNumber")
+    .lean();
+
+  for (const asgn of assignments) {
+    if (!asgn.subjectId) continue;
+    const subIdStr = asgn.subjectId._id.toString();
+    const subName = asgn.subjectId.name || asgn.subjectId.subjectName || "Subject";
+    const subCode = asgn.subjectId.code || asgn.subjectId.subjectCode || "SUB";
+    const category = asgn.subjectId.category || "GENERAL";
+
+    subjectMap.set(subIdStr, {
+      subjectId: subIdStr,
+      subjectName: subName,
+      subjectCode: subCode,
+      category,
+      teacher: asgn.facultyId
+        ? {
+            nameEnglish: asgn.facultyId.nameEnglish || "Faculty Member",
+            designation: asgn.facultyId.designation || "Usthad",
+            photo: asgn.facultyId.photo || "",
+            contactNumber: asgn.facultyId.contactNumber || "",
+          }
+        : null,
+    });
+  }
+
+  // 2. Secondary / Fallback: Active Timetable entries for unmapped subjects
   const timetableEntries = await Timetable.find({
     classId,
     status: "ACTIVE",
     isDeleted: { $ne: true },
   })
-    .populate("subjectId", "subjectName subjectCode category")
-    .populate("facultyId", "nameEnglish designation")
+    .populate("subjectId", "name subjectName code subjectCode category")
+    .populate("facultyId", "nameEnglish designation photo")
     .lean();
 
-  // 2. Fetch faculty assigned directly to this class
-  const assignedFaculty = await FacultyProfile.find({
-    assignedClasses: classId,
-    status: "ACTIVE",
-    isDeleted: { $ne: true },
-  })
-    .populate("assignedSubjects", "subjectName subjectCode category")
-    .select("nameEnglish designation assignedSubjects")
-    .lean();
-
-  // Distinct subjects map
-  const subjectMap = new Map();
-
-  // Process timetable entries
   for (const entry of timetableEntries) {
     if (!entry.subjectId) continue;
     const subIdStr = entry.subjectId._id.toString();
@@ -559,13 +618,14 @@ const getStudentTeachers = async (userId) => {
     if (!subjectMap.has(subIdStr)) {
       subjectMap.set(subIdStr, {
         subjectId: subIdStr,
-        subjectName: entry.subjectId.subjectName || "Subject",
-        subjectCode: entry.subjectId.subjectCode || "SUB",
+        subjectName: entry.subjectId.name || entry.subjectId.subjectName || "Subject",
+        subjectCode: entry.subjectId.code || entry.subjectId.subjectCode || "SUB",
         category: entry.subjectId.category || "GENERAL",
         teacher: entry.facultyId
           ? {
               nameEnglish: entry.facultyId.nameEnglish || "Faculty Member",
               designation: entry.facultyId.designation || "Usthad",
+              photo: entry.facultyId.photo || "",
             }
           : null,
       });
@@ -573,11 +633,21 @@ const getStudentTeachers = async (userId) => {
       subjectMap.get(subIdStr).teacher = {
         nameEnglish: entry.facultyId.nameEnglish || "Faculty Member",
         designation: entry.facultyId.designation || "Usthad",
+        photo: entry.facultyId.photo || "",
       };
     }
   }
 
-  // Next incorporate directly assigned faculty
+  // 3. Fallback: Legacy FacultyProfile.assignedClasses
+  const assignedFaculty = await FacultyProfile.find({
+    assignedClasses: classId,
+    status: "ACTIVE",
+    isDeleted: { $ne: true },
+  })
+    .populate("assignedSubjects", "name subjectName code subjectCode category")
+    .select("nameEnglish designation assignedSubjects photo")
+    .lean();
+
   for (const faculty of assignedFaculty) {
     const subjects = faculty.assignedSubjects || [];
     for (const sub of subjects) {
@@ -585,18 +655,20 @@ const getStudentTeachers = async (userId) => {
       if (!subjectMap.has(subIdStr)) {
         subjectMap.set(subIdStr, {
           subjectId: subIdStr,
-          subjectName: sub.subjectName || "Subject",
-          subjectCode: sub.subjectCode || "SUB",
+          subjectName: sub.name || sub.subjectName || "Subject",
+          subjectCode: sub.code || sub.subjectCode || "SUB",
           category: sub.category || "GENERAL",
           teacher: {
             nameEnglish: faculty.nameEnglish || "Faculty Member",
             designation: faculty.designation || "Usthad",
+            photo: faculty.photo || "",
           },
         });
       } else if (!subjectMap.get(subIdStr).teacher) {
         subjectMap.get(subIdStr).teacher = {
           nameEnglish: faculty.nameEnglish || "Faculty Member",
           designation: faculty.designation || "Usthad",
+          photo: faculty.photo || "",
         };
       }
     }

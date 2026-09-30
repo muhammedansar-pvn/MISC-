@@ -17,7 +17,26 @@ const reviewCorrectionRequestSchema = Joi.object({
   adminRemarks: Joi.string().trim().max(500).allow("").optional(),
 });
 
+const markClassAttendanceSchema = Joi.object({
+  classId: Joi.string().hex().length(24).required(),
+  subjectId: Joi.string().hex().length(24).required(),
+  date: Joi.alternatives().try(Joi.date().iso(), Joi.string().regex(/^\d{4}-\d{2}-\d{2}/)).required(),
+  period: Joi.number().integer().min(1).max(7).required(),
+  records: Joi.array()
+    .items(
+      Joi.object({
+        studentId: Joi.string().hex().length(24).required(),
+        status: Joi.string().valid("PRESENT", "ABSENT", "LATE", "LEAVE", "EXCUSED").required(),
+        remarks: Joi.string().trim().allow("").optional(),
+      })
+    )
+    .min(1)
+    .required(),
+});
+
 module.exports = {
   validateCreateCorrectionRequest: validateSchema(createCorrectionRequestSchema),
   validateReviewCorrectionRequest: validateSchema(reviewCorrectionRequestSchema),
+  validateMarkClassAttendance: validateSchema(markClassAttendanceSchema),
 };
+

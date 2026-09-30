@@ -55,6 +55,40 @@ export const deleteUser = async (id: string): Promise<ApiResponse> => {
   return response.data;
 };
 
+export const resetUserPassword = async (
+  id: string
+): Promise<ApiResponse<{ userId: string; name?: string; email: string; maskedEmail: string }>> => {
+  const response = await apiClient.post<
+    ApiResponse<{ userId: string; name?: string; email: string; maskedEmail: string }>
+  >(API_ENDPOINTS.admin.resetPassword(id));
+  return response.data;
+};
+
+export interface BulkAssignStudentsPayload {
+  studentIds: string[];
+  classId: string;
+}
+
+export interface BulkAssignStudentsResponse {
+  classId: string;
+  className: string;
+  updatedCount: number;
+  skipped: Array<{
+    studentId: string;
+    reason: 'INVALID_ID' | 'NOT_FOUND' | 'DELETED' | 'ALREADY_IN_CLASS';
+  }>;
+}
+
+export const bulkAssignStudents = async (
+  payload: BulkAssignStudentsPayload
+): Promise<ApiResponse<BulkAssignStudentsResponse>> => {
+  const response = await apiClient.post<ApiResponse<BulkAssignStudentsResponse>>(
+    API_ENDPOINTS.admin.bulkAssignStudents,
+    payload
+  );
+  return response.data;
+};
+
 export default {
   getDashboardStats,
   getUsers,
@@ -65,4 +99,7 @@ export default {
   updateUser,
   updateUserStatus,
   deleteUser,
+  resetUserPassword,
+  bulkAssignStudents,
 };
+

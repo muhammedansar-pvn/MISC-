@@ -33,6 +33,12 @@ const classSchema = new mongoose.Schema(
       enum: ["ACTIVE", "INACTIVE"],
       default: "ACTIVE",
     },
+
+    department: {
+      type: String,
+      trim: true,
+      default: "General",
+    },
   },
   {
     timestamps: true,

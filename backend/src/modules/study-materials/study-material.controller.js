@@ -1,5 +1,6 @@
 const studyMaterialService = require("./study-material.service");
 const FacultyProfile = require("../faculty/faculty.model");
+const { isFacultyAssigned } = require("../academics/academic-auth.service");
 
 exports.handleCreateStudyMaterial = async (req, res) => {
   try {
@@ -25,6 +26,20 @@ exports.handleCreateStudyMaterial = async (req, res) => {
         success: false,
         message: "title, classId, and subjectId are required",
       });
+    }
+
+    if (req.user.role === "FACULTY") {
+      const isAssigned = await isFacultyAssigned({
+        facultyId,
+        classId: req.body.classId,
+        subjectId: req.body.subjectId,
+      });
+      if (!isAssigned) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: You are not assigned to teach this class and subject",
+        });
+      }
     }
 
     if (!req.file && !req.body.fileUrl) {
@@ -66,6 +81,13 @@ exports.handleGetStudyMaterials = async (req, res) => {
     if (req.query.subjectId) filter.subjectId = req.query.subjectId;
     if (req.query.facultyId) filter.facultyId = req.query.facultyId;
     if (req.query.chapter) filter.chapter = req.query.chapter;
+
+    if (req.user?.role === "FACULTY" && !filter.facultyId) {
+      const fp = await FacultyProfile.findOne({ userId: req.user.userId || req.user.id });
+      if (fp) {
+        filter.facultyId = fp._id;
+      }
+    }
 
     const result = await studyMaterialService.getStudyMaterials(filter, req.query);
     return res.status(200).json(result);

@@ -41,6 +41,16 @@ const assignmentSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    academicYearId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicYear",
+      required: true,
+    },
+    maxMarks: {
+      type: Number,
+      default: 100,
+      min: 1,
+    },
     attachments: [assignmentAttachmentSchema],
     isDeleted: {
       type: Boolean,
@@ -53,9 +63,10 @@ const assignmentSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for query performance (filter by class, subject, faculty)
+// Indexes for query performance (filter by class, subject, faculty, academicYear)
 assignmentSchema.index({ classId: 1, isDeleted: 1 });
-assignmentSchema.index({ subjectId: 1, isDeleted: 1 });
+assignmentSchema.index({ classId: 1, academicYearId: 1, isDeleted: 1 });
+assignmentSchema.index({ classId: 1, subjectId: 1, isDeleted: 1 });
 assignmentSchema.index({ facultyId: 1, isDeleted: 1 });
 assignmentSchema.index({ dueDate: 1 });
 

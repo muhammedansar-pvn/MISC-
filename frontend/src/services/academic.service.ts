@@ -8,6 +8,8 @@ import {
   SubjectPayload,
   Syllabus,
   SyllabusPayload,
+  FacultyAssignment,
+  FacultyAssignmentPayload,
   ApiResponse,
   PaginationParams,
 } from '@/types';
@@ -124,6 +126,51 @@ export const uploadSyllabusFile = async (payload: {
   return response.data;
 };
 
+// --- FACULTY ASSIGNMENTS ---
+export const getFacultyAssignments = async (
+  params: {
+    facultyId?: string;
+    academicYearId?: string;
+    classId?: string;
+    subjectId?: string;
+    status?: string;
+    page?: number;
+    limit?: number;
+  } = {}
+): Promise<ApiResponse<FacultyAssignment[]>> => {
+  const response = await apiClient.get<ApiResponse<FacultyAssignment[]>>(
+    API_ENDPOINTS.academic.facultyAssignments,
+    { params }
+  );
+  return response.data;
+};
+
+export const getFacultyAssignmentById = async (
+  id: string
+): Promise<ApiResponse<FacultyAssignment>> => {
+  const response = await apiClient.get<ApiResponse<FacultyAssignment>>(
+    API_ENDPOINTS.academic.facultyAssignmentById(id)
+  );
+  return response.data;
+};
+
+export const createFacultyAssignment = async (
+  data: FacultyAssignmentPayload
+): Promise<ApiResponse<FacultyAssignment>> => {
+  const response = await apiClient.post<ApiResponse<FacultyAssignment>>(
+    API_ENDPOINTS.academic.facultyAssignments,
+    data
+  );
+  return response.data;
+};
+
+export const deleteFacultyAssignment = async (id: string): Promise<ApiResponse<null>> => {
+  const response = await apiClient.delete<ApiResponse<null>>(
+    API_ENDPOINTS.academic.facultyAssignmentById(id)
+  );
+  return response.data;
+};
+
 export default {
   getAcademicYears,
   getAcademicYearById,
@@ -143,4 +190,8 @@ export default {
   updateSyllabus,
   deleteSyllabus,
   uploadSyllabusFile,
+  getFacultyAssignments,
+  getFacultyAssignmentById,
+  createFacultyAssignment,
+  deleteFacultyAssignment,
 };

@@ -14,11 +14,13 @@ const examScheduleSchema = Joi.object({
   examId: Joi.string().hex().length(24).required(),
   classId: Joi.string().hex().length(24).required(),
   subjectId: Joi.string().hex().length(24).required(),
+  academicYearId: Joi.string().hex().length(24).optional(),
   examDate: Joi.date().iso().required(),
   startTime: Joi.string().trim().required(),
   endTime: Joi.string().trim().required(),
   maxMarks: Joi.number().greater(0).required(),
   passMarks: Joi.number().min(0).max(Joi.ref("maxMarks")).required(),
+  status: Joi.string().valid("SCHEDULED", "ONGOING", "COMPLETED", "CANCELLED").optional(),
 });
 
 const examRegistrationSchema = Joi.object({
@@ -31,26 +33,57 @@ const examRegistrationSchema = Joi.object({
 });
 
 const markEntrySchema = Joi.object({
-  examId: Joi.string().hex().length(24).required(),
+  examId: Joi.string().hex().length(24).optional(),
   examScheduleId: Joi.string().hex().length(24).required(),
   studentId: Joi.string().hex().length(24).required(),
-  subjectId: Joi.string().hex().length(24).required(),
+  classId: Joi.string().hex().length(24).optional(),
+  subjectId: Joi.string().hex().length(24).optional(),
+  academicYearId: Joi.string().hex().length(24).optional(),
   marksObtained: Joi.number().min(0).required(),
   isAbsent: Joi.boolean().default(false),
-  evaluatorId: Joi.string().hex().length(24).allow(null, ""),
-  status: Joi.string().valid("DRAFT", "SUBMITTED", "VERIFIED").default("DRAFT"),
+  evaluatorId: Joi.string().hex().length(24).allow(null, "").optional(),
+  status: Joi.string().valid("DRAFT", "SUBMITTED", "VERIFIED", "PUBLISHED").default("DRAFT"),
+  remarks: Joi.string().allow("").optional(),
+});
+
+const rosterMarksSchema = Joi.object({
+  status: Joi.string().valid("DRAFT", "SUBMITTED").default("SUBMITTED"),
+  marks: Joi.array()
+    .items(
+      Joi.object({
+        studentId: Joi.string().hex().length(24).required(),
+        marksObtained: Joi.number().min(0).required(),
+        isAbsent: Joi.boolean().default(false),
+        remarks: Joi.string().allow("").optional(),
+      })
+    )
+    .min(1)
+    .required(),
+});
+
+const markCorrectionRequestSchema = Joi.object({
+  markEntryId: Joi.string().hex().length(24).required(),
+  newMarks: Joi.number().min(0).required(),
+  reason: Joi.string().trim().min(3).required(),
+});
+
+const reviewCorrectionRequestSchema = Joi.object({
+  status: Joi.string().valid("APPROVED", "REJECTED").required(),
+  adminRemarks: Joi.string().trim().allow("").optional(),
 });
 
 const examResultSchema = Joi.object({
   examId: Joi.string().hex().length(24).required(),
   studentId: Joi.string().hex().length(24).required(),
   classId: Joi.string().hex().length(24).required(),
+  academicYearId: Joi.string().hex().length(24).optional(),
   institutionId: Joi.string().hex().length(24).allow(null, "").optional(),
   totalMaxMarks: Joi.number().greater(0).required(),
   totalMarksObtained: Joi.number().min(0).required(),
   percentage: Joi.number().min(0).max(100).required(),
   grade: Joi.string().trim().required(),
   resultStatus: Joi.string().valid("PASSED", "FAILED", "WITHHELD").required(),
+  status: Joi.string().valid("DRAFT", "PUBLISHED").optional(),
   publishedAt: Joi.date().iso().allow(null),
 });
 
@@ -59,5 +92,8 @@ module.exports = {
   validateExamSchedule: validateSchema(examScheduleSchema),
   validateExamRegistration: validateSchema(examRegistrationSchema),
   validateMarkEntry: validateSchema(markEntrySchema),
+  validateRosterMarks: validateSchema(rosterMarksSchema),
+  validateMarkCorrectionRequest: validateSchema(markCorrectionRequestSchema),
+  validateReviewCorrectionRequest: validateSchema(reviewCorrectionRequestSchema),
   validateExamResult: validateSchema(examResultSchema),
 };

@@ -23,8 +23,19 @@ const updateUserStatusSchema = Joi.object({
   status: Joi.string().valid("PENDING_SETUP", "ACTIVE", "INVITED", "SUSPENDED", "INACTIVE").required(),
 });
 
+const bulkAssignStudentsSchema = Joi.object({
+  classId: Joi.string().hex().length(24).required(),
+  studentIds: Joi.array()
+    .items(Joi.string().required())
+    .min(1)
+    .max(200)
+    .required(),
+});
+
 module.exports = {
   validateUserInvitation: validateSchema(userInvitationSchema),
   validateUpdateUser: validateSchema(updateUserSchema),
   validateUpdateUserStatus: validateSchema(updateUserStatusSchema),
+  validateBulkAssignStudents: validateSchema(bulkAssignStudentsSchema),
 };
+

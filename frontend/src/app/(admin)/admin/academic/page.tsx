@@ -14,9 +14,11 @@ import {
   AlertCircle,
   Edit3,
   X,
+  UserCheck,
 } from 'lucide-react';
 import StatusBadge from '@/components/admin/StatusBadge';
 import SyllabusManager from '@/components/admin/academic/SyllabusManager';
+import FacultyAssignmentsManager from '@/components/admin/academic/FacultyAssignmentsManager';
 import {
   getAcademicYears,
   createAcademicYear,
@@ -30,7 +32,7 @@ import {
 } from '@/services/academic.service';
 import { AcademicYear, ClassModel, Subject } from '@/types';
 
-type AcademicTab = 'academic-years' | 'classes' | 'subjects' | 'syllabuses';
+type AcademicTab = 'academic-years' | 'classes' | 'subjects' | 'faculty-assignments' | 'syllabuses';
 
 function AdminAcademicContent() {
   const router = useRouter();
@@ -60,6 +62,8 @@ function AdminAcademicContent() {
       setActiveTab('classes');
     } else if (tabParam === 'subjects') {
       setActiveTab('subjects');
+    } else if (tabParam === 'faculty-assignments') {
+      setActiveTab('faculty-assignments');
     } else if (tabParam === 'syllabuses') {
       router.replace('/admin/academic/syllabus');
     } else if (tabParam === 'academic-years') {
@@ -172,7 +176,7 @@ function AdminAcademicContent() {
           <h1 className="text-2xl font-serif font-bold text-[#132238]">Academic Curriculum & Setup</h1>
           <p className="text-sm text-slate-500 mt-1">Configure Academic Years, Classes, Subjects, and Syllabuses for Markaz Sanaviyya</p>
         </div>
-        {activeTab !== 'syllabuses' && (
+        {activeTab !== 'syllabuses' && activeTab !== 'faculty-assignments' && (
           <button
             onClick={() => handleOpenModal()}
             className="inline-flex items-center justify-center px-4 py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] cursor-pointer transition-all shadow-xs"
@@ -188,6 +192,7 @@ function AdminAcademicContent() {
           { id: 'academic-years' as AcademicTab, label: 'Academic Years', icon: Calendar, count: academicYears.length },
           { id: 'classes' as AcademicTab, label: 'Classes', icon: Layers, count: classesList.length },
           { id: 'subjects' as AcademicTab, label: 'Subjects', icon: BookOpen, count: subjectsList.length },
+          { id: 'faculty-assignments' as AcademicTab, label: 'Faculty Assignments', icon: UserCheck, count: null },
           { id: 'syllabuses' as AcademicTab, label: 'Syllabuses', icon: FileText, count: null },
         ].map((tab) => {
           const Icon = tab.icon;
@@ -225,6 +230,12 @@ function AdminAcademicContent() {
       {activeTab === 'syllabuses' ? (
         <SyllabusManager
           standalone={false}
+          preloadedYears={academicYears}
+          preloadedClasses={classesList}
+          preloadedSubjects={subjectsList}
+        />
+      ) : activeTab === 'faculty-assignments' ? (
+        <FacultyAssignmentsManager
           preloadedYears={academicYears}
           preloadedClasses={classesList}
           preloadedSubjects={subjectsList}
@@ -298,6 +309,7 @@ function AdminAcademicContent() {
                   <tr>
                     <th className="px-6 py-4">Class Name</th>
                     <th className="px-6 py-4">Code</th>
+                    <th className="px-6 py-4">Department</th>
                     <th className="px-6 py-4">Academic Year</th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4 text-right">Actions</th>
@@ -306,13 +318,18 @@ function AdminAcademicContent() {
                 <tbody className="divide-y divide-[#E2E8E0]">
                   {classesList.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-slate-400">No classes registered yet.</td>
+                      <td colSpan={6} className="px-6 py-8 text-center text-slate-400">No classes registered yet.</td>
                     </tr>
                   ) : (
                     classesList.map((cls: any) => (
                       <tr key={cls._id} className="hover:bg-slate-50">
                         <td className="px-6 py-4 font-bold text-[#132238]">{cls.name}</td>
                         <td className="px-6 py-4 font-mono text-slate-600">{cls.code}</td>
+                        <td className="px-6 py-4">
+                          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-teal-50 text-teal-800 border border-teal-200">
+                            {cls.department || 'General'}
+                          </span>
+                        </td>
                         <td className="px-6 py-4 text-xs text-slate-600">
                           {cls.academicYearId?.yearName || cls.academicYearId?.yearCode || 'N/A'}
                         </td>
@@ -421,6 +438,16 @@ function AdminAcademicContent() {
                   <div>
                     <label className="block text-xs font-bold uppercase mb-1">Class Code *</label>
                     <input type="text" required value={formData.code || ''} onChange={(e) => setFormData({ ...formData, code: e.target.value })} placeholder="STD-10" className="w-full px-3 py-2 border rounded-lg text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase mb-1">Department</label>
+                    <input
+                      type="text"
+                      value={formData.department || ''}
+                      onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                      placeholder="e.g. Sanaviyya, Shareea, Secondary, General"
+                      className="w-full px-3 py-2 border rounded-lg text-sm"
+                    />
                   </div>
                   <div>
                     <label className="block text-xs font-bold uppercase mb-1">Academic Year *</label>

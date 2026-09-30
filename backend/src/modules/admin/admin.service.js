@@ -2,8 +2,9 @@ const crypto = require("crypto");
 const mongoose = require("mongoose");
 const User = require("../users/user.model");
 const AccountSetupToken = require("../auth/account-setup-token.model");
+const PasswordResetToken = require("../auth/password-reset-token.model");
 const OtpVerification = require("../auth/otp-verification.model");
-const { sendUserInvitationEmail } = require("../../shared/services/email.service");
+const { sendUserInvitationEmail, sendPasswordResetEmail } = require("../../shared/services/email.service");
 const { sendAndStoreOtp, verifyOtpCode } = require("../auth/auth.service");
 const { escapeRegex } = require("../../shared/utils/regex");
 const studentLifecycleService = require("../students/student-lifecycle.service");
@@ -528,6 +529,154 @@ const getDashboardStats = async () => {
   };
 };
 
+const triggerUserPasswordReset = async (userId) => {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    const error = new Error("Invalid user ID");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const user = await User.findOne({ _id: userId, isDeleted: { $ne: true } });
+  if (!user) {
+    const error = new Error("User account not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (!user.email) {
+    const error = new Error("User does not have a registered email address for password reset");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // Delete existing unused reset tokens for this user
+  await PasswordResetToken.deleteMany({ userId: user._id, usedAt: null });
+
+  // Generate cryptographic token
+  const rawToken = crypto.randomBytes(32).toString("hex");
+  const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24-hour expiry
+
+  await PasswordResetToken.create({
+    userId: user._id,
+    tokenHash,
+    expiresAt,
+  });
+
+  // Dispatch password reset email
+  await sendPasswordResetEmail(user.email, rawToken);
+
+  return {
+    userId: user._id,
+    name: user.name,
+    email: user.email,
+    maskedEmail: user.email.replace(/^(.)(.*)(@.*)$/, (m, a, b, c) => `${a}***${c}`),
+  };
+};
+
+/**
+ * Bulk assign students to a class cohort
+ */
+const bulkAssignStudentsToClass = async (payload) => {
+  const { classId, studentIds } = payload;
+  const Class = require("../academics/class.model");
+  const StudentProfile = require("../students/student.model");
+
+  if (!classId || !mongoose.Types.ObjectId.isValid(classId)) {
+    const error = new Error("Invalid classId");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const targetClass = await Class.findById(classId);
+  if (!targetClass) {
+    const error = new Error("Class not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (targetClass.status !== "ACTIVE") {
+    const error = new Error("Class is inactive");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (!Array.isArray(studentIds) || studentIds.length === 0) {
+    const error = new Error("studentIds must be a non-empty array");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (studentIds.length > 200) {
+    const error = new Error("Maximum batch size is 200 students");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // Deduplicate incoming studentIds while preserving order
+  const uniqueRawIds = [...new Set(studentIds.map(String))];
+
+  const skipped = [];
+  const validFormatIds = [];
+
+  for (const rawId of uniqueRawIds) {
+    if (!rawId || !mongoose.Types.ObjectId.isValid(rawId)) {
+      skipped.push({ studentId: rawId, reason: "INVALID_ID" });
+    } else {
+      validFormatIds.push(new mongoose.Types.ObjectId(rawId));
+    }
+  }
+
+  const validStudentIdsToUpdate = [];
+
+  if (validFormatIds.length > 0) {
+    const profiles = await StudentProfile.find({
+      _id: { $in: validFormatIds },
+    }).select("_id classId isDeleted");
+
+    const profileMap = new Map();
+    profiles.forEach((p) => profileMap.set(p._id.toString(), p));
+
+    for (const objId of validFormatIds) {
+      const idStr = objId.toString();
+      const profile = profileMap.get(idStr);
+
+      if (!profile) {
+        skipped.push({ studentId: idStr, reason: "NOT_FOUND" });
+      } else if (profile.isDeleted === true) {
+        skipped.push({ studentId: idStr, reason: "DELETED" });
+      } else if (profile.classId && profile.classId.toString() === classId.toString()) {
+        skipped.push({ studentId: idStr, reason: "ALREADY_IN_CLASS" });
+      } else {
+        validStudentIdsToUpdate.push(profile._id);
+      }
+    }
+  }
+
+  if (validStudentIdsToUpdate.length > 0) {
+    const updateDoc = {
+      $set: {
+        classId: targetClass._id,
+      },
+    };
+    if (targetClass.institutionId) {
+      updateDoc.$set.institutionId = targetClass.institutionId;
+    }
+
+    await StudentProfile.updateMany(
+      { _id: { $in: validStudentIdsToUpdate } },
+      updateDoc
+    );
+  }
+
+  return {
+    classId: targetClass._id.toString(),
+    className: targetClass.name,
+    updatedCount: validStudentIdsToUpdate.length,
+    skipped,
+  };
+};
+
 module.exports = {
   createUserInvitation,
   verifyAdminUserOtp,
@@ -538,4 +687,7 @@ module.exports = {
   updateUserStatus,
   deleteUser,
   getDashboardStats,
+  triggerUserPasswordReset,
+  bulkAssignStudentsToClass,
 };
+

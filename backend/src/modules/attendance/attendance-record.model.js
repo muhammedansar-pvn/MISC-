@@ -6,17 +6,34 @@ const attendanceRecordSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "StudentProfile",
       required: true,
+      index: true,
     },
 
     classId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Class",
       required: true,
+      index: true,
+    },
+
+    subjectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subject",
+      required: true,
+      index: true,
+    },
+
+    academicYearId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicYear",
+      required: true,
+      index: true,
     },
 
     date: {
       type: Date,
       required: true,
+      index: true,
     },
 
     period: {
@@ -37,8 +54,8 @@ const attendanceRecordSchema = new mongoose.Schema(
     source: {
       type: String,
       required: true,
-      enum: ["MANUAL_CORRECTION", "SYSTEM_OVERRIDE", "BIOMETRIC"],
-      default: "SYSTEM_OVERRIDE",
+      enum: ["MANUAL", "MANUAL_CORRECTION", "SYSTEM_OVERRIDE", "BIOMETRIC"],
+      default: "MANUAL",
     },
 
     status: {
@@ -52,9 +69,17 @@ const attendanceRecordSchema = new mongoose.Schema(
       type: Date,
     },
 
+    // Biometric Architecture Future-Proofing (Nullable until biometric device integration)
     biometricDeviceId: {
       type: String,
       trim: true,
+      default: null,
+    },
+
+    biometricEventId: {
+      type: String,
+      trim: true,
+      default: null,
     },
 
     // Intentionally set to true by both admin-approved correction-requests and leave-driven attendance overrides
@@ -84,10 +109,13 @@ const attendanceRecordSchema = new mongoose.Schema(
   }
 );
 
-// Compound Unique Index: One record per student per period per day
+// Compound Unique Index: Prevent duplicate attendance records for the same student + class + subject + academic year + date + period
 attendanceRecordSchema.index(
   {
     studentId: 1,
+    classId: 1,
+    subjectId: 1,
+    academicYearId: 1,
     date: 1,
     period: 1,
   },
@@ -96,7 +124,12 @@ attendanceRecordSchema.index(
   }
 );
 
-attendanceRecordSchema.index({ classId: 1, date: 1, period: 1 });
+// Query optimization indexes
+attendanceRecordSchema.index({ classId: 1, subjectId: 1, date: 1, period: 1 });
 attendanceRecordSchema.index({ studentId: 1, date: 1 });
+attendanceRecordSchema.index({ studentId: 1, subjectId: 1, date: 1 });
+attendanceRecordSchema.index({ classId: 1, date: 1 });
+attendanceRecordSchema.index({ academicYearId: 1, classId: 1, date: 1 });
+attendanceRecordSchema.index({ markedBy: 1, date: 1 });
 
 module.exports = mongoose.model("AttendanceRecord", attendanceRecordSchema);

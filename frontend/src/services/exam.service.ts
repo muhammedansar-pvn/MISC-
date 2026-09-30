@@ -110,12 +110,90 @@ export const getExamResults = async (params: PaginationParams = {}): Promise<Api
   return response.data;
 };
 
+// --- FACULTY SCOPED SCHEDULES & ROSTER MARKS ---
+export const getFacultyExamSchedules = async (params: any = {}): Promise<ApiResponse<ExamSchedule[]>> => {
+  const response = await apiClient.get<ApiResponse<ExamSchedule[]>>(API_ENDPOINTS.exams.facultySchedules, { params });
+  return response.data;
+};
+
+export interface ExamScheduleRosterResponse {
+  schedule: ExamSchedule;
+  roster: Array<{
+    studentId: string;
+    studentName: string;
+    registrationNumber: string;
+    admissionNumber: string;
+    markEntryId: string | null;
+    marksObtained: number | null;
+    isAbsent: boolean;
+    status: 'NOT_ENTERED' | 'DRAFT' | 'SUBMITTED' | 'VERIFIED' | 'PUBLISHED';
+    remarks?: string;
+  }>;
+}
+
+export const getExamScheduleRoster = async (
+  examScheduleId: string
+): Promise<ApiResponse<ExamScheduleRosterResponse>> => {
+  const response = await apiClient.get<ApiResponse<ExamScheduleRosterResponse>>(
+    API_ENDPOINTS.exams.scheduleRoster(examScheduleId)
+  );
+  return response.data;
+};
+
+export interface SubmitRosterMarksPayload {
+  status?: 'DRAFT' | 'SUBMITTED';
+  marks: Array<{
+    studentId: string;
+    marksObtained: number;
+    isAbsent?: boolean;
+    remarks?: string;
+  }>;
+}
+
+export const submitRosterMarks = async (
+  examScheduleId: string,
+  payload: SubmitRosterMarksPayload
+): Promise<ApiResponse<{ totalProcessed: number; status: string }>> => {
+  const response = await apiClient.post<ApiResponse<any>>(
+    API_ENDPOINTS.exams.submitRosterMarks(examScheduleId),
+    payload
+  );
+  return response.data;
+};
+
+// --- MARK CORRECTION REQUESTS ---
+export const createMarkCorrectionRequest = async (payload: {
+  markEntryId: string;
+  newMarks: number;
+  reason: string;
+}): Promise<ApiResponse<any>> => {
+  const response = await apiClient.post<ApiResponse<any>>(
+    API_ENDPOINTS.exams.markCorrections,
+    payload
+  );
+  return response.data;
+};
+
+export const reviewMarkCorrectionRequest = async (
+  id: string,
+  payload: { status: 'APPROVED' | 'REJECTED'; adminRemarks?: string }
+): Promise<ApiResponse<any>> => {
+  const response = await apiClient.patch<ApiResponse<any>>(
+    API_ENDPOINTS.exams.reviewMarkCorrection(id),
+    payload
+  );
+  return response.data;
+};
+
 export default {
   getExams,
   getExamById,
   createExam,
   updateExam,
   getExamSchedules,
+  getFacultyExamSchedules,
+  getExamScheduleRoster,
+  submitRosterMarks,
   createExamSchedule,
   updateExamSchedule,
   getExamRegistrations,
@@ -124,6 +202,8 @@ export default {
   getMarkEntries,
   submitMarkEntry,
   verifyMarkEntries,
+  createMarkCorrectionRequest,
+  reviewMarkCorrectionRequest,
   generateExamResults,
   getExamResults,
 };

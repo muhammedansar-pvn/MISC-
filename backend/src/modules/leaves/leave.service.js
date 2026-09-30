@@ -76,9 +76,14 @@ const approveLeave = async (leaveId, facultyUserId, reviewRemarks) => {
     throw error;
   }
 
-  // Enforce class-assignment verification
-  const assignedClassIds = (faculty.assignedClasses || []).map((id) => id.toString());
-  if (!student.classId || !assignedClassIds.includes(student.classId.toString())) {
+  // Enforce class-assignment verification via academic-auth service
+  const { isFacultyAssigned } = require("../academics/academic-auth.service");
+  const isAssigned = await isFacultyAssigned({
+    facultyId: faculty._id,
+    classId: student.classId,
+  });
+
+  if (!isAssigned) {
     const error = new Error("Unauthorized: student does not belong to your assigned classes");
     error.statusCode = 403;
     throw error;
@@ -93,6 +98,9 @@ const approveLeave = async (leaveId, facultyUserId, reviewRemarks) => {
 
   // Leave -> Attendance linkage: For each date in dateRange, upsert AttendanceRecord with status=LEAVE across periods 1-7
   const AttendanceRecord = require("../attendance/attendance-record.model");
+  const Timetable = require("../academics/timetable.model");
+
+  const DAYS_OF_WEEK = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
   const startDate = new Date(leave.dateRange.startDate);
   const endDate = new Date(leave.dateRange.endDate);
 
@@ -102,30 +110,53 @@ const approveLeave = async (leaveId, facultyUserId, reviewRemarks) => {
   const bulkOps = [];
   while (cur <= end) {
     const recordDate = new Date(cur);
+    const dayOfWeek = DAYS_OF_WEEK[recordDate.getUTCDay()];
+
+    // Look up timetable entries for this class on this day of week
+    const ttEntries = await Timetable.find({
+      classId: student.classId,
+      dayOfWeek,
+      isDeleted: { $ne: true },
+    }).lean();
+
+    const ttMap = new Map();
+    ttEntries.forEach((tt) => ttMap.set(tt.periodNumber, tt));
+
     for (let period = 1; period <= 7; period++) {
-      bulkOps.push({
-        updateOne: {
-          filter: {
-            studentId: leave.studentId,
-            date: recordDate,
-            period,
-          },
-          update: {
-            $set: {
+      const tt = ttMap.get(period);
+      const subjectId = tt?.subjectId;
+      const academicYearId = tt?.academicYearId || student.academicYearId;
+
+      if (subjectId && academicYearId) {
+        bulkOps.push({
+          updateOne: {
+            filter: {
               studentId: leave.studentId,
               classId: student.classId,
+              subjectId,
+              academicYearId,
               date: recordDate,
               period,
-              sessionName: `Period ${period}`,
-              source: "MANUAL_CORRECTION",
-              status: "LEAVE",
-              isCorrected: true,
-              remarks: `Approved leave: ${leave.reason}`,
             },
+            update: {
+              $set: {
+                studentId: leave.studentId,
+                classId: student.classId,
+                subjectId,
+                academicYearId,
+                date: recordDate,
+                period,
+                sessionName: `Period ${period}`,
+                source: "MANUAL_CORRECTION",
+                status: "LEAVE",
+                isCorrected: true,
+                remarks: `Approved leave: ${leave.reason}`,
+              },
+            },
+            upsert: true,
           },
-          upsert: true,
-        },
-      });
+        });
+      }
     }
     cur.setUTCDate(cur.getUTCDate() + 1);
   }

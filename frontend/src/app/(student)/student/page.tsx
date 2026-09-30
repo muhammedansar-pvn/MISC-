@@ -23,6 +23,7 @@ import {
   Clock,
   Sparkles,
   MapPin,
+  CalendarCheck,
 } from 'lucide-react';
 
 export default function StudentDashboardPage() {
@@ -129,6 +130,47 @@ export default function StudentDashboardPage() {
     }
   };
 
+  const todayAtt = (profile as any)?.todayAttendance;
+  const attendanceStatus = todayAtt?.status || 'NOT_MARKED';
+
+  const attendanceStyles: Record<string, { label: string; badge: string; iconBg: string; iconColor: string }> = {
+    PRESENT: {
+      label: 'Present',
+      badge: 'bg-emerald-100 text-emerald-800 border border-emerald-200',
+      iconBg: 'bg-emerald-50 text-emerald-700',
+      iconColor: 'text-emerald-700',
+    },
+    LATE: {
+      label: 'Late',
+      badge: 'bg-amber-100 text-amber-800 border border-amber-200',
+      iconBg: 'bg-amber-50 text-amber-700',
+      iconColor: 'text-amber-700',
+    },
+    LEAVE: {
+      label: 'On Leave',
+      badge: 'bg-blue-100 text-blue-800 border border-blue-200',
+      iconBg: 'bg-blue-50 text-blue-700',
+      iconColor: 'text-blue-700',
+    },
+    ABSENT: {
+      label: 'Absent',
+      badge: 'bg-rose-100 text-rose-800 border border-rose-200',
+      iconBg: 'bg-rose-50 text-rose-700',
+      iconColor: 'text-rose-700',
+    },
+    NOT_MARKED: {
+      label: 'Not Yet Marked',
+      badge: 'bg-slate-100 text-slate-700 border border-slate-200',
+      iconBg: 'bg-slate-100 text-slate-600',
+      iconColor: 'text-slate-600',
+    },
+  };
+
+  const currentAttStyle = attendanceStyles[attendanceStatus] || attendanceStyles.NOT_MARKED;
+  const currentAttSubtitle = todayAtt?.totalMarked > 0
+    ? `${todayAtt.presentCount + todayAtt.lateCount} of ${todayAtt.totalMarked} periods attended`
+    : 'No periods marked yet today';
+
   return (
     <div className="space-y-8">
       {/* Student Welcome Banner */}
@@ -231,7 +273,7 @@ export default function StudentDashboardPage() {
       )}
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5">
         <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Class</span>
@@ -246,6 +288,28 @@ export default function StudentDashboardPage() {
             Admission Year: {profile?.admissionYear || 'Current'}
           </p>
         </div>
+
+        {/* Today's Attendance Card Widget */}
+        <Link
+          href="/student/attendance"
+          className="bg-white p-5 rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A] shadow-2xs space-y-2 transition-all group block"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today&apos;s Attendance</span>
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${currentAttStyle.iconBg}`}>
+              <CalendarCheck className={`w-4 h-4 ${currentAttStyle.iconColor}`} />
+            </div>
+          </div>
+          <div className="flex items-center space-x-2 pt-0.5">
+            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${currentAttStyle.badge}`}>
+              {currentAttStyle.label}
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 group-hover:text-[#2F7C7A] transition-colors flex items-center justify-between">
+            <span className="truncate">{currentAttSubtitle}</span>
+            <ArrowRight className="w-3.5 h-3.5 ml-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </p>
+        </Link>
 
         <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
