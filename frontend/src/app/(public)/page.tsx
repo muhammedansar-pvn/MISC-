@@ -5,9 +5,11 @@ import AcademicPillars from '@/components/home/AcademicPillars';
 import InstitutionalHighlightsSection from '@/components/home/InstitutionalHighlightsSection';
 import FeaturedInstitutionSection from '@/components/home/FeaturedInstitutionSection';
 import CoreServicesSection from '@/components/home/CoreServicesSection';
+import HomeStatsBand from '@/components/home/HomeStatsBand';
 import ImportantResourcesSection from '@/components/home/ImportantResourcesSection';
 import LatestUpdatesSection from '@/components/home/LatestUpdatesSection';
 import FinalCTA from '@/components/home/FinalCTA';
+import InstitutionalLogoStrip from '@/components/home/InstitutionalLogoStrip';
 
 export const metadata: Metadata = {
   title: 'MISC - Markaz Integrated Studies Council | Jamia Markaz',
@@ -17,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="w-full bg-[#F7F7F3] overflow-x-hidden">
+    <div className="w-full bg-misc-page overflow-x-hidden">
       {/* 1. CINEMATIC FULL-BLEED HERO & MINIMAL STAT RAIL */}
       <HeroSection />
 
@@ -33,8 +35,11 @@ export default function HomePage() {
       {/* 5. FEATURED INSTITUTION (04 JAMIA MARKAZ KARANTHUR) */}
       <FeaturedInstitutionSection />
 
-      {/* 6. PROGRAMMES SHOWCASE (05 ACADEMIC STREAMS - HORIZONTAL ROWS) */}
+      {/* 6. PROGRAMMES SHOWCASE */}
       <CoreServicesSection />
+
+      {/* SECOND APPROVED MISC STATISTICS BAND */}
+      <HomeStatsBand />
 
       {/* 7. ACADEMIC STANDARDS (06 BOARD GOVERNANCE) */}
       <ImportantResourcesSection />
@@ -44,6 +49,9 @@ export default function HomePage() {
 
       {/* 9. FINAL CLOSING CTA */}
       <FinalCTA />
+
+      {/* EXISTING MARKAZ IDENTITY AND ACADEMIC NETWORK */}
+      <InstitutionalLogoStrip />
     </div>
   );
 }

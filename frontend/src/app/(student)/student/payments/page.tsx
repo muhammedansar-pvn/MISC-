@@ -77,13 +77,13 @@ export default function StudentPaymentsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Payments</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Fee & Payment History
           </h1>
         </div>
@@ -96,17 +96,17 @@ export default function StudentPaymentsPage() {
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Total Amount Settled
           </span>
-          <p className="text-2xl font-bold font-mono text-[#132238]">
+          <p className="text-2xl font-bold font-mono text-[#171D19]">
             ₹{totalPaid.toLocaleString('en-IN')}
           </p>
           <p className="text-xs text-slate-400">Verified transaction receipts</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Cleared Transactions
           </span>
@@ -114,11 +114,11 @@ export default function StudentPaymentsPage() {
           <p className="text-xs text-slate-400">Successfully processed payments</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Total Records
           </span>
-          <p className="text-2xl font-bold text-[#2F7C7A]">{payments.length}</p>
+          <p className="text-2xl font-bold text-[#23804A]">{payments.length}</p>
           <p className="text-xs text-slate-400">All registered ledger entries</p>
         </div>
       </div>
@@ -131,13 +131,13 @@ export default function StudentPaymentsPage() {
           placeholder="Filter by transaction ID, fee type, or status..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#2F7C7A]"
+          className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#23804A]"
         />
       </div>
 
       {/* Transactions Table */}
       {filteredPayments.length === 0 ? (
-        <div className="p-12 text-center bg-white rounded-xl border border-[#E2E8E0] space-y-3">
+        <div className="p-12 text-center bg-white rounded-xl border border-[#E3EAE5] space-y-3">
           <CreditCard className="w-10 h-10 text-slate-300 mx-auto" />
           <p className="text-sm font-bold text-slate-700">No payment records found</p>
           <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -145,10 +145,10 @@ export default function StudentPaymentsPage() {
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-x-auto">
+        <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-[#E2E8E0] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+              <tr className="bg-slate-50 border-b border-[#E3EAE5] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                 <th className="p-4">Transaction ID</th>
                 <th className="p-4">Payment Purpose</th>
                 <th className="p-4">Method</th>
@@ -174,7 +174,7 @@ export default function StudentPaymentsPage() {
                     <td className="p-4 text-slate-600 font-mono text-[11px]">
                       {pay.paymentMethod || 'Online'}
                     </td>
-                    <td className="p-4 font-mono font-bold text-[#132238] text-sm">
+                    <td className="p-4 font-mono font-bold text-[#171D19] text-sm">
                       ₹{pay.amount?.toLocaleString('en-IN') || '0'}
                     </td>
                     <td className="p-4">

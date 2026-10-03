@@ -54,8 +54,8 @@ export default function AdminUserDetailsPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <div className="w-10 h-10 border-4 border-[#2F7C7A] border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm font-semibold text-[#132238]">Loading user profile...</p>
+        <div className="w-10 h-10 border-4 border-[#23804A] border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm font-semibold text-[#171D19]">Loading user profile...</p>
       </div>
     );
   }
@@ -75,7 +75,7 @@ export default function AdminUserDetailsPage() {
           </button>
           <button
             onClick={fetchUser}
-            className="px-4 py-2 bg-[#2F7C7A] hover:bg-[#256361] text-white font-bold text-xs rounded-xl uppercase tracking-wider inline-flex items-center cursor-pointer"
+            className="px-4 py-2 bg-[#23804A] hover:bg-[#1B6F41] text-white font-bold text-xs rounded-xl uppercase tracking-wider inline-flex items-center cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5 mr-1.5" /> Retry
           </button>
@@ -90,17 +90,17 @@ export default function AdminUserDetailsPage() {
       <div>
         <Link
           href="/admin/users"
-          className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-[#2F7C7A] hover:underline mb-4"
+          className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-[#23804A] hover:underline mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Users List
         </Link>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-2xl bg-[#2F7C7A]/10 text-[#2F7C7A] flex items-center justify-center font-serif font-bold text-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-[#23804A]/10 text-[#23804A] flex items-center justify-center font-serif font-bold text-2xl">
               {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[#132238]">{user.name || 'User Profile'}</h1>
+              <h1 className="text-2xl font-bold text-[#171D19]">{user.name || 'User Profile'}</h1>
               <p className="text-xs text-slate-500 mt-0.5">
                 Username: <span className="font-mono text-slate-800">@{user.username || 'unassigned'}</span>
               </p>
@@ -114,49 +114,49 @@ export default function AdminUserDetailsPage() {
       </div>
 
       {/* Main Details Card */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs p-6 sm:p-8 space-y-6">
-        <h2 className="text-base font-bold text-[#132238] border-b border-[#E2E8E0] pb-3">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs p-6 sm:p-8 space-y-6">
+        <h2 className="text-base font-bold text-[#171D19] border-b border-[#E3EAE5] pb-3">
           Account Specifications
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
           <div className="flex items-start space-x-3.5 p-4 bg-slate-50 rounded-xl border border-slate-100">
-            <Mail className="w-5 h-5 text-[#2F7C7A] mt-0.5 flex-shrink-0" />
+            <Mail className="w-5 h-5 text-[#23804A] mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Email Address</p>
-              <p className="font-semibold text-[#132238] mt-0.5">{user.email || 'N/A'}</p>
+              <p className="font-semibold text-[#171D19] mt-0.5">{user.email || 'N/A'}</p>
             </div>
           </div>
 
           <div className="flex items-start space-x-3.5 p-4 bg-slate-50 rounded-xl border border-slate-100">
-            <Hash className="w-5 h-5 text-[#2F7C7A] mt-0.5 flex-shrink-0" />
+            <Hash className="w-5 h-5 text-[#23804A] mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">System Username</p>
-              <p className="font-mono font-semibold text-[#132238] mt-0.5">{user.username || 'N/A'}</p>
+              <p className="font-mono font-semibold text-[#171D19] mt-0.5">{user.username || 'N/A'}</p>
             </div>
           </div>
 
           <div className="flex items-start space-x-3.5 p-4 bg-slate-50 rounded-xl border border-slate-100">
-            <Phone className="w-5 h-5 text-[#2F7C7A] mt-0.5 flex-shrink-0" />
+            <Phone className="w-5 h-5 text-[#23804A] mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Mobile Phone</p>
-              <p className="font-semibold text-[#132238] mt-0.5">{user.mobile || 'Not specified'}</p>
+              <p className="font-semibold text-[#171D19] mt-0.5">{user.mobile || 'Not specified'}</p>
             </div>
           </div>
 
           <div className="flex items-start space-x-3.5 p-4 bg-slate-50 rounded-xl border border-slate-100">
-            <Building className="w-5 h-5 text-[#2F7C7A] mt-0.5 flex-shrink-0" />
+            <Building className="w-5 h-5 text-[#23804A] mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Department / Office</p>
-              <p className="font-semibold text-[#132238] mt-0.5">{user.department || 'Not assigned'}</p>
+              <p className="font-semibold text-[#171D19] mt-0.5">{user.department || 'Not assigned'}</p>
             </div>
           </div>
 
           <div className="flex items-start space-x-3.5 p-4 bg-slate-50 rounded-xl border border-slate-100">
-            <Calendar className="w-5 h-5 text-[#2F7C7A] mt-0.5 flex-shrink-0" />
+            <Calendar className="w-5 h-5 text-[#23804A] mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Created On</p>
-              <p className="font-semibold text-[#132238] mt-0.5">
+              <p className="font-semibold text-[#171D19] mt-0.5">
                 {new Date(user.createdAt).toLocaleDateString('en-US', {
                   weekday: 'short',
                   year: 'numeric',

@@ -2,6 +2,7 @@ const StudentDevelopmentScore = require("./student-development-score.model");
 const StudentProfile = require("../students/student.model");
 const FacultyProfile = require("../faculty/faculty.model");
 const ParentProfile = require("../parents/parent.model");
+const { isFacultyAssigned } = require("../academics/academic-auth.service");
 
 /**
  * Records or updates a student's development score for an academic term.
@@ -39,10 +40,14 @@ const recordDevelopmentScore = async (scoreData, reqUser) => {
 
     evaluatorProfileId = faculty._id;
 
-    const isClassTeacher =
+    const isRelationalAssigned = student.classId
+      ? await isFacultyAssigned({ facultyId: faculty._id, classId: student.classId })
+      : false;
+    const isLegacyAssigned =
       student.classId &&
       faculty.assignedClasses &&
       faculty.assignedClasses.some((cId) => cId.toString() === student.classId.toString());
+    const isClassTeacher = isRelationalAssigned || isLegacyAssigned;
 
     const isMentor =
       student.mentorId && student.mentorId.toString() === faculty._id.toString();
@@ -158,10 +163,14 @@ const getStudentDevelopmentScores = async (studentId, reqUser) => {
       err.statusCode = 404;
       throw err;
     }
-    const isClassTeacher =
+    const isRelationalAssigned = student.classId
+      ? await isFacultyAssigned({ facultyId: faculty._id, classId: student.classId })
+      : false;
+    const isLegacyAssigned =
       student.classId &&
       faculty.assignedClasses &&
       faculty.assignedClasses.some((cId) => cId.toString() === student.classId.toString());
+    const isClassTeacher = isRelationalAssigned || isLegacyAssigned;
     const isMentor =
       student.mentorId && student.mentorId.toString() === faculty._id.toString();
 

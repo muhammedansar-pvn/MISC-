@@ -20,13 +20,17 @@ export interface MentorAcademicYear {
 
 export interface MentorAssignment {
   _id: string;
-  mentorId: MentorFacultyProfile;
-  studentId: string;
-  academicYearId: MentorAcademicYear;
-  // NOTE: monitoringCategory & notes are internal faculty fields returned by the API
-  // but MUST BE EXCLUDED from any student-facing UI rendering.
+  mentorId: MentorFacultyProfile | any;
+  studentId: string | any;
+  academicYearId: MentorAcademicYear | any;
   monitoringCategory?: string;
   notes?: string;
+  notesHistory?: Array<{
+    note: string;
+    category?: string;
+    createdAt?: string;
+    createdBy?: any;
+  }>;
   createdAt: string;
   updatedAt: string;
 }

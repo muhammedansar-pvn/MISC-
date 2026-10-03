@@ -777,6 +777,11 @@ const markClassAttendance = async (payload, requestingUser) => {
   const Leave = require("../leaves/leave.model");
   const { isFacultyAssigned } = require("../academics/academic-auth.service");
 
+  if (requestingUser?.role === "FACULTY") {
+    const { assertFacultyAvailableForAssignment } = require("../faculty/faculty.service");
+    await assertFacultyAvailableForAssignment(requestingUser.userId || requestingUser.id || requestingUser.facultyId);
+  }
+
   if (!classId || !mongoose.Types.ObjectId.isValid(classId)) {
     const error = new Error("Invalid classId");
     error.statusCode = 400;

@@ -1,5 +1,6 @@
 const FacultyAssignment = require("./faculty-assignment.model");
 const FacultyProfile = require("../faculty/faculty.model");
+const { assertFacultyAvailableForAssignment } = require("../faculty/faculty.service");
 const AcademicYear = require("./academic-year.model");
 const Class = require("./class.model");
 const Subject = require("./subject.model");
@@ -19,7 +20,9 @@ const createAssignment = async ({
   assignedBy = null,
 }) => {
   // 1. Verify existence of faculty
-  const faculty = await FacultyProfile.findById(facultyId);
+  const faculty = status === "ACTIVE"
+    ? await assertFacultyAvailableForAssignment(facultyId)
+    : await FacultyProfile.findById(facultyId);
   if (!faculty) {
     const error = new Error("Faculty profile not found");
     error.statusCode = 404;

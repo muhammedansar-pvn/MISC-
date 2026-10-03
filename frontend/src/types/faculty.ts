@@ -18,7 +18,27 @@ export interface FacultyProfile {
   status?: string;
   createdAt?: string;
   updatedAt?: string;
+  currentAssignments?: FacultyCurrentAssignment[];
+  academicActivity?: FacultyAcademicActivity;
   [key: string]: any;
+}
+
+export interface FacultyCurrentAssignment {
+  _id: string;
+  classId?: { _id: string; name?: string; code?: string; department?: string };
+  subjectId?: { _id: string; name?: string; subjectName?: string; code?: string; subjectCode?: string; category?: string };
+  academicYearId?: { _id: string; yearName?: string; yearCode?: string };
+}
+
+export interface FacultyAcademicActivity {
+  assignedClassesCount: number;
+  assignedSubjectsCount: number;
+  activeAssignmentsCount: number;
+  timetableEntriesCount: number;
+  assignmentsCreatedCount: number;
+  attendanceRecordsCount: number;
+  marksEvaluatedCount: number;
+  menteesCount: number;
 }
 
 export interface FacultyPayload {

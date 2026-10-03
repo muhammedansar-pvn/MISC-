@@ -21,19 +21,19 @@ const streams = [
 
 export const EducationalFramework = () => {
   return (
-    <section className="relative bg-[#F7F8F5] py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-[#E2E8E0]">
+    <section className="relative bg-misc-page py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-misc-border">
       <div className="relative misc-container z-10">
         <div className="max-w-3xl space-y-4 mb-12">
           <div className="flex items-center space-x-3">
-            <span className="w-8 h-[2px] bg-[#2F7C7A]" />
-            <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#2F7C7A] uppercase">
+            <span className="w-8 h-[2px] bg-misc-primary" />
+            <span className="text-xs sm:text-sm font-semibold tracking-widest text-misc-primary uppercase">
               EDUCATIONAL MODEL
             </span>
           </div>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#132238]">
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-misc-text">
             Integrated Educational Framework
           </h2>
-          <p className="text-base text-[#475569] leading-relaxed font-normal">
+          <p className="text-base text-misc-secondary leading-relaxed font-normal">
             MISC harmonizes traditional Islamic learning with contemporary university education under a single, cohesive academic structure.
           </p>
         </div>
@@ -44,15 +44,15 @@ export const EducationalFramework = () => {
             return (
               <div
                 key={idx}
-                className="bg-white rounded-md border border-[#E2E8E0] p-8 shadow-2xs space-y-4"
+                className="bg-white rounded-md border border-misc-border p-8 shadow-2xs space-y-4"
               >
-                <div className="w-12 h-12 rounded bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center">
+                <div className="w-12 h-12 rounded bg-misc-soft-blue text-misc-primary flex items-center justify-center">
                   <Icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-xl font-bold text-[#132238]">
+                <h3 className="font-serif text-xl font-bold text-misc-text">
                   {st.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-[#475569] leading-relaxed font-normal">
+                <p className="text-xs sm:text-sm text-misc-secondary leading-relaxed font-normal">
                   {st.description}
                 </p>
               </div>

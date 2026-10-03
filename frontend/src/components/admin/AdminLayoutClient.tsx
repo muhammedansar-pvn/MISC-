@@ -99,8 +99,8 @@ function AdminSidebarNavLinks({
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                   isActive
-                    ? 'bg-[#2F7C7A] text-white font-bold shadow-xs'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-[#132238]'
+                    ? 'bg-[#EAF2EC] text-[#23804A] border border-[#D8E5DA] font-bold'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-[#171D19]'
                 }`}
                 title={sidebarCollapsed ? item.label : undefined}
               >
@@ -207,7 +207,7 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
 
   return (
     <ProtectedRoute allowedRoles={['ADMIN']}>
-      <div className="min-h-screen bg-[#F7F8F5] flex flex-col md:flex-row text-slate-800 antialiased font-sans max-w-full overflow-x-hidden">
+      <div className="misc-portal-theme min-h-screen bg-[#FBFCFB] flex flex-col md:flex-row text-slate-800 antialiased font-sans max-w-full overflow-x-hidden">
         {/* Mobile Drawer Overlay */}
         {sidebarOpen && (
           <div
@@ -218,19 +218,19 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
 
         {/* Left Sidebar */}
         <aside
-          className={`fixed md:static inset-y-0 left-0 z-50 bg-white border-r border-[#E2E8E0] text-slate-700 flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out shadow-xs ${
+          className={`fixed md:static inset-y-0 left-0 z-50 bg-white border-r border-[#E3EAE5] text-slate-700 flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out shadow-xs ${
             sidebarCollapsed ? 'w-20' : 'w-56 lg:w-60'
           } ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
         >
           {/* Sidebar Header: Logo & Branding */}
-          <div className="h-20 flex items-center justify-between px-5 border-b border-[#E2E8E0] bg-white flex-shrink-0">
+          <div className="h-20 flex items-center justify-between px-5 border-b border-[#E3EAE5] bg-white flex-shrink-0">
             <div className="flex items-center space-x-3 overflow-hidden min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-[#2F7C7A] text-white flex items-center justify-center font-bold text-lg shadow-xs flex-shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-[#EAF2EC] text-[#23804A] border border-[#D8E5DA] flex items-center justify-center font-bold text-lg flex-shrink-0">
                 M
               </div>
               {!sidebarCollapsed && (
                 <div className="min-w-0">
-                  <h1 className="font-bold text-sm text-[#132238] leading-tight truncate">
+                  <h1 className="font-bold text-sm text-[#171D19] leading-tight truncate">
                     MISC Admin
                   </h1>
                   <p className="text-[10px] text-slate-500 font-semibold tracking-tight truncate">
@@ -258,15 +258,15 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
           </Suspense>
 
           {/* Sidebar Footer User Info */}
-          <div className="p-3.5 border-t border-[#E2E8E0] bg-[#F7F8F5] flex-shrink-0">
+          <div className="p-3.5 border-t border-[#E3EAE5] bg-[#FBFCFB] flex-shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-[#2F7C7A]/15 text-[#2F7C7A] flex items-center justify-center font-bold text-xs flex-shrink-0 border border-[#2F7C7A]/20">
+                <div className="w-8 h-8 rounded-full bg-[#23804A]/15 text-[#23804A] flex items-center justify-center font-bold text-xs flex-shrink-0 border border-[#23804A]/20">
                   {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
                 </div>
                 {!sidebarCollapsed && (
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-[#132238] truncate">{user?.name || user?.username || 'Super Admin'}</p>
+                    <p className="text-xs font-bold text-[#171D19] truncate">{user?.name || user?.username || 'Super Admin'}</p>
                     <p className="text-[10px] text-slate-500 font-semibold truncate">{user?.role || 'Administrator'}</p>
                   </div>
                 )}
@@ -287,7 +287,7 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
         {/* Main Right Content Area */}
         <div className="flex-1 flex flex-col min-w-0 w-full max-w-full">
           {/* Top Navbar */}
-          <header className="h-20 bg-white border-b border-[#E2E8E0] px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-2xs w-full min-w-0">
+          <header className="h-20 bg-white border-b border-[#E3EAE5] px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-2xs w-full min-w-0">
             {/* Left: Menu Toggle & Search Bar */}
             <div className="flex items-center space-x-3 flex-1 max-w-md min-w-0">
               <button
@@ -312,7 +312,7 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
                 <input
                   type="text"
                   placeholder="Search Application ID, Name, Phone..."
-                  className="w-full pl-9 pr-16 py-2 rounded-xl border border-[#E2E8E0] bg-[#F7F8F5] text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:bg-white transition-all"
+                  className="w-full pl-9 pr-16 py-2 rounded-xl border border-[#E3EAE5] bg-[#FBFCFB] text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#23804A] focus:bg-white transition-all"
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                   <span className="text-[10px] font-bold text-slate-400 border border-slate-200 px-1.5 py-0.5 rounded bg-white">
@@ -325,11 +325,11 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
             {/* Right: Real-time Date/Clock, Notifications & User Dropdown */}
             <div className="flex items-center space-x-3 flex-shrink-0">
               {/* Live Clock & Date Badge */}
-              <div className="hidden lg:flex items-center space-x-2 bg-[#F7F8F5] px-3.5 py-1.5 rounded-xl border border-[#E2E8E0] text-xs font-semibold text-slate-700" suppressHydrationWarning>
-                <ClockIcon className="w-3.5 h-3.5 text-[#2F7C7A]" />
+              <div className="hidden lg:flex items-center space-x-2 bg-[#FBFCFB] px-3.5 py-1.5 rounded-xl border border-[#E3EAE5] text-xs font-semibold text-slate-700" suppressHydrationWarning>
+                <ClockIcon className="w-3.5 h-3.5 text-[#23804A]" />
                 <span>{formattedDate}</span>
                 <span className="text-slate-300">|</span>
-                <span className="font-mono font-bold text-[#132238]">{formattedTime}</span>
+                <span className="font-mono font-bold text-[#171D19]">{formattedTime}</span>
               </div>
 
               {/* Notification Bell */}
@@ -346,11 +346,11 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center space-x-2.5 p-1 rounded-xl hover:bg-slate-100 transition-all focus:outline-none cursor-pointer"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#2F7C7A] text-white flex items-center justify-center font-bold text-xs shadow-xs flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-[#23804A] text-white flex items-center justify-center font-bold text-xs shadow-xs flex-shrink-0">
                     {user?.name ? user.name.charAt(0).toUpperCase() : <UserIcon className="w-4 h-4" />}
                   </div>
                   <div className="text-left hidden sm:block">
-                    <span className="text-xs font-bold text-[#132238] block leading-tight">
+                    <span className="text-xs font-bold text-[#171D19] block leading-tight">
                       {user?.name || user?.username || 'Super Admin'}
                     </span>
                     <span className="text-[10px] text-slate-500 font-semibold block leading-tight">
@@ -361,9 +361,9 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-[#E2E8E0] py-2 z-50">
+                  <div className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-[#E3EAE5] py-2 z-50">
                     <div className="px-4 py-2 border-b border-slate-100">
-                      <p className="text-xs font-bold text-[#132238]">{user?.name || user?.username}</p>
+                      <p className="text-xs font-bold text-[#171D19]">{user?.name || user?.username}</p>
                       <p className="text-[10px] text-slate-500 truncate">{user?.email}</p>
                     </div>
                     <button

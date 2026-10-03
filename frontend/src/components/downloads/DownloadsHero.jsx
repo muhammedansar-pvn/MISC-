@@ -13,7 +13,7 @@ export const DownloadsHero = () => {
   };
 
   return (
-    <section className="relative bg-[#132238] text-white py-16 sm:py-24 border-b border-[#2F7C7A]/30 overflow-hidden min-h-[440px] flex items-center">
+    <section className="relative bg-misc-navy text-white py-16 sm:py-24 border-b border-misc-primary/30 overflow-hidden min-h-[440px] flex items-center">
       {/* Background aerial image with dark overlay */}
       <div className="absolute inset-0 z-0">
         <img
@@ -21,7 +21,7 @@ export const DownloadsHero = () => {
           alt="Jamia Markaz Aerial Campus View"
           className="w-full h-full object-cover object-center opacity-30 scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#132238] via-[#132238]/90 to-[#132238]/70" />
+        <div className="absolute inset-0 bg-gradient-to-r from-misc-navy via-misc-navy/90 to-misc-navy/70" />
       </div>
 
       <div className="misc-container relative z-10">
@@ -30,15 +30,15 @@ export const DownloadsHero = () => {
           {/* Left: Title & Description */}
           <div className="lg:col-span-8 space-y-5">
             <div className="flex items-center space-x-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#2F7C7A]" />
-              <span className="text-xs font-semibold tracking-widest text-[#E6F2F1] uppercase">
+              <span className="w-2.5 h-2.5 rounded-full bg-misc-primary" />
+              <span className="text-xs font-semibold tracking-widest text-misc-dark-muted uppercase">
                 RESOURCE CENTRE
               </span>
             </div>
 
             <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
               Resources & <br className="hidden sm:inline" />
-              <span className="text-[#2F7C7A]">Academic Documents</span>
+              <span className="text-misc-primary">Academic Documents</span>
             </h1>
 
             <p className="text-slate-300 text-base sm:text-lg font-normal leading-relaxed max-w-2xl">
@@ -61,12 +61,12 @@ export const DownloadsHero = () => {
           {/* Right: Institutional Brand Quote Card */}
           <div className="lg:col-span-4 hidden lg:flex justify-end">
             <div className="bg-white/10 backdrop-blur-md border border-white/15 rounded-xl p-8 max-w-xs text-right space-y-3">
-              <span className="text-3xl font-serif text-[#2F7C7A] block leading-none">“</span>
+              <span className="text-3xl font-serif text-misc-primary block leading-none">“</span>
               <p className="font-serif text-xl italic font-semibold text-white leading-snug">
                 Knowledge Organizes. <br />
                 Institutions Thrive.
               </p>
-              <span className="text-xs uppercase font-bold tracking-widest text-[#2F7C7A] block">
+              <span className="text-xs uppercase font-bold tracking-widest text-misc-primary block">
                 — MISC SECRETARIAT
               </span>
             </div>

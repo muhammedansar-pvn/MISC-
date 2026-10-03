@@ -436,7 +436,7 @@ export default function AdminStudentsPage() {
   return (
     <div className="space-y-6">
       {/* 1. Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
             <span>Admin</span>
@@ -446,8 +446,8 @@ export default function AdminStudentsPage() {
             <span className="text-slate-900 font-semibold">Students</span>
           </div>
           <div className="flex items-center space-x-3">
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#132238]">Students</h1>
-            <span className="px-2.5 py-0.5 text-xs font-bold bg-[#E6F2F1] text-[#2F7C7A] rounded-full border border-teal-100">
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#171D19]">Students</h1>
+            <span className="px-2.5 py-0.5 text-xs font-bold bg-[#EAF2EC] text-[#23804A] rounded-full border border-green-100">
               {students.length} Enrolled
             </span>
           </div>
@@ -457,14 +457,14 @@ export default function AdminStudentsPage() {
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="inline-flex items-center justify-center px-4 py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] transition-colors cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center justify-center px-4 py-2.5 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] transition-colors cursor-pointer shadow-xs shrink-0 self-start sm:self-auto"
         >
           <Plus className="w-4 h-4 mr-2" /> Add Student
         </button>
       </div>
 
       {/* 2. Search & Filter Toolbar */}
-      <div className="bg-white p-4 rounded-2xl border border-[#E2E8E0] shadow-xs space-y-3">
+      <div className="bg-white p-4 rounded-2xl border border-[#E3EAE5] shadow-xs space-y-3">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           {/* Search bar */}
           <div className="relative flex-1">
@@ -474,7 +474,7 @@ export default function AdminStudentsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by student name, email, or registration number..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#E2E8E0] text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] bg-slate-50/50 focus:bg-white transition-all"
+              className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#E3EAE5] text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#23804A] bg-slate-50/50 focus:bg-white transition-all"
             />
           </div>
 
@@ -485,7 +485,7 @@ export default function AdminStudentsPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs font-medium border border-[#E2E8E0] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white text-slate-700 cursor-pointer"
+                className="w-full px-3 py-2 text-xs font-medium border border-[#E3EAE5] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white text-slate-700 cursor-pointer"
               >
                 <option value="">All Statuses</option>
                 <option value="ACTIVE">Active</option>
@@ -499,7 +499,7 @@ export default function AdminStudentsPage() {
               <select
                 value={classFilter}
                 onChange={(e) => setClassFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs font-medium border border-[#E2E8E0] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white text-slate-700 cursor-pointer"
+                className="w-full px-3 py-2 text-xs font-medium border border-[#E3EAE5] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white text-slate-700 cursor-pointer"
               >
                 <option value="">All Classes</option>
                 {classesList.map((cls) => (
@@ -516,7 +516,7 @@ export default function AdminStudentsPage() {
                 <select
                   value={institutionFilter}
                   onChange={(e) => setInstitutionFilter(e.target.value)}
-                  className="w-full px-3 py-2 text-xs font-medium border border-[#E2E8E0] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white text-slate-700 cursor-pointer"
+                  className="w-full px-3 py-2 text-xs font-medium border border-[#E3EAE5] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white text-slate-700 cursor-pointer"
                 >
                   <option value="">All Campuses</option>
                   {institutions.map((inst) => (
@@ -547,7 +547,7 @@ export default function AdminStudentsPage() {
             <strong className="text-slate-800">{students.length}</strong> students
           </span>
           {hasActiveFilters && (
-            <span className="text-[11px] text-[#2F7C7A] bg-teal-50 px-2.5 py-0.5 rounded-full font-medium border border-teal-100">
+            <span className="text-[11px] text-[#23804A] bg-green-50 px-2.5 py-0.5 rounded-full font-medium border border-green-100">
               Filters applied
             </span>
           )}
@@ -556,9 +556,9 @@ export default function AdminStudentsPage() {
 
       {/* Bulk Action Bar (Visible when students are selected) */}
       {selectedStudentIds.length > 0 && (
-        <div className="flex items-center justify-between p-3.5 bg-[#132238] text-white rounded-2xl shadow-md animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="flex items-center justify-between p-3.5 bg-[#171D19] text-white rounded-2xl shadow-md animate-in fade-in slide-in-from-top-2 duration-150">
           <div className="flex items-center space-x-3 text-xs">
-            <span className="font-bold bg-[#2F7C7A] text-white px-2.5 py-1 rounded-md">
+            <span className="font-bold bg-[#23804A] text-white px-2.5 py-1 rounded-md">
               {selectedStudentIds.length} Selected
             </span>
             <span className="text-slate-300 hidden sm:inline">
@@ -574,7 +574,7 @@ export default function AdminStudentsPage() {
                 setBulkAssignError('');
                 setTargetClassId(classesList[0]?._id || '');
               }}
-              className="px-3.5 py-1.5 bg-[#2F7C7A] hover:bg-[#286b69] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-1.5 bg-[#23804A] hover:bg-[#1B6F41] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
             >
               <BookOpen className="w-3.5 h-3.5" />
               <span>Assign to Class</span>
@@ -591,7 +591,7 @@ export default function AdminStudentsPage() {
       )}
 
       {/* 3. Students Table Card */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs overflow-hidden">
         {loading ? (
           /* Loading Skeleton */
           <div className="p-6 space-y-4">
@@ -627,7 +627,7 @@ export default function AdminStudentsPage() {
             </div>
             <button
               onClick={fetchData}
-              className="inline-flex items-center px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center px-4 py-2 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] transition-colors cursor-pointer shadow-xs"
             >
               <RefreshCw className="w-4 h-4 mr-2" /> Retry Connection
             </button>
@@ -638,7 +638,7 @@ export default function AdminStudentsPage() {
             <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
               <GraduationCap className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-[#132238]">No student profiles found</h3>
+            <h3 className="text-base font-bold text-[#171D19]">No student profiles found</h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
               {hasActiveFilters
                 ? 'No students match your selected search query and filter combination. Try clearing your filters.'
@@ -654,7 +654,7 @@ export default function AdminStudentsPage() {
             ) : (
               <button
                 onClick={() => handleOpenModal()}
-                className="inline-flex items-center px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] transition-colors cursor-pointer shadow-xs"
+                className="inline-flex items-center px-4 py-2 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] transition-colors cursor-pointer shadow-xs"
               >
                 <Plus className="w-4 h-4 mr-2" /> Add First Student
               </button>
@@ -664,7 +664,7 @@ export default function AdminStudentsPage() {
           /* Populated Table */
           <div className="overflow-x-auto min-h-[300px]">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E2E8E0]">
+              <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E3EAE5]">
                 <tr>
                   <th className="w-10 px-4 py-3.5 text-center">
                     <input
@@ -677,7 +677,7 @@ export default function AdminStudentsPage() {
                           setSelectedStudentIds([]);
                         }
                       }}
-                      className="rounded border-slate-300 text-[#2F7C7A] focus:ring-[#2F7C7A] cursor-pointer"
+                      className="rounded border-slate-300 text-[#23804A] focus:ring-[#23804A] cursor-pointer"
                       title="Select all students"
                     />
                   </th>
@@ -688,7 +688,7 @@ export default function AdminStudentsPage() {
                   <th className="px-5 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8E0]">
+              <tbody className="divide-y divide-[#E3EAE5]">
                 {filtered.map((std) => {
                   const studentName = (std.userId as any)?.name || std.nameEnglish || 'N/A';
                   const studentEmail = (std.userId as any)?.email || 'No email attached';
@@ -699,7 +699,7 @@ export default function AdminStudentsPage() {
                   const isSelected = selectedStudentIds.includes(std._id);
 
                   return (
-                    <tr key={std._id} className={`hover:bg-slate-50/80 transition-colors ${isSelected ? 'bg-teal-50/40' : ''}`}>
+                    <tr key={std._id} className={`hover:bg-slate-50/80 transition-colors ${isSelected ? 'bg-green-50/40' : ''}`}>
                       <td className="w-10 px-4 py-3.5 text-center">
                         <input
                           type="checkbox"
@@ -711,18 +711,18 @@ export default function AdminStudentsPage() {
                               setSelectedStudentIds((prev) => prev.filter((id) => id !== std._id));
                             }
                           }}
-                          className="rounded border-slate-300 text-[#2F7C7A] focus:ring-[#2F7C7A] cursor-pointer"
+                          className="rounded border-slate-300 text-[#23804A] focus:ring-[#23804A] cursor-pointer"
                         />
                       </td>
                       {/* Column 1: Student */}
                       <td className="px-5 py-3.5">
 
                         <div className="flex items-center space-x-3">
-                          <div className="w-9 h-9 rounded-full bg-[#E6F2F1] border border-teal-100 text-[#2F7C7A] flex items-center justify-center font-bold text-xs shrink-0">
+                          <div className="w-9 h-9 rounded-full bg-[#EAF2EC] border border-green-100 text-[#23804A] flex items-center justify-center font-bold text-xs shrink-0">
                             {initial}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-bold text-sm text-[#132238] truncate">{studentName}</p>
+                            <p className="font-bold text-sm text-[#171D19] truncate">{studentName}</p>
                             <p className="text-xs text-slate-500 font-normal truncate">{studentEmail}</p>
                           </div>
                         </div>
@@ -730,7 +730,7 @@ export default function AdminStudentsPage() {
 
                       {/* Column 2: Registration Number */}
                       <td className="px-5 py-3.5 whitespace-nowrap">
-                        <span className="font-mono text-xs font-semibold text-[#2F7C7A] bg-teal-50/70 px-2.5 py-1 rounded-md border border-teal-100/80 inline-block">
+                        <span className="font-mono text-xs font-semibold text-[#23804A] bg-green-50/70 px-2.5 py-1 rounded-md border border-green-100/80 inline-block">
                           {std.registrationNumber || 'Pending'}
                         </span>
                       </td>
@@ -762,10 +762,10 @@ export default function AdminStudentsPage() {
                           {/* Edit Button */}
                           <button
                             onClick={() => handleOpenModal(std)}
-                            className="px-2.5 py-1.5 bg-teal-50 hover:bg-teal-100 text-[#2F7C7A] border border-teal-200/80 rounded-lg text-xs font-semibold transition-colors inline-flex items-center gap-1 cursor-pointer"
+                            className="px-2.5 py-1.5 bg-green-50 hover:bg-green-100 text-[#23804A] border border-green-200/80 rounded-lg text-xs font-semibold transition-colors inline-flex items-center gap-1 cursor-pointer"
                             title="Edit Student"
                           >
-                            <Edit3 className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                            <Edit3 className="w-3.5 h-3.5 text-[#23804A]" />
                             <span>Edit</span>
                           </button>
 
@@ -784,7 +784,7 @@ export default function AdminStudentsPage() {
                             </button>
 
                             {activeMenuId === std._id && (
-                              <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-[#E2E8E0] py-1.5 z-30 focus:outline-none animate-in fade-in zoom-in-95 duration-100">
+                              <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-[#E3EAE5] py-1.5 z-30 focus:outline-none animate-in fade-in zoom-in-95 duration-100">
                                 {/* Toggle Status */}
                                 <button
                                   onClick={() => {
@@ -839,7 +839,7 @@ export default function AdminStudentsPage() {
 
         {/* Clean Footer Area */}
         {!loading && !error && filtered.length > 0 && (
-          <div className="px-6 py-4 bg-[#F7F8F5] border-t border-[#E2E8E0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+          <div className="px-6 py-4 bg-[#FBFCFB] border-t border-[#E3EAE5] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
             <span>
               Showing <strong className="text-slate-800">{filtered.length}</strong> of{' '}
               <strong className="text-slate-800">{students.length}</strong> registered students
@@ -854,9 +854,9 @@ export default function AdminStudentsPage() {
       {/* Form Modal (Create / Edit & Verification) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white max-w-2xl w-full rounded-2xl shadow-xl border border-[#E2E8E0] p-6 space-y-4 my-8">
+          <div className="bg-white max-w-2xl w-full rounded-2xl shadow-xl border border-[#E3EAE5] p-6 space-y-4 my-8">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-lg font-bold text-[#132238]">
+              <h3 className="text-lg font-bold text-[#171D19]">
                 {regSuccessData
                   ? regSuccessData.isEmailUpdate
                     ? 'Verify New Email Address'
@@ -893,19 +893,19 @@ export default function AdminStudentsPage() {
                   <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
                     <CheckCircle className="w-7 h-7" />
                   </div>
-                  <h4 className="text-lg font-bold text-[#132238]">
+                  <h4 className="text-lg font-bold text-[#171D19]">
                     {regSuccessData.isEmailUpdate
                       ? 'Student Email Updated'
                       : 'Student Registered Successfully'}
                   </h4>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-teal-50 border border-teal-200 rounded-full text-xs font-mono font-bold text-[#2F7C7A]">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-50 border border-green-200 rounded-full text-xs font-mono font-bold text-[#23804A]">
                     Reg No: {regSuccessData.student?.registrationNumber || 'Assigned'}
                   </div>
                 </div>
 
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5 text-xs text-slate-700">
                   <div className="flex items-start gap-2.5">
-                    <Mail className="w-4 h-4 text-[#2F7C7A] mt-0.5 shrink-0" />
+                    <Mail className="w-4 h-4 text-[#23804A] mt-0.5 shrink-0" />
                     <div>
                       <p className="font-semibold text-slate-900">Email Verification Dispatched</p>
                       <p className="text-slate-500 text-[11px] mt-0.5">
@@ -920,7 +920,7 @@ export default function AdminStudentsPage() {
 
                   {regSuccessData.verificationId && (
                     <div className="flex items-start gap-2.5 pt-1 border-t border-slate-200">
-                      <KeyRound className="w-4 h-4 text-[#2F7C7A] mt-0.5 shrink-0" />
+                      <KeyRound className="w-4 h-4 text-[#23804A] mt-0.5 shrink-0" />
                       <div>
                         <p className="font-semibold text-slate-900">Verification Session ID</p>
                         <p className="font-mono text-[11px] text-slate-500 break-all">
@@ -947,8 +947,8 @@ export default function AdminStudentsPage() {
                 {/* Inline OTP Verification */}
                 {!otpVerified ? (
                   <form onSubmit={handleModalVerifyOtp} className="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-4">
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#132238]">
-                      <ShieldCheck className="w-4 h-4 text-[#2F7C7A]" />
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#171D19]">
+                      <ShieldCheck className="w-4 h-4 text-[#23804A]" />
                       <span>Enter Student Verification OTP</span>
                     </div>
 
@@ -965,7 +965,7 @@ export default function AdminStudentsPage() {
                           value={digit}
                           onChange={(e) => handleModalOtpChange(idx, e.target.value)}
                           onKeyDown={(e) => handleModalOtpKeyDown(idx, e)}
-                          className="w-11 h-12 text-center text-lg font-bold rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all shadow-xs"
+                          className="w-11 h-12 text-center text-lg font-bold rounded-xl border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#23804A] focus:border-transparent transition-all shadow-xs"
                         />
                       ))}
                     </div>
@@ -975,7 +975,7 @@ export default function AdminStudentsPage() {
                         type="button"
                         onClick={handleModalResendOtp}
                         disabled={otpTimer > 0 || otpResending}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#2F7C7A] hover:underline disabled:text-slate-400 disabled:no-underline cursor-pointer"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#23804A] hover:underline disabled:text-slate-400 disabled:no-underline cursor-pointer"
                       >
                         <RefreshCw className={`w-3.5 h-3.5 ${otpResending ? 'animate-spin' : ''}`} />
                         {otpTimer > 0 ? `Resend code in ${otpTimer}s` : 'Resend Code'}
@@ -994,7 +994,7 @@ export default function AdminStudentsPage() {
                         <button
                           type="submit"
                           disabled={otpVerifying || modalOtp.join('').length !== 6}
-                          className="px-5 py-2 bg-[#2F7C7A] text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#256361] disabled:opacity-50 transition-colors cursor-pointer"
+                          className="px-5 py-2 bg-[#23804A] text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#1B6F41] disabled:opacity-50 transition-colors cursor-pointer"
                         >
                           {otpVerifying ? 'Verifying...' : 'Verify OTP'}
                         </button>
@@ -1036,8 +1036,8 @@ export default function AdminStudentsPage() {
                 {/* Account Credentials Section (Only in New Registration Mode) */}
                 {!editingStudent && (
                   <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-3">
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#132238]">
-                      <UserIcon className="w-4 h-4 text-[#2F7C7A]" />
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#171D19]">
+                      <UserIcon className="w-4 h-4 text-[#23804A]" />
                       <span>1. Portal Account Credentials</span>
                     </div>
 
@@ -1052,7 +1052,7 @@ export default function AdminStudentsPage() {
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           placeholder="student@markaz.in"
-                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs"
+                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
                         />
                       </div>
 
@@ -1071,7 +1071,7 @@ export default function AdminStudentsPage() {
                             })
                           }
                           placeholder="+91 9876543210"
-                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs"
+                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
                         />
                       </div>
 
@@ -1084,7 +1084,7 @@ export default function AdminStudentsPage() {
                           value={formData.username}
                           onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                           placeholder="e.g. ansar2026"
-                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs"
+                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
                         />
                       </div>
                     </div>
@@ -1094,12 +1094,12 @@ export default function AdminStudentsPage() {
                 {/* Account & Contact Credentials in Edit Mode */}
                 {editingStudent && (
                   <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-3">
-                    <div className="flex items-center justify-between text-xs font-bold text-[#132238] uppercase tracking-wider">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#171D19] uppercase tracking-wider">
                       <span className="flex items-center gap-1.5">
-                        <UserIcon className="w-3.5 h-3.5 text-[#2F7C7A]" /> Account Credentials & Email
+                        <UserIcon className="w-3.5 h-3.5 text-[#23804A]" /> Account Credentials & Email
                       </span>
                       {selectedUser && (
-                        <span className="px-2 py-0.5 bg-teal-100 text-teal-800 rounded-full font-bold text-[10px]">
+                        <span className="px-2 py-0.5 bg-green-100 text-green-800 rounded-full font-bold text-[10px]">
                           {selectedUser.role}
                         </span>
                       )}
@@ -1114,7 +1114,7 @@ export default function AdminStudentsPage() {
                           required
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs"
+                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
                         />
                         <p className="text-[10px] text-slate-400 mt-1">
                           Changing email will require OTP re-verification for security.
@@ -1135,7 +1135,7 @@ export default function AdminStudentsPage() {
                               mobile: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs"
+                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
                         />
                       </div>
                     </div>
@@ -1144,8 +1144,8 @@ export default function AdminStudentsPage() {
 
                 {/* Personal Information */}
                 <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#132238]">
-                    <UserIcon className="w-4 h-4 text-[#2F7C7A]" />
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#171D19]">
+                    <UserIcon className="w-4 h-4 text-[#23804A]" />
                     <span>2. Personal Information</span>
                   </div>
 
@@ -1166,7 +1166,7 @@ export default function AdminStudentsPage() {
                           })
                         }
                         placeholder="MUHAMMED ANSAR"
-                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs uppercase"
+                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs uppercase"
                       />
                     </div>
 
@@ -1180,7 +1180,7 @@ export default function AdminStudentsPage() {
                         value={formData.nameArabic}
                         onChange={(e) => setFormData({ ...formData, nameArabic: e.target.value })}
                         placeholder="محمد أنصار"
-                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs font-arabic"
+                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs font-arabic"
                       />
                     </div>
 
@@ -1193,7 +1193,7 @@ export default function AdminStudentsPage() {
                         value={formData.placeEnglish}
                         onChange={(e) => setFormData({ ...formData, placeEnglish: e.target.value })}
                         placeholder="Kozhikode, Kerala"
-                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs"
+                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
                       />
                     </div>
 
@@ -1207,7 +1207,7 @@ export default function AdminStudentsPage() {
                         value={formData.placeArabic}
                         onChange={(e) => setFormData({ ...formData, placeArabic: e.target.value })}
                         placeholder="كوزيكود، كيرالا"
-                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs font-arabic"
+                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs font-arabic"
                       />
                     </div>
 
@@ -1220,7 +1220,7 @@ export default function AdminStudentsPage() {
                         required
                         value={formData.dateOfBirth}
                         onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs"
+                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
                       />
                     </div>
                   </div>
@@ -1228,8 +1228,8 @@ export default function AdminStudentsPage() {
 
                 {/* Academic Enrollment Information */}
                 <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#132238]">
-                    <Building2 className="w-4 h-4 text-[#2F7C7A]" />
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#171D19]">
+                    <Building2 className="w-4 h-4 text-[#23804A]" />
                     <span>3. Academic Enrollment</span>
                   </div>
 
@@ -1242,7 +1242,7 @@ export default function AdminStudentsPage() {
                         required
                         value={formData.classId}
                         onChange={(e) => setFormData({ ...formData, classId: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs bg-white"
+                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs bg-white"
                       >
                         <option value="">Select Enrolled Class</option>
                         {classesList.map((c) => (
@@ -1260,7 +1260,7 @@ export default function AdminStudentsPage() {
                       <select
                         value={formData.institutionId}
                         onChange={(e) => setFormData({ ...formData, institutionId: e.target.value })}
-                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs bg-white"
+                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs bg-white"
                       >
                         <option value="">Select Campus (Optional)</option>
                         {institutions.map((inst) => (
@@ -1284,7 +1284,7 @@ export default function AdminStudentsPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, admissionYear: parseInt(e.target.value) || new Date().getFullYear() })
                         }
-                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs"
+                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
                       />
                     </div>
                   </div>
@@ -1292,8 +1292,8 @@ export default function AdminStudentsPage() {
 
                 {/* Family Information */}
                 <div className="p-4 bg-slate-50/80 rounded-xl border border-slate-200 space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#132238]">
-                    <UserIcon className="w-4 h-4 text-[#2F7C7A]" />
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#171D19]">
+                    <UserIcon className="w-4 h-4 text-[#23804A]" />
                     <span>4. Family Information</span>
                   </div>
 
@@ -1307,7 +1307,7 @@ export default function AdminStudentsPage() {
                         value={formData.fatherName}
                         onChange={(e) => setFormData({ ...formData, fatherName: e.target.value })}
                         placeholder="Father's full name"
-                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs"
+                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
                       />
                     </div>
 
@@ -1320,7 +1320,7 @@ export default function AdminStudentsPage() {
                         value={formData.motherName}
                         onChange={(e) => setFormData({ ...formData, motherName: e.target.value })}
                         placeholder="Mother's full name"
-                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#2F7C7A] text-xs"
+                        className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
                       />
                     </div>
                   </div>
@@ -1340,7 +1340,7 @@ export default function AdminStudentsPage() {
                   <button
                     type="submit"
                     disabled={formLoading}
-                    className="px-5 py-2.5 bg-[#2F7C7A] text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#256361] disabled:opacity-50 cursor-pointer shadow-sm transition-all"
+                    className="px-5 py-2.5 bg-[#23804A] text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#1B6F41] disabled:opacity-50 cursor-pointer shadow-sm transition-all"
                   >
                     {formLoading
                       ? 'Processing...'
@@ -1358,14 +1358,14 @@ export default function AdminStudentsPage() {
       {/* View Student Details Modal */}
       {viewingStudent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white max-w-xl w-full rounded-2xl shadow-xl border border-[#E2E8E0] p-6 space-y-4 my-8">
+          <div className="bg-white max-w-xl w-full rounded-2xl shadow-xl border border-[#E3EAE5] p-6 space-y-4 my-8">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center font-bold text-sm">
+                <div className="w-10 h-10 rounded-full bg-[#EAF2EC] text-[#23804A] flex items-center justify-center font-bold text-sm">
                   <GraduationCap className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#132238]">Student Profile Details</h3>
+                  <h3 className="text-base font-bold text-[#171D19]">Student Profile Details</h3>
                   <p className="text-xs text-slate-500 font-mono">{viewingStudent.registrationNumber}</p>
                 </div>
               </div>
@@ -1381,12 +1381,12 @@ export default function AdminStudentsPage() {
               <div className="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Full Name (English)</p>
-                  <p className="font-bold text-[#132238] text-sm">{viewingStudent.nameEnglish || 'N/A'}</p>
+                  <p className="font-bold text-[#171D19] text-sm">{viewingStudent.nameEnglish || 'N/A'}</p>
                 </div>
                 {viewingStudent.nameArabic && (
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Name (Arabic)</p>
-                    <p className="font-bold text-[#132238] text-sm font-arabic">{viewingStudent.nameArabic}</p>
+                    <p className="font-bold text-[#171D19] text-sm font-arabic">{viewingStudent.nameArabic}</p>
                   </div>
                 )}
                 <div>
@@ -1418,8 +1418,8 @@ export default function AdminStudentsPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-teal-50/50 rounded-xl border border-teal-100">
-                <span className="text-[11px] font-bold text-[#132238]">Account Status:</span>
+              <div className="flex items-center justify-between p-3 bg-green-50/50 rounded-xl border border-green-100">
+                <span className="text-[11px] font-bold text-[#171D19]">Account Status:</span>
                 <StatusBadge status={(viewingStudent.userId as any)?.status || viewingStudent.status || 'ACTIVE'} />
               </div>
             </div>
@@ -1440,14 +1440,14 @@ export default function AdminStudentsPage() {
       {/* Delete / Deactivate Student Confirmation Modal */}
       {studentToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white max-w-md w-full rounded-2xl shadow-xl border border-[#E2E8E0] p-6 space-y-4 my-8">
+          <div className="bg-white max-w-md w-full rounded-2xl shadow-xl border border-[#E3EAE5] p-6 space-y-4 my-8">
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center">
                   <AlertTriangle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#132238]">Deactivate / Archive Student</h3>
+                  <h3 className="text-base font-bold text-[#171D19]">Deactivate / Archive Student</h3>
                   <p className="text-xs text-slate-500">Confirm student lifecycle action</p>
                 </div>
               </div>
@@ -1466,7 +1466,7 @@ export default function AdminStudentsPage() {
             <div className="space-y-3">
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-1">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Student Record</p>
-                <p className="font-bold text-[#132238] text-sm">{studentToDelete.nameEnglish}</p>
+                <p className="font-bold text-[#171D19] text-sm">{studentToDelete.nameEnglish}</p>
                 <p className="text-slate-500 font-mono">Reg No: {studentToDelete.registrationNumber}</p>
                 <p className="text-slate-500">Email: {(studentToDelete.userId as any)?.email || 'N/A'}</p>
               </div>
@@ -1529,9 +1529,9 @@ export default function AdminStudentsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
           <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
             {/* Modal Header */}
-            <div className="px-6 py-4 bg-[#132238] text-white flex items-center justify-between">
+            <div className="px-6 py-4 bg-[#171D19] text-white flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <BookOpen className="w-5 h-5 text-teal-400" />
+                <BookOpen className="w-5 h-5 text-green-400" />
                 <h3 className="font-serif font-bold text-base">Bulk Assign Students to Class</h3>
               </div>
               <button
@@ -1591,7 +1591,7 @@ export default function AdminStudentsPage() {
                         fetchData();
                         setSelectedStudentIds([]);
                       }}
-                      className="px-4 py-2 bg-[#2F7C7A] hover:bg-[#286b69] text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer"
+                      className="px-4 py-2 bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer"
                     >
                       Done & Refresh Roster
                     </button>
@@ -1601,7 +1601,7 @@ export default function AdminStudentsPage() {
                 /* Initial Confirmation State */
                 <div className="space-y-4">
                   <p className="text-xs text-slate-600 leading-relaxed">
-                    You have selected <strong className="text-[#132238] font-bold">{selectedStudentIds.length}</strong> student(s). Select the target class cohort below to assign or transfer them.
+                    You have selected <strong className="text-[#171D19] font-bold">{selectedStudentIds.length}</strong> student(s). Select the target class cohort below to assign or transfer them.
                   </p>
 
                   <div>
@@ -1611,7 +1611,7 @@ export default function AdminStudentsPage() {
                     <select
                       value={targetClassId}
                       onChange={(e) => setTargetClassId(e.target.value)}
-                      className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl font-semibold text-[#132238] focus:outline-hidden focus:border-[#2F7C7A] cursor-pointer"
+                      className="w-full px-3 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl font-semibold text-[#171D19] focus:outline-hidden focus:border-[#23804A] cursor-pointer"
                     >
                       {classesList.map((cls) => (
                         <option key={cls._id} value={cls._id}>
@@ -1668,7 +1668,7 @@ export default function AdminStudentsPage() {
                           setBulkAssignSubmitting(false);
                         }
                       }}
-                      className="px-5 py-2 bg-[#2F7C7A] hover:bg-[#286b69] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      className="px-5 py-2 bg-[#23804A] hover:bg-[#1B6F41] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                     >
                       {bulkAssignSubmitting ? (
                         <>

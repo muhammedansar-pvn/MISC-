@@ -234,7 +234,7 @@ export default function FacultyAssignmentsManager({
       )}
 
       {/* Control Bar: Filters & Actions */}
-      <div className="bg-white p-5 rounded-2xl border border-[#E2E8E0] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white p-5 rounded-2xl border border-[#E3EAE5] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
           {/* Academic Year Filter */}
           <div className="flex items-center space-x-2">
@@ -242,7 +242,7 @@ export default function FacultyAssignmentsManager({
             <select
               value={selectedYearId}
               onChange={(e) => setSelectedYearId(e.target.value)}
-              className="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-semibold text-slate-700 focus:outline-hidden focus:border-[#2F7C7A]"
+              className="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-semibold text-slate-700 focus:outline-hidden focus:border-[#23804A]"
             >
               <option value="">All Academic Years</option>
               {preloadedYears.map((ay) => (
@@ -259,7 +259,7 @@ export default function FacultyAssignmentsManager({
             <select
               value={selectedClassFilter}
               onChange={(e) => setSelectedClassFilter(e.target.value)}
-              className="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-semibold text-slate-700 focus:outline-hidden focus:border-[#2F7C7A]"
+              className="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-semibold text-slate-700 focus:outline-hidden focus:border-[#23804A]"
             >
               <option value="">All Classes</option>
               {availableClassesForYear(selectedYearId).map((cls) => (
@@ -278,7 +278,7 @@ export default function FacultyAssignmentsManager({
               placeholder="Search faculty, subject, or class..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#2F7C7A]"
+              className="w-full pl-8 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#23804A]"
             />
           </div>
         </div>
@@ -289,11 +289,11 @@ export default function FacultyAssignmentsManager({
             title="Refresh allocations"
             className="p-2 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#2F7C7A]' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#23804A]' : ''}`} />
           </button>
           <button
             onClick={handleOpenModal}
-            className="flex items-center space-x-2 px-4 py-2 bg-[#2F7C7A] text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#256563] shadow-2xs transition-all cursor-pointer"
+            className="flex items-center space-x-2 px-4 py-2 bg-[#23804A] text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#1B6F41] shadow-2xs transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Assign Faculty</span>
@@ -302,10 +302,10 @@ export default function FacultyAssignmentsManager({
       </div>
 
       {/* Table Container */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-16 text-center space-y-3">
-            <div className="w-8 h-8 border-4 border-[#2F7C7A] border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-8 h-8 border-4 border-[#23804A] border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-xs font-semibold text-slate-500">Loading teaching allocations...</p>
           </div>
         ) : filteredAssignments.length === 0 ? (
@@ -319,7 +319,7 @@ export default function FacultyAssignmentsManager({
             </p>
             <button
               onClick={handleOpenModal}
-              className="mt-2 inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-[#2F7C7A] bg-teal-50 border border-teal-200 rounded-lg hover:bg-teal-100 transition-colors"
+              className="mt-2 inline-flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-[#23804A] bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Create First Allocation</span>
@@ -328,7 +328,7 @@ export default function FacultyAssignmentsManager({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E2E8E0]">
+              <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E3EAE5]">
                 <tr>
                   <th className="px-6 py-4">Faculty Member</th>
                   <th className="px-6 py-4">Class / Cohort</th>
@@ -338,7 +338,7 @@ export default function FacultyAssignmentsManager({
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8E0]">
+              <tbody className="divide-y divide-[#E3EAE5]">
                 {filteredAssignments.map((asgn) => {
                   const faculty = asgn.facultyId;
                   const cls = asgn.classId;
@@ -350,7 +350,7 @@ export default function FacultyAssignmentsManager({
                       {/* Faculty Info */}
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-3">
-                          <div className="w-9 h-9 rounded-full bg-[#2F7C7A]/10 text-[#2F7C7A] font-bold flex items-center justify-center text-xs shrink-0">
+                          <div className="w-9 h-9 rounded-full bg-[#23804A]/10 text-[#23804A] font-bold flex items-center justify-center text-xs shrink-0">
                             {faculty?.nameEnglish ? faculty.nameEnglish.charAt(0).toUpperCase() : 'U'}
                           </div>
                           <div>
@@ -377,7 +377,7 @@ export default function FacultyAssignmentsManager({
                             {cls?.code || 'CLS'}
                           </span>
                           {cls?.department && (
-                            <span className="text-[10px] text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-100">
+                            <span className="text-[10px] text-green-700 bg-green-50 px-1.5 py-0.5 rounded border border-green-100">
                               {cls.department}
                             </span>
                           )}
@@ -387,7 +387,7 @@ export default function FacultyAssignmentsManager({
                       {/* Subject */}
                       <td className="px-6 py-4">
                         <div className="font-semibold text-slate-900 flex items-center space-x-1.5">
-                          <BookOpen className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                          <BookOpen className="w-3.5 h-3.5 text-[#23804A]" />
                           <span>{subject?.name || subject?.subjectName || 'Subject'}</span>
                         </div>
                         <div className="text-xs text-slate-500 flex items-center space-x-2 mt-0.5">
@@ -441,11 +441,11 @@ export default function FacultyAssignmentsManager({
       {/* Creation Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 border border-[#E2E8E0] shadow-xl animate-in fade-in zoom-in duration-150">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 border border-[#E3EAE5] shadow-xl animate-in fade-in zoom-in duration-150">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center space-x-2">
-                <UserCheck className="w-5 h-5 text-[#2F7C7A]" />
-                <h3 className="font-bold text-base text-[#132238]">Assign Faculty to Class & Subject</h3>
+                <UserCheck className="w-5 h-5 text-[#23804A]" />
+                <h3 className="font-bold text-base text-[#171D19]">Assign Faculty to Class & Subject</h3>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -475,7 +475,7 @@ export default function FacultyAssignmentsManager({
                     setFormClassId(''); // Reset class when year changes
                   }}
                   required
-                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#2F7C7A]"
+                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#23804A]"
                 >
                   <option value="">Select Academic Year...</option>
                   {preloadedYears.map((ay) => (
@@ -496,7 +496,7 @@ export default function FacultyAssignmentsManager({
                   onChange={(e) => setFormClassId(e.target.value)}
                   required
                   disabled={!formYearId}
-                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#2F7C7A] disabled:opacity-50"
+                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#23804A] disabled:opacity-50"
                 >
                   <option value="">
                     {formYearId ? 'Select Class...' : 'Select an Academic Year first...'}
@@ -518,7 +518,7 @@ export default function FacultyAssignmentsManager({
                   value={formSubjectId}
                   onChange={(e) => setFormSubjectId(e.target.value)}
                   required
-                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#2F7C7A]"
+                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#23804A]"
                 >
                   <option value="">Select Subject...</option>
                   {preloadedSubjects.map((sub) => (
@@ -538,7 +538,7 @@ export default function FacultyAssignmentsManager({
                   value={formFacultyId}
                   onChange={(e) => setFormFacultyId(e.target.value)}
                   required
-                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#2F7C7A]"
+                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#23804A]"
                 >
                   <option value="">Select Faculty Usthad...</option>
                   {facultyList.map((fac) => (
@@ -560,7 +560,7 @@ export default function FacultyAssignmentsManager({
                   placeholder="e.g. Primary teacher, Second semester rotation..."
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
-                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#2F7C7A]"
+                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#23804A]"
                 />
               </div>
 
@@ -576,7 +576,7 @@ export default function FacultyAssignmentsManager({
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="px-5 py-2 text-xs font-bold uppercase tracking-wider text-white bg-[#2F7C7A] hover:bg-[#256563] rounded-xl shadow-2xs transition-all disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2 text-xs font-bold uppercase tracking-wider text-white bg-[#23804A] hover:bg-[#1B6F41] rounded-xl shadow-2xs transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {formLoading ? 'Assigning...' : 'Assign Faculty'}
                 </button>

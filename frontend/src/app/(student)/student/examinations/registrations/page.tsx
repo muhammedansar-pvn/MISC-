@@ -82,24 +82,24 @@ export default function StudentRegistrationsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
-            <Link href="/student/examinations" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student/examinations" className="hover:text-[#23804A] transition-colors">
               Examinations
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Registrations & Hall Tickets</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Exam Registrations & Hall Tickets
           </h1>
         </div>
 
         <Link
           href="/student/examinations"
-          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#2F7C7A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
+          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#23804A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to Timetable
         </Link>
@@ -107,7 +107,7 @@ export default function StudentRegistrationsPage() {
 
       {/* Info Notice regarding registration workflow */}
       <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 flex items-start space-x-3 text-xs">
-        <ShieldCheck className="w-5 h-5 text-[#2F7C7A] shrink-0 mt-0.5" />
+        <ShieldCheck className="w-5 h-5 text-[#23804A] shrink-0 mt-0.5" />
         <div>
           <p className="font-bold text-slate-900">Institutional Candidate Verification</p>
           <p className="text-slate-500 mt-0.5 leading-relaxed">
@@ -118,7 +118,7 @@ export default function StudentRegistrationsPage() {
 
       {/* Registrations List */}
       {registrations.length === 0 ? (
-        <div className="p-12 text-center bg-white rounded-xl border border-[#E2E8E0] space-y-3">
+        <div className="p-12 text-center bg-white rounded-xl border border-[#E3EAE5] space-y-3">
           <FileCheck className="w-10 h-10 text-slate-300 mx-auto" />
           <p className="text-sm font-bold text-slate-700">No active exam registrations</p>
           <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -135,21 +135,21 @@ export default function StudentRegistrationsPage() {
             return (
               <div
                 key={reg._id}
-                className="bg-white rounded-xl border border-[#E2E8E0] p-6 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-[#2F7C7A] transition-all"
+                className="bg-white rounded-xl border border-[#E3EAE5] p-6 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-[#23804A] transition-all"
               >
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
                       {exam?.examCode || 'EXAM'}
                     </span>
-                    <h2 className="text-base font-bold text-[#132238]">{exam?.title || 'Examination Term'}</h2>
+                    <h2 className="text-base font-bold text-[#171D19]">{exam?.title || 'Examination Term'}</h2>
                     <span
                       className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                         isIssued
                           ? 'bg-emerald-100 text-emerald-800'
                           : isCancelled
                           ? 'bg-rose-100 text-rose-800'
-                          : 'bg-blue-100 text-blue-800'
+                          : 'bg-green-100 text-green-800'
                       }`}
                     >
                       {reg.registrationStatus || 'REGISTERED'}
@@ -174,7 +174,7 @@ export default function StudentRegistrationsPage() {
                   {isIssued ? (
                     <button
                       onClick={() => setSelectedHallTicket(reg)}
-                      className="inline-flex items-center px-4 py-2.5 rounded-lg bg-[#2F7C7A] hover:bg-[#286b69] text-white text-xs font-semibold shadow-2xs transition-all"
+                      className="inline-flex items-center px-4 py-2.5 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-semibold shadow-2xs transition-all"
                     >
                       <Printer className="w-3.5 h-3.5 mr-1.5" /> View / Print Hall Ticket
                     </button>
@@ -219,11 +219,11 @@ export default function StudentRegistrationsPage() {
             {/* Printable Document Body */}
             <div className="p-8 sm:p-10 space-y-6 text-slate-900 bg-white" id="printable-hall-ticket">
               {/* Council Header */}
-              <div className="text-center border-b-2 border-[#132238] pb-6 space-y-1">
-                <div className="font-bold uppercase tracking-widest text-xs text-[#2F7C7A]">
+              <div className="text-center border-b-2 border-[#171D19] pb-6 space-y-1">
+                <div className="font-bold uppercase tracking-widest text-xs text-[#23804A]">
                   Markaz Sanaviyya
                 </div>
-                <h2 className="text-2xl font-serif font-bold text-[#132238]">
+                <h2 className="text-2xl font-serif font-bold text-[#171D19]">
                   EXAMINATION ADMIT CARD / HALL TICKET
                 </h2>
                 <p className="text-xs text-slate-500 font-mono">
@@ -246,7 +246,7 @@ export default function StudentRegistrationsPage() {
                 </div>
                 <div>
                   <span className="text-slate-400">Official Roll Number:</span>
-                  <p className="font-mono font-bold text-lg text-[#132238] mt-0.5">
+                  <p className="font-mono font-bold text-lg text-[#171D19] mt-0.5">
                     {selectedHallTicket.rollNumber}
                   </p>
                 </div>

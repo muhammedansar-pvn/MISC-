@@ -2,99 +2,75 @@
 
 import React from 'react';
 import { useNavigate } from '@/hooks/useNavigate';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, CalendarDays, ClipboardCheck, FileCheck2, Scale } from 'lucide-react';
+
+const standards = [
+  {
+    title: 'Examination',
+    subtitle: 'Central Board Evaluation & Schedules',
+    description: 'Standardized assessment guidelines, center registrations, and evaluation board directives.',
+    path: '/examination',
+    icon: ClipboardCheck,
+  },
+  {
+    title: 'Results',
+    subtitle: 'Official Board Verification',
+    description: 'Centralized marks evaluation, institutional performance analytics, and authenticated transcripts.',
+    path: '/examination',
+    icon: FileCheck2,
+  },
+  {
+    title: 'Regulations',
+    subtitle: 'Academic By-laws & Governance',
+    description: 'Council statutes, institutional affiliation criteria, faculty mandates, and code of conduct.',
+    path: '/downloads',
+    icon: Scale,
+  },
+  {
+    title: 'Academic Calendar',
+    subtitle: 'Yearly Schedule & Timeline',
+    description: 'Synchronized term dates, assessment intervals, research symposiums, and convocations.',
+    path: '/downloads',
+    icon: CalendarDays,
+  },
+];
 
 export const ImportantResourcesSection = () => {
   const navigate = useNavigate();
 
-  const standards = [
-    {
-      index: '01',
-      title: 'EXAMINATION',
-      subtitle: 'Central Board Evaluation & Schedules',
-      description: 'Standardized assessment guidelines, center registrations, and evaluation board directives.',
-      path: '/examination',
-    },
-    {
-      index: '02',
-      title: 'RESULTS',
-      subtitle: 'Official Board Verification',
-      description: 'Centralized marks evaluation, institutional performance analytics, and authenticated transcripts.',
-      path: '/examination',
-    },
-    {
-      index: '03',
-      title: 'REGULATIONS',
-      subtitle: 'Academic By-laws & Governance',
-      description: 'Council statutes, institutional affiliation criteria, faculty mandates, and code of conduct.',
-      path: '/downloads',
-    },
-    {
-      index: '04',
-      title: 'ACADEMIC CALENDAR',
-      subtitle: 'Yearly Schedule & Timeline',
-      description: 'Synchronized term dates, assessment intervals, research symposiums, and convocations.',
-      path: '/downloads',
-    },
-  ];
-
   return (
-    <section className="relative bg-[#F7F7F3] text-[#132238] py-24 sm:py-32 lg:py-36 xl:py-40 border-b border-[rgba(19,34,56,0.12)]">
+    <section className="border-b border-misc-border bg-white py-16 text-misc-text sm:py-20 lg:py-24">
       <div className="misc-container">
-        
-        {/* Section Header */}
-        <div className="max-w-3xl space-y-4 mb-16 sm:mb-20">
-          <div className="flex items-center space-x-3">
-            <span className="font-mono text-xs sm:text-sm font-semibold text-[#2F7C7A] tracking-wider">
-              06
-            </span>
-            <span className="text-xs sm:text-[13px] font-mono tracking-[0.25em] text-[#667085] uppercase">
-              BOARD GOVERNANCE
-            </span>
-          </div>
-
-          <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[#132238] leading-tight">
-            ACADEMIC STANDARDS
+        <div className="mb-8 max-w-2xl sm:mb-10">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-misc-primary">Board governance</p>
+          <h2 className="mt-3 font-serif text-3xl font-semibold leading-tight tracking-tight text-misc-text sm:text-4xl">
+            Academic standards and resources
           </h2>
-
-          <p className="text-base sm:text-lg text-[#667085] font-normal leading-relaxed max-w-2xl">
-            Centralized academic governance, rigorous board assessments, official institutional statutes, and yearly operational schedules.
+          <p className="mt-3 text-sm leading-6 text-misc-muted sm:text-[15px]">
+            Centralized academic governance, board assessments, official institutional statutes, and yearly schedules.
           </p>
         </div>
 
-        {/* 4 Large Typography & Border Links — NO CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 border-t border-l border-[rgba(19,34,56,0.12)]">
-          {standards.map((item) => (
-            <div
-              key={item.index}
-              onClick={() => navigate(item.path)}
-              className="group p-8 sm:p-10 lg:p-12 border-r border-b border-[rgba(19,34,56,0.12)] hover:bg-white transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[220px] relative"
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {standards.map(({ title, subtitle, description, path, icon: Icon }) => (
+            <button
+              key={title}
+              type="button"
+              onClick={() => navigate(path)}
+              className="group flex min-h-44 flex-col rounded-xl border border-misc-border bg-misc-page p-5 text-left transition-all hover:border-misc-primary/30 hover:bg-white hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-misc-primary sm:p-6"
             >
-              <div className="flex items-start justify-between">
-                <span className="font-mono text-xs sm:text-sm font-semibold text-[#2F7C7A] tracking-widest">
-                  {item.index}
-                </span>
-
-                <div className="w-8 h-8 rounded-full border border-[rgba(19,34,56,0.15)] flex items-center justify-center text-[#132238]/60 group-hover:border-[#2F7C7A] group-hover:text-[#2F7C7A] group-hover:bg-[#E6F2F1] transition-all duration-300">
-                  <ArrowUpRight className="w-4 h-4 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
-                </div>
-              </div>
-
-              <div className="pt-8 space-y-2 transform group-hover:translate-x-1.5 transition-transform duration-300">
-                <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal tracking-wide text-[#132238] group-hover:text-[#2F7C7A] transition-colors">
-                  {item.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-[#667085] font-normal leading-relaxed max-w-md">
-                  {item.description}
-                </p>
-              </div>
-
-              {/* Bottom Subtle Accent */}
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#2F7C7A] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-            </div>
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-misc-soft-blue text-misc-primary">
+                <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+              </span>
+              <span className="mt-4 flex items-center justify-between gap-2 font-serif text-lg font-semibold text-misc-text">
+                {title}
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-misc-primary transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </span>
+              <span className="mt-0.5 text-[10px] font-medium text-misc-muted">{subtitle}</span>
+              <span className="mt-2 text-xs leading-5 text-misc-muted">{description}</span>
+            </button>
           ))}
         </div>
-
       </div>
     </section>
   );

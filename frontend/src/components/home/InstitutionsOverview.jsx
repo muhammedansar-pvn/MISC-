@@ -34,22 +34,22 @@ export const InstitutionsOverview = () => {
   ];
 
   return (
-    <section className="relative bg-white py-16 sm:py-24 border-b border-[#E2E8E0]">
+    <section className="relative bg-white py-16 sm:py-24 border-b border-misc-border">
       <div className="misc-container">
         {/* Section Header */}
         <div className="max-w-3xl space-y-3 mb-12">
-          <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#E6F2F1] border border-[#E2E8E0]">
-            <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
-            <span className="text-xs font-semibold tracking-wider text-[#2F7C7A] uppercase">
+          <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-misc-soft-blue border border-misc-border">
+            <span className="w-2 h-2 rounded-full bg-misc-primary" />
+            <span className="text-xs font-semibold tracking-wider text-misc-primary uppercase">
               INSTITUTION NETWORK
             </span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#132238] tracking-tight leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-misc-text tracking-tight leading-tight">
             An Integrated Network of Institutions
           </h2>
 
-          <p className="text-base text-[#475569]">
+          <p className="text-base text-misc-secondary">
             MISC oversees and coordinates campus institutions and educational systems functioning directly under Jamia Markaz as well as through academic collaboration.
           </p>
         </div>
@@ -58,10 +58,10 @@ export const InstitutionsOverview = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
           {/* LEFT SIDE — CONCEPTUAL NETWORK COMPOSITION (Cols 1-5) */}
-          <div className="lg:col-span-5 bg-[#F7F8F5] text-[#132238] rounded-xl p-8 border border-[#E2E8E0] shadow-xs relative overflow-hidden flex flex-col justify-between">
+          <div className="lg:col-span-5 bg-misc-page text-misc-text rounded-xl p-8 border border-misc-border shadow-xs relative overflow-hidden flex flex-col justify-between">
             <div className="relative z-10 space-y-6">
               {/* Header Badge */}
-              <div className="inline-flex items-center space-x-2 bg-[#E6F2F1] border border-[#E2E8E0] px-3 py-1 rounded-full text-xs font-bold text-[#2F7C7A] uppercase tracking-wider">
+              <div className="inline-flex items-center space-x-2 bg-misc-soft-blue border border-misc-border px-3 py-1 rounded-full text-xs font-bold text-misc-primary uppercase tracking-wider">
                 <Network className="w-3.5 h-3.5" />
                 <span>ACADEMIC COORDINATION NETWORK</span>
               </div>
@@ -69,7 +69,7 @@ export const InstitutionsOverview = () => {
               {/* Conceptual Node Tree Diagram */}
               <div className="pt-4 space-y-5">
                 {/* Central Root Node */}
-                <div className="bg-[#2F7C7A] text-white rounded-lg p-4 text-center shadow-xs">
+                <div className="bg-misc-primary text-white rounded-lg p-4 text-center shadow-xs">
                   <span className="font-serif font-bold text-base tracking-wide block">
                     MISC ACADEMIC COUNCIL
                   </span>
@@ -80,25 +80,25 @@ export const InstitutionsOverview = () => {
 
                 {/* Connecting Lines */}
                 <div className="flex items-center justify-center space-x-12 relative my-2">
-                  <div className="w-px h-6 bg-[#2F7C7A]" />
+                  <div className="w-px h-6 bg-misc-primary" />
                 </div>
 
                 {/* Child Nodes */}
                 <div className="grid grid-cols-2 gap-4 text-center text-xs font-semibold">
-                  <div className="bg-white border border-[#E2E8E0] p-3 rounded-lg text-[#132238]">
-                    <span className="text-[#2F7C7A] block font-serif font-bold">DIRECT</span>
-                    <span className="text-[#475569]">Campus Systems</span>
+                  <div className="bg-white border border-misc-border p-3 rounded-lg text-misc-text">
+                    <span className="text-misc-primary block font-serif font-bold">DIRECT</span>
+                    <span className="text-misc-secondary">Campus Systems</span>
                   </div>
-                  <div className="bg-white border border-[#E2E8E0] p-3 rounded-lg text-[#132238]">
-                    <span className="text-[#2F7C7A] block font-serif font-bold">COLLABORATING</span>
-                    <span className="text-[#475569]">Partner Centers</span>
+                  <div className="bg-white border border-misc-border p-3 rounded-lg text-misc-text">
+                    <span className="text-misc-primary block font-serif font-bold">COLLABORATING</span>
+                    <span className="text-misc-secondary">Partner Centers</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Subtext */}
-            <p className="relative z-10 text-xs text-[#475569] font-normal leading-relaxed pt-6 mt-6 border-t border-[#E2E8E0]">
+            <p className="relative z-10 text-xs text-misc-secondary font-normal leading-relaxed pt-6 mt-6 border-t border-misc-border">
               Standardized examination, curriculum guidelines, and quality assurance across all member centers.
             </p>
           </div>
@@ -114,37 +114,37 @@ export const InstitutionsOverview = () => {
                   tabIndex={0}
                   onClick={() => navigate('/institutions')}
                   onKeyDown={(e) => handleKeyDown(e, '/institutions')}
-                  className="bg-[#F7F8F5] rounded-xl border border-[#E2E8E0] p-6 sm:p-8 shadow-xs hover:border-[#2F7C7A]/40 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] transition-all duration-200 group cursor-pointer flex flex-col justify-between flex-1"
+                  className="bg-misc-page rounded-xl border border-misc-border p-6 sm:p-8 shadow-xs hover:border-misc-primary/40 focus:outline-none focus:ring-2 focus:ring-misc-primary transition-all duration-200 group cursor-pointer flex flex-col justify-between flex-1"
                   aria-label={`Explore ${cat.title}`}
                 >
                   <div className="space-y-4">
                     {/* Top Bar: Category Number & Icon */}
-                    <div className="flex items-center justify-between border-b border-[#E2E8E0] pb-3">
+                    <div className="flex items-center justify-between border-b border-misc-border pb-3">
                       <div className="flex items-center space-x-3">
-                        <span className="font-serif text-sm font-bold text-[#2F7C7A] tracking-wider">
+                        <span className="font-serif text-sm font-bold text-misc-primary tracking-wider">
                           {cat.number}
                         </span>
-                        <span className="w-6 h-[1.5px] bg-[#2F7C7A] group-hover:w-10 transition-all duration-300" />
+                        <span className="w-6 h-[1.5px] bg-misc-primary group-hover:w-10 transition-all duration-300" />
                       </div>
-                      <div className="w-9 h-9 rounded-lg bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center border border-[#E2E8E0] group-hover:bg-[#2F7C7A] group-hover:text-white transition-colors">
+                      <div className="w-9 h-9 rounded-lg bg-misc-soft-blue text-misc-primary flex items-center justify-center border border-misc-border group-hover:bg-misc-primary group-hover:text-white transition-colors">
                         <IconComp className="w-4 h-4" />
                       </div>
                     </div>
 
                     {/* Category Title */}
-                    <h3 className="font-serif text-xl font-bold text-[#132238] group-hover:text-[#2F7C7A] transition-colors">
+                    <h3 className="font-serif text-xl font-bold text-misc-text group-hover:text-misc-primary transition-colors">
                       {cat.title}
                     </h3>
 
                     {/* Category Description */}
-                    <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
+                    <p className="text-xs sm:text-sm text-misc-secondary leading-relaxed">
                       {cat.description}
                     </p>
                   </div>
 
                   {/* Footer Affordance */}
-                  <div className="pt-4 mt-6 border-t border-[#E2E8E0] flex items-center justify-between">
-                    <span className="text-xs font-bold tracking-wider text-[#2F7C7A] uppercase flex items-center space-x-1.5">
+                  <div className="pt-4 mt-6 border-t border-misc-border flex items-center justify-between">
+                    <span className="text-xs font-bold tracking-wider text-misc-primary uppercase flex items-center space-x-1.5">
                       <span>EXPLORE {cat.title.toUpperCase()}</span>
                       <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </span>
@@ -157,7 +157,7 @@ export const InstitutionsOverview = () => {
         </div>
 
         {/* Section Bottom CTA */}
-        <div className="mt-12 text-center pt-8 border-t border-[#E2E8E0]">
+        <div className="mt-12 text-center pt-8 border-t border-misc-border">
           <Button
             variant="primary"
             size="lg"

@@ -68,14 +68,14 @@ export default function FacultyTimetablePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/faculty" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/faculty" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Faculty Timetable</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238] flex items-center gap-2">
-            <Clock className="w-7 h-7 text-[#2F7C7A]" />
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19] flex items-center gap-2">
+            <Clock className="w-7 h-7 text-[#23804A]" />
             Weekly Teaching Schedule
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -90,7 +90,7 @@ export default function FacultyTimetablePage() {
               onClick={() => setViewMode('week')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 viewMode === 'week'
-                  ? 'bg-[#2F7C7A] text-white shadow-2xs'
+                  ? 'bg-[#23804A] text-white shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -100,7 +100,7 @@ export default function FacultyTimetablePage() {
               onClick={() => setViewMode('day')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 viewMode === 'day'
-                  ? 'bg-[#2F7C7A] text-white shadow-2xs'
+                  ? 'bg-[#23804A] text-white shadow-2xs'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -110,7 +110,7 @@ export default function FacultyTimetablePage() {
 
           <Link
             href="/faculty"
-            className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#2F7C7A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all"
+            className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#23804A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Dashboard
           </Link>
@@ -118,9 +118,9 @@ export default function FacultyTimetablePage() {
       </div>
 
       {timetable.length === 0 ? (
-        <div className="p-12 text-center bg-white rounded-2xl border border-[#E2E8E0] space-y-4 shadow-xs">
+        <div className="p-12 text-center bg-white rounded-2xl border border-[#E3EAE5] space-y-4 shadow-xs">
           <Calendar className="w-12 h-12 text-slate-300 mx-auto" />
-          <h2 className="text-lg font-bold font-serif text-[#132238]">No Timetable Allocations Found</h2>
+          <h2 className="text-lg font-bold font-serif text-[#171D19]">No Timetable Allocations Found</h2>
           <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
             Your schedule does not have any active period allocations yet. Timetable sessions are configured by the institution administrator.
           </p>
@@ -139,7 +139,7 @@ export default function FacultyTimetablePage() {
                   onClick={() => setSelectedDay(day)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border flex items-center space-x-2 ${
                     active
-                      ? 'bg-[#2F7C7A] text-white border-[#2F7C7A] shadow-sm shadow-[#2F7C7A]/20'
+                      ? 'bg-[#23804A] text-white border-[#23804A] shadow-sm shadow-[#23804A]/20'
                       : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                   }`}
                 >
@@ -166,14 +166,14 @@ export default function FacultyTimetablePage() {
               {dayEntries.map((period) => (
                 <div
                   key={period._id}
-                  className="bg-white rounded-xl border border-[#E2E8E0] p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-[#2F7C7A] transition-all"
+                  className="bg-white rounded-xl border border-[#E3EAE5] p-4 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-[#23804A] transition-all"
                 >
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200 text-[#2F7C7A] font-bold text-sm flex items-center justify-center font-mono shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-green-50 border border-green-200 text-[#23804A] font-bold text-sm flex items-center justify-center font-mono shrink-0">
                       P{period.periodNumber}
                     </div>
                     <div>
-                      <h3 className="font-bold text-sm text-[#132238]">
+                      <h3 className="font-bold text-sm text-[#171D19]">
                         {period.subjectId?.name || period.subjectId?.subjectName || 'Subject Paper'}
                       </h3>
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mt-1">
@@ -194,7 +194,7 @@ export default function FacultyTimetablePage() {
 
                   <Link
                     href={`/faculty/attendance?classId=${period.classId?._id}&subjectId=${period.subjectId?._id}&period=${period.periodNumber}`}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#2F7C7A] hover:bg-[#286b69] text-white text-xs font-semibold shadow-2xs transition-all self-end sm:self-auto"
+                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-semibold shadow-2xs transition-all self-end sm:self-auto"
                   >
                     <CalendarCheck className="w-3.5 h-3.5 mr-1.5" /> Mark Period {period.periodNumber}
                   </Link>
@@ -205,7 +205,7 @@ export default function FacultyTimetablePage() {
         </div>
       ) : (
         /* Weekly Matrix View */
-        <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-2xs overflow-x-auto">
+        <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-2xs overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse min-w-[700px]">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
@@ -233,11 +233,11 @@ export default function FacultyTimetablePage() {
                       return (
                         <td key={pNum} className="py-3 px-2 border-r border-slate-100 last:border-r-0 align-top">
                           {entry ? (
-                            <div className="bg-teal-50/80 border border-teal-200/80 rounded-lg p-2.5 space-y-1 group hover:border-[#2F7C7A] transition-all">
-                              <p className="font-bold text-[11px] text-[#132238] truncate" title={entry.subjectId?.name || ''}>
+                            <div className="bg-green-50/80 border border-green-200/80 rounded-lg p-2.5 space-y-1 group hover:border-[#23804A] transition-all">
+                              <p className="font-bold text-[11px] text-[#171D19] truncate" title={entry.subjectId?.name || ''}>
                                 {entry.subjectId?.name || entry.subjectId?.subjectName || 'Subject'}
                               </p>
-                              <p className="text-[10px] text-teal-800 font-semibold truncate">
+                              <p className="text-[10px] text-green-800 font-semibold truncate">
                                 {entry.classId?.name}
                               </p>
                               <p className="text-[9px] font-mono text-slate-500">
@@ -246,7 +246,7 @@ export default function FacultyTimetablePage() {
                               <div className="pt-1">
                                 <Link
                                   href={`/faculty/attendance?classId=${entry.classId?._id}&subjectId=${entry.subjectId?._id}&period=${entry.periodNumber}`}
-                                  className="text-[10px] text-[#2F7C7A] font-bold hover:underline flex items-center"
+                                  className="text-[10px] text-[#23804A] font-bold hover:underline flex items-center"
                                 >
                                   Mark &rarr;
                                 </Link>

@@ -174,12 +174,7 @@ function LoginForm() {
           </form>
 
           <div className="text-center pt-2 border-t border-[#E2E8E0]">
-            <p className="text-sm text-[#64748B]">
-              Don't have an account?{' '}
-              <Link href="/register" className="font-semibold text-[#2F7C7A] hover:underline cursor-pointer">
-                Create an account
-              </Link>
-            </p>
+            
           </div>
         </>
       )}

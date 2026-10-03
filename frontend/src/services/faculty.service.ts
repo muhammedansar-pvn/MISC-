@@ -25,9 +25,22 @@ export const createFaculty = async (data: FacultyPayload): Promise<ApiResponse<F
 
 export const updateFaculty = async (
   id: string,
-  data: Partial<FacultyPayload>
+  data: Partial<FacultyPayload> & { email?: string }
+): Promise<ApiResponse<FacultyProfile & { requiresEmailVerification?: boolean; maskedEmail?: string }>> => {
+  const response = await apiClient.put<ApiResponse<FacultyProfile & { requiresEmailVerification?: boolean; maskedEmail?: string }>>(API_ENDPOINTS.faculty.byId(id), data);
+  return response.data;
+};
+
+export const updateFacultyStatus = async (
+  id: string,
+  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
 ): Promise<ApiResponse<FacultyProfile>> => {
-  const response = await apiClient.put<ApiResponse<FacultyProfile>>(API_ENDPOINTS.faculty.byId(id), data);
+  const response = await apiClient.patch<ApiResponse<FacultyProfile>>(API_ENDPOINTS.faculty.status(id), { status });
+  return response.data;
+};
+
+export const deleteFaculty = async (id: string): Promise<ApiResponse<FacultyProfile>> => {
+  const response = await apiClient.delete<ApiResponse<FacultyProfile>>(API_ENDPOINTS.faculty.byId(id));
   return response.data;
 };
 
@@ -107,6 +120,8 @@ export default {
   getFacultyById,
   createFaculty,
   updateFaculty,
+  updateFacultyStatus,
+  deleteFaculty,
   getFacultyDashboardStats,
   getMyAssignments,
   getMyClasses,

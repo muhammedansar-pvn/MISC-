@@ -33,30 +33,30 @@ export const PublicationsOverview = () => {
   ];
 
   return (
-    <section className="relative bg-[#F7F8F5] py-16 sm:py-24 border-b border-[#E2E8E0]">
+    <section className="relative bg-misc-page py-16 sm:py-24 border-b border-misc-border">
       <div className="misc-container">
         
         {/* Section Header with Visual Card */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-12">
           <div className="lg:col-span-7 space-y-3">
-            <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#E6F2F1] border border-[#E2E8E0]">
-              <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
-              <span className="text-xs font-semibold tracking-wider text-[#2F7C7A] uppercase">
+            <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-misc-soft-blue border border-misc-border">
+              <span className="w-2 h-2 rounded-full bg-misc-primary" />
+              <span className="text-xs font-semibold tracking-wider text-misc-primary uppercase">
                 FROM THE JOURNAL
               </span>
             </div>
 
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#132238] tracking-tight leading-tight">
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-misc-text tracking-tight leading-tight">
               Academic Research & Scholarly Publications
             </h2>
 
-            <p className="text-base text-[#475569]">
+            <p className="text-base text-misc-secondary">
               Peer-reviewed research papers, journal articles, and curriculum monographs issued by MISC research wings.
             </p>
           </div>
 
           <div className="lg:col-span-5">
-            <div className="relative rounded-xl overflow-hidden border border-[#E2E8E0] shadow-sm bg-white p-2">
+            <div className="relative rounded-xl overflow-hidden border border-misc-border shadow-sm bg-white p-2">
               <img
                 src="/MKZ01377.JPG.jpeg"
                 alt="MISC Scholars conducting manuscript research in library"
@@ -71,30 +71,30 @@ export const PublicationsOverview = () => {
           {publications.map((item, idx) => (
             <div 
               key={idx}
-              className="bg-white p-6 rounded-xl border border-[#E2E8E0] shadow-xs hover:border-[#2F7C7A]/40 transition-all flex flex-col justify-between group"
+              className="bg-white p-6 rounded-xl border border-misc-border shadow-xs hover:border-misc-primary/40 transition-all flex flex-col justify-between group"
             >
               <div className="space-y-4">
-                <span className="text-[10px] font-semibold tracking-wider text-[#2F7C7A] bg-[#E6F2F1] border border-[#E2E8E0] px-2.5 py-1 rounded-full uppercase inline-block">
+                <span className="text-[10px] font-semibold tracking-wider text-misc-primary bg-misc-soft-blue border border-misc-border px-2.5 py-1 rounded-full uppercase inline-block">
                   {item.category}
                 </span>
 
-                <h3 className="font-serif text-lg sm:text-xl font-bold text-[#132238] group-hover:text-[#2F7C7A] transition-colors leading-snug">
+                <h3 className="font-serif text-lg sm:text-xl font-bold text-misc-text group-hover:text-misc-primary transition-colors leading-snug">
                   {item.title}
                 </h3>
 
-                <p className="text-xs text-[#475569] font-normal leading-relaxed">
+                <p className="text-xs text-misc-secondary font-normal leading-relaxed">
                   {item.snippet}
                 </p>
               </div>
 
-              <div className="pt-4 mt-6 border-t border-[#E2E8E0] space-y-3">
-                <div className="flex items-center justify-between text-[11px] text-[#475569]">
+              <div className="pt-4 mt-6 border-t border-misc-border space-y-3">
+                <div className="flex items-center justify-between text-[11px] text-misc-secondary">
                   <span className="flex items-center space-x-1.5">
-                    <User className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                    <User className="w-3.5 h-3.5 text-misc-primary" />
                     <span>{item.author}</span>
                   </span>
                   <span className="flex items-center space-x-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-[#475569]" />
+                    <Calendar className="w-3.5 h-3.5 text-misc-secondary" />
                     <span>{item.date}</span>
                   </span>
                 </div>

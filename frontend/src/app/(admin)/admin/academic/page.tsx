@@ -171,15 +171,15 @@ function AdminAcademicContent() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs">
         <div>
-          <h1 className="text-2xl font-serif font-bold text-[#132238]">Academic Curriculum & Setup</h1>
+          <h1 className="text-2xl font-serif font-bold text-[#171D19]">Academic Curriculum & Setup</h1>
           <p className="text-sm text-slate-500 mt-1">Configure Academic Years, Classes, Subjects, and Syllabuses for Markaz Sanaviyya</p>
         </div>
         {activeTab !== 'syllabuses' && activeTab !== 'faculty-assignments' && (
           <button
             onClick={() => handleOpenModal()}
-            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] cursor-pointer transition-all shadow-xs"
+            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] cursor-pointer transition-all shadow-xs"
           >
             <Plus className="w-4 h-4 mr-2" /> Add {activeTab === 'academic-years' ? 'Academic Year' : activeTab === 'classes' ? 'Class' : 'Subject'}
           </button>
@@ -187,7 +187,7 @@ function AdminAcademicContent() {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-2 border-b border-[#E2E8E0] pb-1 overflow-x-auto">
+      <div className="flex space-x-2 border-b border-[#E3EAE5] pb-1 overflow-x-auto">
         {[
           { id: 'academic-years' as AcademicTab, label: 'Academic Years', icon: Calendar, count: academicYears.length },
           { id: 'classes' as AcademicTab, label: 'Classes', icon: Layers, count: classesList.length },
@@ -203,8 +203,8 @@ function AdminAcademicContent() {
               onClick={() => handleTabChange(tab.id)}
               className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                 isSelected
-                  ? 'bg-[#2F7C7A] text-white shadow-xs'
-                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0]'
+                  ? 'bg-[#23804A] text-white shadow-xs'
+                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5]'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -219,7 +219,7 @@ function AdminAcademicContent() {
         })}
         <Link
           href="/admin/academic/timetable"
-          className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0] whitespace-nowrap"
+          className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5] whitespace-nowrap"
         >
           <Clock className="w-4 h-4" />
           <span>Class Timetable</span>
@@ -241,24 +241,24 @@ function AdminAcademicContent() {
           preloadedSubjects={subjectsList}
         />
       ) : (
-        <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs overflow-hidden">
           {loading ? (
             <div className="p-12 text-center space-y-3">
-              <div className="w-8 h-8 border-4 border-[#2F7C7A] border-t-transparent rounded-full animate-spin mx-auto" />
+              <div className="w-8 h-8 border-4 border-[#23804A] border-t-transparent rounded-full animate-spin mx-auto" />
               <p className="text-sm font-semibold text-slate-600">Loading academic records...</p>
             </div>
           ) : error ? (
             <div className="p-12 text-center space-y-4">
               <AlertCircle className="w-10 h-10 text-rose-500 mx-auto" />
               <p className="text-sm font-semibold text-rose-700">{error}</p>
-              <button onClick={fetchAllAcademicData} className="px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer">
+              <button onClick={fetchAllAcademicData} className="px-4 py-2 bg-[#23804A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer">
                 <RefreshCw className="w-4 h-4 mr-2 inline" /> Retry
               </button>
             </div>
           ) : activeTab === 'academic-years' ? (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
+                <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
                   <tr>
                     <th className="px-6 py-4">Year Name</th>
                     <th className="px-6 py-4">Code</th>
@@ -268,7 +268,7 @@ function AdminAcademicContent() {
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E2E8E0]">
+                <tbody className="divide-y divide-[#E3EAE5]">
                   {academicYears.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="px-6 py-8 text-center text-slate-400">No academic years found.</td>
@@ -276,7 +276,7 @@ function AdminAcademicContent() {
                   ) : (
                     academicYears.map((ay) => (
                       <tr key={ay._id} className="hover:bg-slate-50">
-                        <td className="px-6 py-4 font-bold text-[#132238]">{ay.yearName}</td>
+                        <td className="px-6 py-4 font-bold text-[#171D19]">{ay.yearName}</td>
                         <td className="px-6 py-4 font-mono text-slate-600">{ay.yearCode}</td>
                         <td className="px-6 py-4 text-xs text-slate-600">
                           {ay.startDate ? new Date(ay.startDate).toLocaleDateString() : 'N/A'} - {ay.endDate ? new Date(ay.endDate).toLocaleDateString() : 'N/A'}
@@ -305,7 +305,7 @@ function AdminAcademicContent() {
           ) : activeTab === 'classes' ? (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
+                <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
                   <tr>
                     <th className="px-6 py-4">Class Name</th>
                     <th className="px-6 py-4">Code</th>
@@ -315,7 +315,7 @@ function AdminAcademicContent() {
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E2E8E0]">
+                <tbody className="divide-y divide-[#E3EAE5]">
                   {classesList.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="px-6 py-8 text-center text-slate-400">No classes registered yet.</td>
@@ -323,10 +323,10 @@ function AdminAcademicContent() {
                   ) : (
                     classesList.map((cls: any) => (
                       <tr key={cls._id} className="hover:bg-slate-50">
-                        <td className="px-6 py-4 font-bold text-[#132238]">{cls.name}</td>
+                        <td className="px-6 py-4 font-bold text-[#171D19]">{cls.name}</td>
                         <td className="px-6 py-4 font-mono text-slate-600">{cls.code}</td>
                         <td className="px-6 py-4">
-                          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-teal-50 text-teal-800 border border-teal-200">
+                          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-green-50 text-green-800 border border-green-200">
                             {cls.department || 'General'}
                           </span>
                         </td>
@@ -348,7 +348,7 @@ function AdminAcademicContent() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
+                <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
                   <tr>
                     <th className="px-6 py-4">Subject Name</th>
                     <th className="px-6 py-4">Code</th>
@@ -357,7 +357,7 @@ function AdminAcademicContent() {
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E2E8E0]">
+                <tbody className="divide-y divide-[#E3EAE5]">
                   {subjectsList.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="px-6 py-8 text-center text-slate-400">No subjects found.</td>
@@ -365,7 +365,7 @@ function AdminAcademicContent() {
                   ) : (
                     subjectsList.map((sbj: any) => (
                       <tr key={sbj._id} className="hover:bg-slate-50">
-                        <td className="px-6 py-4 font-bold text-[#132238]">{sbj.subjectName || sbj.name}</td>
+                        <td className="px-6 py-4 font-bold text-[#171D19]">{sbj.subjectName || sbj.name}</td>
                         <td className="px-6 py-4 font-mono text-slate-600">{sbj.subjectCode || sbj.code}</td>
                         <td className="px-6 py-4">
                           <span className="px-2.5 py-0.5 text-xs font-bold bg-slate-100 text-slate-700 rounded-full border">
@@ -391,9 +391,9 @@ function AdminAcademicContent() {
       {/* Form Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white max-w-lg w-full rounded-2xl shadow-xl border border-[#E2E8E0] p-6 space-y-4 my-8">
+          <div className="bg-white max-w-lg w-full rounded-2xl shadow-xl border border-[#E3EAE5] p-6 space-y-4 my-8">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-lg font-bold text-[#132238]">
+              <h3 className="text-lg font-bold text-[#171D19]">
                 {editingItem ? 'Edit Record' : 'Create Record'} ({activeTab === 'academic-years' ? 'Academic Year' : activeTab === 'classes' ? 'Class' : 'Subject'})
               </h3>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer"><X className="w-5 h-5" /></button>
@@ -511,7 +511,7 @@ function AdminAcademicContent() {
 
               <div className="flex justify-end space-x-3 pt-3 border-t">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border rounded-lg text-xs font-bold cursor-pointer">Cancel</button>
-                <button type="submit" disabled={formLoading} className="px-5 py-2 bg-[#2F7C7A] text-white rounded-lg text-xs font-bold uppercase cursor-pointer">
+                <button type="submit" disabled={formLoading} className="px-5 py-2 bg-[#23804A] text-white rounded-lg text-xs font-bold uppercase cursor-pointer">
                   {formLoading ? 'Saving...' : editingItem ? 'Update' : 'Create'}
                 </button>
               </div>
@@ -528,7 +528,7 @@ export default function AdminAcademicPage() {
     <Suspense
       fallback={
         <div className="p-12 text-center space-y-3">
-          <div className="w-8 h-8 border-4 border-[#2F7C7A] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-8 h-8 border-4 border-[#23804A] border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-sm font-semibold text-slate-600">Loading academic portal...</p>
         </div>
       }

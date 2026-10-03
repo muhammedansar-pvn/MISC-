@@ -54,8 +54,8 @@ router.post("/syllabuses/upload", requireAuth, requireRole("ADMIN"), handleUploa
 router.post("/syllabuses", requireAuth, requireRole("ADMIN"), validateSyllabus, handleCreateSyllabus);
 router.get("/syllabuses", requireAuth, handleGetSyllabuses);
 router.get("/syllabuses/:id", requireAuth, handleGetSyllabusById);
-router.put("/syllabuses/:id", requireAuth, requireRole("ADMIN"), validateUpdateSyllabus, handleUpdateSyllabus);
-router.patch("/syllabuses/:id", requireAuth, requireRole("ADMIN"), validateUpdateSyllabus, handleUpdateSyllabus);
+router.put("/syllabuses/:id", requireAuth, requireRole("ADMIN", "FACULTY"), validateUpdateSyllabus, handleUpdateSyllabus);
+router.patch("/syllabuses/:id", requireAuth, requireRole("ADMIN", "FACULTY"), validateUpdateSyllabus, handleUpdateSyllabus);
 router.delete("/syllabuses/:id", requireAuth, requireRole("ADMIN"), handleDeleteSyllabus);
 
 // --- TIMETABLES ---

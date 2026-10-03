@@ -285,27 +285,27 @@ function FacultyMarksContent() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/faculty" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/faculty" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Mark Entry Workspace</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Class Candidate Mark Entry
           </h1>
         </div>
 
         <Link
           href="/faculty/examinations"
-          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#2F7C7A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
+          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#23804A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to Schedules
         </Link>
       </div>
 
       {/* Schedule Selector Card */}
-      <div className="bg-white p-5 rounded-2xl border border-[#E2E8E0] shadow-2xs space-y-4">
+      <div className="bg-white p-5 rounded-2xl border border-[#E3EAE5] shadow-2xs space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700">
@@ -314,7 +314,7 @@ function FacultyMarksContent() {
             <select
               value={selectedScheduleId}
               onChange={(e) => setSelectedScheduleId(e.target.value)}
-              className="w-full py-2.5 px-3 text-xs border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#2F7C7A] bg-white font-medium text-slate-800"
+              className="w-full py-2.5 px-3 text-xs border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#23804A] bg-white font-medium text-slate-800"
             >
               {schedules.length === 0 ? (
                 <option value="">No assigned exam papers found</option>
@@ -361,7 +361,7 @@ function FacultyMarksContent() {
           </div>
           <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
             <span className="text-[10px] uppercase font-bold text-slate-400">Marks Entered</span>
-            <p className="text-lg font-bold text-[#2F7C7A]">
+            <p className="text-lg font-bold text-[#23804A]">
               {enteredCount} <span className="text-xs font-normal text-slate-400">/ {totalStudents}</span>
             </p>
           </div>
@@ -396,11 +396,11 @@ function FacultyMarksContent() {
       )}
 
       {/* Student Roster Table */}
-      <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
-        <div className="p-5 border-b border-[#E2E8E0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
+        <div className="p-5 border-b border-[#E3EAE5] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center space-x-2">
-            <Users className="w-4 h-4 text-[#2F7C7A]" />
-            <h3 className="font-bold text-sm text-[#132238]">
+            <Users className="w-4 h-4 text-[#23804A]" />
+            <h3 className="font-bold text-sm text-[#171D19]">
               Candidate Roster Evaluation ({rows.length})
             </h3>
           </div>
@@ -416,7 +416,7 @@ function FacultyMarksContent() {
             <button
               onClick={() => handleSaveMarks('SUBMITTED')}
               disabled={saving || loadingRoster || rows.length === 0}
-              className="inline-flex items-center px-4 py-2 rounded-lg bg-[#2F7C7A] hover:bg-[#286b69] text-white font-semibold text-xs transition-all shadow-2xs disabled:opacity-50"
+              className="inline-flex items-center px-4 py-2 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white font-semibold text-xs transition-all shadow-2xs disabled:opacity-50"
             >
               <Send className="w-3.5 h-3.5 mr-1.5" /> Submit Marks
             </button>
@@ -436,7 +436,7 @@ function FacultyMarksContent() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-[#E2E8E0] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                <tr className="bg-slate-50 border-b border-[#E3EAE5] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                   <th className="p-3.5 w-12 text-center">#</th>
                   <th className="p-3.5">Candidate Name</th>
                   <th className="p-3.5">Registration</th>
@@ -477,7 +477,7 @@ function FacultyMarksContent() {
                           value={row.marksObtained}
                           onChange={(e) => handleMarkChange(idx, e.target.value)}
                           disabled={row.isAbsent || isLocked || saving}
-                          className="w-full px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#2F7C7A] font-mono text-xs font-bold text-slate-900 disabled:bg-slate-100 disabled:text-slate-400"
+                          className="w-full px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-hidden focus:border-[#23804A] font-mono text-xs font-bold text-slate-900 disabled:bg-slate-100 disabled:text-slate-400"
                         />
                       </td>
                       <td className="p-3.5 text-center">
@@ -487,7 +487,7 @@ function FacultyMarksContent() {
                             checked={row.isAbsent}
                             onChange={(e) => handleAbsentToggle(idx, e.target.checked)}
                             disabled={isLocked || saving}
-                            className="rounded text-[#2F7C7A] focus:ring-0 w-3.5 h-3.5 disabled:opacity-50"
+                            className="rounded text-[#23804A] focus:ring-0 w-3.5 h-3.5 disabled:opacity-50"
                           />
                           <span className={`text-[11px] font-semibold ${row.isAbsent ? 'text-rose-600' : 'text-slate-500'}`}>
                             Absent
@@ -500,7 +500,7 @@ function FacultyMarksContent() {
                             row.status === 'VERIFIED'
                               ? 'bg-emerald-100 text-emerald-800'
                               : row.status === 'PUBLISHED'
-                              ? 'bg-blue-100 text-blue-800'
+                              ? 'bg-green-100 text-green-800'
                               : row.status === 'SUBMITTED'
                               ? 'bg-amber-100 text-amber-800'
                               : row.status === 'DRAFT'
@@ -576,7 +576,7 @@ function FacultyMarksContent() {
                   max={maxMarks}
                   value={correctionNewMarks}
                   onChange={(e) => setCorrectionNewMarks(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg font-mono text-xs focus:outline-hidden focus:border-[#2F7C7A]"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg font-mono text-xs focus:outline-hidden focus:border-[#23804A]"
                   required
                 />
               </div>
@@ -588,7 +588,7 @@ function FacultyMarksContent() {
                   value={correctionReason}
                   onChange={(e) => setCorrectionReason(e.target.value)}
                   placeholder="Explain why this mark must be changed (e.g., retotalling, re-evaluation)..."
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-hidden focus:border-[#2F7C7A]"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-hidden focus:border-[#23804A]"
                   required
                 />
               </div>
@@ -605,7 +605,7 @@ function FacultyMarksContent() {
                 <button
                   type="submit"
                   disabled={submittingCorrection}
-                  className="px-4 py-2 rounded-lg bg-[#2F7C7A] hover:bg-[#286b69] text-white font-semibold shadow-2xs"
+                  className="px-4 py-2 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white font-semibold shadow-2xs"
                 >
                   {submittingCorrection ? 'Submitting...' : 'Submit for Review'}
                 </button>

@@ -31,9 +31,20 @@ const subjectSchema = Joi.object({
   status: Joi.string().valid("ACTIVE", "INACTIVE").default("ACTIVE"),
 }).or("subjectName", "name").or("subjectCode", "code");
 
+const topicItemSchema = Joi.object({
+  title: Joi.string().trim().required(),
+  isCompleted: Joi.boolean().default(false),
+  completedAt: Joi.date().optional().allow(null),
+});
+
 const unitItemSchema = Joi.object({
   unitNumber: Joi.number().optional().allow(null),
   title: Joi.string().trim().required(),
+  topics: Joi.array().items(topicItemSchema).optional(),
+  plannedHours: Joi.number().min(0).optional(),
+  completedHours: Joi.number().min(0).optional(),
+  isCompleted: Joi.boolean().optional(),
+  completedAt: Joi.date().optional().allow(null),
 });
 
 const syllabusSchema = Joi.object({
@@ -41,6 +52,7 @@ const syllabusSchema = Joi.object({
   title: Joi.string().trim().allow("").optional(),
   examType: Joi.string().valid("HALF_YEARLY", "ANNUAL").required(),
   units: Joi.array().items(unitItemSchema).default([]),
+  completionPercentage: Joi.number().min(0).max(100).optional(),
   subjectId: Joi.string().hex().length(24).required(),
   classId: Joi.string().hex().length(24).required(),
   academicYearId: Joi.string().hex().length(24).required(),
@@ -55,6 +67,7 @@ const updateSyllabusSchema = Joi.object({
   title: Joi.string().trim().allow("").optional(),
   examType: Joi.string().valid("HALF_YEARLY", "ANNUAL").optional(),
   units: Joi.array().items(unitItemSchema).optional(),
+  completionPercentage: Joi.number().min(0).max(100).optional(),
   subjectId: Joi.string().hex().length(24).optional(),
   classId: Joi.string().hex().length(24).optional(),
   academicYearId: Joi.string().hex().length(24).optional(),

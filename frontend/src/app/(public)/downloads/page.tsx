@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function DownloadsPage() {
   return (
-    <div className="w-full bg-[#F7F8F5]">
+    <div className="w-full bg-misc-page">
       {/* 1. HERO SECTION */}
       <DownloadsHero />
 

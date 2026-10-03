@@ -271,15 +271,15 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-white max-w-lg w-full rounded-2xl shadow-xl border border-[#E2E8E0] overflow-hidden transition-all my-8">
+      <div className="bg-white max-w-lg w-full rounded-2xl shadow-xl border border-[#E3EAE5] overflow-hidden transition-all my-8">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8E0] bg-[#F7F8F5]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E3EAE5] bg-[#FBFCFB]">
           <div className="flex items-center space-x-3">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isEditMode ? 'bg-emerald-100 text-emerald-700' : 'bg-[#2F7C7A]/10 text-[#2F7C7A]'}`}>
-              {step === 'OTP' ? <ShieldCheck className="w-5 h-5 text-[#2F7C7A]" /> : isEditMode ? <Edit3 className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isEditMode ? 'bg-emerald-100 text-emerald-700' : 'bg-[#23804A]/10 text-[#23804A]'}`}>
+              {step === 'OTP' ? <ShieldCheck className="w-5 h-5 text-[#23804A]" /> : isEditMode ? <Edit3 className="w-5 h-5" /> : <UserPlus className="w-5 h-5" />}
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[#132238]">
+              <h3 className="text-lg font-bold text-[#171D19]">
                 {step === 'OTP' ? 'Verify Email OTP' : isEditMode ? 'Edit System User' : 'Register / Invite User'}
               </h3>
               <p className="text-xs text-slate-500">
@@ -322,13 +322,13 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                 </div>
               )}
 
-              <div className="bg-[#F7F8F5] p-4 rounded-xl border border-[#E2E8E0] text-center space-y-2">
+              <div className="bg-[#FBFCFB] p-4 rounded-xl border border-[#E3EAE5] text-center space-y-2">
                 <p className="text-sm text-slate-700">
-                  Please enter the 6-digit verification code sent to <strong className="text-[#132238]">{verificationSession?.maskedEmail || verificationSession?.email}</strong>.
+                  Please enter the 6-digit verification code sent to <strong className="text-[#171D19]">{verificationSession?.maskedEmail || verificationSession?.email}</strong>.
                 </p>
                 <div className="text-xs text-slate-500 font-medium">
                   {timeLeft > 0 ? (
-                    <span>Code expires in: <strong className="text-[#2F7C7A]">{formatTime(timeLeft)}</strong></span>
+                    <span>Code expires in: <strong className="text-[#23804A]">{formatTime(timeLeft)}</strong></span>
                   ) : (
                     <span className="text-rose-600 font-bold">OTP has expired. Please request a new code.</span>
                   )}
@@ -336,7 +336,7 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#132238] mb-1.5 text-center">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#171D19] mb-1.5 text-center">
                   6-Digit Verification Code <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -346,7 +346,7 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                   placeholder="123456"
-                  className="w-full px-4 py-3 rounded-xl border border-[#E2E8E0] bg-white text-center font-mono text-2xl tracking-[0.5em] font-extrabold text-[#132238] focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-[#E3EAE5] bg-white text-center font-mono text-2xl tracking-[0.5em] font-extrabold text-[#171D19] focus:outline-none focus:ring-2 focus:ring-[#23804A] focus:border-transparent transition-all"
                 />
               </div>
 
@@ -354,7 +354,7 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                 <button
                   type="button"
                   onClick={() => setStep('FORM')}
-                  className="inline-flex items-center text-xs font-bold text-slate-600 hover:text-[#2F7C7A] transition-all"
+                  className="inline-flex items-center text-xs font-bold text-slate-600 hover:text-[#23804A] transition-all"
                 >
                   <ArrowLeft className="w-4 h-4 mr-1" />
                   Back to Registration Form
@@ -364,14 +364,14 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                   type="button"
                   onClick={handleResendOtp}
                   disabled={resendCooldown > 0 || resending}
-                  className="inline-flex items-center text-xs font-bold text-[#2F7C7A] hover:text-[#256361] disabled:opacity-50 transition-all"
+                  className="inline-flex items-center text-xs font-bold text-[#23804A] hover:text-[#1B6F41] disabled:opacity-50 transition-all"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 mr-1 ${resending ? 'animate-spin' : ''}`} />
                   {resendCooldown > 0 ? `Resend Code in ${resendCooldown}s` : 'Resend Code'}
                 </button>
               </div>
 
-              <div className="pt-4 flex items-center justify-end space-x-3 border-t border-[#E2E8E0]">
+              <div className="pt-4 flex items-center justify-end space-x-3 border-t border-[#E3EAE5]">
                 <button
                   type="button"
                   onClick={handleClose}
@@ -382,7 +382,7 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                 <button
                   type="submit"
                   disabled={loading || otp.length !== 6 || timeLeft <= 0}
-                  className="px-5 py-2.5 bg-[#2F7C7A] text-white rounded-lg font-bold text-sm hover:bg-[#256361] focus:outline-none transition-all disabled:opacity-50 uppercase tracking-wider shadow-sm flex items-center"
+                  className="px-5 py-2.5 bg-[#23804A] text-white rounded-lg font-bold text-sm hover:bg-[#1B6F41] focus:outline-none transition-all disabled:opacity-50 uppercase tracking-wider shadow-sm flex items-center"
                 >
                   {loading ? (
                     <>
@@ -416,7 +416,7 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
               )}
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-[#132238] mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#171D19] mb-1.5">
                   Full Name <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -426,13 +426,13 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="e.g. Dr. Ahmed Hassan"
-                  className="w-full px-4 py-2.5 rounded-lg border border-[#E2E8E0] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all"
+                  className="w-full px-4 py-2.5 rounded-lg border border-[#E3EAE5] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#23804A] focus:border-transparent transition-all"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#132238] mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#171D19] mb-1.5">
                     Email Address <span className="text-rose-500">*</span>
                   </label>
                   <input
@@ -442,12 +442,12 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="ahmed.hassan@markaz.in"
-                    className="w-full px-4 py-2.5 rounded-lg border border-[#E2E8E0] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 rounded-lg border border-[#E3EAE5] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#23804A] focus:border-transparent transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#132238] mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#171D19] mb-1.5">
                     Username
                   </label>
                   <input
@@ -456,21 +456,21 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                     value={formData.username}
                     onChange={handleChange}
                     placeholder="ahmed.hassan"
-                    className="w-full px-4 py-2.5 rounded-lg border border-[#E2E8E0] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 rounded-lg border border-[#E3EAE5] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#23804A] focus:border-transparent transition-all"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#132238] mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#171D19] mb-1.5">
                     User Role <span className="text-rose-500">*</span>
                   </label>
                   <select
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-lg border border-[#E2E8E0] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 rounded-lg border border-[#E3EAE5] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#23804A] focus:border-transparent transition-all"
                   >
                     <option value="FACULTY">Faculty Member</option>
                     <option value="HOD">Head of Department (HOD)</option>
@@ -487,14 +487,14 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#132238] mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#171D19] mb-1.5">
                     Account Status
                   </label>
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleChange}
-                    className="w-full px-4 py-2.5 rounded-lg border border-[#E2E8E0] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 rounded-lg border border-[#E3EAE5] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#23804A] focus:border-transparent transition-all"
                   >
                     <option value="ACTIVE">ACTIVE</option>
                     <option value="INACTIVE">INACTIVE</option>
@@ -507,7 +507,7 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#132238] mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#171D19] mb-1.5">
                     Mobile Number
                   </label>
                   <input
@@ -516,12 +516,12 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                     value={formData.mobile}
                     onChange={handleChange}
                     placeholder="9876543210"
-                    className="w-full px-4 py-2.5 rounded-lg border border-[#E2E8E0] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 rounded-lg border border-[#E3EAE5] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#23804A] focus:border-transparent transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[#132238] mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#171D19] mb-1.5">
                     Department / Office
                   </label>
                   <input
@@ -530,12 +530,12 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                     value={formData.department}
                     onChange={handleChange}
                     placeholder="e.g. Islamic Studies & Shariah"
-                    className="w-full px-4 py-2.5 rounded-lg border border-[#E2E8E0] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] focus:border-transparent transition-all"
+                    className="w-full px-4 py-2.5 rounded-lg border border-[#E3EAE5] bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#23804A] focus:border-transparent transition-all"
                   />
                 </div>
               </div>
 
-              <div className="pt-4 flex items-center justify-end space-x-3 border-t border-[#E2E8E0]">
+              <div className="pt-4 flex items-center justify-end space-x-3 border-t border-[#E3EAE5]">
                 <button
                   type="button"
                   onClick={handleClose}
@@ -546,7 +546,7 @@ export const UserFormModal = ({ isOpen, onClose, onSuccess, userToEdit = null })
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2.5 bg-[#2F7C7A] text-white rounded-lg font-bold text-sm hover:bg-[#256361] focus:outline-none transition-all disabled:opacity-50 uppercase tracking-wider shadow-sm flex items-center"
+                  className="px-5 py-2.5 bg-[#23804A] text-white rounded-lg font-bold text-sm hover:bg-[#1B6F41] focus:outline-none transition-all disabled:opacity-50 uppercase tracking-wider shadow-sm flex items-center"
                 >
                   {loading ? (
                     <>

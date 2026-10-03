@@ -291,6 +291,11 @@ const updateExamRegistrationStatus = async (id, registrationStatus) => {
 // 5. MARK ENTRIES (SECURE & AUTHORIZED)
 // ==========================================
 const submitOrUpdateMarkEntry = async (data, requestingUser = null) => {
+  if (requestingUser?.role === "FACULTY") {
+    const { assertFacultyAvailableForAssignment } = require("../faculty/faculty.service");
+    await assertFacultyAvailableForAssignment(requestingUser.userId || requestingUser.id || requestingUser.facultyId);
+  }
+
   const schedule = await ExamSchedule.findById(data.examScheduleId).lean();
   if (!schedule) {
     const error = new Error("Exam schedule record not found");
@@ -448,6 +453,11 @@ const submitOrUpdateMarkEntry = async (data, requestingUser = null) => {
 
 // Bulk Roster Marks Submission
 const submitRosterMarks = async ({ examScheduleId, status = "SUBMITTED", marks = [] }, requestingUser = null) => {
+  if (requestingUser?.role === "FACULTY") {
+    const { assertFacultyAvailableForAssignment } = require("../faculty/faculty.service");
+    await assertFacultyAvailableForAssignment(requestingUser.userId || requestingUser.id || requestingUser.facultyId);
+  }
+
   const schedule = await ExamSchedule.findById(examScheduleId).lean();
   if (!schedule) {
     const error = new Error("Exam schedule record not found");
@@ -942,6 +952,18 @@ const getExamResults = async (filter = {}, pagination = null, requestingUser = n
       } else {
         query.classId = { $in: authClassIds };
       }
+    } else if (requestingUser.role === "PARENT") {
+      const parentStudentIds = (requestingUser.parentStudentIds || []).map((id) => id.toString());
+      if (query.studentId) {
+        if (!parentStudentIds.includes(query.studentId.toString())) {
+          const error = new Error("Forbidden: You are not authorized to view this student's results");
+          error.statusCode = 403;
+          throw error;
+        }
+      } else {
+        query.studentId = { $in: parentStudentIds };
+      }
+      query.status = "PUBLISHED";
     }
   }
 

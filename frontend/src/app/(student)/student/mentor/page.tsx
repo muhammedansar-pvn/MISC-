@@ -67,13 +67,13 @@ export default function StudentMentorPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">My Mentor</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Assigned Usthad / Mentor
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
@@ -84,18 +84,18 @@ export default function StudentMentorPage() {
         <button
           onClick={() => loadMentor(true)}
           disabled={loading || refreshing}
-          className="p-2 rounded-lg border border-[#E2E8E0] bg-white text-slate-600 hover:text-[#2F7C7A] hover:bg-slate-50 shadow-2xs transition-all disabled:opacity-50 self-start sm:self-auto"
+          className="p-2 rounded-lg border border-[#E3EAE5] bg-white text-slate-600 hover:text-[#23804A] hover:bg-slate-50 shadow-2xs transition-all disabled:opacity-50 self-start sm:self-auto"
           title="Refresh mentor details"
           aria-label="Refresh mentor details"
         >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-[#2F7C7A]' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-[#23804A]' : ''}`} />
         </button>
       </div>
 
       {/* Loading State */}
       {loading ? (
         <div className="space-y-6">
-          <div className="bg-white rounded-xl border border-[#E2E8E0] p-8 animate-pulse">
+          <div className="bg-white rounded-xl border border-[#E3EAE5] p-8 animate-pulse">
             <div className="flex items-center space-x-5">
               <div className="w-20 h-20 rounded-full bg-slate-200" />
               <div className="space-y-3 flex-1">
@@ -107,7 +107,7 @@ export default function StudentMentorPage() {
           </div>
         </div>
       ) : error ? (
-        <div className="bg-white rounded-xl border border-[#E2E8E0] p-12 text-center space-y-3 shadow-2xs">
+        <div className="bg-white rounded-xl border border-[#E3EAE5] p-12 text-center space-y-3 shadow-2xs">
           <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-200">
             <AlertCircle className="w-6 h-6" />
           </div>
@@ -115,19 +115,19 @@ export default function StudentMentorPage() {
           <p className="text-xs text-slate-500 max-w-md mx-auto">{error}</p>
           <button
             onClick={() => loadMentor(true)}
-            className="text-xs font-semibold px-4 py-2 rounded-lg bg-[#2F7C7A] text-white hover:bg-[#286b69] transition-all"
+            className="text-xs font-semibold px-4 py-2 rounded-lg bg-[#23804A] text-white hover:bg-[#1B6F41] transition-all"
           >
             Retry Connection
           </button>
         </div>
       ) : !assignment || !mentorProfile ? (
         /* Empty State */
-        <div className="bg-white rounded-xl border border-[#E2E8E0] p-12 sm:p-16 text-center space-y-4 shadow-2xs">
-          <div className="w-16 h-16 rounded-2xl bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center mx-auto border border-[#2F7C7A]/20">
+        <div className="bg-white rounded-xl border border-[#E3EAE5] p-12 sm:p-16 text-center space-y-4 shadow-2xs">
+          <div className="w-16 h-16 rounded-2xl bg-[#EAF2EC] text-[#23804A] flex items-center justify-center mx-auto border border-[#23804A]/20">
             <UserCheck className="w-8 h-8" />
           </div>
           <div className="space-y-1">
-            <h3 className="text-base font-bold text-[#132238]">No mentor assigned yet</h3>
+            <h3 className="text-base font-bold text-[#171D19]">No mentor assigned yet</h3>
             <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
               Your designated class mentor (Usthad) for the current academic year is being assigned by the academic council. Once assigned, their contact details and guidance schedule will appear here.
             </p>
@@ -144,22 +144,22 @@ export default function StudentMentorPage() {
       ) : (
         /* Main Mentor Card */
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-[#E2E8E0] p-6 sm:p-8 shadow-2xs overflow-hidden">
+          <div className="bg-white rounded-2xl border border-[#E3EAE5] p-6 sm:p-8 shadow-2xs overflow-hidden">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
               <div className="flex items-start sm:items-center space-x-5">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#2F7C7A] to-[#3ca09d] text-white font-serif text-2xl font-bold flex items-center justify-center shadow-md shadow-[#2F7C7A]/20 shrink-0">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#23804A] to-[#78A887] text-white font-serif text-2xl font-bold flex items-center justify-center shadow-md shadow-[#23804A]/20 shrink-0">
                   {mentorUser?.name ? mentorUser.name.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#E6F2F1] text-[#2F7C7A] border border-[#2F7C7A]/20">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#EAF2EC] text-[#23804A] border border-[#23804A]/20">
                       Assigned Mentor
                     </span>
                     <span className="inline-flex items-center text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                       <ShieldCheck className="w-3 h-3 mr-1" /> Verified Faculty
                     </span>
                   </div>
-                  <h2 className="text-xl sm:text-2xl font-bold font-serif text-[#132238]">
+                  <h2 className="text-xl sm:text-2xl font-bold font-serif text-[#171D19]">
                     {mentorUser?.name || 'Usthad'}
                   </h2>
                   <p className="text-xs text-slate-500 flex items-center gap-2">
@@ -180,7 +180,7 @@ export default function StudentMentorPage() {
                     Academic Session
                   </span>
                   <p className="font-semibold text-slate-800 flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                    <Calendar className="w-3.5 h-3.5 text-[#23804A]" />
                     {academicYear.yearName}
                   </p>
                 </div>
@@ -192,13 +192,13 @@ export default function StudentMentorPage() {
               {/* Email */}
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-200/70 space-y-2">
                 <div className="flex items-center space-x-2 text-xs text-slate-500">
-                  <Mail className="w-4 h-4 text-[#2F7C7A]" />
+                  <Mail className="w-4 h-4 text-[#23804A]" />
                   <span className="font-semibold uppercase tracking-wider text-[10px]">Official Email</span>
                 </div>
                 {mentorUser?.email ? (
                   <a
                     href={`mailto:${mentorUser.email}`}
-                    className="text-sm font-semibold text-slate-800 hover:text-[#2F7C7A] transition-colors break-all block"
+                    className="text-sm font-semibold text-slate-800 hover:text-[#23804A] transition-colors break-all block"
                   >
                     {mentorUser.email}
                   </a>
@@ -210,13 +210,13 @@ export default function StudentMentorPage() {
               {/* Mobile / Contact Number */}
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-200/70 space-y-2">
                 <div className="flex items-center space-x-2 text-xs text-slate-500">
-                  <Phone className="w-4 h-4 text-[#2F7C7A]" />
+                  <Phone className="w-4 h-4 text-[#23804A]" />
                   <span className="font-semibold uppercase tracking-wider text-[10px]">Contact Number</span>
                 </div>
                 {mentorUser?.mobile ? (
                   <a
                     href={`tel:${mentorUser.mobile}`}
-                    className="text-sm font-semibold font-mono text-slate-800 hover:text-[#2F7C7A] transition-colors block"
+                    className="text-sm font-semibold font-mono text-slate-800 hover:text-[#23804A] transition-colors block"
                   >
                     {mentorUser.mobile}
                   </a>
@@ -228,7 +228,7 @@ export default function StudentMentorPage() {
               {/* Department */}
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-200/70 space-y-2">
                 <div className="flex items-center space-x-2 text-xs text-slate-500">
-                  <Building2 className="w-4 h-4 text-[#2F7C7A]" />
+                  <Building2 className="w-4 h-4 text-[#23804A]" />
                   <span className="font-semibold uppercase tracking-wider text-[10px]">Department</span>
                 </div>
                 <p className="text-sm font-semibold text-slate-800">
@@ -240,8 +240,8 @@ export default function StudentMentorPage() {
 
           {/* Mentorship Information & Principles Banner */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl border border-[#E2E8E0] p-5 shadow-2xs space-y-2">
-              <div className="flex items-center space-x-2 text-[#2F7C7A]">
+            <div className="bg-white rounded-xl border border-[#E3EAE5] p-5 shadow-2xs space-y-2">
+              <div className="flex items-center space-x-2 text-[#23804A]">
                 <BookOpen className="w-4 h-4" />
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
                   Role of Your Mentor (Usthad)
@@ -252,8 +252,8 @@ export default function StudentMentorPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#E2E8E0] p-5 shadow-2xs space-y-2">
-              <div className="flex items-center space-x-2 text-[#2F7C7A]">
+            <div className="bg-white rounded-xl border border-[#E3EAE5] p-5 shadow-2xs space-y-2">
+              <div className="flex items-center space-x-2 text-[#23804A]">
                 <MessageSquare className="w-4 h-4" />
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
                   Guidance Consultations

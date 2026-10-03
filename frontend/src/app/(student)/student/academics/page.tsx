@@ -93,34 +93,34 @@ export default function StudentAcademicsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Academics</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Academic Structure & Curriculum
           </h1>
         </div>
 
         <Link
           href="/student/syllabus"
-          className="inline-flex items-center text-xs font-semibold text-white px-4 py-2 rounded-lg bg-[#2F7C7A] hover:bg-[#286b69] shadow-2xs transition-all self-start sm:self-auto"
+          className="inline-flex items-center text-xs font-semibold text-white px-4 py-2 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] shadow-2xs transition-all self-start sm:self-auto"
         >
           <BookOpen className="w-3.5 h-3.5 mr-1.5" /> View Detailed Syllabus
         </Link>
       </div>
 
       {/* Program Summary Banner */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] p-6 sm:p-8 shadow-2xs">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] p-6 sm:p-8 shadow-2xs">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
           <div className="space-y-2">
-            <div className="flex items-center space-x-2 text-[#2F7C7A]">
+            <div className="flex items-center space-x-2 text-[#23804A]">
               <GraduationCap className="w-5 h-5" />
               <span className="text-xs font-bold uppercase tracking-wider">Enrolled Class</span>
             </div>
-            <h2 className="text-xl font-bold text-[#132238]">
+            <h2 className="text-xl font-bold text-[#171D19]">
               {enrolledClass?.name || enrolledClass?.className || 'Sanaviyya Standard'}
             </h2>
             <p className="text-xs text-slate-500">
@@ -129,11 +129,11 @@ export default function StudentAcademicsPage() {
           </div>
 
           <div className="space-y-2 pt-4 md:pt-0 md:pl-6">
-            <div className="flex items-center space-x-2 text-[#2F7C7A]">
+            <div className="flex items-center space-x-2 text-[#23804A]">
               <Calendar className="w-5 h-5" />
               <span className="text-xs font-bold uppercase tracking-wider">Academic Year</span>
             </div>
-            <h2 className="text-xl font-bold text-[#132238]">
+            <h2 className="text-xl font-bold text-[#171D19]">
               {activeAcademicYear?.yearName || activeAcademicYear?.yearCode || 'Academic Session'}
             </h2>
             <p className="text-xs text-slate-500">
@@ -142,11 +142,11 @@ export default function StudentAcademicsPage() {
           </div>
 
           <div className="space-y-2 pt-4 md:pt-0 md:pl-6">
-            <div className="flex items-center space-x-2 text-[#2F7C7A]">
+            <div className="flex items-center space-x-2 text-[#23804A]">
               <Building2 className="w-5 h-5" />
               <span className="text-xs font-bold uppercase tracking-wider">Institution</span>
             </div>
-            <h2 className="text-xl font-bold text-[#132238] truncate">
+            <h2 className="text-xl font-bold text-[#171D19] truncate">
               Markaz Sanaviyya
             </h2>
             <p className="text-xs text-slate-500">
@@ -160,7 +160,7 @@ export default function StudentAcademicsPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold font-serif text-[#132238]">Curriculum Subjects</h2>
+            <h2 className="text-lg font-bold font-serif text-[#171D19]">Curriculum Subjects</h2>
             <p className="text-xs text-slate-500">
               Official subjects and assigned teachers for your enrolled academic class.
             </p>
@@ -171,7 +171,7 @@ export default function StudentAcademicsPage() {
         </div>
 
         {items.length === 0 ? (
-          <div className="p-8 rounded-xl bg-white border border-[#E2E8E0] text-center text-xs text-slate-500">
+          <div className="p-8 rounded-xl bg-white border border-[#E3EAE5] text-center text-xs text-slate-500">
             No subjects listed for this academic curriculum yet.
           </div>
         ) : (
@@ -179,7 +179,7 @@ export default function StudentAcademicsPage() {
             {items.map((sub) => (
               <div
                 key={sub.subjectId}
-                className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs hover:border-[#2F7C7A] transition-all flex flex-col justify-between space-y-4"
+                className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs hover:border-[#23804A] transition-all flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -190,7 +190,7 @@ export default function StudentAcademicsPage() {
                   </div>
 
                   <div>
-                    <h3 className="font-bold text-base text-[#132238]">{sub.subjectName}</h3>
+                    <h3 className="font-bold text-base text-[#171D19]">{sub.subjectName}</h3>
                     {sub.category && (
                       <p className="text-xs text-slate-400 mt-0.5">
                         Category: <span className="font-semibold text-slate-600">{sub.category}</span>
@@ -219,7 +219,7 @@ export default function StudentAcademicsPage() {
                   <span className="text-slate-400">Curriculum Module</span>
                   <Link
                     href={`/student/syllabus?subjectId=${sub.subjectId}`}
-                    className="inline-flex items-center font-semibold text-[#2F7C7A] hover:underline"
+                    className="inline-flex items-center font-semibold text-[#23804A] hover:underline"
                   >
                     Syllabus <ArrowRight className="w-3 h-3 ml-1" />
                   </Link>

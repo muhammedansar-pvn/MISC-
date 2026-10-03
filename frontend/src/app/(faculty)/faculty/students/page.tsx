@@ -75,14 +75,14 @@ export default function FacultyStudentsRosterPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/faculty" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/faculty" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Student Directory</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238] flex items-center gap-2">
-            <Users className="w-7 h-7 text-[#2F7C7A]" />
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19] flex items-center gap-2">
+            <Users className="w-7 h-7 text-[#23804A]" />
             Student Cohort Directory
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -92,7 +92,7 @@ export default function FacultyStudentsRosterPage() {
 
         <Link
           href="/faculty"
-          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#2F7C7A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
+          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#23804A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to Dashboard
         </Link>
@@ -107,14 +107,14 @@ export default function FacultyStudentsRosterPage() {
             placeholder="Search students by name, Arabic name, or register number..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#2F7C7A]"
+            className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#23804A]"
           />
         </div>
 
         <select
           value={selectedClassId}
           onChange={(e) => setSelectedClassId(e.target.value)}
-          className="text-xs font-semibold bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-[#132238] focus:outline-hidden focus:border-[#2F7C7A]"
+          className="text-xs font-semibold bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-[#171D19] focus:outline-hidden focus:border-[#23804A]"
         >
           <option value="ALL">All Authorized Classes</option>
           {classes.map((cls) => (
@@ -126,9 +126,9 @@ export default function FacultyStudentsRosterPage() {
       </div>
 
       {/* Students List Table */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
-        <div className="p-4 bg-slate-50/60 border-b border-[#E2E8E0] flex items-center justify-between text-xs text-slate-600">
-          <span className="font-bold text-[#132238]">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
+        <div className="p-4 bg-slate-50/60 border-b border-[#E3EAE5] flex items-center justify-between text-xs text-slate-600">
+          <span className="font-bold text-[#171D19]">
             Enrolled Students ({filteredStudents.length})
           </span>
           <span className="text-[11px] text-slate-400">
@@ -138,7 +138,7 @@ export default function FacultyStudentsRosterPage() {
 
         {loading ? (
           <div className="p-12 text-center space-y-3">
-            <div className="w-6 h-6 border-2 border-[#2F7C7A] border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-6 h-6 border-2 border-[#23804A] border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-xs text-slate-500">Loading student cohort roster...</p>
           </div>
         ) : filteredStudents.length === 0 ? (
@@ -168,11 +168,11 @@ export default function FacultyStudentsRosterPage() {
                     <td className="py-3.5 px-4 text-center text-slate-400 font-mono text-xs">
                       {idx + 1}
                     </td>
-                    <td className="py-3.5 px-4 font-mono font-bold text-[#132238]">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#171D19]">
                       {st.registrationNumber || 'N/A'}
                     </td>
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-sm text-[#132238]">
+                      <div className="font-bold text-sm text-[#171D19]">
                         {st.nameEnglish || st.userId?.name || 'Student Candidate'}
                       </div>
                       {st.nameArabic && (
@@ -182,7 +182,7 @@ export default function FacultyStudentsRosterPage() {
                       )}
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#E6F2F1] text-[#2F7C7A] font-semibold text-xs border border-[#2F7C7A]/20">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#EAF2EC] text-[#23804A] font-semibold text-xs border border-[#23804A]/20">
                         <Building2 className="w-3 h-3 mr-1" />
                         {st.classId?.name || 'Class'}
                       </span>
@@ -204,7 +204,7 @@ export default function FacultyStudentsRosterPage() {
                     <td className="py-3.5 px-4 text-right">
                       <Link
                         href={`/faculty/students/${st._id}`}
-                        className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#2F7C7A] hover:bg-[#286b69] text-white text-xs font-semibold shadow-2xs transition-all"
+                        className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-semibold shadow-2xs transition-all"
                       >
                         <span>Student 360°</span>
                         <ArrowRight className="w-3 h-3 ml-1" />

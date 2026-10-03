@@ -39,25 +39,25 @@ export const ExaminationResourcesSection = () => {
   ];
 
   return (
-    <section id="examination-documents" className="relative bg-[#F7F8F5] py-14 sm:py-18 border-b border-[#E2E8E0]">
+    <section id="examination-documents" className="relative bg-misc-page py-14 sm:py-18 border-b border-misc-border">
       <div className="misc-container">
         
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10 pb-4 border-b border-[#E2E8E0]">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10 pb-4 border-b border-misc-border">
           <div>
             <div className="flex items-center space-x-2.5 mb-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#2F7C7A]" />
-              <span className="text-xs font-bold uppercase tracking-wider text-[#2F7C7A]">
+              <span className="w-2.5 h-2.5 rounded-full bg-misc-primary" />
+              <span className="text-xs font-bold uppercase tracking-wider text-misc-primary">
                 EXAMINATION RESOURCES
               </span>
             </div>
-            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#132238]">
+            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-misc-text">
               Examination & Board Documents
             </h2>
           </div>
           <button
             onClick={() => navigate('/examination')}
-            className="inline-flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider text-[#2F7C7A] hover:text-[#256664] cursor-pointer"
+            className="inline-flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider text-misc-primary hover:text-misc-primary-dark cursor-pointer"
           >
             <span>View all examination resources</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -72,27 +72,27 @@ export const ExaminationResourcesSection = () => {
               <div
                 key={idx}
                 onClick={() => navigate(doc.path)}
-                className="group bg-white hover:bg-[#E6F2F1] border border-[#E2E8E0] hover:border-[#2F7C7A]/40 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all cursor-pointer shadow-2xs"
+                className="group bg-white hover:bg-misc-soft-blue border border-misc-border hover:border-misc-primary/40 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all cursor-pointer shadow-2xs"
               >
                 <div className="flex items-start sm:items-center space-x-4">
-                  <div className="w-9 h-9 rounded-lg bg-[#F7F8F5] border border-[#E2E8E0] text-[#2F7C7A] group-hover:bg-[#2F7C7A] group-hover:text-white flex items-center justify-center transition-colors shrink-0">
+                  <div className="w-9 h-9 rounded-lg bg-misc-page border border-misc-border text-misc-primary group-hover:bg-misc-primary group-hover:text-white flex items-center justify-center transition-colors shrink-0">
                     <IconComp className="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-base font-bold text-[#132238] group-hover:text-[#2F7C7A] transition-colors leading-tight">
+                    <h3 className="font-serif text-base font-bold text-misc-text group-hover:text-misc-primary transition-colors leading-tight">
                       {doc.title}
                     </h3>
-                    <p className="text-xs text-[#475569] font-normal mt-0.5 leading-relaxed">
+                    <p className="text-xs text-misc-secondary font-normal mt-0.5 leading-relaxed">
                       {doc.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between sm:justify-end space-x-4 shrink-0 border-t sm:border-t-0 border-[#E2E8E0]/60 pt-2 sm:pt-0">
-                  <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#2F7C7A] bg-[#F7F8F5] px-2.5 py-1 rounded border border-[#E2E8E0]">
+                <div className="flex items-center justify-between sm:justify-end space-x-4 shrink-0 border-t sm:border-t-0 border-misc-border/60 pt-2 sm:pt-0">
+                  <span className="text-[10.5px] font-bold uppercase tracking-wider text-misc-primary bg-misc-page px-2.5 py-1 rounded border border-misc-border">
                     {doc.type}
                   </span>
-                  <ChevronRight className="w-4 h-4 text-[#475569] group-hover:text-[#2F7C7A] group-hover:translate-x-1 transition-transform" />
+                  <ChevronRight className="w-4 h-4 text-misc-secondary group-hover:text-misc-primary group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             );

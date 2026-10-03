@@ -110,8 +110,8 @@ export default function StudentActivitiesPage() {
         );
       case 'CONSOLATION':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-            <Award className="w-3.5 h-3.5 mr-1 text-blue-600" /> Consolation
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200">
+            <Award className="w-3.5 h-3.5 mr-1 text-green-600" /> Consolation
           </span>
         );
       case 'PARTICIPATION':
@@ -126,7 +126,7 @@ export default function StudentActivitiesPage() {
 
   const renderCategoryBadge = (category?: string) => {
     return (
-      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#E6F2F1] text-[#2F7C7A] border border-[#2F7C7A]/20">
+      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#EAF2EC] text-[#23804A] border border-[#23804A]/20">
         {category || 'ACTIVITY'}
       </span>
     );
@@ -163,13 +163,13 @@ export default function StudentActivitiesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Activities</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Activities & Achievements
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
@@ -180,18 +180,18 @@ export default function StudentActivitiesPage() {
         <button
           onClick={() => loadAchievements(true)}
           disabled={loading || refreshing}
-          className="p-2 rounded-lg border border-[#E2E8E0] bg-white text-slate-600 hover:text-[#2F7C7A] hover:bg-slate-50 shadow-2xs transition-all disabled:opacity-50 self-start sm:self-auto"
+          className="p-2 rounded-lg border border-[#E3EAE5] bg-white text-slate-600 hover:text-[#23804A] hover:bg-slate-50 shadow-2xs transition-all disabled:opacity-50 self-start sm:self-auto"
           title="Refresh achievements"
           aria-label="Refresh achievements"
         >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-[#2F7C7A]' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-[#23804A]' : ''}`} />
         </button>
       </div>
 
       {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Total Achievements */}
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Total Participations
@@ -200,14 +200,14 @@ export default function StudentActivitiesPage() {
               <Sparkles className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-2xl font-bold font-mono text-[#132238]">
+          <p className="text-2xl font-bold font-mono text-[#171D19]">
             {loading ? '--' : totalCount}
           </p>
           <p className="text-xs text-slate-400">Events and competitions entered</p>
         </div>
 
         {/* Verified by Faculty */}
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Verified Records
@@ -223,7 +223,7 @@ export default function StudentActivitiesPage() {
         </div>
 
         {/* Top Ranks */}
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Podium Honors (1st - 3rd)
@@ -240,12 +240,12 @@ export default function StudentActivitiesPage() {
       </div>
 
       {/* Main Grid / Section */}
-      <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
         {/* Controls */}
-        <div className="p-5 border-b border-[#E2E8E0] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-5 border-b border-[#E3EAE5] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-base font-bold text-[#132238] flex items-center space-x-2">
-              <Award className="w-4 h-4 text-[#2F7C7A]" />
+            <h2 className="text-base font-bold text-[#171D19] flex items-center space-x-2">
+              <Award className="w-4 h-4 text-[#23804A]" />
               <span>Achievement Portfolio</span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -261,18 +261,18 @@ export default function StudentActivitiesPage() {
                 placeholder="Search activity or category..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-[#E2E8E0] rounded-lg focus:outline-hidden focus:border-[#2F7C7A] text-slate-800 placeholder-slate-400"
+                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-[#E3EAE5] rounded-lg focus:outline-hidden focus:border-[#23804A] text-slate-800 placeholder-slate-400"
               />
             </div>
 
-            <div className="inline-flex rounded-lg border border-[#E2E8E0] bg-slate-50 p-0.5 text-xs">
+            <div className="inline-flex rounded-lg border border-[#E3EAE5] bg-slate-50 p-0.5 text-xs">
               {(['ALL', 'VERIFIED', 'PENDING'] as const).map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
                   className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
                     statusFilter === st
-                      ? 'bg-white text-[#132238] shadow-2xs'
+                      ? 'bg-white text-[#171D19] shadow-2xs'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -286,7 +286,7 @@ export default function StudentActivitiesPage() {
         {/* Content Section */}
         {loading ? (
           <div className="p-12 text-center text-xs text-slate-400">
-            <div className="w-8 h-8 rounded-full border-2 border-[#2F7C7A] border-t-transparent animate-spin mx-auto mb-3" />
+            <div className="w-8 h-8 rounded-full border-2 border-[#23804A] border-t-transparent animate-spin mx-auto mb-3" />
             Loading activities and achievements...
           </div>
         ) : error ? (
@@ -298,7 +298,7 @@ export default function StudentActivitiesPage() {
             <p className="text-xs text-slate-500 max-w-md mx-auto">{error}</p>
             <button
               onClick={() => loadAchievements(true)}
-              className="text-xs font-semibold px-4 py-2 rounded-lg bg-[#2F7C7A] text-white hover:bg-[#286b69] transition-all"
+              className="text-xs font-semibold px-4 py-2 rounded-lg bg-[#23804A] text-white hover:bg-[#1B6F41] transition-all"
             >
               Retry
             </button>
@@ -306,10 +306,10 @@ export default function StudentActivitiesPage() {
         ) : filteredAchievements.length === 0 ? (
           /* Empty State */
           <div className="p-12 sm:p-16 text-center space-y-3">
-            <div className="w-16 h-16 rounded-2xl bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center mx-auto border border-[#2F7C7A]/20">
+            <div className="w-16 h-16 rounded-2xl bg-[#EAF2EC] text-[#23804A] flex items-center justify-center mx-auto border border-[#23804A]/20">
               <Trophy className="w-8 h-8" />
             </div>
-            <h3 className="text-base font-bold text-[#132238]">No activities or achievements recorded yet</h3>
+            <h3 className="text-base font-bold text-[#171D19]">No activities or achievements recorded yet</h3>
             <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
               When you participate in speech, essay, debate, Qiraath, sports, or other campus competitions, your verified records and awards will be featured here.
             </p>
@@ -346,7 +346,7 @@ export default function StudentActivitiesPage() {
                     </span>
 
                     {item.marksObtained > 0 && (
-                      <span className="text-[11px] font-mono font-semibold text-[#2F7C7A] bg-teal-50 border border-teal-200 px-2 py-0.5 rounded-md">
+                      <span className="text-[11px] font-mono font-semibold text-[#23804A] bg-green-50 border border-green-200 px-2 py-0.5 rounded-md">
                         {item.marksObtained} Marks
                       </span>
                     )}
@@ -376,7 +376,7 @@ export default function StudentActivitiesPage() {
                       href={item.certificateUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center text-xs font-semibold text-[#2F7C7A] hover:text-[#246260] bg-white px-3 py-1.5 rounded-lg border border-[#2F7C7A]/30 hover:border-[#2F7C7A] transition-all shadow-2xs"
+                      className="inline-flex items-center text-xs font-semibold text-[#23804A] hover:text-[#1B6F41] bg-white px-3 py-1.5 rounded-lg border border-[#23804A]/30 hover:border-[#23804A] transition-all shadow-2xs"
                     >
                       <ExternalLink className="w-3 h-3 mr-1.5" /> View Certificate
                     </a>

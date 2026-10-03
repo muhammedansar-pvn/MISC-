@@ -71,13 +71,13 @@ export default function FacultyAcademicsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/faculty" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/faculty" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Academics</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Academic Structure & Framework
           </h1>
         </div>
@@ -91,7 +91,7 @@ export default function FacultyAcademicsPage() {
           </Link>
           <Link
             href="/faculty/subjects"
-            className="inline-flex items-center text-xs font-semibold text-white bg-[#2F7C7A] hover:bg-[#286b69] px-3.5 py-2 rounded-lg shadow-2xs transition-all"
+            className="inline-flex items-center text-xs font-semibold text-white bg-[#23804A] hover:bg-[#1B6F41] px-3.5 py-2 rounded-lg shadow-2xs transition-all"
           >
             <Layers className="w-3.5 h-3.5 mr-1.5" /> View Subjects
           </Link>
@@ -99,14 +99,14 @@ export default function FacultyAcademicsPage() {
       </div>
 
       {/* Session Overview Banner */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] p-6 sm:p-8 shadow-2xs">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] p-6 sm:p-8 shadow-2xs">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
           <div className="space-y-2">
-            <div className="flex items-center space-x-2 text-[#2F7C7A]">
+            <div className="flex items-center space-x-2 text-[#23804A]">
               <Calendar className="w-5 h-5" />
               <span className="text-xs font-bold uppercase tracking-wider">Current Session</span>
             </div>
-            <h2 className="text-xl font-bold text-[#132238]">
+            <h2 className="text-xl font-bold text-[#171D19]">
               {activeYear?.yearName || activeYear?.yearCode || 'Academic Session'}
             </h2>
             <p className="text-xs text-slate-500">
@@ -115,20 +115,20 @@ export default function FacultyAcademicsPage() {
           </div>
 
           <div className="space-y-2 pt-4 md:pt-0 md:pl-6">
-            <div className="flex items-center space-x-2 text-[#2F7C7A]">
+            <div className="flex items-center space-x-2 text-[#23804A]">
               <Building2 className="w-5 h-5" />
               <span className="text-xs font-bold uppercase tracking-wider">Authorized Classes</span>
             </div>
-            <h2 className="text-xl font-bold text-[#132238]">{classes.length} Classes</h2>
+            <h2 className="text-xl font-bold text-[#171D19]">{classes.length} Classes</h2>
             <p className="text-xs text-slate-500">Authorized teaching cohorts</p>
           </div>
 
           <div className="space-y-2 pt-4 md:pt-0 md:pl-6">
-            <div className="flex items-center space-x-2 text-[#2F7C7A]">
+            <div className="flex items-center space-x-2 text-[#23804A]">
               <Layers className="w-5 h-5" />
               <span className="text-xs font-bold uppercase tracking-wider">Curriculum Courses</span>
             </div>
-            <h2 className="text-xl font-bold text-[#132238]">{subjects.length} Subjects</h2>
+            <h2 className="text-xl font-bold text-[#171D19]">{subjects.length} Subjects</h2>
             <p className="text-xs text-slate-500">Approved syllabus frameworks</p>
           </div>
         </div>
@@ -137,15 +137,15 @@ export default function FacultyAcademicsPage() {
       {/* Two Column Grid: Classes & Subjects */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Classes Preview */}
-        <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
-          <div className="p-5 border-b border-[#E2E8E0] flex items-center justify-between">
+        <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
+          <div className="p-5 border-b border-[#E3EAE5] flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Building2 className="w-4 h-4 text-[#2F7C7A]" />
-              <h3 className="font-bold text-sm text-[#132238]">Authorized Classes</h3>
+              <Building2 className="w-4 h-4 text-[#23804A]" />
+              <h3 className="font-bold text-sm text-[#171D19]">Authorized Classes</h3>
             </div>
             <Link
               href="/faculty/classes"
-              className="text-xs font-semibold text-[#2F7C7A] hover:underline"
+              className="text-xs font-semibold text-[#23804A] hover:underline"
             >
               View All
             </Link>
@@ -177,15 +177,15 @@ export default function FacultyAcademicsPage() {
         </div>
 
         {/* Subjects Preview */}
-        <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
-          <div className="p-5 border-b border-[#E2E8E0] flex items-center justify-between">
+        <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
+          <div className="p-5 border-b border-[#E3EAE5] flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Layers className="w-4 h-4 text-[#2F7C7A]" />
-              <h3 className="font-bold text-sm text-[#132238]">Curriculum Subjects</h3>
+              <Layers className="w-4 h-4 text-[#23804A]" />
+              <h3 className="font-bold text-sm text-[#171D19]">Curriculum Subjects</h3>
             </div>
             <Link
               href="/faculty/subjects"
-              className="text-xs font-semibold text-[#2F7C7A] hover:underline"
+              className="text-xs font-semibold text-[#23804A] hover:underline"
             >
               View All
             </Link>

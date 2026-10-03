@@ -2,6 +2,7 @@ const MentorAssignment = require("./mentor-assignment.model");
 const StudentProfile = require("../students/student.model");
 const FacultyProfile = require("../faculty/faculty.model");
 const ParentProfile = require("../parents/parent.model");
+const { assertFacultyAvailableForAssignment } = require("../faculty/faculty.service");
 
 /**
  * Assigns or updates a student's mentor for an academic year.
@@ -15,10 +16,7 @@ const assignMentor = async ({
   notes,
   assignedBy,
 }) => {
-  const mentor = await FacultyProfile.findById(mentorId);
-  if (!mentor) {
-    throw new Error("Mentor faculty profile not found");
-  }
+  await assertFacultyAvailableForAssignment(mentorId);
 
   const student = await StudentProfile.findById(studentId);
   if (!student) {
@@ -69,6 +67,10 @@ const getMyMentees = async (userId) => {
  * Enforces that only the assigned mentor or an ADMIN can update.
  */
 const updateMenteeMonitoring = async (assignmentId, reqUser, { monitoringCategory, notes }) => {
+  if (reqUser.role === "FACULTY") {
+    await assertFacultyAvailableForAssignment(reqUser.userId || reqUser.id || reqUser.facultyId);
+  }
+
   const assignment = await MentorAssignment.findById(assignmentId);
   if (!assignment) {
     throw new Error("Mentor assignment not found");
@@ -112,6 +114,21 @@ const getStudentMentor = async (studentId, reqUser) => {
       err.statusCode = 403;
       throw err;
     }
+  } else if (reqUser.role === "FACULTY") {
+    const faculty = await FacultyProfile.findOne({
+      $or: [{ userId: reqUser.userId || reqUser.id }, { _id: reqUser.facultyId }],
+    });
+    if (!faculty) {
+      const err = new Error("Faculty profile not found");
+      err.statusCode = 403;
+      throw err;
+    }
+    const isMentor = await MentorAssignment.exists({ studentId, mentorId: faculty._id });
+    if (!isMentor) {
+      const err = new Error("Access denied: You are not assigned as mentor for this student");
+      err.statusCode = 403;
+      throw err;
+    }
   }
 
   const assignment = await MentorAssignment.findOne({ studentId })
@@ -125,9 +142,78 @@ const getStudentMentor = async (studentId, reqUser) => {
   return assignment;
 };
 
+/**
+ * Adds a mentorship note / observation for an assigned mentee.
+ */
+const addMentorshipNote = async (studentId, reqUser, { note, category = "GENERAL" }) => {
+  if (!note || !note.trim()) {
+    const err = new Error("Note content is required");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  let assignment = null;
+
+  if (reqUser.role === "FACULTY") {
+    await assertFacultyAvailableForAssignment(reqUser.userId || reqUser.id || reqUser.facultyId);
+    const faculty = await FacultyProfile.findOne({
+      $or: [{ userId: reqUser.userId || reqUser.id }, { _id: reqUser.facultyId }],
+    });
+    if (!faculty) {
+      const err = new Error("Faculty profile not found");
+      err.statusCode = 403;
+      throw err;
+    }
+
+    assignment = await MentorAssignment.findOne({ studentId, mentorId: faculty._id });
+    if (!assignment) {
+      const err = new Error("Access denied: You are not assigned as mentor for this student");
+      err.statusCode = 403;
+      throw err;
+    }
+  } else if (reqUser.role === "ADMIN") {
+    assignment = await MentorAssignment.findOne({ studentId });
+    if (!assignment) {
+      const err = new Error("Mentor assignment not found for this student");
+      err.statusCode = 404;
+      throw err;
+    }
+  } else {
+    const err = new Error("Forbidden: Only mentors or administrators can add mentorship notes");
+    err.statusCode = 403;
+    throw err;
+  }
+
+  const noteEntry = {
+    note: note.trim(),
+    category: category || "GENERAL",
+    createdAt: new Date(),
+    createdBy: reqUser.userId || reqUser.id,
+  };
+
+  if (!Array.isArray(assignment.notesHistory)) {
+    assignment.notesHistory = [];
+  }
+  assignment.notesHistory.push(noteEntry);
+  assignment.notes = note.trim();
+
+  await assignment.save();
+
+  return MentorAssignment.findById(assignment._id)
+    .populate({
+      path: "studentId",
+      select: "nameEnglish registrationNumber classId house disciplineScore",
+      populate: { path: "classId", select: "name code" },
+    })
+    .populate("mentorId", "facultyId department")
+    .populate("academicYearId", "yearName yearCode")
+    .lean();
+};
+
 module.exports = {
   assignMentor,
   getMyMentees,
   updateMenteeMonitoring,
   getStudentMentor,
+  addMentorshipNote,
 };

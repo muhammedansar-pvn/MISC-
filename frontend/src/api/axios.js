@@ -114,6 +114,7 @@ export const API_ENDPOINTS = {
   faculty: {
     list: '/faculty',
     byId: (id) => `/faculty/${id}`,
+    status: (id) => `/faculty/${id}/status`,
     dashboardStats: '/faculty/dashboard-stats',
     myAssignments: '/faculty/my-assignments',
     myClasses: '/faculty/my-classes',
@@ -196,18 +197,30 @@ export const API_ENDPOINTS = {
 
   leaves: {
     list: '/leaves',
+    apply: '/leaves',
+    approve: (id) => `/leaves/${id}/approve`,
+    reject: (id) => `/leaves/${id}/reject`,
   },
 
   mentorship: {
     myMentor: '/mentorship/my-mentor',
+    myMentees: '/mentorship/my-mentees',
+    updateMonitoring: (id) => `/mentorship/assignments/${id}`,
+    studentMentor: (studentId) => `/mentorship/student/${studentId}`,
+    addNote: (studentId) => `/mentorship/student/${studentId}/notes`,
   },
 
   development: {
     myScores: '/development/my-scores',
+    recordScore: '/development/scores',
+    studentScores: (studentId) => `/development/student/${studentId}`,
   },
 
   discipline: {
     myRecords: '/discipline/my-records',
+    recordIncident: '/discipline/incidents',
+    resolveIncident: (id) => `/discipline/incidents/${id}/resolve`,
+    studentRecords: (studentId) => `/discipline/student/${studentId}`,
   },
 
   activities: {

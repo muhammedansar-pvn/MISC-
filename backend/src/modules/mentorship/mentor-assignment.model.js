@@ -27,6 +27,28 @@ const mentorAssignmentSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    notesHistory: [
+      {
+        note: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        category: {
+          type: String,
+          enum: ["ACADEMIC", "BEHAVIORAL", "SPIRITUAL", "PROGRESS", "GENERAL"],
+          default: "GENERAL",
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+        createdBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      },
+    ],
     assignedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

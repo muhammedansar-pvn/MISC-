@@ -2,241 +2,109 @@
 
 import React from 'react';
 import { useNavigate } from '@/hooks/useNavigate';
-import { ArrowRight, ArrowDown } from 'lucide-react';
+import { ArrowRight, Award, BookOpen, Landmark, UsersRound } from 'lucide-react';
+
+const statistics = [
+  { value: '50+', label: 'Affiliated institutions', icon: Landmark },
+  { value: '20+', label: 'Academic programmes', icon: BookOpen },
+  { value: '10K+', label: 'Students & scholars', icon: UsersRound },
+  { value: '4+', label: 'Decades of service', icon: Award },
+];
 
 export const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative w-full min-h-[92vh] lg:min-h-screen flex flex-col justify-between overflow-hidden bg-[#0D1B2A] text-white">
-      
-      {/* SCOPED ENTRANCE ANIMATION & PARALLAX STYLES */}
-      <style>{`
-        @keyframes heroFadeUp {
-          0% {
-            opacity: 0;
-            transform: translateY(22px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
+    <section className="relative isolate overflow-hidden bg-white text-misc-text">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_8%_20%,rgba(30,91,184,0.07),transparent_32%),linear-gradient(135deg,#fff_46%,#f6f9fd_100%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-28 top-24 h-72 w-72 rounded-full border border-misc-primary/5"
+      />
 
-        @keyframes heroFadeIn {
-          0% { opacity: 0; }
-          100% { opacity: 1; }
-        }
-
-        .hero-reveal-eyebrow {
-          animation: heroFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
-        }
-
-        .hero-reveal-title-1 {
-          animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
-        }
-
-        .hero-reveal-title-2 {
-          animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.34s both;
-        }
-
-        .hero-reveal-desc {
-          animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.46s both;
-        }
-
-        .hero-reveal-buttons {
-          animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.58s both;
-        }
-
-        .hero-reveal-quote {
-          animation: heroFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
-        }
-
-        .hero-reveal-stats {
-          animation: heroFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .hero-reveal-eyebrow,
-          .hero-reveal-title-1,
-          .hero-reveal-title-2,
-          .hero-reveal-desc,
-          .hero-reveal-buttons,
-          .hero-reveal-quote,
-          .hero-reveal-stats {
-            animation: none !important;
-            opacity: 1 !important;
-            transform: none !important;
-          }
-        }
-      `}</style>
-
-      {/* 1. CINEMATIC FULL-VIEWPORT REAL STUDENT-STUDY PHOTOGRAPH */}
-      {/* Students and their faces on the RIGHT remain bright, sharp, and natural */}
-      <div className="absolute inset-0 z-0 overflow-hidden bg-[#0D1B2A]">
-        <img
-          src="/DSC00390.JPG.jpeg"
-          alt="Scholars studying classical texts in Jamia Markaz library"
-          className="h-full w-full object-cover object-[65%_35%] sm:object-[68%_36%] lg:object-[70%_38%]"
-        />
-
-        {/* Left-only text readability gradient (becomes completely transparent before reaching students' faces) */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0D1B2A]/95 via-[#0D1B2A]/65 via-[38%] to-transparent pointer-events-none" />
-
-        {/* Subtle bottom gradient for statistics readability without darkening faces */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0D1B2A]/65 via-transparent to-transparent pointer-events-none" />
-      </div>
-
-      {/* Header Clearance Spacer */}
-      <div className="pt-24 sm:pt-28 lg:pt-32" />
-
-      {/* 2. MAIN HERO BODY (Left Content + Right Subtle Floating Quote) */}
-      <div className="misc-container relative z-10 my-auto py-6 sm:py-8 lg:py-12 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
-          {/* LEFT SIDE CONTENT: Occupies approximately 50% of the hero width */}
-          <div className="lg:col-span-7 xl:col-span-7 space-y-6 sm:space-y-8 max-w-2xl lg:max-w-none">
-            
-            {/* Small Eyebrow with Thin Teal Horizontal Line Beside It */}
-            <div className="flex items-center space-x-3.5 hero-reveal-eyebrow">
-              <span className="text-xs sm:text-[13px] font-mono tracking-[0.25em] text-[#F7F5EF] uppercase font-medium">
-                MARKAZ INTEGRATED STUDIES COUNCIL
-              </span>
-              <span className="h-[1.5px] w-12 sm:w-16 bg-[#2F7C7A] shrink-0" />
+      <div className="misc-container relative z-10 pt-24 pb-8 sm:pt-28 sm:pb-10 lg:pt-32 lg:pb-12">
+        <div className="grid grid-cols-1 items-center gap-9 lg:grid-cols-2 lg:gap-12 xl:gap-16">
+          <div className="max-w-2xl">
+            <div className="mb-4 inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-misc-primary sm:text-[11px]">
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-misc-primary" />
+              Markaz Integrated Studies Council
             </div>
 
-            {/* Main Editorial Headline (72–96px on desktop, line height 0.95–1.0, medium weight) */}
-            <div className="space-y-1 sm:space-y-2">
-              <h1 className="font-serif text-[44px] sm:text-[62px] md:text-[72px] lg:text-[78px] xl:text-[88px] 2xl:text-[94px] font-normal tracking-[-0.025em] leading-[0.98] text-[#FFFFFF]">
-                <span className="block hero-reveal-title-1">
-                  Integrating
-                </span>
-                <span className="block hero-reveal-title-1">
-                  Islamic Scholarship
-                </span>
-                <span className="block hero-reveal-title-2">
-                  with <span className="text-[#2F7C7A] italic font-normal">Contemporary</span>
-                </span>
-                <span className="block hero-reveal-title-2 text-[#2F7C7A] italic font-normal">
-                  Knowledge
-                </span>
-              </h1>
-            </div>
+            <h1 className="max-w-[17ch] font-serif text-[2.65rem] font-semibold leading-[1.04] tracking-[-0.025em] text-misc-text sm:text-5xl lg:text-[3.55rem] xl:text-[4rem]">
+              Rooted in Islamic Heritage,
+              <br />
+              <span className="text-misc-primary">Prepared for Tomorrow</span>
+            </h1>
 
-            {/* Description (approx 2 lines, 17–19px, soft/warm white) */}
-            <p className="text-[16px] sm:text-[18px] lg:text-[19px] text-[#F7F5EF]/90 font-normal leading-relaxed max-w-xl hero-reveal-desc">
+            <p className="mt-5 max-w-xl text-sm leading-7 text-misc-muted sm:mt-6 sm:text-base">
               An academic network harmonizing classical Islamic scholarship with contemporary knowledge for a better tomorrow.
             </p>
 
-            {/* CTA Buttons: Rectangular with small border radius, NO pill shapes */}
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-5 hero-reveal-buttons">
+            <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
               <button
                 type="button"
                 onClick={() => navigate('/academics')}
-                className="inline-flex items-center justify-center space-x-2 bg-[#2F7C7A] hover:bg-[#256664] text-white text-xs sm:text-[13px] font-semibold tracking-wider uppercase px-7 py-3.5 rounded-xs transition-all duration-200 cursor-pointer shadow-sm hover:translate-x-0.5 group"
+                className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-misc-primary px-5 py-3 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-misc-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-misc-primary focus-visible:ring-offset-2 sm:text-sm"
               >
-                <span>EXPLORE PROGRAMMES</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+                <span>Explore Programmes</span>
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </button>
-
               <button
                 type="button"
                 onClick={() => navigate('/about')}
-                className="inline-flex items-center justify-center space-x-2 bg-transparent hover:bg-white/10 text-[#F7F5EF] border border-white/40 hover:border-white text-xs sm:text-[13px] font-semibold tracking-wider uppercase px-7 py-3.5 rounded-xs backdrop-blur-2xs transition-all duration-200 cursor-pointer group"
+                className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-misc-border bg-white px-5 py-3 text-xs font-semibold text-misc-text transition-colors hover:border-misc-primary hover:text-misc-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-misc-primary focus-visible:ring-offset-2 sm:text-sm"
               >
-                <span>DISCOVER MISC</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1 text-slate-300" />
+                <span>About Sanaviyya</span>
+                <ArrowRight className="h-4 w-4 text-misc-primary transition-transform group-hover:translate-x-0.5" />
               </button>
             </div>
 
+            <p className="mt-6 text-xs font-medium text-misc-muted">
+              <span className="text-misc-text">Jamia Markaz</span>
+              <span className="mx-2 text-misc-border">/</span>
+              Karanthur, Kozhikode
+            </p>
           </div>
 
-          {/* FAR RIGHT SIDE: Subtle Vertical Quote (Non-competing, visible on large screens) */}
-          <div className="hidden lg:flex lg:col-span-5 justify-end hero-reveal-quote">
-            <div className="border-l border-white/20 pl-6 space-y-3 max-w-xs backdrop-blur-2xs py-2 bg-black/10 rounded-xs">
-              <blockquote className="font-serif italic text-base lg:text-[1.1rem] xl:text-[1.2rem] text-[#F7F5EF]/80 leading-snug">
-                “Knowledge <br />
-                People <br />
-                Communities <br />
-                A Brighter <br />
-                Tomorrow”
-              </blockquote>
-              <div className="pt-2 border-t border-white/10">
-                <span className="font-mono text-[9.5px] tracking-[0.25em] text-[#F7F5EF]/60 uppercase block">
-                  JAMIA MARKAZ
-                </span>
-                <span className="font-mono text-[9px] tracking-[0.25em] text-[#2F7C7A] uppercase block font-semibold">
-                  KARANTHUR
-                </span>
+          <div className="relative">
+            <div className="absolute -inset-2 -z-10 rounded-[1.75rem] bg-misc-soft-blue/80 blur-xl sm:-inset-4" />
+            <div className="relative overflow-hidden rounded-2xl border border-white shadow-[0_22px_55px_-30px_rgba(18,35,63,0.42)]">
+              <img
+                src="/campus.webp"
+                alt="Academic campus at Jamia Markaz, Karanthur"
+                className="aspect-[4/3] w-full object-cover object-center sm:aspect-[1.42]"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-misc-navy/70 via-misc-navy/15 to-transparent px-5 pb-5 pt-14 sm:px-6 sm:pb-6">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/80">
+                  Jamia Markaz · Karanthur
+                </p>
+                <p className="mt-1 text-sm font-medium text-white sm:text-base">
+                  A tradition of learning and service
+                </p>
               </div>
             </div>
           </div>
-
         </div>
-      </div>
 
-      {/* 3. BOTTOM STATISTICS RAIL & SCROLL INDICATOR */}
-      {/* NO CARDS. NO ROUNDED BOXES. Thin vertical separators. */}
-      <div className="relative z-10 w-full border-t border-white/15 bg-[#0D1B2A]/85 backdrop-blur-sm hero-reveal-stats">
-        <div className="misc-container py-5 sm:py-6">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            
-            {/* Horizontal Statistics Rail */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 lg:gap-0 lg:divide-x lg:divide-white/15 w-full lg:w-auto flex-1">
-              
-              <div className="lg:pr-8 xl:pr-10">
-                <div className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal leading-none text-white">
-                  50<span className="text-[#2F7C7A]">+</span>
-                </div>
-                <div className="text-[11px] sm:text-[12px] font-mono tracking-[0.12em] text-[#F7F5EF]/80 uppercase mt-2">
-                  AFFILIATED INSTITUTIONS
-                </div>
+        <div className="relative mt-8 rounded-2xl border border-misc-border bg-white px-4 py-5 shadow-[0_12px_32px_-24px_rgba(18,35,63,0.35)] sm:mt-10 sm:px-6 lg:mt-12">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-5 md:grid-cols-4 md:divide-x md:divide-misc-border md:gap-0">
+            {statistics.map(({ value, label, icon: Icon }) => (
+              <div key={label} className="flex min-w-0 items-center gap-3 md:px-5 first:md:pl-0 last:md:pr-0">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-misc-soft-blue text-misc-primary sm:h-10 sm:w-10">
+                  <Icon className="h-4 w-4 sm:h-[18px] sm:w-[18px]" aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-xl font-semibold leading-tight tracking-tight text-misc-text sm:text-2xl">{value}</span>
+                  <span className="mt-1 block text-[9px] font-medium leading-snug text-misc-muted sm:text-[10px]">{label}</span>
+                </span>
               </div>
-
-              <div className="lg:px-8 xl:px-10">
-                <div className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal leading-none text-white">
-                  20<span className="text-[#2F7C7A]">+</span>
-                </div>
-                <div className="text-[11px] sm:text-[12px] font-mono tracking-[0.12em] text-[#F7F5EF]/80 uppercase mt-2">
-                  ACADEMIC PROGRAMMES
-                </div>
-              </div>
-
-              <div className="lg:px-8 xl:px-10">
-                <div className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal leading-none text-white">
-                  10K<span className="text-[#2F7C7A]">+</span>
-                </div>
-                <div className="text-[11px] sm:text-[12px] font-mono tracking-[0.12em] text-[#F7F5EF]/80 uppercase mt-2">
-                  STUDENTS & SCHOLARS
-                </div>
-              </div>
-
-              <div className="lg:pl-8 xl:pl-10">
-                <div className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal leading-none text-white">
-                  4<span className="text-[#2F7C7A]">+</span> DECADES
-                </div>
-                <div className="text-[11px] sm:text-[12px] font-mono tracking-[0.12em] text-[#F7F5EF]/80 uppercase mt-2">
-                  OF ACADEMIC SERVICE
-                </div>
-              </div>
-
-            </div>
-
-            {/* Bottom-Right Minimal Scroll Indicator */}
-            <div className="hidden lg:flex items-center space-x-3 text-[#F7F5EF]/80 hover:text-white transition-colors shrink-0 pl-6">
-              <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center text-[#2F7C7A] group-hover:border-[#2F7C7A] transition-colors">
-                <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
-              </div>
-              <div className="text-left font-mono text-[9px] tracking-[0.2em] leading-tight uppercase">
-                SCROLL <br />
-                <span className="text-[#2F7C7A]">TO EXPLORE</span>
-              </div>
-            </div>
-
+            ))}
           </div>
         </div>
       </div>
-
     </section>
   );
 };

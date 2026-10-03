@@ -8,60 +8,48 @@ export const AboutSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative bg-[#F7F7F3] text-[#132238] py-24 sm:py-32 lg:py-36 xl:py-40 border-b border-[rgba(19,34,56,0.12)]">
-      <div className="misc-container">
-        
-        {/* Editorial Two-Column Asymmetric Composition */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 xl:gap-24 items-start">
-          
-          {/* LEFT COLUMN: Section Index & Label */}
-          <div className="lg:col-span-4 lg:sticky lg:top-32 space-y-4">
-            <div className="flex items-baseline space-x-3">
-              <span className="font-mono text-sm sm:text-base font-semibold text-[#2F7C7A] tracking-wider">
-                01
-              </span>
-              <span className="text-xs sm:text-[13px] font-mono tracking-[0.25em] text-[#667085] uppercase">
-                ABOUT MISC
-              </span>
+    <section className="relative overflow-hidden border-b border-misc-border bg-misc-page py-16 text-misc-text sm:py-20 lg:py-24">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-20 top-10 h-64 w-64 rounded-full border border-misc-primary/5"
+      />
+      <div className="misc-container relative">
+        <div className="grid grid-cols-1 items-center gap-9 lg:grid-cols-12 lg:gap-12">
+          <div className="space-y-5 lg:col-span-5">
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-semibold tracking-wider text-misc-primary">01.</span>
+              <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-misc-muted">About Sanaviyya</span>
             </div>
-            
-            <div className="h-px w-16 bg-[#2F7C7A]/40" />
 
-            <div className="pt-2 text-xs text-[#667085] font-mono uppercase tracking-wider leading-relaxed">
-              Markaz Integrated Studies Council <br />
-              Jamia Markaz • Karanthur
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN: Large Editorial Statement & Narrative */}
-          <div className="lg:col-span-8 space-y-8 lg:space-y-10">
-            {/* Very Large Editorial Statement */}
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-[3.35rem] font-normal leading-[1.18] tracking-tight text-[#132238]">
-              “An academic coordination body connecting Islamic scholarship, contemporary education and institutional excellence.”
+            <h2 className="max-w-xl font-serif text-3xl font-semibold leading-[1.12] tracking-tight text-misc-text sm:text-4xl lg:text-[2.75rem]">
+              An Academic Network for Institutional Excellence
             </h2>
 
-            {/* Concise Academic Paragraph */}
-            <div className="space-y-5 text-[#132238]/80 text-base sm:text-lg lg:text-[1.125rem] font-normal leading-relaxed max-w-3xl border-l-2 border-[#2F7C7A]/30 pl-6 sm:pl-8">
-              <p>
-                Established under the governance of Jamia Markaz in Karanthur, MISC oversees a network of direct institutions and affiliated academic centers. Through centralized curriculum development, faculty development, uniform assessments, and quality assurance, the Council nurtures scholars and professionals equipped for contemporary society while remaining firmly rooted in Islamic heritage.
-              </p>
-            </div>
+            <p className="max-w-xl text-sm leading-6 text-misc-muted sm:text-[15px] sm:leading-7">
+              Established under the governance of Jamia Markaz in Karanthur, MISC oversees a network of direct institutions and affiliated academic centres. Through centralized curriculum development, faculty development, uniform assessments, and quality assurance, the Council nurtures scholars and professionals equipped for contemporary society while remaining firmly rooted in Islamic heritage.
+            </p>
 
-            {/* Clean Minimalist Editorial Link */}
-            <div className="pt-4">
-              <button
-                type="button"
-                onClick={() => navigate('/about')}
-                className="group inline-flex items-center space-x-3 text-xs sm:text-sm font-semibold tracking-widest text-[#132238] uppercase hover:text-[#2F7C7A] transition-colors cursor-pointer py-2 border-b-2 border-[#132238] hover:border-[#2F7C7A]"
-              >
-                <span>DISCOVER MISC</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1.5 text-[#2F7C7A]" />
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/about')}
+              className="group inline-flex min-h-10 items-center gap-2 rounded-md bg-misc-primary px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-misc-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-misc-primary focus-visible:ring-offset-2"
+            >
+              <span>Learn More</span>
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </button>
           </div>
 
+          <div className="lg:col-span-7">
+            <div className="relative overflow-hidden rounded-2xl border border-white bg-white p-1.5 shadow-[0_18px_45px_-30px_rgba(18,35,63,0.42)] sm:p-2">
+              <img
+                src="/DSC00390.webp"
+                alt="Students studying together at Jamia Markaz"
+                className="aspect-[4/3] w-full rounded-xl object-cover object-center sm:aspect-[1.55]"
+                loading="lazy"
+              />
+            </div>
+          </div>
         </div>
-
       </div>
     </section>
   );

@@ -18,12 +18,12 @@ export const Button = ({
   const baseStyles = "inline-flex items-center justify-center font-semibold rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer tracking-wider uppercase";
 
   const variants = {
-    primary: "bg-[#2F7C7A] text-white hover:bg-[#256664] focus:ring-[#2F7C7A] border border-[#2F7C7A] shadow-2xs",
-    secondary: "bg-white text-[#132238] border border-[#E2E8E0] hover:bg-[#E6F2F1] hover:border-[#2F7C7A] focus:ring-[#2F7C7A]",
-    outline: "bg-white text-[#132238] border border-[#E2E8E0] hover:bg-[#E6F2F1] hover:border-[#2F7C7A] focus:ring-[#2F7C7A]",
-    miscBlue: "bg-[#2F7C7A] text-white hover:bg-[#132238] border border-[#2F7C7A] shadow-2xs focus:ring-[#2F7C7A]",
-    lightBlue: "bg-[#E6F2F1] text-[#132238] border border-[#E2E8E0] hover:bg-[#E6F2F1] hover:text-[#2F7C7A] focus:ring-[#2F7C7A]",
-    outlineDark: "bg-transparent text-[#132238] border border-[#132238] hover:bg-[#132238] hover:text-white focus:ring-[#132238]",
+    primary: "bg-misc-primary text-white hover:bg-misc-primary-dark focus:ring-misc-primary border border-misc-primary shadow-2xs",
+    secondary: "bg-white text-misc-deep-blue border border-slate-300 hover:bg-misc-soft-blue hover:border-misc-primary focus:ring-misc-primary",
+    outline: "bg-white text-misc-deep-blue border border-slate-300 hover:bg-misc-soft-blue hover:border-misc-primary focus:ring-misc-primary",
+    miscBlue: "bg-misc-primary text-white hover:bg-misc-primary-dark border border-misc-primary shadow-2xs focus:ring-misc-primary",
+    lightBlue: "bg-misc-soft-blue text-misc-text border border-misc-border hover:bg-misc-soft-blue hover:text-misc-primary focus:ring-misc-primary",
+    outlineDark: "bg-transparent text-misc-text border border-misc-text hover:bg-misc-navy hover:text-white focus:ring-misc-text",
     outlineLight: "bg-transparent text-white border border-white/30 hover:bg-white/10 hover:border-white focus:ring-white"
   };
 

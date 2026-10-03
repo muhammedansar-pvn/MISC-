@@ -138,16 +138,16 @@ export default function StudentTimetablePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Class Timetable</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#132238]">Class Timetable</h1>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#171D19]">Class Timetable</h1>
           <p className="text-xs text-slate-500 mt-1">
             View your daily period sessions, timings, assigned subjects, and faculty details.
           </p>
@@ -156,7 +156,7 @@ export default function StudentTimetablePage() {
         {/* Enrolled Class & Year Info */}
         <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
           {data?.class && (
-            <span className="inline-flex items-center px-3 py-1.5 rounded-xl bg-[#E6F2F1] text-[#2F7C7A] text-xs font-bold gap-1.5 shadow-2xs">
+            <span className="inline-flex items-center px-3 py-1.5 rounded-xl bg-[#EAF2EC] text-[#23804A] text-xs font-bold gap-1.5 shadow-2xs">
               <GraduationCap className="w-4 h-4" />
               <span>{data.class.name || data.class.code}</span>
             </span>
@@ -171,13 +171,13 @@ export default function StudentTimetablePage() {
       </div>
 
       {/* View Toggle Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-[#E2E8E0] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-[#E3EAE5] shadow-xs">
         <div className="flex space-x-1 bg-slate-100 p-1 rounded-xl w-full sm:w-auto">
           <button
             onClick={() => setViewMode('today')}
             className={`flex-1 sm:flex-initial flex items-center justify-center space-x-2 px-5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               viewMode === 'today'
-                ? 'bg-white text-[#2F7C7A] shadow-xs'
+                ? 'bg-white text-[#23804A] shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -191,7 +191,7 @@ export default function StudentTimetablePage() {
             onClick={() => setViewMode('weekly')}
             className={`flex-1 sm:flex-initial flex items-center justify-center space-x-2 px-5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               viewMode === 'weekly'
-                ? 'bg-white text-[#2F7C7A] shadow-xs'
+                ? 'bg-white text-[#23804A] shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
@@ -215,7 +215,7 @@ export default function StudentTimetablePage() {
 
       {/* Empty State: No timetable at all */}
       {entries.length === 0 ? (
-        <div className="bg-white p-12 rounded-2xl border border-[#E2E8E0] shadow-xs text-center space-y-3">
+        <div className="bg-white p-12 rounded-2xl border border-[#E3EAE5] shadow-xs text-center space-y-3">
           <Clock className="w-12 h-12 text-slate-300 mx-auto" />
           <h3 className="font-bold text-base text-slate-800">
             No timetable has been published for your class yet.
@@ -229,8 +229,8 @@ export default function StudentTimetablePage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#2F7C7A] animate-pulse" />
-              <h2 className="text-base font-bold text-[#132238]">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#23804A] animate-pulse" />
+              <h2 className="text-base font-bold text-[#171D19]">
                 Today&apos;s Sessions — {todayKey}
               </h2>
             </div>
@@ -240,7 +240,7 @@ export default function StudentTimetablePage() {
           </div>
 
           {todayKey === 'SUNDAY' || todayEntries.length === 0 ? (
-            <div className="bg-white p-10 rounded-2xl border border-[#E2E8E0] shadow-xs text-center space-y-2">
+            <div className="bg-white p-10 rounded-2xl border border-[#E3EAE5] shadow-xs text-center space-y-2">
               <Sparkles className="w-10 h-10 text-emerald-500 mx-auto" />
               <p className="font-bold text-sm text-slate-800">No classes scheduled for today!</p>
               <p className="text-xs text-slate-500">
@@ -259,8 +259,8 @@ export default function StudentTimetablePage() {
                     key={period._id}
                     className={`bg-white rounded-2xl p-5 border transition-all ${
                       isCurrent
-                        ? 'border-[#2F7C7A] ring-2 ring-[#2F7C7A]/20 shadow-md'
-                        : 'border-[#E2E8E0] shadow-2xs hover:shadow-sm'
+                        ? 'border-[#23804A] ring-2 ring-[#23804A]/20 shadow-md'
+                        : 'border-[#E3EAE5] shadow-2xs hover:shadow-sm'
                     } space-y-3`}
                   >
                     {/* Header: Period & Time */}
@@ -275,7 +275,7 @@ export default function StudentTimetablePage() {
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center space-x-1 text-xs font-semibold text-[#2F7C7A]">
+                      <div className="flex items-center space-x-1 text-xs font-semibold text-[#23804A]">
                         <Clock className="w-3.5 h-3.5" />
                         <span>{period.startTime} - {period.endTime}</span>
                       </div>
@@ -283,7 +283,7 @@ export default function StudentTimetablePage() {
 
                     {/* Subject */}
                     <div>
-                      <h3 className="font-bold text-base text-[#132238] leading-tight">
+                      <h3 className="font-bold text-base text-[#171D19] leading-tight">
                         {subject?.subjectName || subject?.name || 'Subject'}
                       </h3>
                       {(subject?.subjectCode || subject?.code) && (
@@ -296,7 +296,7 @@ export default function StudentTimetablePage() {
                     {/* Faculty / Usthad */}
                     <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
                       <div className="flex items-center space-x-2">
-                        <div className="w-7 h-7 rounded-lg bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center shrink-0">
+                        <div className="w-7 h-7 rounded-lg bg-[#EAF2EC] text-[#23804A] flex items-center justify-center shrink-0">
                           <UserCheck className="w-4 h-4" />
                         </div>
                         <div className="min-w-0">
@@ -338,8 +338,8 @@ export default function StudentTimetablePage() {
                   onClick={() => setSelectedWeeklyDay(key)}
                   className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                     isSelected
-                      ? 'bg-[#2F7C7A] text-white shadow-xs'
-                      : 'bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0]'
+                      ? 'bg-[#23804A] text-white shadow-xs'
+                      : 'bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5]'
                   }`}
                 >
                   <span>{label}</span>
@@ -359,10 +359,10 @@ export default function StudentTimetablePage() {
           </div>
 
           {/* Selected Day Timetable List */}
-          <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs p-5 space-y-4">
+          <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs p-5 space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
               <div>
-                <h3 className="text-base font-bold text-[#132238]">
+                <h3 className="text-base font-bold text-[#171D19]">
                   {selectedWeeklyDay} Schedule
                 </h3>
                 <p className="text-xs text-slate-500">
@@ -395,13 +395,13 @@ export default function StudentTimetablePage() {
                       <div className="flex items-start sm:items-center space-x-3.5">
                         <div className="w-12 h-12 rounded-xl bg-white border border-slate-200 flex flex-col items-center justify-center shrink-0 shadow-2xs">
                           <span className="text-[10px] uppercase font-bold text-slate-400">Slot</span>
-                          <span className="text-base font-bold text-[#132238] font-mono leading-none">
+                          <span className="text-base font-bold text-[#171D19] font-mono leading-none">
                             {period.periodNumber}
                           </span>
                         </div>
                         <div>
                           <div className="flex items-center space-x-2">
-                            <h4 className="font-bold text-sm text-[#132238]">
+                            <h4 className="font-bold text-sm text-[#171D19]">
                               {subject?.subjectName || subject?.name || 'Subject'}
                             </h4>
                             {(subject?.subjectCode || subject?.code) && (
@@ -422,7 +422,7 @@ export default function StudentTimetablePage() {
                       </div>
 
                       <div className="flex items-center space-x-2 self-start sm:self-auto shrink-0 bg-white px-3 py-1.5 rounded-lg border border-slate-200">
-                        <Clock className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                        <Clock className="w-3.5 h-3.5 text-[#23804A]" />
                         <span className="text-xs font-bold text-slate-800">
                           {period.startTime} - {period.endTime}
                         </span>

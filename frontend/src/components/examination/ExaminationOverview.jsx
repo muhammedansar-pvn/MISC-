@@ -27,23 +27,23 @@ export const ExaminationOverview = () => {
   ];
 
   return (
-    <section className="relative bg-white py-16 sm:py-24 border-b border-[#E2E8E0]" id="examination-framework">
+    <section className="relative bg-white py-16 sm:py-24 border-b border-misc-border" id="examination-framework">
       <div className="misc-container">
         
         {/* Section Header */}
         <div className="max-w-3xl space-y-3 mb-12">
-          <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#E6F2F1] border border-[#E2E8E0]">
-            <span className="w-2 h-2 rounded-full bg-[#2F7C7A]" />
-            <span className="text-xs font-semibold tracking-wider text-[#2F7C7A] uppercase">
+          <div className="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-misc-soft-blue border border-misc-border">
+            <span className="w-2 h-2 rounded-full bg-misc-primary" />
+            <span className="text-xs font-semibold tracking-wider text-misc-primary uppercase">
               EXAMINATION HUB
             </span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#132238] tracking-tight leading-tight">
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-misc-text tracking-tight leading-tight">
             Central Board Examination & Assessment Services
           </h2>
 
-          <p className="text-base text-[#475569]">
+          <p className="text-base text-misc-secondary">
             Unified evaluation procedures, hall ticket verification, and official academic record processing for all affiliated campuses.
           </p>
         </div>
@@ -55,23 +55,23 @@ export const ExaminationOverview = () => {
             return (
               <div 
                 key={idx}
-                className="bg-[#F7F8F5] p-6 rounded-xl border border-[#E2E8E0] shadow-xs hover:border-[#2F7C7A]/40 transition-all flex flex-col justify-between"
+                className="bg-misc-page p-6 rounded-xl border border-misc-border shadow-xs hover:border-misc-primary/40 transition-all flex flex-col justify-between"
               >
                 <div className="space-y-4">
-                  <div className="w-10 h-10 rounded-lg bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center border border-[#E2E8E0]">
+                  <div className="w-10 h-10 rounded-lg bg-misc-soft-blue text-misc-primary flex items-center justify-center border border-misc-border">
                     <IconComp className="w-5 h-5" />
                   </div>
 
-                  <h3 className="font-serif text-xl font-bold text-[#132238]">
+                  <h3 className="font-serif text-xl font-bold text-misc-text">
                     {item.title}
                   </h3>
 
-                  <p className="text-xs text-[#475569] leading-relaxed">
+                  <p className="text-xs text-misc-secondary leading-relaxed">
                     {item.desc}
                   </p>
                 </div>
 
-                <div className="pt-4 mt-6 border-t border-[#E2E8E0]">
+                <div className="pt-4 mt-6 border-t border-misc-border">
                   <Button
                     variant="outline"
                     size="sm"

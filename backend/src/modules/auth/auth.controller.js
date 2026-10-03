@@ -120,9 +120,10 @@ const verifyEmailOtp = async (req, res) => {
 
     // Check if account onboarding requires password setup
     const needsPasswordSetup = user.status === "PENDING_SETUP" || !user.passwordHash;
+    const isDeactivatedFaculty = ["FACULTY", "HOD", "PRINCIPAL"].includes(user.role) && ["INACTIVE", "SUSPENDED"].includes(user.status);
 
     if (needsPasswordSetup) {
-      user.status = "PENDING_SETUP";
+      if (!isDeactivatedFaculty) user.status = "PENDING_SETUP";
       await user.save();
 
       // Generate secure single-use 24h AccountSetupToken and dispatch email
@@ -138,7 +139,7 @@ const verifyEmailOtp = async (req, res) => {
     }
 
     // Direct registration with pre-existing password hash
-    user.status = "ACTIVE";
+    if (!isDeactivatedFaculty) user.status = "ACTIVE";
     await user.save();
 
     if (user.role === "STUDENT") {
@@ -234,6 +235,16 @@ const login = async (req, res) => {
 
     if (user.status !== "ACTIVE" || user.isDeleted === true) {
       return res.status(403).json({ success: false, message: "Account is not active" });
+    }
+
+    if (["FACULTY", "HOD", "PRINCIPAL"].includes(user.role)) {
+      const FacultyProfile = require("../faculty/faculty.model");
+      const facultyProfile = await FacultyProfile.findOne({ userId: user._id })
+        .select("status isDeleted")
+        .lean();
+      if (facultyProfile && (facultyProfile.isDeleted === true || facultyProfile.status === "INACTIVE")) {
+        return res.status(403).json({ success: false, message: "Account is not active" });
+      }
     }
 
     if (requires2FA === true) {
@@ -427,6 +438,8 @@ const accountSetup = async (req, res) => {
       return res.status(404).json({ success: false, message: "User account not found" });
     }
 
+    const isDeactivatedFaculty = ["FACULTY", "HOD", "PRINCIPAL"].includes(user.role) && ["INACTIVE", "SUSPENDED"].includes(user.status);
+
     if (username && username.trim().toLowerCase() !== user.username) {
       const normalizedUsername = username.trim().toLowerCase();
       const existingUser = await User.findOne({ username: normalizedUsername, isDeleted: { $ne: true } });
@@ -437,7 +450,7 @@ const accountSetup = async (req, res) => {
     }
 
     user.passwordHash = await hashPassword(password);
-    user.status = "ACTIVE";
+    if (!isDeactivatedFaculty) user.status = "ACTIVE";
     user.emailVerified = true;
     await user.save();
 

@@ -23,6 +23,10 @@ import {
   Layers,
   Building2,
   CalendarCheck,
+  HeartHandshake,
+  Activity,
+  AlertTriangle,
+  FileCheck,
 } from 'lucide-react';
 
 interface FacultyLayoutClientProps {
@@ -67,13 +71,22 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
         { label: 'Attendance Marking', path: '/faculty/attendance', icon: CalendarCheck, exact: true },
         { label: 'Assigned Classes', path: '/faculty/classes', icon: Building2, exact: true },
         { label: 'Teaching Allocations', path: '/faculty/subjects', icon: Layers, exact: true },
+        { label: 'Curriculum & Syllabus', path: '/faculty/syllabus', icon: BookOpen, exact: false },
         { label: 'Faculty Timetable', path: '/faculty/timetable', icon: Clock, exact: true },
-        { label: 'Student Directory', path: '/faculty/students', icon: User, exact: false },
         { label: 'Homework & Assignments', path: '/faculty/assignments', icon: Award, exact: false },
         { label: 'Academic Resources', path: '/faculty/resources', icon: FileText, exact: true },
       ],
     },
-
+    {
+      title: 'STUDENT CARE & MENTORSHIP',
+      items: [
+        { label: 'Student Directory', path: '/faculty/students', icon: User, exact: false },
+        { label: 'Mentorship Workspace', path: '/faculty/mentorship', icon: HeartHandshake, exact: false },
+        { label: 'Student Development', path: '/faculty/development', icon: Activity, exact: false },
+        { label: 'Discipline & Conduct', path: '/faculty/discipline', icon: AlertTriangle, exact: false },
+        { label: 'Leave Applications', path: '/faculty/leaves', icon: FileCheck, exact: false },
+      ],
+    },
     {
       title: 'EXAMINATIONS & EVALUATION',
       items: [
@@ -92,7 +105,7 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
 
   return (
     <ProtectedRoute allowedRoles={['FACULTY']}>
-      <div className="min-h-screen bg-[#F7F8F5] text-slate-900 flex">
+      <div className="misc-portal-theme min-h-screen bg-[#FBFCFB] text-slate-900 flex">
         {/* Mobile Sidebar Overlay */}
         {sidebarOpen && (
           <div
@@ -103,28 +116,28 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
 
         {/* Sidebar */}
         <aside
-          className={`fixed top-0 bottom-0 left-0 z-50 flex flex-col bg-[#132238] border-r border-[#1e3454] transition-all duration-300 ease-in-out ${
+          className={`fixed top-0 bottom-0 left-0 z-50 flex flex-col bg-white border-r border-[#E3EAE5] transition-all duration-300 ease-in-out ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
           } lg:translate-x-0 ${
             sidebarCollapsed ? 'w-20' : 'w-64'
           }`}
         >
           {/* Brand Header */}
-          <div className="h-16 px-4 flex items-center justify-between border-b border-[#1e3454]">
+          <div className="h-16 px-4 flex items-center justify-between border-b border-[#E3EAE5]">
             <Link
               href="/faculty"
               className="flex items-center space-x-3 overflow-hidden"
               onClick={() => setSidebarOpen(false)}
             >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#2F7C7A] to-[#3ca09d] flex items-center justify-center shrink-0 shadow-sm shadow-[#2F7C7A]/20">
-                <GraduationCap className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-[#EAF2EC] border border-[#D8E5DA] flex items-center justify-center shrink-0">
+                <GraduationCap className="w-5 h-5 text-[#23804A]" />
               </div>
               {!sidebarCollapsed && (
                 <div className="flex flex-col">
-                  <span className="font-serif font-bold text-lg text-white tracking-wider leading-tight">
+                  <span className="font-serif font-bold text-lg text-[#171D19] tracking-wider leading-tight">
                     MISC
                   </span>
-                  <span className="text-[10px] uppercase font-semibold text-[#8ebdbb] tracking-wider">
+                  <span className="text-[10px] uppercase font-semibold text-[#5E7D67] tracking-wider">
                     Faculty Portal
                   </span>
                 </div>
@@ -134,14 +147,14 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
             {/* Mobile close */}
             <button
               onClick={() => setSidebarOpen(false)}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 lg:hidden"
+              className="p-1.5 rounded-lg text-slate-500 hover:text-[#171D19] hover:bg-slate-100 lg:hidden"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Navigation Links */}
-          <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6 scrollbar-thin scrollbar-thumb-slate-800">
+          <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6 scrollbar-thin scrollbar-thumb-slate-300">
             {navCategories.map((group, idx) => (
               <div key={idx} className="space-y-1">
                 {group.title && !sidebarCollapsed && (
@@ -160,12 +173,12 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
                       onClick={() => setSidebarOpen(false)}
                       className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                         active
-                          ? 'bg-[#2F7C7A] text-white shadow-sm shadow-[#2F7C7A]/20 font-semibold'
-                          : 'text-slate-300 hover:bg-slate-800/80 hover:text-white'
+                          ? 'bg-[#EAF2EC] text-[#23804A] border border-[#D8E5DA] font-semibold'
+                          : 'text-slate-700 hover:bg-[#F3F6F3] hover:text-[#171D19]'
                       }`}
                       title={sidebarCollapsed ? item.label : undefined}
                     >
-                      <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-white' : 'text-slate-400'}`} />
+                      <Icon className={`w-4 h-4 shrink-0 ${active ? 'text-[#23804A]' : 'text-slate-500'}`} />
                       {!sidebarCollapsed && <span>{item.label}</span>}
                     </Link>
                   );
@@ -175,21 +188,21 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
           </div>
 
           {/* Faculty Portal Status Footer */}
-          <div className="p-3 border-t border-[#1e3454]">
+          <div className="p-3 border-t border-[#E3EAE5]">
             {!sidebarCollapsed ? (
-              <div className="bg-[#0f1b2c] p-3 rounded-lg border border-[#1e3454]/60 flex items-center space-x-3">
-                <div className="w-8 h-8 rounded-full bg-teal-950/80 border border-teal-500/30 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-4 h-4 text-teal-400" />
+              <div className="bg-[#F3F6F3] p-3 rounded-lg border border-[#E3EAE5] flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-full bg-[#EAF2EC] border border-[#D8E5DA] flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-4 h-4 text-[#23804A]" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-semibold text-white truncate">Authorized Faculty</p>
-                  <p className="text-[10px] text-teal-400 truncate">Evaluator Access Active</p>
+                  <p className="text-xs font-semibold text-[#171D19] truncate">Authorized Faculty</p>
+                  <p className="text-[10px] text-[#23804A] truncate">Evaluator Access Active</p>
                 </div>
               </div>
             ) : (
               <div className="flex justify-center">
-                <div className="w-8 h-8 rounded-full bg-teal-950/80 border border-teal-500/30 flex items-center justify-center">
-                  <ShieldCheck className="w-4 h-4 text-teal-400" />
+                <div className="w-8 h-8 rounded-full bg-[#EAF2EC] border border-[#D8E5DA] flex items-center justify-center">
+                  <ShieldCheck className="w-4 h-4 text-[#23804A]" />
                 </div>
               </div>
             )}
@@ -203,7 +216,7 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
           }`}
         >
           {/* Top Bar Header */}
-          <header className="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur-xs border-b border-[#E2E8E0] px-4 sm:px-6 flex items-center justify-between shadow-xs">
+          <header className="sticky top-0 z-30 h-16 bg-white/95 backdrop-blur-xs border-b border-[#E3EAE5] px-4 sm:px-6 flex items-center justify-between shadow-xs">
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setSidebarOpen(true)}
@@ -222,7 +235,7 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
               </button>
 
               <div className="hidden md:flex items-center space-x-2 text-xs text-slate-500 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-200">
-                <Clock className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                <Clock className="w-3.5 h-3.5 text-[#23804A]" />
                 <span className="font-mono" suppressHydrationWarning>
                   {currentTime.toLocaleDateString('en-GB', {
                     weekday: 'short',
@@ -243,14 +256,14 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center space-x-3 p-1.5 rounded-lg hover:bg-slate-100 transition-all text-left"
                 >
-                  <div className="w-9 h-9 rounded-full bg-[#E6F2F1] text-[#2F7C7A] font-bold text-sm flex items-center justify-center border border-[#2F7C7A]/20">
+                  <div className="w-9 h-9 rounded-full bg-[#EAF2EC] text-[#23804A] font-bold text-sm flex items-center justify-center border border-[#23804A]/20">
                     {user?.name ? user.name[0].toUpperCase() : 'F'}
                   </div>
                   <div className="hidden sm:flex flex-col">
-                    <span className="text-xs font-bold text-[#132238] leading-tight">
+                    <span className="text-xs font-bold text-[#171D19] leading-tight">
                       {user?.name || user?.username || 'Faculty Member'}
                     </span>
-                    <span className="text-[10px] font-semibold text-teal-700 uppercase tracking-wider">
+                    <span className="text-[10px] font-semibold text-green-700 uppercase tracking-wider">
                       {user?.role || 'FACULTY'}
                     </span>
                   </div>

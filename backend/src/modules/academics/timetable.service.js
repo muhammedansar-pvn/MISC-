@@ -2,8 +2,8 @@ const Timetable = require("./timetable.model");
 const Class = require("./class.model");
 const Subject = require("./subject.model");
 const AcademicYear = require("./academic-year.model");
-const FacultyProfile = require("../faculty/faculty.model");
 const StudentProfile = require("../students/student.model");
+const { assertFacultyAvailableForAssignment } = require("../faculty/faculty.service");
 
 const DAY_ORDER = {
   MONDAY: 1,
@@ -37,10 +37,7 @@ const createTimetableEntry = async (data) => {
   }
 
   // 4. Verify Faculty
-  const facultyObj = await FacultyProfile.findById(facultyId);
-  if (!facultyObj) {
-    throw new Error("Faculty profile not found");
-  }
+  await assertFacultyAvailableForAssignment(facultyId);
 
   // 5. Check for existing schedule clash in same class
   const existingClash = await Timetable.findOne({
@@ -54,6 +51,21 @@ const createTimetableEntry = async (data) => {
   if (existingClash) {
     throw new Error(
       `Schedule clash: Period ${periodNumber} on ${dayOfWeek.toUpperCase()} is already assigned in this class`
+    );
+  }
+
+  // 5b. Check for faculty double-booking conflict across classes
+  const facultyClash = await Timetable.findOne({
+    facultyId,
+    academicYearId,
+    dayOfWeek: dayOfWeek.toUpperCase(),
+    periodNumber,
+    isDeleted: { $ne: true },
+  });
+
+  if (facultyClash) {
+    throw new Error(
+      `Faculty conflict: This faculty member is already scheduled to teach in another class during Period ${periodNumber} on ${dayOfWeek.toUpperCase()}`
     );
   }
 
@@ -146,6 +158,22 @@ const updateTimetableEntry = async (id, data) => {
     }
   }
 
+  // Check faculty conflict if faculty, slot, or day changed
+  const targetFacultyId = data.facultyId || current.facultyId;
+  const facultyConflict = await Timetable.findOne({
+    _id: { $ne: id },
+    facultyId: targetFacultyId,
+    academicYearId: targetYearId,
+    dayOfWeek: targetDay,
+    periodNumber: targetPeriod,
+    isDeleted: { $ne: true },
+  });
+  if (facultyConflict) {
+    throw new Error(
+      `Faculty conflict: This faculty member is already scheduled to teach in another class during Period ${targetPeriod} on ${targetDay}`
+    );
+  }
+
   // Validate subject if changed
   if (data.subjectId) {
     const subj = await Subject.findById(data.subjectId);
@@ -154,8 +182,7 @@ const updateTimetableEntry = async (id, data) => {
 
   // Validate faculty if changed
   if (data.facultyId) {
-    const fac = await FacultyProfile.findById(data.facultyId);
-    if (!fac) throw new Error("Faculty profile not found");
+    await assertFacultyAvailableForAssignment(data.facultyId);
   }
 
   const payload = { ...data };

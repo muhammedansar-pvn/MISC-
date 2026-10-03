@@ -14,29 +14,29 @@ const pillars = [
 
 export const AcademicOverview = () => {
   return (
-    <section className="relative bg-white py-16 sm:py-20 lg:py-28 overflow-hidden border-b border-[#E2E8E0]">
+    <section className="relative bg-white py-16 sm:py-20 lg:py-28 overflow-hidden border-b border-misc-border">
       <div className="relative misc-container z-10">
         <ScrollReveal delay={100}>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center mb-12 sm:mb-16">
             <div className="lg:col-span-7 space-y-4">
               <div className="flex items-center space-x-3">
-                <span className="w-8 h-[2px] bg-[#2F7C7A]" />
-                <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#2F7C7A] uppercase">
+                <span className="w-8 h-[2px] bg-misc-primary" />
+                <span className="text-xs sm:text-sm font-semibold tracking-widest text-misc-primary uppercase">
                   ACADEMIC PHILOSOPHY
                 </span>
               </div>
 
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#132238] tracking-tight leading-tight">
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-misc-text tracking-tight leading-tight">
                 Harmonizing Tradition with Modern Scholarship
               </h2>
 
-              <p className="text-[15.5px] sm:text-[17px] text-[#475569] font-normal leading-relaxed">
+              <p className="text-[15.5px] sm:text-[17px] text-misc-secondary font-normal leading-relaxed">
                 The academic framework of MISC harmonizes classical Islamic jurisprudence with modern university disciplines, ensuring that students develop spiritual depth alongside contemporary competence.
               </p>
             </div>
 
             <div className="lg:col-span-5">
-              <div className="relative rounded-xl overflow-hidden border border-[#E2E8E0] shadow-md bg-white p-2">
+              <div className="relative rounded-xl overflow-hidden border border-misc-border shadow-md bg-white p-2">
                 <ImageCrossfade
                   images={["/DSC00390.JPG.jpeg", "/MKZ01377.JPG.jpeg"]}
                   alt={[
@@ -47,11 +47,11 @@ export const AcademicOverview = () => {
                   interval={4500}
                   transitionDuration={500}
                   caption={(idx) => (
-                    <div className="pt-2 px-1 pb-0.5 flex items-center justify-between text-xs text-[#475569]">
-                      <span className="font-serif font-bold text-[#132238]">
+                    <div className="pt-2 px-1 pb-0.5 flex items-center justify-between text-xs text-misc-secondary">
+                      <span className="font-serif font-bold text-misc-text">
                         {idx === 0 ? "Collaborative Library Study" : "Scholarly Manuscript Research"}
                       </span>
-                      <span className="text-[10px] uppercase font-bold text-[#2F7C7A] bg-[#E6F2F1] px-2 py-0.5 rounded border border-[#E2E8E0]">
+                      <span className="text-[10px] uppercase font-bold text-misc-primary bg-misc-soft-blue px-2 py-0.5 rounded border border-misc-border">
                         {idx === 0 ? "STUDENT LEARNING" : "RESEARCH WING"}
                       </span>
                     </div>
@@ -68,15 +68,15 @@ export const AcademicOverview = () => {
             return (
               <div
                 key={idx}
-                className="bg-[#F7F8F5] rounded-md border border-[#E2E8E0] p-6 sm:p-8 shadow-2xs hover:shadow-md hover:border-[#2F7C7A]/60 transition-all duration-200"
+                className="bg-misc-page rounded-md border border-misc-border p-6 sm:p-8 shadow-2xs hover:shadow-md hover:border-misc-primary/60 transition-all duration-200"
               >
-                <div className="w-10 h-10 rounded bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center mb-4">
+                <div className="w-10 h-10 rounded bg-misc-soft-blue text-misc-primary flex items-center justify-center mb-4">
                   <Icon className="w-5 h-5" />
                 </div>
-                <h3 className="font-serif text-lg font-bold text-[#132238]">
+                <h3 className="font-serif text-lg font-bold text-misc-text">
                   {item.title}
                 </h3>
-                <p className="text-[13.5px] sm:text-[14.5px] text-[#475569] leading-relaxed font-normal mt-2">
+                <p className="text-[13.5px] sm:text-[14.5px] text-misc-secondary leading-relaxed font-normal mt-2">
                   {item.desc}
                 </p>
               </div>

@@ -69,7 +69,9 @@ const approveLeave = async (leaveId, facultyUserId, reviewRemarks) => {
     throw error;
   }
 
-  const faculty = await FacultyProfile.findOne({ userId: facultyUserId }).lean();
+  const faculty = await FacultyProfile.findOne({
+    $or: [{ userId: facultyUserId }, { _id: facultyUserId }],
+  }).lean();
   if (!faculty) {
     const error = new Error("Faculty profile not found for authenticated account");
     error.statusCode = 403;
@@ -82,8 +84,10 @@ const approveLeave = async (leaveId, facultyUserId, reviewRemarks) => {
     facultyId: faculty._id,
     classId: student.classId,
   });
+  const assignedClassIds = (faculty.assignedClasses || []).map((id) => id.toString());
+  const isLegacyAssigned = student.classId && assignedClassIds.includes(student.classId.toString());
 
-  if (!isAssigned) {
+  if (!isAssigned && !isLegacyAssigned) {
     const error = new Error("Unauthorized: student does not belong to your assigned classes");
     error.statusCode = 403;
     throw error;
@@ -158,6 +162,7 @@ const approveLeave = async (leaveId, facultyUserId, reviewRemarks) => {
         });
       }
     }
+
     cur.setUTCDate(cur.getUTCDate() + 1);
   }
 
@@ -190,7 +195,9 @@ const rejectLeave = async (leaveId, facultyUserId, reviewRemarks) => {
     throw error;
   }
 
-  const faculty = await FacultyProfile.findOne({ userId: facultyUserId }).lean();
+  const faculty = await FacultyProfile.findOne({
+    $or: [{ userId: facultyUserId }, { _id: facultyUserId }],
+  }).lean();
   if (!faculty) {
     const error = new Error("Faculty profile not found for authenticated account");
     error.statusCode = 403;
@@ -198,8 +205,15 @@ const rejectLeave = async (leaveId, facultyUserId, reviewRemarks) => {
   }
 
   // Enforce class-assignment verification
+  const { isFacultyAssigned } = require("../academics/academic-auth.service");
+  const isAssigned = await isFacultyAssigned({
+    facultyId: faculty._id,
+    classId: student.classId,
+  });
   const assignedClassIds = (faculty.assignedClasses || []).map((id) => id.toString());
-  if (!student.classId || !assignedClassIds.includes(student.classId.toString())) {
+  const isLegacyAssigned = student.classId && assignedClassIds.includes(student.classId.toString());
+
+  if (!isAssigned && !isLegacyAssigned) {
     const error = new Error("Unauthorized: student does not belong to your assigned classes");
     error.statusCode = 403;
     throw error;
