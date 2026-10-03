@@ -70,9 +70,45 @@ const handleGetLeaves = async (req, res) => {
       filter.appliedBy = req.user.userId;
     } else if (req.user.role === "STUDENT") {
       filter.studentId = req.user.studentId;
-    }
+    } else if (req.user.role === "FACULTY") {
+      const { getFacultyAuthorizedClasses } = require("../academics/academic-auth.service");
+      const StudentProfile = require("../students/student.model");
+      const MentorAssignment = require("../mentorship/mentor-assignment.model");
+      const FacultyProfile = require("../faculty/faculty.model");
 
-    if (req.query.studentId && req.user.role !== "PARENT" && req.user.role !== "STUDENT") {
+      const faculty = await FacultyProfile.findOne({
+        $or: [{ userId: req.user.userId || req.user.id }, { _id: req.user.facultyId }],
+      }).lean();
+
+      if (!faculty) {
+        return res.status(200).json(formatPaginatedResponse({ data: [], total: 0 }));
+      }
+
+      const authorizedClasses = await getFacultyAuthorizedClasses(faculty._id);
+      const classIds = authorizedClasses.map((c) => c._id);
+
+      const [classStudents, mentees] = await Promise.all([
+        StudentProfile.find({ classId: { $in: classIds }, isDeleted: { $ne: true } }).select("_id").lean(),
+        MentorAssignment.find({ mentorId: faculty._id }).select("studentId").lean(),
+      ]);
+
+      const allowedStudentIds = [
+        ...classStudents.map((s) => s._id.toString()),
+        ...mentees.map((m) => m.studentId?.toString()).filter(Boolean),
+      ];
+
+      if (req.query.studentId) {
+        if (!allowedStudentIds.includes(req.query.studentId.toString())) {
+          return res.status(403).json({
+            success: false,
+            message: "Access denied: You are not authorized to view leaves for this student",
+          });
+        }
+        filter.studentId = req.query.studentId;
+      } else {
+        filter.studentId = { $in: allowedStudentIds };
+      }
+    } else if (req.query.studentId) {
       filter.studentId = req.query.studentId;
     }
 

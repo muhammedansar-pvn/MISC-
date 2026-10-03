@@ -111,10 +111,37 @@ const handleGetStudentMentor = async (req, res, next) => {
   }
 };
 
+const handleAddMentorshipNote = async (req, res, next) => {
+  try {
+    const studentId = req.params.studentId || req.body.studentId;
+    const { note, category } = req.body;
+
+    const assignment = await mentorService.addMentorshipNote(studentId, req.user, {
+      note,
+      category,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Mentorship note recorded successfully",
+      data: assignment,
+    });
+  } catch (error) {
+    if (error.statusCode) {
+      return res.status(error.statusCode).json({
+        success: false,
+        message: error.message,
+      });
+    }
+    return next(error);
+  }
+};
+
 module.exports = {
   handleAssignMentor,
   handleGetMyMentees,
   handleUpdateMenteeMonitoring,
   handleGetMyMentor,
   handleGetStudentMentor,
+  handleAddMentorshipNote,
 };

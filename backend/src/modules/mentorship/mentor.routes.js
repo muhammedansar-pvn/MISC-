@@ -42,4 +42,17 @@ router.get(
   mentorController.handleGetStudentMentor
 );
 
+// Add mentorship note for a student (Assigned Mentor or Admin)
+router.post(
+  "/student/:studentId/notes",
+  requireRole("FACULTY", "ADMIN"),
+  mentorController.handleAddMentorshipNote
+);
+
+router.post(
+  "/notes",
+  requireRole("FACULTY", "ADMIN"),
+  mentorController.handleAddMentorshipNote
+);
+
 module.exports = router;

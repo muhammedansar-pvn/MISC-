@@ -1,5 +1,23 @@
 const mongoose = require("mongoose");
 
+const topicSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    isCompleted: {
+      type: Boolean,
+      default: false,
+    },
+    completedAt: {
+      type: Date,
+    },
+  },
+  { _id: true }
+);
+
 const unitSchema = new mongoose.Schema(
   {
     unitNumber: {
@@ -10,8 +28,24 @@ const unitSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    topics: [topicSchema],
+    plannedHours: {
+      type: Number,
+      default: 0,
+    },
+    completedHours: {
+      type: Number,
+      default: 0,
+    },
+    isCompleted: {
+      type: Boolean,
+      default: false,
+    },
+    completedAt: {
+      type: Date,
+    },
   },
-  { _id: false }
+  { _id: true }
 );
 
 const syllabusSchema = new mongoose.Schema(
@@ -35,6 +69,18 @@ const syllabusSchema = new mongoose.Schema(
     },
 
     units: [unitSchema],
+
+    completionPercentage: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
+
+    lastUpdatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
 
     subjectId: {
       type: mongoose.Schema.Types.ObjectId,

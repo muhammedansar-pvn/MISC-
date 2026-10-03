@@ -110,6 +110,8 @@ export const updateSyllabus = async (
   return response.data;
 };
 
+export const updateSyllabusProgress = updateSyllabus;
+
 export const deleteSyllabus = async (id: string): Promise<ApiResponse<null>> => {
   const response = await apiClient.delete<ApiResponse<null>>(API_ENDPOINTS.academic.syllabusById(id));
   return response.data;
@@ -188,6 +190,7 @@ export default {
   getSyllabusById,
   createSyllabus,
   updateSyllabus,
+  updateSyllabusProgress,
   deleteSyllabus,
   uploadSyllabusFile,
   getFacultyAssignments,

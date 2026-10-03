@@ -31,8 +31,22 @@ router.patch(
   validateReviewLeave,
   handleApproveLeave
 );
+router.put(
+  "/:id/approve",
+  requireAuth,
+  requireRole("FACULTY"),
+  validateReviewLeave,
+  handleApproveLeave
+);
 
 router.patch(
+  "/:id/reject",
+  requireAuth,
+  requireRole("FACULTY"),
+  validateReviewLeave,
+  handleRejectLeave
+);
+router.put(
   "/:id/reject",
   requireAuth,
   requireRole("FACULTY"),

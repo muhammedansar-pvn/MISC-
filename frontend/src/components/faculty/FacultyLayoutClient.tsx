@@ -23,6 +23,10 @@ import {
   Layers,
   Building2,
   CalendarCheck,
+  HeartHandshake,
+  Activity,
+  AlertTriangle,
+  FileCheck,
 } from 'lucide-react';
 
 interface FacultyLayoutClientProps {
@@ -67,13 +71,22 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
         { label: 'Attendance Marking', path: '/faculty/attendance', icon: CalendarCheck, exact: true },
         { label: 'Assigned Classes', path: '/faculty/classes', icon: Building2, exact: true },
         { label: 'Teaching Allocations', path: '/faculty/subjects', icon: Layers, exact: true },
+        { label: 'Curriculum & Syllabus', path: '/faculty/syllabus', icon: BookOpen, exact: false },
         { label: 'Faculty Timetable', path: '/faculty/timetable', icon: Clock, exact: true },
-        { label: 'Student Directory', path: '/faculty/students', icon: User, exact: false },
         { label: 'Homework & Assignments', path: '/faculty/assignments', icon: Award, exact: false },
         { label: 'Academic Resources', path: '/faculty/resources', icon: FileText, exact: true },
       ],
     },
-
+    {
+      title: 'STUDENT CARE & MENTORSHIP',
+      items: [
+        { label: 'Student Directory', path: '/faculty/students', icon: User, exact: false },
+        { label: 'Mentorship Workspace', path: '/faculty/mentorship', icon: HeartHandshake, exact: false },
+        { label: 'Student Development', path: '/faculty/development', icon: Activity, exact: false },
+        { label: 'Discipline & Conduct', path: '/faculty/discipline', icon: AlertTriangle, exact: false },
+        { label: 'Leave Applications', path: '/faculty/leaves', icon: FileCheck, exact: false },
+      ],
+    },
     {
       title: 'EXAMINATIONS & EVALUATION',
       items: [

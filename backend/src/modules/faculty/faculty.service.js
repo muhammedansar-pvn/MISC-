@@ -477,12 +477,29 @@ const getFacultyDashboardStats = async (userId) => {
     isDeleted: { $ne: true },
   }).select("_id").lean();
 
-  const studentIds = studentsInAssignedClasses.map((s) => s._id);
-
   const pendingLeavesCount = await Leave.countDocuments({
-    studentId: { $in: studentIds },
+    studentId: { $in: studentsInAssignedClasses.map((s) => s._id) },
     status: "PENDING",
   });
+
+  // 8. Mentees Count
+  const MentorAssignment = require("../mentorship/mentor-assignment.model");
+  const menteesCount = await MentorAssignment.countDocuments({
+    mentorId: faculty._id,
+  });
+
+  // 9. Syllabus Metrics
+  const Syllabus = require("../academics/syllabus.model");
+  const syllabuses = await Syllabus.find({
+    classId: { $in: distinctClassIds },
+    subjectId: { $in: distinctSubjectIds },
+    isDeleted: { $ne: true },
+  }).select("completionPercentage").lean();
+
+  const activeSyllabusesCount = syllabuses.length;
+  const averageSyllabusProgress = activeSyllabusesCount > 0
+    ? Math.round(syllabuses.reduce((acc, s) => acc + (s.completionPercentage || 0), 0) / activeSyllabusesCount)
+    : 0;
 
   return {
     assignedClassesCount: distinctClassIds.length,
@@ -493,6 +510,9 @@ const getFacultyDashboardStats = async (userId) => {
     unmarkedAttendanceCount,
     pendingAssignmentsCount,
     pendingLeavesCount,
+    menteesCount,
+    activeSyllabusesCount,
+    averageSyllabusProgress,
     todayDayOfWeek,
   };
 };

@@ -152,12 +152,54 @@ const handleGetSyllabuses = async (req, res) => {
       }
       filter.classId = classId;
       filter.status = "ACTIVE";
+    } else if (req.user?.role === "FACULTY") {
+      const { isFacultyAssigned, resolveFacultyProfileId } = require("./academic-auth.service");
+      const facultyProfileId = await resolveFacultyProfileId(req.user.facultyId || req.user.userId || req.user.id);
+      const FacultyAssignment = require("./faculty-assignment.model");
+
+      if (req.query.subjectId) {
+        const isAssigned = await isFacultyAssigned({
+          facultyId: facultyProfileId,
+          subjectId: req.query.subjectId,
+          classId: req.query.classId || undefined,
+        });
+        if (!isAssigned) {
+          return res.status(403).json({
+            success: false,
+            message: "Access denied: You are not assigned to teach this subject",
+          });
+        }
+        filter.subjectId = req.query.subjectId;
+        if (req.query.classId) filter.classId = req.query.classId;
+      } else if (req.query.classId) {
+        const isAssigned = await isFacultyAssigned({
+          facultyId: facultyProfileId,
+          classId: req.query.classId,
+        });
+        if (!isAssigned) {
+          return res.status(403).json({
+            success: false,
+            message: "Access denied: You are not assigned to teach this class",
+          });
+        }
+        filter.classId = req.query.classId;
+      } else {
+        const myAssignments = await FacultyAssignment.find({
+          facultyId: facultyProfileId,
+          status: "ACTIVE",
+        }).lean();
+        const assignedClassIds = [...new Set(myAssignments.map((a) => a.classId?.toString()).filter(Boolean))];
+        const assignedSubjectIds = [...new Set(myAssignments.map((a) => a.subjectId?.toString()).filter(Boolean))];
+        filter.classId = { $in: assignedClassIds };
+        filter.subjectId = { $in: assignedSubjectIds };
+      }
+      if (req.query.status) filter.status = req.query.status.toUpperCase();
     } else {
       if (req.query.classId) filter.classId = req.query.classId;
+      if (req.query.subjectId) filter.subjectId = req.query.subjectId;
       if (req.query.status) filter.status = req.query.status.toUpperCase();
     }
 
-    if (req.query.subjectId) filter.subjectId = req.query.subjectId;
     if (req.query.academicYearId) filter.academicYearId = req.query.academicYearId;
 
     const search = req.query.search || "";
@@ -192,6 +234,26 @@ const handleGetSyllabusById = async (req, res) => {
       }
     }
 
+    // Enforce class & subject authorization for faculty
+    if (req.user?.role === "FACULTY") {
+      const { isFacultyAssigned } = require("./academic-auth.service");
+      const recordClassId = record.classId?._id || record.classId;
+      const recordSubjectId = record.subjectId?._id || record.subjectId;
+
+      const isAssigned = await isFacultyAssigned({
+        facultyId: req.user.facultyId || req.user.userId || req.user.id,
+        classId: recordClassId,
+        subjectId: recordSubjectId,
+      });
+
+      if (!isAssigned) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: You are not assigned to teach this syllabus class and subject",
+        });
+      }
+    }
+
     return res.status(200).json({ success: true, data: record });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve syllabus" });
@@ -200,8 +262,52 @@ const handleGetSyllabusById = async (req, res) => {
 
 const handleUpdateSyllabus = async (req, res) => {
   try {
+    const existing = await academicService.getSyllabusById(req.params.id);
+    if (!existing) return res.status(404).json({ success: false, message: "Syllabus not found" });
+
+    // Enforce class/subject authorization for faculty
+    if (req.user?.role === "FACULTY") {
+      const { isFacultyAssigned } = require("./academic-auth.service");
+      const existingClassId = existing.classId?._id || existing.classId;
+      const existingSubjectId = existing.subjectId?._id || existing.subjectId;
+
+      const isAssigned = await isFacultyAssigned({
+        facultyId: req.user.facultyId || req.user.userId || req.user.id,
+        classId: existingClassId,
+        subjectId: existingSubjectId,
+      });
+
+      if (!isAssigned) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: You cannot modify syllabus for an unassigned class or subject",
+        });
+      }
+
+      req.body.lastUpdatedBy = req.user.userId || req.user.id;
+    }
+
+    // Auto-compute completion percentage if units are updated
+    if (Array.isArray(req.body.units) && req.body.units.length > 0 && req.body.completionPercentage === undefined) {
+      let totalUnits = req.body.units.length;
+      let completedUnits = req.body.units.filter((u) => u.isCompleted === true).length;
+
+      let allTopics = [];
+      req.body.units.forEach((u) => {
+        if (Array.isArray(u.topics) && u.topics.length > 0) {
+          allTopics.push(...u.topics);
+        }
+      });
+
+      if (allTopics.length > 0) {
+        const completedTopics = allTopics.filter((t) => t.isCompleted === true).length;
+        req.body.completionPercentage = Math.round((completedTopics / allTopics.length) * 100);
+      } else if (totalUnits > 0) {
+        req.body.completionPercentage = Math.round((completedUnits / totalUnits) * 100);
+      }
+    }
+
     const record = await academicService.updateSyllabus(req.params.id, req.body);
-    if (!record) return res.status(404).json({ success: false, message: "Syllabus not found" });
     return res.status(200).json({ success: true, message: "Syllabus updated successfully", data: record });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message || "Failed to update syllabus" });

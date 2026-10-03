@@ -23,6 +23,10 @@ import {
   Users,
   ArrowRight,
   BookOpen,
+  HeartHandshake,
+  Activity,
+  AlertTriangle,
+  FileCheck,
 } from 'lucide-react';
 
 export default function FacultyDashboardPage() {
@@ -248,6 +252,90 @@ export default function FacultyDashboardPage() {
               <span className="font-semibold text-[#23804A] group-hover:underline">/faculty/assignments</span>
             </div>
           </Link>
+
+          {/* Action Card 3: Pending Student Leaves */}
+          <Link
+            href="/faculty/leaves"
+            className="block relative p-5 rounded-xl border bg-white shadow-2xs border-[#E3EAE5] space-y-3 transition-all hover:border-[#23804A] hover:shadow-sm cursor-pointer group"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 flex items-center justify-center">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-[#171D19] group-hover:text-[#23804A] transition-colors">
+                    Pending Student Leaves
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Review and authorize absence requests for your classes
+                  </p>
+                </div>
+              </div>
+              {(dashboardStats?.pendingLeavesCount || 0) > 0 ? (
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
+                  Review
+                </span>
+              ) : (
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  Clear
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-baseline space-x-2 pt-1">
+              <span className="text-2xl font-bold font-mono text-[#171D19]">
+                {dashboardStats?.pendingLeavesCount ?? 0}
+              </span>
+              <span className="text-xs text-slate-500">
+                pending leave applications awaiting review
+              </span>
+            </div>
+
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-600 transition-colors">
+              <span>Review leave requests and auto-mark attendance &rarr;</span>
+              <span className="font-semibold text-[#23804A] group-hover:underline">/faculty/leaves</span>
+            </div>
+          </Link>
+
+          {/* Action Card 4: Mentorship & Holistic Care */}
+          <Link
+            href="/faculty/mentorship"
+            className="block relative p-5 rounded-xl border bg-white shadow-2xs border-[#E3EAE5] space-y-3 transition-all hover:border-[#23804A] hover:shadow-sm cursor-pointer group"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-lg bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-[#171D19] group-hover:text-[#23804A] transition-colors">
+                    Assigned Student Mentees
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Record observations, pastoral care, and guidance notes
+                  </p>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-teal-100 text-teal-800 border border-teal-200">
+                Mentoring
+              </span>
+            </div>
+
+            <div className="flex items-baseline space-x-2 pt-1">
+              <span className="text-2xl font-bold font-mono text-[#171D19]">
+                {(dashboardStats as any)?.menteesCount ?? 0}
+              </span>
+              <span className="text-xs text-slate-500">
+                students currently assigned under your mentorship
+              </span>
+            </div>
+
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-600 transition-colors">
+              <span>Open mentorship guidance workspace &rarr;</span>
+              <span className="font-semibold text-[#23804A] group-hover:underline">/faculty/mentorship</span>
+            </div>
+          </Link>
         </div>
       </div>
 
@@ -448,18 +536,86 @@ export default function FacultyDashboardPage() {
           </Link>
 
           <Link
-            href="/faculty/resources"
+            href="/faculty/syllabus"
             className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
           >
-            <div className="w-10 h-10 rounded-lg bg-green-50 text-green-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-              <FileText className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <BookOpen className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-green-700 transition-colors">
-                Study Materials & Resources
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-emerald-700 transition-colors">
+                Curriculum & Syllabus
               </h3>
               <p className="text-xs text-slate-500 mt-1">
-                Upload and share class-specific notes, chapters, and reference docs.
+                Track teaching milestones, unit hours, and completion rates for assigned subjects.
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            href="/faculty/mentorship"
+            className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
+          >
+            <div className="w-10 h-10 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <HeartHandshake className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-teal-700 transition-colors">
+                Mentorship Workspace
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Log observation notes, pastoral care, and monitor student guidance categories.
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            href="/faculty/development"
+            className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
+          >
+            <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Activity className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-indigo-700 transition-colors">
+                Student Holistic Development
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Evaluate academic, linguistic, spiritual, skill, and leadership domain scores.
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            href="/faculty/discipline"
+            className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
+          >
+            <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <AlertTriangle className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-amber-700 transition-colors">
+                Discipline & Conduct
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Log behavioral incidents, track demerit points, and resolve cases for authorized students.
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            href="/faculty/leaves"
+            className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
+          >
+            <div className="w-10 h-10 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <FileCheck className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-purple-700 transition-colors">
+                Student Leave Approvals
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Review absence requests and auto-synchronize period attendance records.
               </p>
             </div>
           </Link>

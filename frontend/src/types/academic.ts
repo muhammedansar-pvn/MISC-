@@ -70,11 +70,22 @@ export interface SubjectPayload {
 
 export type SyllabusExamType = 'HALF_YEARLY' | 'ANNUAL';
 
+export interface SyllabusTopic {
+  title: string;
+  isCompleted?: boolean;
+  completedAt?: string;
+  [key: string]: any;
+}
+
 export interface SyllabusUnit {
   unitNumber?: number;
   title: string;
   unitTitle?: string;
-  topics?: string | string[];
+  topics?: string | string[] | SyllabusTopic[] | any;
+  isCompleted?: boolean;
+  plannedHours?: number;
+  completedHours?: number;
+  completedAt?: string;
   [key: string]: any;
 }
 
@@ -84,6 +95,7 @@ export interface Syllabus {
   kitabName: string;
   examType: SyllabusExamType;
   units: SyllabusUnit[];
+  completionPercentage?: number;
   academicYearId?: string | AcademicYear;
   classId?: string | ClassModel;
   subjectId?: string | Subject;
@@ -101,6 +113,7 @@ export interface SyllabusPayload {
   title?: string;
   examType: SyllabusExamType;
   units?: SyllabusUnit[];
+  completionPercentage?: number;
   academicYearId?: string;
   classId?: string;
   subjectId?: string;
