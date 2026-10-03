@@ -4,13 +4,13 @@ export const RoleBadge = ({ role }) => {
   const getBadgeStyle = (roleType) => {
     switch (roleType?.toUpperCase()) {
       case 'ADMIN':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'bg-green-100 text-green-800 border-green-200';
       case 'PRINCIPAL':
         return 'bg-rose-100 text-rose-800 border-rose-200';
       case 'HOD':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
+        return 'bg-green-100 text-green-800 border-green-200';
       case 'FACULTY':
-        return 'bg-teal-100 text-teal-800 border-teal-200';
+        return 'bg-green-100 text-green-800 border-green-200';
       case 'PARENT':
         return 'bg-sky-100 text-sky-800 border-sky-200';
       case 'STUDENT':

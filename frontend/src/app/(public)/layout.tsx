@@ -8,7 +8,7 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col min-h-screen bg-[#F7F8F5] font-sans text-[#132238] antialiased selection:bg-[#2F7C7A]/30 selection:text-[#132238]">
+    <div className="sanaviyya-site flex min-h-screen flex-col bg-misc-page font-sans text-misc-text antialiased selection:bg-misc-primary/30 selection:text-misc-text">
       <Header />
       <main className="flex-grow">{children}</main>
       <Footer />

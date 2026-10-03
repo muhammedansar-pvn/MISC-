@@ -9,6 +9,16 @@ const { sendAndStoreOtp, verifyOtpCode } = require("../auth/auth.service");
 const { escapeRegex } = require("../../shared/utils/regex");
 const studentLifecycleService = require("../students/student-lifecycle.service");
 
+const syncFacultyProfileStatus = async (user) => {
+  if (!user || !["FACULTY", "HOD", "PRINCIPAL"].includes(user.role)) return;
+
+  const FacultyProfile = require("../faculty/faculty.model");
+  await FacultyProfile.updateOne(
+    { userId: user._id, isDeleted: { $ne: true } },
+    { $set: { status: user.status === "ACTIVE" ? "ACTIVE" : "INACTIVE" } }
+  );
+};
+
 // Models for stats aggregations
 const getExternalModels = () => ({
   Event: require("../events/event.model"),
@@ -389,6 +399,7 @@ const updateUser = async (id, updateData, currentAdminId) => {
   }
 
   await user.save();
+  await syncFacultyProfileStatus(user);
 
   const updatedUser = user.toObject();
   delete updatedUser.passwordHash;
@@ -439,6 +450,7 @@ const updateUserStatus = async (id, status, currentAdminId) => {
 
   user.status = targetStatus;
   await user.save();
+  await syncFacultyProfileStatus(user);
 
   const updatedUser = user.toObject();
   delete updatedUser.passwordHash;

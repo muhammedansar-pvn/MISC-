@@ -22,11 +22,11 @@ const getRoleDisplayLabel = (role) => {
 const getRoleBadgeStyle = (role) => {
   switch (role?.toUpperCase()) {
     case 'ADMIN':
-      return 'bg-purple-100 text-purple-800 border-purple-200';
+      return 'bg-green-100 text-green-800 border-green-200';
     case 'INSTITUTION':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
+      return 'bg-green-100 text-green-800 border-green-200';
     case 'FACULTY':
-      return 'bg-teal-100 text-teal-800 border-teal-200';
+      return 'bg-green-100 text-green-800 border-green-200';
     case 'STUDENT':
       return 'bg-amber-100 text-amber-800 border-amber-200';
     default:
@@ -37,11 +37,11 @@ const getRoleBadgeStyle = (role) => {
 const getAvatarBg = (role) => {
   switch (role?.toUpperCase()) {
     case 'ADMIN':
-      return 'bg-[#2F7C7A] text-white';
+      return 'bg-[#23804A] text-white';
     case 'INSTITUTION':
-      return 'bg-blue-600 text-white';
+      return 'bg-green-600 text-white';
     case 'FACULTY':
-      return 'bg-teal-600 text-white';
+      return 'bg-green-600 text-white';
     case 'STUDENT':
       return 'bg-amber-600 text-white';
     default:
@@ -62,7 +62,7 @@ export const UserCard = ({ user, onDetails, onEdit, onToggleStatus }) => {
   const isSuspended = user.status === 'SUSPENDED';
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E2E8E0] p-4.5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4 w-full min-w-0 h-full">
+    <div className="bg-white rounded-2xl border border-[#E3EAE5] p-4.5 shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4 w-full min-w-0 h-full">
       {/* Header Info */}
       <div className="min-w-0">
         <div className="flex items-start justify-between gap-2 min-w-0">
@@ -71,7 +71,7 @@ export const UserCard = ({ user, onDetails, onEdit, onToggleStatus }) => {
               {getInitials(user.name)}
             </div>
             <div className="min-w-0">
-              <h4 className="font-bold text-[#132238] text-sm truncate leading-snug" title={user.name}>
+              <h4 className="font-bold text-[#171D19] text-sm truncate leading-snug" title={user.name}>
                 {user.name || 'Unassigned User'}
               </h4>
               <p className="text-xs text-slate-500 truncate" title={user.department}>
@@ -85,7 +85,7 @@ export const UserCard = ({ user, onDetails, onEdit, onToggleStatus }) => {
         </div>
 
         {/* Inner Detail Box */}
-        <div className="mt-4 bg-[#F8FAF9] border border-slate-200/70 rounded-xl p-3 space-y-2 text-xs min-w-0">
+        <div className="mt-4 bg-[#FBFCFB] border border-slate-200/70 rounded-xl p-3 space-y-2 text-xs min-w-0">
           <div className="flex items-center justify-between gap-1">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">System Role</span>
             <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase border truncate ${getRoleBadgeStyle(user.role)}`}>

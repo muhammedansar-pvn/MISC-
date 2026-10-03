@@ -73,18 +73,18 @@ export default function StudentResourcesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Academic Resources</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Study Materials & Downloads
           </h1>
         </div>
 
-        <span className="text-xs font-bold text-slate-500 bg-white px-3.5 py-2 rounded-lg border border-[#E2E8E0] self-start sm:self-auto">
+        <span className="text-xs font-bold text-slate-500 bg-white px-3.5 py-2 rounded-lg border border-[#E3EAE5] self-start sm:self-auto">
           {resources.length} Published Documents
         </span>
       </div>
@@ -98,7 +98,7 @@ export default function StudentResourcesPage() {
               onClick={() => setSelectedCategory(cat)}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 selectedCategory === cat
-                  ? 'bg-[#2F7C7A] text-white shadow-2xs'
+                  ? 'bg-[#23804A] text-white shadow-2xs'
                   : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
               }`}
             >
@@ -114,14 +114,14 @@ export default function StudentResourcesPage() {
             placeholder="Search study materials, guidelines, and reference sheets..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#2F7C7A]"
+            className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#23804A]"
           />
         </div>
       </div>
 
       {/* Resources Grid */}
       {filteredResources.length === 0 ? (
-        <div className="p-12 text-center bg-white rounded-xl border border-[#E2E8E0] space-y-3">
+        <div className="p-12 text-center bg-white rounded-xl border border-[#E3EAE5] space-y-3">
           <FileText className="w-10 h-10 text-slate-300 mx-auto" />
           <p className="text-sm font-bold text-slate-700">No resources found</p>
           <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -133,18 +133,18 @@ export default function StudentResourcesPage() {
           {filteredResources.map((res) => (
             <div
               key={res._id}
-              className="bg-white rounded-xl border border-[#E2E8E0] p-5 shadow-2xs hover:border-[#2F7C7A] transition-all flex flex-col justify-between space-y-4"
+              className="bg-white rounded-xl border border-[#E3EAE5] p-5 shadow-2xs hover:border-[#23804A] transition-all flex flex-col justify-between space-y-4"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#E6F2F1] text-[#2F7C7A]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#EAF2EC] text-[#23804A]">
                     {res.category || 'General'}
                   </span>
                   {res.fileSize && (
                     <span className="text-[11px] font-mono text-slate-400">{res.fileSize}</span>
                   )}
                 </div>
-                <h3 className="font-bold text-sm text-[#132238] line-clamp-1">{res.title}</h3>
+                <h3 className="font-bold text-sm text-[#171D19] line-clamp-1">{res.title}</h3>
                 {res.description && (
                   <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
                     {res.description}
@@ -161,7 +161,7 @@ export default function StudentResourcesPage() {
                     href={res.fileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#2F7C7A] text-white text-xs font-semibold hover:bg-[#286b69] transition-all shadow-2xs"
+                    className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#23804A] text-white text-xs font-semibold hover:bg-[#1B6F41] transition-all shadow-2xs"
                   >
                     <Download className="w-3.5 h-3.5 mr-1.5" /> Download
                   </a>

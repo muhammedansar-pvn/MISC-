@@ -137,13 +137,13 @@ export default function StudentLeavePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Leaves</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Leave Requests & Status
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
@@ -154,17 +154,17 @@ export default function StudentLeavePage() {
         <button
           onClick={() => loadLeaves(true)}
           disabled={loading || refreshing}
-          className="p-2 rounded-lg border border-[#E2E8E0] bg-white text-slate-600 hover:text-[#2F7C7A] hover:bg-slate-50 shadow-2xs transition-all disabled:opacity-50 self-start sm:self-auto"
+          className="p-2 rounded-lg border border-[#E3EAE5] bg-white text-slate-600 hover:text-[#23804A] hover:bg-slate-50 shadow-2xs transition-all disabled:opacity-50 self-start sm:self-auto"
           title="Refresh leave requests"
           aria-label="Refresh leave requests"
         >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-[#2F7C7A]' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-[#23804A]' : ''}`} />
         </button>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Total Applications
@@ -173,13 +173,13 @@ export default function StudentLeavePage() {
               <CalendarDays className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-2xl sm:text-3xl font-bold font-mono text-[#132238]">
+          <p className="text-2xl sm:text-3xl font-bold font-mono text-[#171D19]">
             {loading ? '--' : totalCount}
           </p>
           <p className="text-xs text-slate-400">All submissions on record</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Approved
@@ -194,7 +194,7 @@ export default function StudentLeavePage() {
           <p className="text-xs text-slate-400">Excused leave synced</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Pending Review
@@ -209,7 +209,7 @@ export default function StudentLeavePage() {
           <p className="text-xs text-slate-400">Awaiting faculty action</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Rejected
@@ -226,12 +226,12 @@ export default function StudentLeavePage() {
       </div>
 
       {/* Main List Section */}
-      <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
         {/* Filter Controls */}
-        <div className="p-5 border-b border-[#E2E8E0] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-5 border-b border-[#E3EAE5] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-base font-bold text-[#132238] flex items-center space-x-2">
-              <FileText className="w-4 h-4 text-[#2F7C7A]" />
+            <h2 className="text-base font-bold text-[#171D19] flex items-center space-x-2">
+              <FileText className="w-4 h-4 text-[#23804A]" />
               <span>Leave Application History</span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -247,18 +247,18 @@ export default function StudentLeavePage() {
                 placeholder="Search reason or faculty..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-[#E2E8E0] rounded-lg focus:outline-hidden focus:border-[#2F7C7A] text-slate-800 placeholder-slate-400"
+                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-[#E3EAE5] rounded-lg focus:outline-hidden focus:border-[#23804A] text-slate-800 placeholder-slate-400"
               />
             </div>
 
-            <div className="inline-flex rounded-lg border border-[#E2E8E0] bg-slate-50 p-0.5 text-xs">
+            <div className="inline-flex rounded-lg border border-[#E3EAE5] bg-slate-50 p-0.5 text-xs">
               {(['ALL', 'PENDING', 'APPROVED', 'REJECTED'] as const).map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
                   className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
                     statusFilter === st
-                      ? 'bg-white text-[#132238] shadow-2xs'
+                      ? 'bg-white text-[#171D19] shadow-2xs'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -278,7 +278,7 @@ export default function StudentLeavePage() {
         {/* Content States */}
         {loading ? (
           <div className="p-12 text-center text-xs text-slate-400">
-            <div className="w-8 h-8 rounded-full border-2 border-[#2F7C7A] border-t-transparent animate-spin mx-auto mb-3" />
+            <div className="w-8 h-8 rounded-full border-2 border-[#23804A] border-t-transparent animate-spin mx-auto mb-3" />
             Loading leave applications...
           </div>
         ) : error ? (
@@ -290,7 +290,7 @@ export default function StudentLeavePage() {
             <p className="text-xs text-slate-500 max-w-md mx-auto">{error}</p>
             <button
               onClick={() => loadLeaves(true)}
-              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#2F7C7A] text-white hover:bg-[#286b69] transition-all"
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#23804A] text-white hover:bg-[#1B6F41] transition-all"
             >
               Try Again
             </button>
@@ -345,7 +345,7 @@ export default function StudentLeavePage() {
                     <div className="text-right sm:shrink-0 text-xs text-slate-500 space-y-1">
                       {approverName && (
                         <p className="flex items-center justify-end gap-1 text-slate-700 font-medium">
-                          <UserCheck className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                          <UserCheck className="w-3.5 h-3.5 text-[#23804A]" />
                           Reviewed by: <span className="font-bold">{approverName}</span>
                         </p>
                       )}

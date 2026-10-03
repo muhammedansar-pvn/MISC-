@@ -193,14 +193,14 @@ export default function FacultyResourcesPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/faculty" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/faculty" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Academic Resources</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238] flex items-center gap-2">
-            <FolderOpen className="w-7 h-7 text-[#2F7C7A]" />
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19] flex items-center gap-2">
+            <FolderOpen className="w-7 h-7 text-[#23804A]" />
             Study Materials & Guidelines
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -212,14 +212,14 @@ export default function FacultyResourcesPage() {
           {activeTab === 'study-materials' && (
             <button
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center px-4 py-2 rounded-xl bg-[#2F7C7A] hover:bg-[#286b69] text-white text-xs font-semibold shadow-sm transition-all"
+              className="inline-flex items-center px-4 py-2 rounded-xl bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-semibold shadow-sm transition-all"
             >
               <Plus className="w-4 h-4 mr-1.5" /> Upload Material
             </button>
           )}
           <Link
             href="/faculty"
-            className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#2F7C7A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all"
+            className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#23804A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back
           </Link>
@@ -232,7 +232,7 @@ export default function FacultyResourcesPage() {
           onClick={() => setActiveTab('study-materials')}
           className={`pb-3 border-b-2 transition-colors flex items-center space-x-2 ${
             activeTab === 'study-materials'
-              ? 'border-[#2F7C7A] text-[#2F7C7A]'
+              ? 'border-[#23804A] text-[#23804A]'
               : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
         >
@@ -243,7 +243,7 @@ export default function FacultyResourcesPage() {
           onClick={() => setActiveTab('guidelines')}
           className={`pb-3 border-b-2 transition-colors flex items-center space-x-2 ${
             activeTab === 'guidelines'
-              ? 'border-[#2F7C7A] text-[#2F7C7A]'
+              ? 'border-[#23804A] text-[#23804A]'
               : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
         >
@@ -264,14 +264,14 @@ export default function FacultyResourcesPage() {
                 placeholder="Search materials by title or chapter..."
                 value={searchMaterials}
                 onChange={(e) => setSearchMaterials(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#2F7C7A]"
+                className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#23804A]"
               />
             </div>
 
             <select
               value={selectedClassFilter}
               onChange={(e) => setSelectedClassFilter(e.target.value)}
-              className="text-xs font-semibold bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-[#132238] focus:outline-hidden focus:border-[#2F7C7A]"
+              className="text-xs font-semibold bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-[#171D19] focus:outline-hidden focus:border-[#23804A]"
             >
               <option value="ALL">All Assigned Classes ({materials.length})</option>
               {distinctClasses.map((cls) => (
@@ -289,7 +289,7 @@ export default function FacultyResourcesPage() {
               ))}
             </div>
           ) : filteredMaterials.length === 0 ? (
-            <div className="p-12 text-center bg-white rounded-2xl border border-[#E2E8E0] space-y-3">
+            <div className="p-12 text-center bg-white rounded-2xl border border-[#E3EAE5] space-y-3">
               <FolderOpen className="w-12 h-12 text-slate-300 mx-auto" />
               <h2 className="text-base font-bold text-slate-700">No Study Materials Uploaded</h2>
               <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -301,11 +301,11 @@ export default function FacultyResourcesPage() {
               {filteredMaterials.map((mat) => (
                 <div
                   key={mat._id}
-                  className="bg-white rounded-xl border border-[#E2E8E0] p-5 shadow-2xs hover:border-[#2F7C7A] transition-all flex flex-col justify-between space-y-4"
+                  className="bg-white rounded-xl border border-[#E3EAE5] p-5 shadow-2xs hover:border-[#23804A] transition-all flex flex-col justify-between space-y-4"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#E6F2F1] text-[#2F7C7A]">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#EAF2EC] text-[#23804A]">
                         {mat.classId?.name}
                       </span>
                       <button
@@ -317,12 +317,12 @@ export default function FacultyResourcesPage() {
                       </button>
                     </div>
 
-                    <h3 className="font-bold text-sm text-[#132238] line-clamp-1">{mat.title}</h3>
+                    <h3 className="font-bold text-sm text-[#171D19] line-clamp-1">{mat.title}</h3>
                     <p className="text-xs text-slate-500">
                       Subject: <span className="font-semibold text-slate-700">{mat.subjectId?.name}</span>
                     </p>
                     {mat.chapter && (
-                      <p className="text-[11px] text-teal-700 font-medium">Chapter: {mat.chapter}</p>
+                      <p className="text-[11px] text-green-700 font-medium">Chapter: {mat.chapter}</p>
                     )}
                   </div>
 
@@ -334,7 +334,7 @@ export default function FacultyResourcesPage() {
                       href={mat.fileUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#2F7C7A] text-white text-xs font-semibold hover:bg-[#286b69] transition-all shadow-2xs"
+                      className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#23804A] text-white text-xs font-semibold hover:bg-[#1B6F41] transition-all shadow-2xs"
                     >
                       <Download className="w-3.5 h-3.5 mr-1" /> Download
                     </a>
@@ -356,7 +356,7 @@ export default function FacultyResourcesPage() {
               placeholder="Search official guidelines and council publications..."
               value={searchGuidelines}
               onChange={(e) => setSearchGuidelines(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#2F7C7A]"
+              className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#23804A]"
             />
           </div>
 
@@ -375,7 +375,7 @@ export default function FacultyResourcesPage() {
               {filteredGuidelines.map((res) => (
                 <div
                   key={res._id}
-                  className="bg-white rounded-xl border border-[#E2E8E0] p-5 shadow-2xs space-y-3"
+                  className="bg-white rounded-xl border border-[#E3EAE5] p-5 shadow-2xs space-y-3"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
@@ -385,7 +385,7 @@ export default function FacultyResourcesPage() {
                       <span className="text-[10px] font-mono text-slate-400">{res.fileSize}</span>
                     )}
                   </div>
-                  <h3 className="font-bold text-sm text-[#132238] line-clamp-1">{res.title}</h3>
+                  <h3 className="font-bold text-sm text-[#171D19] line-clamp-1">{res.title}</h3>
                   {res.description && (
                     <p className="text-xs text-slate-500 line-clamp-2">{res.description}</p>
                   )}
@@ -395,7 +395,7 @@ export default function FacultyResourcesPage() {
                         href={res.fileUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-3 py-1.5 rounded-lg bg-teal-50 text-[#2F7C7A] hover:bg-teal-100 text-xs font-semibold border border-teal-200 transition-all"
+                        className="inline-flex items-center px-3 py-1.5 rounded-lg bg-green-50 text-[#23804A] hover:bg-green-100 text-xs font-semibold border border-green-200 transition-all"
                       >
                         <Download className="w-3.5 h-3.5 mr-1" /> Download
                       </a>
@@ -413,8 +413,8 @@ export default function FacultyResourcesPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-base font-serif text-[#132238] flex items-center gap-2">
-                <Plus className="w-5 h-5 text-[#2F7C7A]" /> Upload Subject Study Material
+              <h3 className="font-bold text-base font-serif text-[#171D19] flex items-center gap-2">
+                <Plus className="w-5 h-5 text-[#23804A]" /> Upload Subject Study Material
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -439,7 +439,7 @@ export default function FacultyResourcesPage() {
                   <select
                     value={modalClassId}
                     onChange={(e) => handleModalClassChange(e.target.value)}
-                    className="w-full text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[#132238] focus:outline-hidden focus:border-[#2F7C7A]"
+                    className="w-full text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[#171D19] focus:outline-hidden focus:border-[#23804A]"
                   >
                     {distinctClasses.map((cls) => (
                       <option key={cls._id} value={cls._id}>
@@ -456,7 +456,7 @@ export default function FacultyResourcesPage() {
                   <select
                     value={modalSubjectId}
                     onChange={(e) => setModalSubjectId(e.target.value)}
-                    className="w-full text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[#132238] focus:outline-hidden focus:border-[#2F7C7A]"
+                    className="w-full text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[#171D19] focus:outline-hidden focus:border-[#23804A]"
                   >
                     {modalSubjects.map((sub: any) => (
                       <option key={sub._id} value={sub._id}>
@@ -477,7 +477,7 @@ export default function FacultyResourcesPage() {
                   placeholder="e.g. Chapter 4 Grammar Notes & Commentary"
                   value={materialTitle}
                   onChange={(e) => setMaterialTitle(e.target.value)}
-                  className="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#2F7C7A]"
+                  className="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#23804A]"
                 />
               </div>
 
@@ -490,7 +490,7 @@ export default function FacultyResourcesPage() {
                   placeholder="e.g. Unit 3 - Verb Conjugation"
                   value={materialChapter}
                   onChange={(e) => setMaterialChapter(e.target.value)}
-                  className="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#2F7C7A]"
+                  className="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#23804A]"
                 />
               </div>
 
@@ -506,7 +506,7 @@ export default function FacultyResourcesPage() {
                       setMaterialFile(e.target.files[0]);
                     }
                   }}
-                  className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#E6F2F1] file:text-[#2F7C7A] hover:file:bg-teal-100"
+                  className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#EAF2EC] file:text-[#23804A] hover:file:bg-green-100"
                 />
               </div>
 
@@ -521,7 +521,7 @@ export default function FacultyResourcesPage() {
                 <button
                   type="submit"
                   disabled={submittingMaterial}
-                  className="inline-flex items-center px-5 py-2.5 rounded-xl bg-[#2F7C7A] hover:bg-[#286b69] text-white text-xs font-bold shadow-sm disabled:opacity-50"
+                  className="inline-flex items-center px-5 py-2.5 rounded-xl bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-bold shadow-sm disabled:opacity-50"
                 >
                   {submittingMaterial ? 'Uploading...' : 'Upload & Publish'}
                 </button>

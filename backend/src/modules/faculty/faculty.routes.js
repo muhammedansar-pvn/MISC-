@@ -4,6 +4,7 @@ const {
   handleGetFacultyMembers,
   handleGetFacultyById,
   handleUpdateFaculty,
+  handleUpdateFacultyStatus,
   handleDeleteFaculty,
   handleGetFacultyDashboard,
   handleGetFacultyMyTimetable,
@@ -12,7 +13,11 @@ const {
   handleCreateFacultyRemark,
   handleGetFacultyRemarks,
 } = require("./faculty.controller");
-const { validateCreateFaculty, validateUpdateFaculty } = require("./faculty.validator");
+const {
+  validateCreateFaculty,
+  validateUpdateFaculty,
+  validateUpdateFacultyStatus,
+} = require("./faculty.validator");
 const { requireAuth } = require("../../middleware/auth.middleware");
 const { requireRole } = require("../../middleware/role.middleware");
 
@@ -121,6 +126,14 @@ router.put(
   requireRole("ADMIN", "INSTITUTION"),
   validateUpdateFaculty,
   handleUpdateFaculty
+);
+
+router.patch(
+  "/:id/status",
+  requireAuth,
+  requireRole("ADMIN"),
+  validateUpdateFacultyStatus,
+  handleUpdateFacultyStatus
 );
 
 router.delete(

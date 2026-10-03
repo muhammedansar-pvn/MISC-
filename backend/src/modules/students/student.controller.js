@@ -100,9 +100,9 @@ const handleGetStudents = async (req, res) => {
 
     const { page, limit, skip } = parsePagination(req.query);
 
-    const { students, total } = await getStudents(filter, search, { skip, limit });
+    const { data, total } = await getStudents(filter, search, { skip, limit });
 
-    return res.status(200).json(formatPaginatedResponse(students, total, page, limit));
+    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message || "Failed to retrieve students" });
   }
@@ -114,6 +114,44 @@ const handleGetStudentById = async (req, res) => {
     if (!student) {
       return res.status(404).json({ success: false, message: "Student not found" });
     }
+
+    // Role-based authorization enforcement
+    if (req.user.role === "FACULTY") {
+      const { isFacultyAssigned } = require("../academics/academic-auth.service");
+      const isAssigned = student.classId
+        ? await isFacultyAssigned({
+            facultyId: req.user.facultyId || req.user.userId,
+            classId: student.classId._id || student.classId,
+          })
+        : false;
+      const isMentor =
+        student.mentorId &&
+        req.user.facultyId &&
+        student.mentorId.toString() === req.user.facultyId.toString();
+
+      if (!isAssigned && !isMentor) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: You are not authorized to view this student",
+        });
+      }
+    } else if (req.user.role === "PARENT") {
+      const parentStudentIds = (req.user.parentStudentIds || []).map((id) => id.toString());
+      if (!parentStudentIds.includes(student._id.toString())) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: You are not authorized to view this student",
+        });
+      }
+    } else if (req.user.role === "STUDENT") {
+      if (req.user.studentId && req.user.studentId.toString() !== student._id.toString()) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: Students cannot view other students' profiles",
+        });
+      }
+    }
+
     return res.status(200).json({ success: true, data: student });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message || "Failed to retrieve student" });

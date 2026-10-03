@@ -107,11 +107,11 @@ export default function AdminInstitutionsPage() {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs">
         <div>
           <div className="flex items-center space-x-2">
-            <h1 className="text-2xl font-serif font-bold text-[#132238]">Affiliated Institutions</h1>
-            <span className="px-2.5 py-0.5 text-xs font-bold bg-blue-100 text-blue-800 rounded-full">
+            <h1 className="text-2xl font-serif font-bold text-[#171D19]">Affiliated Institutions</h1>
+            <span className="px-2.5 py-0.5 text-xs font-bold bg-green-100 text-green-800 rounded-full">
               {institutions.length} Registered
             </span>
           </div>
@@ -119,14 +119,14 @@ export default function AdminInstitutionsPage() {
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="inline-flex items-center justify-center px-4 py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] transition-all shadow-sm cursor-pointer"
+          className="inline-flex items-center justify-center px-4 py-2.5 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] transition-all shadow-sm cursor-pointer"
         >
           <Plus className="w-4 h-4 mr-2" /> Add Institution
         </button>
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-[#E2E8E0] shadow-xs">
+      <div className="bg-white p-4 rounded-2xl border border-[#E3EAE5] shadow-xs">
         <div className="relative">
           <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
           <input
@@ -134,16 +134,16 @@ export default function AdminInstitutionsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by institution name, code, or email..."
-            className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#E2E8E0] text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A]"
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#E3EAE5] text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#23804A]"
           />
         </div>
       </div>
 
       {/* Data Table */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center space-y-3">
-            <div className="w-8 h-8 border-4 border-[#2F7C7A] border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-8 h-8 border-4 border-[#23804A] border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-sm font-semibold text-slate-600">Loading institutions...</p>
           </div>
         ) : error ? (
@@ -152,7 +152,7 @@ export default function AdminInstitutionsPage() {
             <p className="text-sm font-semibold text-rose-700">{error}</p>
             <button
               onClick={fetchInstitutionsList}
-              className="inline-flex items-center px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer"
+              className="inline-flex items-center px-4 py-2 bg-[#23804A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer"
             >
               <RefreshCw className="w-4 h-4 mr-2" /> Retry
             </button>
@@ -160,13 +160,13 @@ export default function AdminInstitutionsPage() {
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center space-y-3">
             <Building2 className="w-12 h-12 text-slate-300 mx-auto" />
-            <h3 className="text-base font-bold text-[#132238]">No institutions found</h3>
+            <h3 className="text-base font-bold text-[#171D19]">No institutions found</h3>
             <p className="text-sm text-slate-500">Add an institution to start managing academic records.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E2E8E0]">
+              <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E3EAE5]">
                 <tr>
                   <th className="px-6 py-4">Institution Name</th>
                   <th className="px-6 py-4">Code</th>
@@ -176,10 +176,10 @@ export default function AdminInstitutionsPage() {
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8E0]">
+              <tbody className="divide-y divide-[#E3EAE5]">
                 {filtered.map((inst) => (
                   <tr key={inst._id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-6 py-4 font-bold text-[#132238]">
+                    <td className="px-6 py-4 font-bold text-[#171D19]">
                       {inst.institutionName}
                       <p className="text-xs text-slate-400 font-normal">{inst.address || 'No address'}</p>
                     </td>
@@ -215,9 +215,9 @@ export default function AdminInstitutionsPage() {
       {/* Institution Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white max-w-lg w-full rounded-2xl shadow-xl border border-[#E2E8E0] p-6 space-y-4">
+          <div className="bg-white max-w-lg w-full rounded-2xl shadow-xl border border-[#E3EAE5] p-6 space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-lg font-bold text-[#132238]">
+              <h3 className="text-lg font-bold text-[#171D19]">
                 {editingInst ? 'Edit Institution' : 'Add New Institution'}
               </h3>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer">
@@ -240,7 +240,7 @@ export default function AdminInstitutionsPage() {
                   value={formData.institutionName}
                   onChange={(e) => setFormData({ ...formData, institutionName: e.target.value })}
                   placeholder="e.g. Markaz Arts & Science College"
-                  className="w-full px-3 py-2 rounded-lg border border-[#E2E8E0]"
+                  className="w-full px-3 py-2 rounded-lg border border-[#E3EAE5]"
                 />
               </div>
 
@@ -253,7 +253,7 @@ export default function AdminInstitutionsPage() {
                     value={formData.institutionCode}
                     onChange={(e) => setFormData({ ...formData, institutionCode: e.target.value })}
                     placeholder="MASC-01"
-                    className="w-full px-3 py-2 rounded-lg border border-[#E2E8E0]"
+                    className="w-full px-3 py-2 rounded-lg border border-[#E3EAE5]"
                   />
                 </div>
                 <div>
@@ -261,7 +261,7 @@ export default function AdminInstitutionsPage() {
                   <select
                     value={formData.type}
                     onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}
-                    className="w-full px-3 py-2 rounded-lg border border-[#E2E8E0] cursor-pointer"
+                    className="w-full px-3 py-2 rounded-lg border border-[#E3EAE5] cursor-pointer"
                   >
                     <option value="DIRECT">DIRECT</option>
                     <option value="AFFILIATED">AFFILIATED</option>
@@ -278,7 +278,7 @@ export default function AdminInstitutionsPage() {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="info@markaz.in"
-                    className="w-full px-3 py-2 rounded-lg border border-[#E2E8E0]"
+                    className="w-full px-3 py-2 rounded-lg border border-[#E3EAE5]"
                   />
                 </div>
                 <div>
@@ -288,7 +288,7 @@ export default function AdminInstitutionsPage() {
                     value={formData.contactNumber}
                     onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
                     placeholder="04951234567"
-                    className="w-full px-3 py-2 rounded-lg border border-[#E2E8E0]"
+                    className="w-full px-3 py-2 rounded-lg border border-[#E3EAE5]"
                   />
                 </div>
               </div>
@@ -299,7 +299,7 @@ export default function AdminInstitutionsPage() {
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                   placeholder="Karanthur, Kozhikode, Kerala"
-                  className="w-full px-3 py-2 rounded-lg border border-[#E2E8E0]"
+                  className="w-full px-3 py-2 rounded-lg border border-[#E3EAE5]"
                   rows={2}
                 />
               </div>
@@ -309,7 +309,7 @@ export default function AdminInstitutionsPage() {
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                  className="w-full px-3 py-2 rounded-lg border border-[#E2E8E0] cursor-pointer"
+                  className="w-full px-3 py-2 rounded-lg border border-[#E3EAE5] cursor-pointer"
                 >
                   <option value="ACTIVE">ACTIVE</option>
                   <option value="SUSPENDED">SUSPENDED</option>
@@ -327,7 +327,7 @@ export default function AdminInstitutionsPage() {
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="px-5 py-2 bg-[#2F7C7A] text-white rounded-lg text-xs font-bold uppercase tracking-wider cursor-pointer"
+                  className="px-5 py-2 bg-[#23804A] text-white rounded-lg text-xs font-bold uppercase tracking-wider cursor-pointer"
                 >
                   {formLoading ? 'Saving...' : editingInst ? 'Update' : 'Create'}
                 </button>

@@ -93,7 +93,7 @@ export default function StudentDisciplinePage() {
     switch (severity) {
       case 'LOW':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-green-50 text-green-700 border border-green-200">
             Low
           </span>
         );
@@ -130,13 +130,13 @@ export default function StudentDisciplinePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Conduct</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Conduct & Discipline Records
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
@@ -147,18 +147,18 @@ export default function StudentDisciplinePage() {
         <button
           onClick={() => loadRecords(true)}
           disabled={loading || refreshing}
-          className="p-2 rounded-lg border border-[#E2E8E0] bg-white text-slate-600 hover:text-[#2F7C7A] hover:bg-slate-50 shadow-2xs transition-all disabled:opacity-50 self-start sm:self-auto"
+          className="p-2 rounded-lg border border-[#E3EAE5] bg-white text-slate-600 hover:text-[#23804A] hover:bg-slate-50 shadow-2xs transition-all disabled:opacity-50 self-start sm:self-auto"
           title="Refresh conduct records"
           aria-label="Refresh conduct records"
         >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-[#2F7C7A]' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-[#23804A]' : ''}`} />
         </button>
       </div>
 
       {/* Summary Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Total Records */}
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Recorded Entries
@@ -167,14 +167,14 @@ export default function StudentDisciplinePage() {
               <Scale className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-2xl font-bold font-mono text-[#132238]">
+          <p className="text-2xl font-bold font-mono text-[#171D19]">
             {loading ? '--' : totalRecords}
           </p>
           <p className="text-xs text-slate-400">Total incidents evaluated</p>
         </div>
 
         {/* Resolved Status */}
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Resolved Cases
@@ -190,7 +190,7 @@ export default function StudentDisciplinePage() {
         </div>
 
         {/* Cumulative Demerit Points */}
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-1">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Demerit Deductions
@@ -207,12 +207,12 @@ export default function StudentDisciplinePage() {
       </div>
 
       {/* Main Records Section */}
-      <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
         {/* Table / Controls Header */}
-        <div className="p-5 border-b border-[#E2E8E0] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-5 border-b border-[#E3EAE5] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-base font-bold text-[#132238] flex items-center space-x-2">
-              <FileCheck2 className="w-4 h-4 text-[#2F7C7A]" />
+            <h2 className="text-base font-bold text-[#171D19] flex items-center space-x-2">
+              <FileCheck2 className="w-4 h-4 text-[#23804A]" />
               <span>Incident Registry & Action Logs</span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -228,18 +228,18 @@ export default function StudentDisciplinePage() {
                 placeholder="Search incident type..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-[#E2E8E0] rounded-lg focus:outline-hidden focus:border-[#2F7C7A] text-slate-800 placeholder-slate-400"
+                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-[#E3EAE5] rounded-lg focus:outline-hidden focus:border-[#23804A] text-slate-800 placeholder-slate-400"
               />
             </div>
 
-            <div className="inline-flex rounded-lg border border-[#E2E8E0] bg-slate-50 p-0.5 text-xs">
+            <div className="inline-flex rounded-lg border border-[#E3EAE5] bg-slate-50 p-0.5 text-xs">
               {(['ALL', 'PENDING', 'RESOLVED'] as const).map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
                   className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
                     statusFilter === st
-                      ? 'bg-white text-[#132238] shadow-2xs'
+                      ? 'bg-white text-[#171D19] shadow-2xs'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -253,7 +253,7 @@ export default function StudentDisciplinePage() {
         {/* Content Section */}
         {loading ? (
           <div className="p-12 text-center text-xs text-slate-400">
-            <div className="w-8 h-8 rounded-full border-2 border-[#2F7C7A] border-t-transparent animate-spin mx-auto mb-3" />
+            <div className="w-8 h-8 rounded-full border-2 border-[#23804A] border-t-transparent animate-spin mx-auto mb-3" />
             Loading conduct records...
           </div>
         ) : error ? (
@@ -265,7 +265,7 @@ export default function StudentDisciplinePage() {
             <p className="text-xs text-slate-500 max-w-md mx-auto">{error}</p>
             <button
               onClick={() => loadRecords(true)}
-              className="text-xs font-semibold px-4 py-2 rounded-lg bg-[#2F7C7A] text-white hover:bg-[#286b69] transition-all"
+              className="text-xs font-semibold px-4 py-2 rounded-lg bg-[#23804A] text-white hover:bg-[#1B6F41] transition-all"
             >
               Retry
             </button>
@@ -276,7 +276,7 @@ export default function StudentDisciplinePage() {
             <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-200">
               <ShieldCheck className="w-8 h-8" />
             </div>
-            <h3 className="text-base font-bold text-[#132238]">No disciplinary records found</h3>
+            <h3 className="text-base font-bold text-[#171D19]">No disciplinary records found</h3>
             <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
               Your institutional conduct record is clean with no disciplinary incidents logged. Maintain your commitment to campus regulations and Islamic decorum.
             </p>
@@ -285,7 +285,7 @@ export default function StudentDisciplinePage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-[#E2E8E0] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                <tr className="bg-slate-50 border-b border-[#E3EAE5] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                   <th className="p-3.5">Date</th>
                   <th className="p-3.5">Incident Type</th>
                   <th className="p-3.5 text-center">Severity</th>
@@ -347,8 +347,8 @@ export default function StudentDisciplinePage() {
       </div>
 
       {/* Advisory Footer */}
-      <div className="p-5 rounded-xl bg-slate-50 border border-[#E2E8E0] text-xs text-slate-600 flex items-start gap-4">
-        <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-[#2F7C7A] flex items-center justify-center shrink-0 mt-0.5">
+      <div className="p-5 rounded-xl bg-slate-50 border border-[#E3EAE5] text-xs text-slate-600 flex items-start gap-4">
+        <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-[#23804A] flex items-center justify-center shrink-0 mt-0.5">
           <Info className="w-4 h-4" />
         </div>
         <div className="space-y-1">

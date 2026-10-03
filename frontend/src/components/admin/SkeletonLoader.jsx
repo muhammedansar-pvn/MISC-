@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const UserCardSkeleton = () => (
-  <div className="bg-white rounded-2xl border border-[#E2E8E0] p-5 space-y-4 animate-pulse">
+  <div className="bg-white rounded-2xl border border-[#E3EAE5] p-5 space-y-4 animate-pulse">
     <div className="flex items-center space-x-3">
       <div className="w-11 h-11 bg-slate-200 rounded-full flex-shrink-0" />
       <div className="flex-1 space-y-2">
@@ -23,7 +23,7 @@ export const UserCardSkeleton = () => (
 );
 
 export const StatCardSkeleton = () => (
-  <div className="bg-white p-5 rounded-2xl border border-[#E2E8E0] animate-pulse flex items-center justify-between">
+  <div className="bg-white p-5 rounded-2xl border border-[#E3EAE5] animate-pulse flex items-center justify-between">
     <div className="space-y-2 flex-1">
       <div className="h-3 bg-slate-200 rounded w-1/2" />
       <div className="h-8 bg-slate-200 rounded w-1/3" />

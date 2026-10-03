@@ -2,6 +2,7 @@ const MentorAssignment = require("./mentor-assignment.model");
 const StudentProfile = require("../students/student.model");
 const FacultyProfile = require("../faculty/faculty.model");
 const ParentProfile = require("../parents/parent.model");
+const { assertFacultyAvailableForAssignment } = require("../faculty/faculty.service");
 
 /**
  * Assigns or updates a student's mentor for an academic year.
@@ -15,10 +16,7 @@ const assignMentor = async ({
   notes,
   assignedBy,
 }) => {
-  const mentor = await FacultyProfile.findById(mentorId);
-  if (!mentor) {
-    throw new Error("Mentor faculty profile not found");
-  }
+  await assertFacultyAvailableForAssignment(mentorId);
 
   const student = await StudentProfile.findById(studentId);
   if (!student) {
@@ -69,6 +67,10 @@ const getMyMentees = async (userId) => {
  * Enforces that only the assigned mentor or an ADMIN can update.
  */
 const updateMenteeMonitoring = async (assignmentId, reqUser, { monitoringCategory, notes }) => {
+  if (reqUser.role === "FACULTY") {
+    await assertFacultyAvailableForAssignment(reqUser.userId || reqUser.id || reqUser.facultyId);
+  }
+
   const assignment = await MentorAssignment.findById(assignmentId);
   if (!assignment) {
     throw new Error("Mentor assignment not found");

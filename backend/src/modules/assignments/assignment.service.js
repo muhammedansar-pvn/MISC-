@@ -3,14 +3,16 @@ const fs = require("fs");
 const path = require("path");
 const Assignment = require("./assignment.model");
 const AssignmentSubmission = require("./assignment-submission.model");
-const FacultyProfile = require("../faculty/faculty.model");
 const StudentProfile = require("../students/student.model");
 const Class = require("../academics/class.model");
 const AcademicYear = require("../academics/academic-year.model");
 const { isFacultyAssigned, resolveFacultyProfileId } = require("../academics/academic-auth.service");
+const { assertFacultyAvailableForAssignment } = require("../faculty/faculty.service");
 const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 exports.createAssignment = async (data, files = []) => {
+  await assertFacultyAvailableForAssignment(data.facultyId);
+
   let academicYearId = data.academicYearId;
   if (!academicYearId && data.classId) {
     const cls = await Class.findById(data.classId).select("academicYearId");

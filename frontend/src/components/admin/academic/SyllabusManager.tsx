@@ -401,56 +401,56 @@ export default function SyllabusManager({
       {/* Standalone Header */}
       {standalone && (
         <>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs">
             <div>
               <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-                <Link href="/admin" className="hover:text-[#2F7C7A] transition-colors">
+                <Link href="/admin" className="hover:text-[#23804A] transition-colors">
                   Dashboard
                 </Link>
                 <span>/</span>
-                <Link href="/admin/academic" className="hover:text-[#2F7C7A] transition-colors">
+                <Link href="/admin/academic" className="hover:text-[#23804A] transition-colors">
                   Academic Management
                 </Link>
                 <span>/</span>
                 <span className="text-slate-900 font-semibold">Syllabus</span>
               </div>
-              <h1 className="text-2xl font-serif font-bold text-[#132238]">Curriculum Syllabus Management</h1>
+              <h1 className="text-2xl font-serif font-bold text-[#171D19]">Curriculum Syllabus Management</h1>
               <p className="text-sm text-slate-500 mt-1">
                 Centrally manage course syllabuses, Kitab names, exam types, curriculum units, and attachments across academic years.
               </p>
             </div>
             <button
               onClick={() => handleOpenModal()}
-              className="inline-flex items-center justify-center px-4 py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] cursor-pointer transition-all shadow-xs"
+              className="inline-flex items-center justify-center px-4 py-2.5 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] cursor-pointer transition-all shadow-xs"
             >
               <Plus className="w-4 h-4 mr-2" /> Add Syllabus
             </button>
           </div>
 
           {/* Academic Modules Navigation Tabs */}
-          <div className="flex space-x-2 border-b border-[#E2E8E0] pb-1 overflow-x-auto">
+          <div className="flex space-x-2 border-b border-[#E3EAE5] pb-1 overflow-x-auto">
             <Link
               href="/admin/academic"
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0] whitespace-nowrap"
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5] whitespace-nowrap"
             >
               <Calendar className="w-4 h-4" />
               <span>Academic Years</span>
             </Link>
             <Link
               href="/admin/academic?tab=classes"
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0] whitespace-nowrap"
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5] whitespace-nowrap"
             >
               <Layers className="w-4 h-4" />
               <span>Classes</span>
             </Link>
             <Link
               href="/admin/academic?tab=subjects"
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0] whitespace-nowrap"
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5] whitespace-nowrap"
             >
               <BookOpen className="w-4 h-4" />
               <span>Subjects</span>
             </Link>
-            <div className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-[#2F7C7A] text-white shadow-xs whitespace-nowrap">
+            <div className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-[#23804A] text-white shadow-xs whitespace-nowrap">
               <FileText className="w-4 h-4" />
               <span>Syllabuses</span>
               <span className="px-2 py-0.5 rounded-full text-[10px] bg-white/20 text-white">
@@ -459,7 +459,7 @@ export default function SyllabusManager({
             </div>
             <Link
               href="/admin/academic/timetable"
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0] whitespace-nowrap"
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5] whitespace-nowrap"
             >
               <Clock className="w-4 h-4" />
               <span>Class Timetable</span>
@@ -469,7 +469,7 @@ export default function SyllabusManager({
       )}
 
       {/* Syllabuses Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-[#E2E8E0] shadow-xs space-y-3">
+      <div className="bg-white p-4 rounded-2xl border border-[#E3EAE5] shadow-xs space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
             <Filter className="w-3.5 h-3.5" /> Filter Syllabuses
@@ -498,14 +498,14 @@ export default function SyllabusManager({
               value={sylSearch}
               onChange={(e) => setSylSearch(e.target.value)}
               placeholder="Search kitab, class, subject..."
-              className="w-full pl-9 pr-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+              className="w-full pl-9 pr-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A]"
             />
           </div>
           <div>
             <select
               value={sylYearFilter}
               onChange={(e) => setSylYearFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white"
+              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white"
             >
               <option value="">All Academic Years</option>
               {academicYears.map((ay) => (
@@ -519,7 +519,7 @@ export default function SyllabusManager({
             <select
               value={sylClassFilter}
               onChange={(e) => setSylClassFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white"
+              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white"
             >
               <option value="">All Classes</option>
               {classesList.map((cls) => (
@@ -533,7 +533,7 @@ export default function SyllabusManager({
             <select
               value={sylSubjectFilter}
               onChange={(e) => setSylSubjectFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white"
+              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white"
             >
               <option value="">All Subjects</option>
               {subjectsList.map((sbj: any) => (
@@ -547,7 +547,7 @@ export default function SyllabusManager({
             <select
               value={sylExamTypeFilter}
               onChange={(e) => setSylExamTypeFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white"
+              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white"
             >
               <option value="">All Exam Types</option>
               <option value="HALF_YEARLY">Half Yearly</option>
@@ -558,7 +558,7 @@ export default function SyllabusManager({
             <select
               value={sylStatusFilter}
               onChange={(e) => setSylStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white"
+              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white"
             >
               <option value="">All Statuses</option>
               <option value="ACTIVE">ACTIVE</option>
@@ -572,10 +572,10 @@ export default function SyllabusManager({
       </div>
 
       {/* Content Table Area */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center space-y-3">
-            <div className="w-8 h-8 border-4 border-[#2F7C7A] border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-8 h-8 border-4 border-[#23804A] border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-sm font-semibold text-slate-600">Loading syllabus records...</p>
           </div>
         ) : error ? (
@@ -584,7 +584,7 @@ export default function SyllabusManager({
             <p className="text-sm font-semibold text-rose-700">{error}</p>
             <button
               onClick={fetchSyllabusData}
-              className="px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer"
+              className="px-4 py-2 bg-[#23804A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer"
             >
               <RefreshCw className="w-4 h-4 mr-2 inline" /> Retry
             </button>
@@ -592,7 +592,7 @@ export default function SyllabusManager({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
+              <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
                 <tr>
                   <th className="px-5 py-4">Academic Year</th>
                   <th className="px-5 py-4">Class</th>
@@ -605,7 +605,7 @@ export default function SyllabusManager({
                   <th className="px-5 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8E0]">
+              <tbody className="divide-y divide-[#E3EAE5]">
                 {filteredSyllabuses.length === 0 ? (
                   <tr>
                     <td colSpan={9} className="px-6 py-8 text-center text-slate-400">
@@ -637,7 +637,7 @@ export default function SyllabusManager({
                             </span>
                           )}
                         </td>
-                        <td className="px-5 py-4 font-bold text-[#132238]">
+                        <td className="px-5 py-4 font-bold text-[#171D19]">
                           {syl.kitabName || syl.title}
                         </td>
                         <td className="px-5 py-4">
@@ -662,7 +662,7 @@ export default function SyllabusManager({
                               href={resolvedFileUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center text-xs font-semibold text-[#2F7C7A] hover:text-[#256361] hover:underline gap-1.5 max-w-[130px] truncate"
+                              className="inline-flex items-center text-xs font-semibold text-[#23804A] hover:text-[#1B6F41] hover:underline gap-1.5 max-w-[130px] truncate"
                               title={syl.fileName || 'View uploaded document'}
                             >
                               <Paperclip className="w-3.5 h-3.5 shrink-0" />
@@ -703,10 +703,10 @@ export default function SyllabusManager({
       {/* Form Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white max-w-xl w-full rounded-2xl shadow-xl border border-[#E2E8E0] p-6 space-y-5 my-8 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white max-w-xl w-full rounded-2xl shadow-xl border border-[#E3EAE5] p-6 space-y-5 my-8 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b pb-3">
               <div>
-                <h3 className="text-lg font-bold text-[#132238]">
+                <h3 className="text-lg font-bold text-[#171D19]">
                   {editingItem ? 'Edit Syllabus' : 'Add Syllabus'}
                 </h3>
                 <p className="text-xs text-slate-500">
@@ -736,7 +736,7 @@ export default function SyllabusManager({
                     required
                     value={formData.academicYearId}
                     onChange={(e) => setFormData({ ...formData, academicYearId: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   >
                     <option value="">Select Academic Year</option>
                     {academicYears.map((ay) => (
@@ -752,7 +752,7 @@ export default function SyllabusManager({
                     required
                     value={formData.classId}
                     onChange={(e) => setFormData({ ...formData, classId: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   >
                     <option value="">Select Class</option>
                     {classesList.map((cls) => (
@@ -772,7 +772,7 @@ export default function SyllabusManager({
                     required
                     value={formData.subjectId}
                     onChange={(e) => setFormData({ ...formData, subjectId: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   >
                     <option value="">Select Subject</option>
                     {subjectsList.map((sbj: any) => (
@@ -788,7 +788,7 @@ export default function SyllabusManager({
                     required
                     value={formData.examType}
                     onChange={(e) => setFormData({ ...formData, examType: e.target.value as SyllabusExamType })}
-                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   >
                     <option value="HALF_YEARLY">Half Yearly</option>
                     <option value="ANNUAL">Annual</option>
@@ -805,7 +805,7 @@ export default function SyllabusManager({
                   value={formData.kitabName}
                   onChange={(e) => setFormData({ ...formData, kitabName: e.target.value })}
                   placeholder="e.g. Noorul Iman, Fathul Mueen, Safinathun Najah"
-                  className="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                  className="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                 />
               </div>
 
@@ -819,7 +819,7 @@ export default function SyllabusManager({
                   <button
                     type="button"
                     onClick={handleAddUnit}
-                    className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-lg bg-white border border-[#2F7C7A] text-[#2F7C7A] hover:bg-[#E6F2F1] cursor-pointer"
+                    className="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-lg bg-white border border-[#23804A] text-[#23804A] hover:bg-[#EAF2EC] cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5 mr-1" /> Add Unit
                   </button>
@@ -836,7 +836,7 @@ export default function SyllabusManager({
                         value={unit.title}
                         onChange={(e) => handleUnitChange(index, e.target.value)}
                         placeholder={`e.g. ${index === 0 ? 'Taharah' : index === 1 ? 'Salah' : 'Zakah'}`}
-                        className="flex-1 px-3 py-1.5 border rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                        className="flex-1 px-3 py-1.5 border rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                       />
                       {formData.units.length > 1 && (
                         <button
@@ -857,7 +857,7 @@ export default function SyllabusManager({
               <div className="space-y-2 border border-slate-200 rounded-xl p-3 bg-slate-50/60">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5">
-                    <Paperclip className="w-3.5 h-3.5 text-[#2F7C7A]" /> Syllabus Document
+                    <Paperclip className="w-3.5 h-3.5 text-[#23804A]" /> Syllabus Document
                   </span>
                   <span className="text-[10px] text-slate-500">PDF, DOC, DOCX up to 15MB</span>
                 </div>
@@ -871,8 +871,8 @@ export default function SyllabusManager({
                 />
 
                 {uploadingFile ? (
-                  <div className="p-4 text-center border-2 border-dashed border-[#2F7C7A]/40 rounded-xl bg-white space-y-1">
-                    <div className="w-5 h-5 border-2 border-[#2F7C7A] border-t-transparent rounded-full animate-spin mx-auto" />
+                  <div className="p-4 text-center border-2 border-dashed border-[#23804A]/40 rounded-xl bg-white space-y-1">
+                    <div className="w-5 h-5 border-2 border-[#23804A] border-t-transparent rounded-full animate-spin mx-auto" />
                     <p className="text-xs font-medium text-slate-600">Uploading syllabus document...</p>
                   </div>
                 ) : formData.fileUrl ? (
@@ -889,7 +889,7 @@ export default function SyllabusManager({
                           href={getFileUrl(formData.fileUrl)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[11px] text-[#2F7C7A] hover:underline inline-flex items-center gap-1"
+                          className="text-[11px] text-[#23804A] hover:underline inline-flex items-center gap-1"
                         >
                           <ExternalLink className="w-3 h-3" /> View / Download
                         </a>
@@ -916,7 +916,7 @@ export default function SyllabusManager({
                 ) : (
                   <div
                     onClick={() => fileInputRef.current?.click()}
-                    className="p-4 text-center border-2 border-dashed border-slate-300 rounded-xl bg-white hover:border-[#2F7C7A] hover:bg-slate-50/50 cursor-pointer transition-colors space-y-1"
+                    className="p-4 text-center border-2 border-dashed border-slate-300 rounded-xl bg-white hover:border-[#23804A] hover:bg-slate-50/50 cursor-pointer transition-colors space-y-1"
                   >
                     <Upload className="w-5 h-5 text-slate-400 mx-auto" />
                     <p className="text-xs font-semibold text-slate-700">
@@ -934,7 +934,7 @@ export default function SyllabusManager({
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   >
                     <option value="ACTIVE">ACTIVE</option>
                     <option value="INACTIVE">INACTIVE</option>
@@ -950,7 +950,7 @@ export default function SyllabusManager({
                     value={formData.version}
                     onChange={(e) => setFormData({ ...formData, version: e.target.value })}
                     placeholder="1.0"
-                    className="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   />
                 </div>
               </div>
@@ -966,7 +966,7 @@ export default function SyllabusManager({
                 <button
                   type="submit"
                   disabled={formLoading || uploadingFile}
-                  className="px-5 py-2 bg-[#2F7C7A] text-white rounded-xl text-xs font-bold uppercase cursor-pointer hover:bg-[#256361] disabled:opacity-50 transition-colors shadow-xs"
+                  className="px-5 py-2 bg-[#23804A] text-white rounded-xl text-xs font-bold uppercase cursor-pointer hover:bg-[#1B6F41] disabled:opacity-50 transition-colors shadow-xs"
                 >
                   {formLoading ? 'Saving...' : editingItem ? 'Update Syllabus' : 'Create Syllabus'}
                 </button>

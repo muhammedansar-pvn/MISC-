@@ -116,14 +116,14 @@ export default function FacultyStudent360Page({
           <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto">
             <AlertCircle className="w-7 h-7" />
           </div>
-          <h2 className="text-xl font-bold font-serif text-[#132238]">Access Denied or Not Found</h2>
+          <h2 className="text-xl font-bold font-serif text-[#171D19]">Access Denied or Not Found</h2>
           <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
             {error || 'You are not assigned to teach the class cohort this student belongs to.'}
           </p>
           <div className="pt-2">
             <Link
               href="/faculty/students"
-              className="inline-flex items-center text-xs font-semibold px-4 py-2.5 rounded-lg bg-[#2F7C7A] text-white hover:bg-[#286b69] transition-all"
+              className="inline-flex items-center text-xs font-semibold px-4 py-2.5 rounded-lg bg-[#23804A] text-white hover:bg-[#1B6F41] transition-all"
             >
               <ArrowLeft className="w-4 h-4 mr-2" /> Back to Student Directory
             </Link>
@@ -142,40 +142,40 @@ export default function FacultyStudent360Page({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/faculty" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/faculty" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
-            <Link href="/faculty/students" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/faculty/students" className="hover:text-[#23804A] transition-colors">
               Student Directory
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">{student.nameEnglish || 'Student 360°'}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238] flex items-center gap-2">
-            <Users className="w-7 h-7 text-[#2F7C7A]" />
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19] flex items-center gap-2">
+            <Users className="w-7 h-7 text-[#23804A]" />
             Faculty Student 360° View
           </h1>
         </div>
 
         <Link
           href="/faculty/students"
-          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#2F7C7A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
+          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#23804A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to Directory
         </Link>
       </div>
 
       {/* Student Profile Card */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] p-6 shadow-2xs space-y-4">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] p-6 shadow-2xs space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start space-x-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#2F7C7A] to-[#3ca09d] text-white flex items-center justify-center font-bold text-xl font-serif shadow-sm shrink-0">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#23804A] to-[#78A887] text-white flex items-center justify-center font-bold text-xl font-serif shadow-sm shrink-0">
               {student.nameEnglish ? student.nameEnglish[0] : 'S'}
             </div>
             <div>
               <div className="flex items-center space-x-3">
-                <h2 className="text-xl font-bold font-serif text-[#132238]">
+                <h2 className="text-xl font-bold font-serif text-[#171D19]">
                   {student.nameEnglish || student.userId?.name || 'Student Candidate'}
                 </h2>
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-bold font-mono bg-slate-100 text-slate-700 border border-slate-200">
@@ -187,7 +187,7 @@ export default function FacultyStudent360Page({
               )}
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mt-2">
                 <span className="flex items-center space-x-1">
-                  <Building2 className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                  <Building2 className="w-3.5 h-3.5 text-[#23804A]" />
                   <span>Class: <strong className="text-slate-800">{student.classId?.name}</strong></span>
                 </span>
                 {student.userId?.email && (
@@ -210,9 +210,9 @@ export default function FacultyStudent360Page({
           <div className="flex items-center space-x-4 bg-slate-50 border border-slate-200/80 rounded-xl p-4 self-start md:self-auto">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Attendance Rate</p>
-              <p className="text-2xl font-bold font-mono text-[#132238] mt-0.5">{attPct}%</p>
+              <p className="text-2xl font-bold font-mono text-[#171D19] mt-0.5">{attPct}%</p>
             </div>
-            <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200 text-[#2F7C7A] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-green-50 border border-green-200 text-[#23804A] flex items-center justify-center">
               <CalendarCheck className="w-6 h-6" />
             </div>
           </div>
@@ -222,10 +222,10 @@ export default function FacultyStudent360Page({
       {/* Attendance Metrics & Log Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Attendance Summary */}
-        <div className="bg-white rounded-2xl border border-[#E2E8E0] p-5 shadow-2xs space-y-4">
+        <div className="bg-white rounded-2xl border border-[#E3EAE5] p-5 shadow-2xs space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-sm text-[#132238] flex items-center gap-2">
-              <CalendarCheck className="w-4 h-4 text-[#2F7C7A]" /> Attendance Overview
+            <h3 className="font-bold text-sm text-[#171D19] flex items-center gap-2">
+              <CalendarCheck className="w-4 h-4 text-[#23804A]" /> Attendance Overview
             </h3>
             <span className="text-[11px] font-mono text-slate-400">7 Periods Daily</span>
           </div>
@@ -233,7 +233,7 @@ export default function FacultyStudent360Page({
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-slate-50 border border-slate-200/70 p-3 rounded-xl">
               <span className="text-[10px] uppercase font-bold text-slate-500">Total Periods</span>
-              <p className="text-xl font-bold font-mono text-[#132238]">
+              <p className="text-xl font-bold font-mono text-[#171D19]">
                 {attendanceOverview?.totalSessions ?? 0}
               </p>
             </div>
@@ -260,7 +260,7 @@ export default function FacultyStudent360Page({
           <div className="pt-2">
             <Link
               href={`/faculty/attendance?classId=${student.classId?._id}`}
-              className="w-full inline-flex items-center justify-center px-4 py-2 rounded-xl bg-teal-50 text-[#2F7C7A] hover:bg-teal-100 font-semibold text-xs transition-all border border-teal-200"
+              className="w-full inline-flex items-center justify-center px-4 py-2 rounded-xl bg-green-50 text-[#23804A] hover:bg-green-100 font-semibold text-xs transition-all border border-green-200"
             >
               <CalendarCheck className="w-3.5 h-3.5 mr-1.5" /> Open Class Attendance Roster
             </Link>
@@ -268,10 +268,10 @@ export default function FacultyStudent360Page({
         </div>
 
         {/* Recent Attendance Session Logs */}
-        <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-2xs overflow-hidden lg:col-span-2">
-          <div className="p-4 bg-slate-50/60 border-b border-[#E2E8E0] flex items-center justify-between">
-            <h3 className="font-bold text-sm text-[#132238] flex items-center gap-2">
-              <Clock className="w-4 h-4 text-[#2F7C7A]" /> Recent Session Records (Latest 10)
+        <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-2xs overflow-hidden lg:col-span-2">
+          <div className="p-4 bg-slate-50/60 border-b border-[#E3EAE5] flex items-center justify-between">
+            <h3 className="font-bold text-sm text-[#171D19] flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#23804A]" /> Recent Session Records (Latest 10)
             </h3>
             <span className="text-[11px] font-mono text-slate-400">Attributed by Subject</span>
           </div>
@@ -303,7 +303,7 @@ export default function FacultyStudent360Page({
                         <td className="py-2.5 px-3 font-mono text-slate-700">
                           {new Date(rec.date).toLocaleDateString('en-GB')}
                         </td>
-                        <td className="py-2.5 px-3 text-center font-mono font-bold text-[#132238]">
+                        <td className="py-2.5 px-3 text-center font-mono font-bold text-[#171D19]">
                           P{rec.period}
                         </td>
                         <td className="py-2.5 px-3 font-medium text-slate-800">
@@ -318,7 +318,7 @@ export default function FacultyStudent360Page({
                                 ? 'bg-rose-100 text-rose-800'
                                 : isLate
                                 ? 'bg-amber-100 text-amber-800'
-                                : 'bg-indigo-100 text-indigo-800'
+                                : 'bg-green-100 text-green-800'
                             }`}
                           >
                             {rec.status}
@@ -340,10 +340,10 @@ export default function FacultyStudent360Page({
       {/* Remarks Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Add Remark Form */}
-        <div className="bg-white rounded-2xl border border-[#E2E8E0] p-5 shadow-2xs space-y-4">
+        <div className="bg-white rounded-2xl border border-[#E3EAE5] p-5 shadow-2xs space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-sm text-[#132238] flex items-center gap-2">
-              <MessageSquarePlus className="w-4 h-4 text-[#2F7C7A]" /> Add Faculty Remark
+            <h3 className="font-bold text-sm text-[#171D19] flex items-center gap-2">
+              <MessageSquarePlus className="w-4 h-4 text-[#23804A]" /> Add Faculty Remark
             </h3>
           </div>
 
@@ -368,7 +368,7 @@ export default function FacultyStudent360Page({
               <select
                 value={remarkCategory}
                 onChange={(e: any) => setRemarkCategory(e.target.value)}
-                className="w-full text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[#132238] focus:outline-hidden focus:border-[#2F7C7A]"
+                className="w-full text-xs font-semibold bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[#171D19] focus:outline-hidden focus:border-[#23804A]"
               >
                 <option value="ACADEMIC">ACADEMIC</option>
                 <option value="DISCIPLINE">DISCIPLINE</option>
@@ -388,14 +388,14 @@ export default function FacultyStudent360Page({
                 placeholder="Enter academic observation or feedback for this candidate..."
                 value={remarkText}
                 onChange={(e) => setRemarkText(e.target.value)}
-                className="w-full text-xs p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#2F7C7A] focus:bg-white resize-none"
+                className="w-full text-xs p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#23804A] focus:bg-white resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={submittingRemark || !remarkText.trim()}
-              className="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-[#2F7C7A] hover:bg-[#286b69] text-white font-semibold text-xs transition-all shadow-sm disabled:opacity-50"
+              className="w-full inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-[#23804A] hover:bg-[#1B6F41] text-white font-semibold text-xs transition-all shadow-sm disabled:opacity-50"
             >
               {submittingRemark ? (
                 <>
@@ -412,10 +412,10 @@ export default function FacultyStudent360Page({
         </div>
 
         {/* Existing Remarks List */}
-        <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-2xs overflow-hidden lg:col-span-2">
-          <div className="p-4 bg-slate-50/60 border-b border-[#E2E8E0] flex items-center justify-between">
-            <h3 className="font-bold text-sm text-[#132238] flex items-center gap-2">
-              <FileText className="w-4 h-4 text-[#2F7C7A]" /> Faculty Remarks Log ({remarks.length})
+        <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-2xs overflow-hidden lg:col-span-2">
+          <div className="p-4 bg-slate-50/60 border-b border-[#E3EAE5] flex items-center justify-between">
+            <h3 className="font-bold text-sm text-[#171D19] flex items-center gap-2">
+              <FileText className="w-4 h-4 text-[#23804A]" /> Faculty Remarks Log ({remarks.length})
             </h3>
             <span className="text-[11px] font-mono text-slate-400">Authenticated Records</span>
           </div>
@@ -432,7 +432,7 @@ export default function FacultyStudent360Page({
                   className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 space-y-2 hover:bg-slate-50 transition-colors"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-teal-100 text-teal-800">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-green-100 text-green-800">
                       {rmk.category}
                     </span>
                     <span className="text-[11px] font-mono text-slate-400">
@@ -449,7 +449,7 @@ export default function FacultyStudent360Page({
                   <div className="pt-1 flex items-center justify-between text-[11px] text-slate-500">
                     <span>By: <strong className="text-slate-700">{rmk.authorName || rmk.facultyId?.nameEnglish || 'Faculty'}</strong></span>
                     {rmk.subjectId?.name && (
-                      <span className="text-teal-700 font-semibold">{rmk.subjectId.name}</span>
+                      <span className="text-green-700 font-semibold">{rmk.subjectId.name}</span>
                     )}
                   </div>
                 </div>
@@ -460,9 +460,9 @@ export default function FacultyStudent360Page({
       </div>
 
       {/* Class Teachers & Assigned Cohort Teachers */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] p-5 shadow-2xs space-y-4">
-        <h3 className="font-bold text-sm text-[#132238] flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-[#2F7C7A]" /> Cohort Faculty & Teaching Allocations
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] p-5 shadow-2xs space-y-4">
+        <h3 className="font-bold text-sm text-[#171D19] flex items-center gap-2">
+          <Building2 className="w-4 h-4 text-[#23804A]" /> Cohort Faculty & Teaching Allocations
         </h3>
         {teachers.length === 0 ? (
           <p className="text-xs text-slate-400">No other faculty assignments recorded for this class cohort.</p>
@@ -471,7 +471,7 @@ export default function FacultyStudent360Page({
             {teachers.map((t, idx) => (
               <div key={idx} className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
                 <p className="font-bold text-xs text-slate-900">{t.facultyName || 'Faculty Member'}</p>
-                <p className="text-[11px] text-teal-700 font-semibold">{t.subjectName || 'Subject'}</p>
+                <p className="text-[11px] text-green-700 font-semibold">{t.subjectName || 'Subject'}</p>
                 {t.designation && (
                   <p className="text-[10px] text-slate-400">{t.designation}</p>
                 )}

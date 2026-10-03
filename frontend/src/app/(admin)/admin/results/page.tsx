@@ -81,10 +81,10 @@ export default function AdminResultsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs">
         <div>
           <div className="flex items-center space-x-2">
-            <h1 className="text-2xl font-serif font-bold text-[#132238]">Exam Results & Transcripts</h1>
+            <h1 className="text-2xl font-serif font-bold text-[#171D19]">Exam Results & Transcripts</h1>
             <span className="px-2.5 py-0.5 text-xs font-bold bg-amber-100 text-amber-800 rounded-full">
               {results.length} Published
             </span>
@@ -94,8 +94,8 @@ export default function AdminResultsPage() {
       </div>
 
       {/* Result Generation Card */}
-      <div className="bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs space-y-4">
-        <h3 className="text-base font-bold text-[#132238]">Generate Batch Results</h3>
+      <div className="bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs space-y-4">
+        <h3 className="text-base font-bold text-[#171D19]">Generate Batch Results</h3>
         {genMessage && (
           <div className="p-3 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 text-xs rounded font-semibold">
             {genMessage}
@@ -127,7 +127,7 @@ export default function AdminResultsPage() {
           <button
             type="submit"
             disabled={genLoading}
-            className="w-full py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] flex items-center justify-center cursor-pointer transition-colors"
+            className="w-full py-2.5 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] flex items-center justify-center cursor-pointer transition-colors"
           >
             {genLoading ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
@@ -140,30 +140,30 @@ export default function AdminResultsPage() {
       </div>
 
       {/* Results Table */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center space-y-3">
-            <div className="w-8 h-8 border-4 border-[#2F7C7A] border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-8 h-8 border-4 border-[#23804A] border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-sm font-semibold text-slate-600">Loading result transcripts...</p>
           </div>
         ) : error ? (
           <div className="p-12 text-center space-y-4">
             <AlertCircle className="w-10 h-10 text-rose-500 mx-auto" />
             <p className="text-sm font-semibold text-rose-700">{error}</p>
-            <button onClick={fetchData} className="px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer">
+            <button onClick={fetchData} className="px-4 py-2 bg-[#23804A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer">
               <RefreshCw className="w-4 h-4 mr-2 inline" /> Retry
             </button>
           </div>
         ) : results.length === 0 ? (
           <div className="p-12 text-center space-y-3">
             <Award className="w-12 h-12 text-slate-300 mx-auto" />
-            <h3 className="text-base font-bold text-[#132238]">No generated results yet</h3>
+            <h3 className="text-base font-bold text-[#171D19]">No generated results yet</h3>
             <p className="text-sm text-slate-500">Select an exam and class above to calculate and generate student transcripts.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E2E8E0]">
+              <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E3EAE5]">
                 <tr>
                   <th className="px-6 py-4">Student</th>
                   <th className="px-6 py-4">Total Marks</th>
@@ -173,15 +173,15 @@ export default function AdminResultsPage() {
                   <th className="px-6 py-4">Result Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8E0]">
+              <tbody className="divide-y divide-[#E3EAE5]">
                 {results.map((res: any) => (
                   <tr key={res._id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-bold text-[#132238]">{res.studentId?.name || 'Student Record'}</td>
+                    <td className="px-6 py-4 font-bold text-[#171D19]">{res.studentId?.name || 'Student Record'}</td>
                     <td className="px-6 py-4 font-bold text-slate-900">{res.totalMarksObtained} / {res.totalMaxMarks}</td>
                     <td className="px-6 py-4 font-semibold text-slate-700">{res.percentage}%</td>
-                    <td className="px-6 py-4 font-bold text-[#2F7C7A]">{res.sgpa || 'N/A'}</td>
+                    <td className="px-6 py-4 font-bold text-[#23804A]">{res.sgpa || 'N/A'}</td>
                     <td className="px-6 py-4">
-                      <span className="px-2.5 py-0.5 text-xs font-bold bg-purple-100 text-purple-800 rounded-full border">
+                      <span className="px-2.5 py-0.5 text-xs font-bold bg-green-100 text-green-800 rounded-full border">
                         {res.grade || 'A'}
                       </span>
                     </td>

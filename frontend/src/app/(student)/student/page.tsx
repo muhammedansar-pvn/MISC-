@@ -148,9 +148,9 @@ export default function StudentDashboardPage() {
     },
     LEAVE: {
       label: 'On Leave',
-      badge: 'bg-blue-100 text-blue-800 border border-blue-200',
-      iconBg: 'bg-blue-50 text-blue-700',
-      iconColor: 'text-blue-700',
+      badge: 'bg-green-100 text-green-800 border border-green-200',
+      iconBg: 'bg-green-50 text-green-700',
+      iconColor: 'text-green-700',
     },
     ABSENT: {
       label: 'Absent',
@@ -174,10 +174,10 @@ export default function StudentDashboardPage() {
   return (
     <div className="space-y-8">
       {/* Student Welcome Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#132238] via-[#1a3354] to-[#2F7C7A] text-white p-6 sm:p-8 shadow-md">
+      <div className="relative overflow-hidden rounded-2xl bg-white border border-[#E3EAE5] text-[#171D19] p-6 sm:p-8 shadow-2xs">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-xs font-semibold text-emerald-300 border border-white/10">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#EAF2EC] text-xs font-semibold text-[#23804A] border border-[#D8E5DA]">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Markaz Sanaviyya</span>
             </div>
@@ -185,21 +185,21 @@ export default function StudentDashboardPage() {
               Welcome, {profile?.nameEnglish || user?.name || user?.username || 'Student'}!
             </h1>
             {profile?.nameArabic && (
-              <p className="font-arabic text-lg text-emerald-200 leading-normal" dir="rtl">
+              <p className="font-arabic text-lg text-emerald-700 leading-normal" dir="rtl">
                 {profile.nameArabic}
               </p>
             )}
-            <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs text-slate-300 pt-1">
+            <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs text-slate-600 pt-1">
               {profile?.registrationNumber && (
                 <span className="flex items-center space-x-1 font-mono">
                   <span className="text-slate-400">Reg No:</span>
-                  <span className="text-white font-bold">{profile.registrationNumber}</span>
+                  <span className="text-[#171D19] font-bold">{profile.registrationNumber}</span>
                 </span>
               )}
               {(enrolledClass?.name || enrolledClass?.code || enrolledClass?.className) && (
                 <span className="flex items-center space-x-1">
                   <span className="text-slate-400">Class:</span>
-                  <span className="text-white font-medium">
+                  <span className="text-[#171D19] font-medium">
                     {enrolledClass.name || enrolledClass.className} {enrolledClass.code ? `(${enrolledClass.code})` : ''}
                   </span>
                 </span>
@@ -214,13 +214,13 @@ export default function StudentDashboardPage() {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/student/profile"
-              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold backdrop-blur-xs border border-white/20 transition-all"
+              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-[#F4F6F4] hover:bg-[#F0EDE4] text-[#171D19] text-xs font-semibold border border-[#E3EAE5] transition-all"
             >
               <User className="w-4 h-4 mr-2" /> View Profile
             </Link>
             <Link
               href="/student/results"
-              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-[#2F7C7A] hover:bg-[#286b69] text-white text-xs font-semibold shadow-sm transition-all"
+              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-semibold shadow-sm transition-all"
             >
               <Award className="w-4 h-4 mr-2" /> View Results
             </Link>
@@ -246,26 +246,26 @@ export default function StudentDashboardPage() {
 
       {/* Hall Ticket Announcement Banner (if available) */}
       {activeRegWithHallTicket && (
-        <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-r from-emerald-900 to-teal-900 text-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-4 sm:p-5 rounded-xl bg-[#EAF2EC] text-[#171D19] border border-[#E3EAE5] shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-400/30">
-              <FileCheck className="w-5 h-5 text-emerald-300" />
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 border border-[#D8E5DA]">
+              <FileCheck className="w-5 h-5 text-[#23804A]" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="font-bold text-sm sm:text-base">Hall Ticket Available</span>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-500/30 text-[10px] uppercase tracking-wider font-bold text-emerald-200">
+                <span className="px-2 py-0.5 rounded-full bg-white text-[10px] uppercase tracking-wider font-bold text-[#23804A]">
                   Ready
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-0.5">
-                Roll Number: <span className="font-mono font-bold text-white">{activeRegWithHallTicket.rollNumber}</span> • Exam: {(activeRegWithHallTicket.examId as any)?.title || 'Scheduled Exam'}
+              <p className="text-xs text-slate-600 mt-0.5">
+                Roll Number: <span className="font-mono font-bold text-[#171D19]">{activeRegWithHallTicket.rollNumber}</span> • Exam: {(activeRegWithHallTicket.examId as any)?.title || 'Scheduled Exam'}
               </p>
             </div>
           </div>
           <Link
             href="/student/examinations/registrations"
-            className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs transition-colors shrink-0"
+            className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white font-bold text-xs transition-colors shrink-0"
           >
             View Hall Ticket <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
           </Link>
@@ -274,14 +274,14 @@ export default function StudentDashboardPage() {
 
       {/* Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5">
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-2">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Class</span>
-            <div className="w-8 h-8 rounded-lg bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#EAF2EC] text-[#23804A] flex items-center justify-center">
               <GraduationCap className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-lg font-bold text-[#132238] truncate">
+          <div className="text-lg font-bold text-[#171D19] truncate">
             {enrolledClass?.name || enrolledClass?.code || enrolledClass?.className || 'Sanaviyya'}
           </div>
           <p className="text-xs text-slate-400">
@@ -292,7 +292,7 @@ export default function StudentDashboardPage() {
         {/* Today's Attendance Card Widget */}
         <Link
           href="/student/attendance"
-          className="bg-white p-5 rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A] shadow-2xs space-y-2 transition-all group block"
+          className="bg-white p-5 rounded-xl border border-[#E3EAE5] hover:border-[#23804A] shadow-2xs space-y-2 transition-all group block"
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today&apos;s Attendance</span>
@@ -305,46 +305,46 @@ export default function StudentDashboardPage() {
               {currentAttStyle.label}
             </span>
           </div>
-          <p className="text-xs text-slate-400 group-hover:text-[#2F7C7A] transition-colors flex items-center justify-between">
+          <p className="text-xs text-slate-400 group-hover:text-[#23804A] transition-colors flex items-center justify-between">
             <span className="truncate">{currentAttSubtitle}</span>
             <ArrowRight className="w-3.5 h-3.5 ml-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
           </p>
         </Link>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-2">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Exam Registrations</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-green-50 text-green-700 flex items-center justify-center">
               <Calendar className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-[#132238]">{registrations.length}</div>
+          <div className="text-2xl font-bold text-[#171D19]">{registrations.length}</div>
           <p className="text-xs text-slate-400">
             {activeRegWithHallTicket ? 'Hall ticket generated' : 'Registered for upcoming terms'}
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-2">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Published Results</span>
             <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
               <Award className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-[#132238]">{results.length}</div>
+          <div className="text-2xl font-bold text-[#171D19]">{results.length}</div>
           <p className="text-xs text-slate-400">
             {latestResult ? `Latest Grade: ${latestResult.grade}` : 'No published exams yet'}
           </p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-2">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Fee Transactions</span>
-            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-green-50 text-green-700 flex items-center justify-center">
               <CreditCard className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-[#132238]">{payments.length}</div>
+          <div className="text-2xl font-bold text-[#171D19]">{payments.length}</div>
           <p className="text-xs text-slate-400">
             {payments.filter((p) => p.status === 'SUCCESS').length} verified transactions
           </p>
@@ -352,16 +352,16 @@ export default function StudentDashboardPage() {
       </div>
 
       {/* Today's Timetable Widget */}
-      <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
-        <div className="px-6 py-4.5 border-b border-[#E2E8E0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-slate-50 to-white">
+      <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
+        <div className="px-6 py-4.5 border-b border-[#E3EAE5] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gradient-to-r from-slate-50 to-white">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-[#2F7C7A] shrink-0">
+            <div className="w-10 h-10 rounded-lg bg-green-50 border border-green-100 flex items-center justify-center text-[#23804A] shrink-0">
               <Clock className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="font-bold text-[#132238] font-serif text-base">Today&apos;s Timetable</h2>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-teal-100 text-[#2F7C7A]">
+                <h2 className="font-bold text-[#171D19] font-serif text-base">Today&apos;s Timetable</h2>
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-green-100 text-[#23804A]">
                   {todayDayOfWeek}
                 </span>
               </div>
@@ -374,7 +374,7 @@ export default function StudentDashboardPage() {
           </div>
           <Link
             href="/student/timetable"
-            className="inline-flex items-center text-xs font-semibold text-[#2F7C7A] hover:text-[#235e5d] transition-colors"
+            className="inline-flex items-center text-xs font-semibold text-[#23804A] hover:text-[#1B6F41] transition-colors"
           >
             <span>View Full Timetable</span>
             <ArrowRight className="w-3.5 h-3.5 ml-1" />
@@ -407,8 +407,8 @@ export default function StudentDashboardPage() {
                     key={session._id}
                     className={`relative p-4 rounded-xl border transition-all ${
                       activeNow
-                        ? 'border-[#2F7C7A] bg-teal-50/40 ring-1 ring-[#2F7C7A]/30 shadow-xs'
-                        : 'border-[#E2E8E0] bg-white hover:border-slate-300'
+                        ? 'border-[#23804A] bg-green-50/40 ring-1 ring-[#23804A]/30 shadow-xs'
+                        : 'border-[#E3EAE5] bg-white hover:border-slate-300'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
@@ -433,7 +433,7 @@ export default function StudentDashboardPage() {
                       const faculty = session.facultyId as any;
                       return (
                         <>
-                          <h4 className="font-bold text-sm text-[#132238] line-clamp-1">
+                          <h4 className="font-bold text-sm text-[#171D19] line-clamp-1">
                             {subject?.name || 'Subject'}
                           </h4>
 
@@ -467,17 +467,17 @@ export default function StudentDashboardPage() {
 
       {/* Quick Navigation Cards */}
       <div className="space-y-4">
-        <h2 className="text-lg font-bold font-serif text-[#132238]">Academic & Examination Services</h2>
+        <h2 className="text-lg font-bold font-serif text-[#171D19]">Academic & Examination Services</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Link
             href="/student/timetable"
-            className="group p-5 bg-white rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A] hover:shadow-sm transition-all flex items-start space-x-4"
+            className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
           >
-            <div className="w-10 h-10 rounded-lg bg-teal-50 text-[#2F7C7A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-lg bg-green-50 text-[#23804A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <Clock className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-sm text-[#132238] group-hover:text-[#2F7C7A] transition-colors">
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-[#23804A] transition-colors">
                 Class Timetable
               </h3>
               <p className="text-xs text-slate-500 mt-1">
@@ -488,13 +488,13 @@ export default function StudentDashboardPage() {
 
           <Link
             href="/student/academics"
-            className="group p-5 bg-white rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A] hover:shadow-sm transition-all flex items-start space-x-4"
+            className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
           >
-            <div className="w-10 h-10 rounded-lg bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-lg bg-[#EAF2EC] text-[#23804A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <GraduationCap className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-sm text-[#132238] group-hover:text-[#2F7C7A] transition-colors">
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-[#23804A] transition-colors">
                 Academic Overview
               </h3>
               <p className="text-xs text-slate-500 mt-1">
@@ -505,13 +505,13 @@ export default function StudentDashboardPage() {
 
           <Link
             href="/student/syllabus"
-            className="group p-5 bg-white rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A] hover:shadow-sm transition-all flex items-start space-x-4"
+            className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
           >
-            <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-lg bg-green-50 text-green-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <BookOpen className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-sm text-[#132238] group-hover:text-blue-700 transition-colors">
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-green-700 transition-colors">
                 Syllabus Explorer
               </h3>
               <p className="text-xs text-slate-500 mt-1">
@@ -522,13 +522,13 @@ export default function StudentDashboardPage() {
 
           <Link
             href="/student/resources"
-            className="group p-5 bg-white rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A] hover:shadow-sm transition-all flex items-start space-x-4"
+            className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
           >
             <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <FileCheck className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-sm text-[#132238] group-hover:text-amber-700 transition-colors">
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-amber-700 transition-colors">
                 Academic Resources
               </h3>
               <p className="text-xs text-slate-500 mt-1">
@@ -539,13 +539,13 @@ export default function StudentDashboardPage() {
 
           <Link
             href="/student/examinations"
-            className="group p-5 bg-white rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A] hover:shadow-sm transition-all flex items-start space-x-4"
+            className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
           >
             <div className="w-10 h-10 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <Calendar className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-sm text-[#132238] group-hover:text-rose-700 transition-colors">
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-rose-700 transition-colors">
                 Exam Schedules
               </h3>
               <p className="text-xs text-slate-500 mt-1">
@@ -556,13 +556,13 @@ export default function StudentDashboardPage() {
 
           <Link
             href="/student/results"
-            className="group p-5 bg-white rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A] hover:shadow-sm transition-all flex items-start space-x-4"
+            className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
           >
             <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <Award className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-sm text-[#132238] group-hover:text-emerald-700 transition-colors">
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-emerald-700 transition-colors">
                 Results & Marks
               </h3>
               <p className="text-xs text-slate-500 mt-1">
@@ -573,13 +573,13 @@ export default function StudentDashboardPage() {
 
           <Link
             href="/student/payments"
-            className="group p-5 bg-white rounded-xl border border-[#E2E8E0] hover:border-[#2F7C7A] hover:shadow-sm transition-all flex items-start space-x-4"
+            className="group p-5 bg-white rounded-xl border border-[#E3EAE5] hover:border-[#23804A] hover:shadow-sm transition-all flex items-start space-x-4"
           >
-            <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-lg bg-green-50 text-green-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <CreditCard className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-sm text-[#132238] group-hover:text-indigo-700 transition-colors">
+              <h3 className="font-bold text-sm text-[#171D19] group-hover:text-green-700 transition-colors">
                 Payments & Receipts
               </h3>
               <p className="text-xs text-slate-500 mt-1">
@@ -593,15 +593,15 @@ export default function StudentDashboardPage() {
       {/* Two Column Section: Recent Results & Registrations */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Results */}
-        <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
-          <div className="p-5 border-b border-[#E2E8E0] flex items-center justify-between">
+        <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
+          <div className="p-5 border-b border-[#E3EAE5] flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Award className="w-4 h-4 text-[#2F7C7A]" />
-              <h3 className="font-bold text-sm text-[#132238]">Recent Examination Results</h3>
+              <Award className="w-4 h-4 text-[#23804A]" />
+              <h3 className="font-bold text-sm text-[#171D19]">Recent Examination Results</h3>
             </div>
             <Link
               href="/student/results"
-              className="text-xs font-semibold text-[#2F7C7A] hover:underline"
+              className="text-xs font-semibold text-[#23804A] hover:underline"
             >
               View All
             </Link>
@@ -650,15 +650,15 @@ export default function StudentDashboardPage() {
         </div>
 
         {/* Examination Registrations */}
-        <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
-          <div className="p-5 border-b border-[#E2E8E0] flex items-center justify-between">
+        <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
+          <div className="p-5 border-b border-[#E3EAE5] flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <FileCheck className="w-4 h-4 text-[#2F7C7A]" />
-              <h3 className="font-bold text-sm text-[#132238]">Active Exam Registrations</h3>
+              <FileCheck className="w-4 h-4 text-[#23804A]" />
+              <h3 className="font-bold text-sm text-[#171D19]">Active Exam Registrations</h3>
             </div>
             <Link
               href="/student/examinations/registrations"
-              className="text-xs font-semibold text-[#2F7C7A] hover:underline"
+              className="text-xs font-semibold text-[#23804A] hover:underline"
             >
               View All
             </Link>
@@ -688,7 +688,7 @@ export default function StudentDashboardPage() {
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           isHallTicket
                             ? 'bg-emerald-100 text-emerald-800'
-                            : 'bg-blue-100 text-blue-800'
+                            : 'bg-green-100 text-green-800'
                         }`}
                       >
                         {reg.registrationStatus || 'REGISTERED'}

@@ -208,7 +208,7 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6 w-full max-w-full min-w-0">
       {/* 1. Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
             <span>Admin</span>
@@ -218,8 +218,8 @@ export default function AdminUsersPage() {
             <span className="text-slate-900 font-semibold">Users</span>
           </div>
           <div className="flex items-center space-x-3">
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#132238]">Users</h1>
-            <span className="px-2.5 py-0.5 text-xs font-bold bg-[#E6F2F1] text-[#2F7C7A] rounded-full border border-teal-100">
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#171D19]">Users</h1>
+            <span className="px-2.5 py-0.5 text-xs font-bold bg-[#EAF2EC] text-[#23804A] rounded-full border border-green-100">
               {users.length} Total
             </span>
           </div>
@@ -235,12 +235,12 @@ export default function AdminUsersPage() {
             className="p-2.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-xl border border-slate-200 transition-colors cursor-pointer"
             title="Refresh Users"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#2F7C7A]' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#23804A]' : ''}`} />
           </button>
 
           <button
             onClick={handleOpenAddModal}
-            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] transition-colors cursor-pointer shadow-xs"
+            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] transition-colors cursor-pointer shadow-xs"
           >
             <UserPlus className="w-4 h-4 mr-2" /> Add User
           </button>
@@ -258,10 +258,10 @@ export default function AdminUsersPage() {
           </>
         ) : (
           <>
-            <div className="bg-white p-5 rounded-2xl border border-[#E2E8E0] shadow-xs flex items-center justify-between transition-all hover:shadow-xs w-full min-w-0">
+            <div className="bg-white p-5 rounded-2xl border border-[#E3EAE5] shadow-xs flex items-center justify-between transition-all hover:shadow-xs w-full min-w-0">
               <div className="min-w-0">
                 <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">TOTAL USERS</p>
-                <p className="text-2xl font-extrabold text-[#132238] tracking-tight mt-1">
+                <p className="text-2xl font-extrabold text-[#171D19] tracking-tight mt-1">
                   {stats?.totalUsers !== undefined ? stats.totalUsers : users.length}
                 </p>
                 <p className="text-[11px] text-slate-500 font-medium mt-1 truncate">
@@ -269,28 +269,28 @@ export default function AdminUsersPage() {
                   <span className="text-rose-600 font-bold">{suspendedCount} Inactive</span>
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center flex-shrink-0 ml-3">
+              <div className="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center flex-shrink-0 ml-3">
                 <UsersIcon className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-[#E2E8E0] shadow-xs flex items-center justify-between transition-all hover:shadow-xs w-full min-w-0">
+            <div className="bg-white p-5 rounded-2xl border border-[#E3EAE5] shadow-xs flex items-center justify-between transition-all hover:shadow-xs w-full min-w-0">
               <div className="min-w-0">
                 <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">INSTITUTIONS</p>
-                <p className="text-2xl font-extrabold text-[#132238] tracking-tight mt-1">
+                <p className="text-2xl font-extrabold text-[#171D19] tracking-tight mt-1">
                   {stats?.institutions !== undefined ? stats.institutions : 0}
                 </p>
                 <p className="text-[11px] text-slate-500 font-medium mt-1 truncate">Affiliated Campuses</p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0 ml-3">
+              <div className="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center flex-shrink-0 ml-3">
                 <Building2 className="w-6 h-6" />
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-[#E2E8E0] shadow-xs flex items-center justify-between transition-all hover:shadow-xs w-full min-w-0">
+            <div className="bg-white p-5 rounded-2xl border border-[#E3EAE5] shadow-xs flex items-center justify-between transition-all hover:shadow-xs w-full min-w-0">
               <div className="min-w-0">
                 <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">STUDENTS</p>
-                <p className="text-2xl font-extrabold text-[#132238] tracking-tight mt-1">
+                <p className="text-2xl font-extrabold text-[#171D19] tracking-tight mt-1">
                   {stats?.students !== undefined ? stats.students : 0}
                 </p>
                 <p className="text-[11px] text-slate-500 font-medium mt-1 truncate">Enrolled Students</p>
@@ -300,15 +300,15 @@ export default function AdminUsersPage() {
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-[#E2E8E0] shadow-xs flex items-center justify-between transition-all hover:shadow-xs w-full min-w-0">
+            <div className="bg-white p-5 rounded-2xl border border-[#E3EAE5] shadow-xs flex items-center justify-between transition-all hover:shadow-xs w-full min-w-0">
               <div className="min-w-0">
                 <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">FACULTY</p>
-                <p className="text-2xl font-extrabold text-[#132238] tracking-tight mt-1">
+                <p className="text-2xl font-extrabold text-[#171D19] tracking-tight mt-1">
                   {stats?.faculty !== undefined ? stats.faculty : 0}
                 </p>
                 <p className="text-[11px] text-slate-500 font-medium mt-1 truncate">Instructors & Staff</p>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center flex-shrink-0 ml-3">
+              <div className="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center flex-shrink-0 ml-3">
                 <UserCheck className="w-6 h-6" />
               </div>
             </div>
@@ -317,7 +317,7 @@ export default function AdminUsersPage() {
       </div>
 
       {/* 3. Search & Filter Toolbar */}
-      <div className="bg-white p-4 rounded-2xl border border-[#E2E8E0] shadow-xs space-y-3 w-full min-w-0">
+      <div className="bg-white p-4 rounded-2xl border border-[#E3EAE5] shadow-xs space-y-3 w-full min-w-0">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           {/* Search Input */}
           <div className="relative flex-1">
@@ -327,7 +327,7 @@ export default function AdminUsersPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name, email, username, mobile..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#E2E8E0] text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] bg-slate-50/50 focus:bg-white transition-all"
+              className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#E3EAE5] text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#23804A] bg-slate-50/50 focus:bg-white transition-all"
             />
           </div>
 
@@ -337,7 +337,7 @@ export default function AdminUsersPage() {
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs font-medium border border-[#E2E8E0] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white text-slate-700 cursor-pointer"
+                className="w-full px-3 py-2 text-xs font-medium border border-[#E3EAE5] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white text-slate-700 cursor-pointer"
               >
                 <option value="">All Roles</option>
                 <option value="ADMIN">ADMINISTRATOR</option>
@@ -354,7 +354,7 @@ export default function AdminUsersPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs font-medium border border-[#E2E8E0] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white text-slate-700 cursor-pointer"
+                className="w-full px-3 py-2 text-xs font-medium border border-[#E3EAE5] rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white text-slate-700 cursor-pointer"
               >
                 <option value="">All Statuses</option>
                 <option value="ACTIVE">ACTIVE</option>
@@ -371,7 +371,7 @@ export default function AdminUsersPage() {
                 onClick={() => setViewMode('table')}
                 className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   viewMode === 'table'
-                    ? 'bg-white text-[#132238] shadow-xs'
+                    ? 'bg-white text-[#171D19] shadow-xs'
                     : 'text-slate-500 hover:text-slate-900'
                 }`}
                 title="Table View"
@@ -383,7 +383,7 @@ export default function AdminUsersPage() {
                 onClick={() => setViewMode('cards')}
                 className={`flex items-center space-x-1 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   viewMode === 'cards'
-                    ? 'bg-white text-[#132238] shadow-xs'
+                    ? 'bg-white text-[#171D19] shadow-xs'
                     : 'text-slate-500 hover:text-slate-900'
                 }`}
                 title="Card View"
@@ -412,7 +412,7 @@ export default function AdminUsersPage() {
             <strong className="text-slate-800">{users.length}</strong> users
           </span>
           {hasActiveFilters && (
-            <span className="text-[11px] text-[#2F7C7A] bg-teal-50 px-2.5 py-0.5 rounded-full font-medium border border-teal-100">
+            <span className="text-[11px] text-[#23804A] bg-green-50 px-2.5 py-0.5 rounded-full font-medium border border-green-100">
               Filters applied
             </span>
           )}
@@ -420,7 +420,7 @@ export default function AdminUsersPage() {
       </div>
 
       {/* 4. Main User Data Container (Cards or Table) */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs overflow-hidden w-full min-w-0">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs overflow-hidden w-full min-w-0">
         {loading ? (
           /* Loading Skeleton matching table structure */
           <div className="p-6 space-y-4">
@@ -456,7 +456,7 @@ export default function AdminUsersPage() {
             </div>
             <button
               onClick={fetchData}
-              className="inline-flex items-center px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] transition-colors cursor-pointer shadow-xs"
+              className="inline-flex items-center px-4 py-2 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] transition-colors cursor-pointer shadow-xs"
             >
               <RefreshCw className="w-4 h-4 mr-2" /> Retry Connection
             </button>
@@ -467,7 +467,7 @@ export default function AdminUsersPage() {
             <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
               <UsersIcon className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-[#132238]">No users found</h3>
+            <h3 className="text-base font-bold text-[#171D19]">No users found</h3>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
               {hasActiveFilters
                 ? 'No users match your selected search query and filter combination. Try clearing your filters.'
@@ -483,7 +483,7 @@ export default function AdminUsersPage() {
             ) : (
               <button
                 onClick={handleOpenAddModal}
-                className="inline-flex items-center px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] transition-colors cursor-pointer shadow-xs"
+                className="inline-flex items-center px-4 py-2 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] transition-colors cursor-pointer shadow-xs"
               >
                 <UserPlus className="w-4 h-4 mr-2" /> Add First User
               </button>
@@ -506,7 +506,7 @@ export default function AdminUsersPage() {
           /* Professional Admin Table View */
           <div className="overflow-x-auto min-h-[300px] w-full">
             <table className="w-full text-left text-sm min-w-[760px]">
-              <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E2E8E0]">
+              <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E3EAE5]">
                 <tr>
                   <th className="px-5 py-3.5">User</th>
                   <th className="px-5 py-3.5">Email</th>
@@ -517,7 +517,7 @@ export default function AdminUsersPage() {
                   <th className="px-5 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8E0]">
+              <tbody className="divide-y divide-[#E3EAE5]">
                 {paginatedUsers.map((u) => {
                   const initial = getInitials(u.name);
                   const isSuspendedOrInactive = u.status === 'INACTIVE' || u.status === 'SUSPENDED';
@@ -527,11 +527,11 @@ export default function AdminUsersPage() {
                       {/* 1. User Column */}
                       <td className="px-5 py-3.5">
                         <div className="flex items-center space-x-3">
-                          <div className="w-9 h-9 rounded-full bg-[#E6F2F1] border border-teal-100 text-[#2F7C7A] flex items-center justify-center font-bold text-xs shrink-0">
+                          <div className="w-9 h-9 rounded-full bg-[#EAF2EC] border border-green-100 text-[#23804A] flex items-center justify-center font-bold text-xs shrink-0">
                             {initial}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-bold text-sm text-[#132238] truncate">{u.name || 'Unassigned User'}</p>
+                            <p className="font-bold text-sm text-[#171D19] truncate">{u.name || 'Unassigned User'}</p>
                             <p className="text-xs text-slate-500 font-normal truncate">
                               @{u.username || 'unassigned'}
                               {u.department ? ` · ${u.department}` : ''}
@@ -583,10 +583,10 @@ export default function AdminUsersPage() {
                           {/* Edit Button */}
                           <button
                             onClick={() => handleOpenEditModal(u)}
-                            className="px-2.5 py-1.5 bg-teal-50 hover:bg-teal-100 text-[#2F7C7A] border border-teal-200/80 rounded-lg text-xs font-semibold transition-colors inline-flex items-center gap-1 cursor-pointer"
+                            className="px-2.5 py-1.5 bg-green-50 hover:bg-green-100 text-[#23804A] border border-green-200/80 rounded-lg text-xs font-semibold transition-colors inline-flex items-center gap-1 cursor-pointer"
                             title="Edit User"
                           >
-                            <Edit3 className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                            <Edit3 className="w-3.5 h-3.5 text-[#23804A]" />
                             <span>Edit</span>
                           </button>
 
@@ -605,7 +605,7 @@ export default function AdminUsersPage() {
                             </button>
 
                             {activeMenuId === u._id && (
-                              <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-[#E2E8E0] py-1.5 z-30 focus:outline-none animate-in fade-in zoom-in-95 duration-100">
+                              <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-[#E3EAE5] py-1.5 z-30 focus:outline-none animate-in fade-in zoom-in-95 duration-100">
                                 {/* Student Profile Link if Student Role */}
                                 {u.role === 'STUDENT' && (
                                   <button
@@ -613,9 +613,9 @@ export default function AdminUsersPage() {
                                       setActiveMenuId(null);
                                       router.push(`/admin/students?search=${encodeURIComponent(u.email)}`);
                                     }}
-                                    className="w-full px-3.5 py-2 text-left text-xs font-semibold text-[#2F7C7A] hover:bg-teal-50 flex items-center gap-2 cursor-pointer transition-colors"
+                                    className="w-full px-3.5 py-2 text-left text-xs font-semibold text-[#23804A] hover:bg-green-50 flex items-center gap-2 cursor-pointer transition-colors"
                                   >
-                                    <GraduationCap className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                                    <GraduationCap className="w-3.5 h-3.5 text-[#23804A]" />
                                     <span>Student Profile</span>
                                   </button>
                                 )}
@@ -653,7 +653,7 @@ export default function AdminUsersPage() {
                                   }}
                                   className="w-full px-3.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors"
                                 >
-                                  <KeyRound className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                                  <KeyRound className="w-3.5 h-3.5 text-[#23804A]" />
                                   <span>Reset Password</span>
                                 </button>
 
@@ -685,11 +685,11 @@ export default function AdminUsersPage() {
 
         {/* 5. Pagination Footer */}
         {!loading && !error && totalFilteredCount > 0 && (
-          <div className="bg-white p-4 border-t border-[#E2E8E0] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs w-full min-w-0">
+          <div className="bg-white p-4 border-t border-[#E3EAE5] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs w-full min-w-0">
             <span className="text-slate-500 font-semibold">
-              Showing <strong className="text-[#132238]">{startIndex + 1}</strong> to{' '}
-              <strong className="text-[#132238]">{Math.min(startIndex + pageSize, totalFilteredCount)}</strong> of{' '}
-              <strong className="text-[#132238]">{totalFilteredCount}</strong> users
+              Showing <strong className="text-[#171D19]">{startIndex + 1}</strong> to{' '}
+              <strong className="text-[#171D19]">{Math.min(startIndex + pageSize, totalFilteredCount)}</strong> of{' '}
+              <strong className="text-[#171D19]">{totalFilteredCount}</strong> users
             </span>
 
             {totalPages > 1 && (
@@ -709,7 +709,7 @@ export default function AdminUsersPage() {
                     onClick={() => setCurrentPage(pageNum)}
                     className={`w-8 h-8 rounded-lg font-bold transition-all text-xs cursor-pointer ${
                       currentPage === pageNum
-                        ? 'bg-[#2F7C7A] text-white shadow-xs'
+                        ? 'bg-[#23804A] text-white shadow-xs'
                         : 'text-slate-600 hover:bg-slate-100'
                     }`}
                   >

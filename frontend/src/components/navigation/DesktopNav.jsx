@@ -33,18 +33,18 @@ export const DesktopNav = ({ isTransparent = false }) => {
                     ? 'text-white font-semibold'
                     : 'text-white/85 hover:text-white'
                   : isActive
-                  ? 'text-[#132238] font-semibold'
-                  : 'text-[#132238]/80 hover:text-[#2F7C7A]'
+                  ? 'text-misc-primary font-semibold'
+                  : 'text-misc-secondary hover:text-misc-primary'
               }`}
             >
               <span>{link.name}</span>
               <span
                 className={`absolute left-0 bottom-0 w-full h-[1.5px] transition-transform duration-300 origin-left ${
                   isActive
-                    ? 'scale-x-100 bg-[#2F7C7A]'
+                    ? 'scale-x-100 bg-misc-primary'
                     : isTransparent
                     ? 'scale-x-0 group-hover:scale-x-100 bg-white/70'
-                    : 'scale-x-0 group-hover:scale-x-100 bg-[#2F7C7A]'
+                    : 'scale-x-0 group-hover:scale-x-100 bg-misc-primary'
                 }`}
               />
             </Link>
@@ -55,7 +55,7 @@ export const DesktopNav = ({ isTransparent = false }) => {
       {/* Thin Separator */}
       <div
         className={`h-4 w-px transition-colors duration-300 ${
-          isTransparent ? 'bg-white/25' : 'bg-[rgba(19,34,56,0.15)]'
+          isTransparent ? 'bg-white/25' : 'bg-misc-border'
         }`}
       />
 
@@ -65,7 +65,7 @@ export const DesktopNav = ({ isTransparent = false }) => {
         <Link
           href="/downloads"
           className={`p-1.5 transition-colors cursor-pointer ${
-            isTransparent ? 'text-white/80 hover:text-white' : 'text-[#132238]/80 hover:text-[#2F7C7A]'
+            isTransparent ? 'text-white/80 hover:text-white' : 'text-misc-text/80 hover:text-misc-primary'
           }`}
           aria-label="Search MISC Portal"
         >
@@ -80,7 +80,7 @@ export const DesktopNav = ({ isTransparent = false }) => {
             className={`flex items-center space-x-1 text-xs font-mono font-medium px-2 py-1 transition-all cursor-pointer ${
               isTransparent
                 ? 'text-white/90 hover:text-white'
-                : 'text-[#132238] hover:text-[#2F7C7A]'
+                : 'text-misc-text hover:text-misc-primary'
             }`}
             aria-expanded={showLangMenu}
             aria-label="Select Language"
@@ -90,7 +90,7 @@ export const DesktopNav = ({ isTransparent = false }) => {
           </button>
 
           {showLangMenu && (
-            <div className="absolute right-0 mt-2 w-32 bg-white border border-[rgba(19,34,56,0.12)] rounded-xs shadow-lg py-1 z-50 animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute right-0 mt-2 w-32 bg-white border border-misc-border rounded-xs shadow-lg py-1 z-50 animate-in fade-in zoom-in-95 duration-150">
               {languages.map((item) => (
                 <button
                   key={item.code}
@@ -101,8 +101,8 @@ export const DesktopNav = ({ isTransparent = false }) => {
                   }}
                   className={`w-full text-left px-3 py-1.5 text-xs transition-colors cursor-pointer ${
                     lang === item.code
-                      ? 'bg-[#E6F2F1] text-[#2F7C7A] font-semibold'
-                      : 'text-[#132238] hover:bg-[#F7F7F3]'
+                      ? 'bg-misc-soft-blue text-misc-primary font-semibold'
+                      : 'text-misc-text hover:bg-misc-page'
                   }`}
                 >
                   {item.label}
@@ -112,10 +112,10 @@ export const DesktopNav = ({ isTransparent = false }) => {
           )}
         </div>
 
-        {/* ENQUIRY → Button (Teal filled, rectangular with small border radius) */}
+        {/* ENQUIRY → Button (blue filled, rectangular with small border radius) */}
         <Link
           href={applyCta.path}
-          className="bg-[#2F7C7A] text-white hover:bg-[#256664] active:bg-[#1d504e] text-xs font-semibold tracking-wider uppercase px-4 py-2 rounded-xs transition-all duration-200 flex items-center space-x-1.5 shrink-0 shadow-2xs hover:translate-x-0.5"
+          className="bg-misc-primary text-white hover:bg-misc-primary-dark active:bg-misc-deep-blue text-xs font-semibold tracking-wider uppercase px-4 py-2 rounded-xs transition-all duration-200 flex items-center space-x-1.5 shrink-0 shadow-2xs hover:translate-x-0.5"
         >
           <span>ENQUIRY</span>
           <ArrowRight className="w-3.5 h-3.5" />

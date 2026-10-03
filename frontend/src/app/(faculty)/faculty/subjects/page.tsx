@@ -81,14 +81,14 @@ export default function FacultySubjectsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/faculty" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/faculty" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Teaching Allocations</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238] flex items-center gap-2">
-            <Layers className="w-7 h-7 text-[#2F7C7A]" />
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19] flex items-center gap-2">
+            <Layers className="w-7 h-7 text-[#23804A]" />
             Faculty Teaching Allocations
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -98,7 +98,7 @@ export default function FacultySubjectsPage() {
 
         <Link
           href="/faculty"
-          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#2F7C7A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
+          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#23804A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to Dashboard
         </Link>
@@ -113,14 +113,14 @@ export default function FacultySubjectsPage() {
             placeholder="Search assigned subjects or classes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#2F7C7A]"
+            className="w-full pl-9 pr-4 py-2.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#23804A]"
           />
         </div>
 
         <select
           value={selectedClassFilter}
           onChange={(e) => setSelectedClassFilter(e.target.value)}
-          className="text-xs font-semibold bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-[#132238] focus:outline-hidden focus:border-[#2F7C7A]"
+          className="text-xs font-semibold bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-[#171D19] focus:outline-hidden focus:border-[#23804A]"
         >
           <option value="ALL">All Assigned Classes ({assignments.length})</option>
           {Array.from(distinctClassesMap.entries()).map(([cId, cName]) => (
@@ -133,7 +133,7 @@ export default function FacultySubjectsPage() {
 
       {/* Allocations Grid */}
       {filteredAssignments.length === 0 ? (
-        <div className="p-12 text-center bg-white rounded-xl border border-[#E2E8E0] space-y-3">
+        <div className="p-12 text-center bg-white rounded-xl border border-[#E3EAE5] space-y-3">
           <Layers className="w-10 h-10 text-slate-300 mx-auto" />
           <p className="text-sm font-bold text-slate-700">No teaching allocations found</p>
           <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -152,7 +152,7 @@ export default function FacultySubjectsPage() {
             return (
               <div
                 key={asgn._id}
-                className="bg-white rounded-xl border border-[#E2E8E0] p-5 shadow-2xs hover:border-[#2F7C7A] transition-all flex flex-col justify-between space-y-4"
+                className="bg-white rounded-xl border border-[#E3EAE5] p-5 shadow-2xs hover:border-[#23804A] transition-all flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -161,7 +161,7 @@ export default function FacultySubjectsPage() {
                     </span>
                     <div className="flex items-center space-x-1">
                       {asgn.isPrimary && (
-                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-teal-50 text-[#2F7C7A] border border-teal-200">
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-green-50 text-[#23804A] border border-green-200">
                           Lead Faculty
                         </span>
                       )}
@@ -172,11 +172,11 @@ export default function FacultySubjectsPage() {
                   </div>
 
                   <div>
-                    <h3 className="font-bold text-base text-[#132238]">
+                    <h3 className="font-bold text-base text-[#171D19]">
                       {sub?.name || sub?.subjectName || 'Subject Paper'}
                     </h3>
                     <div className="flex items-center space-x-2 text-xs text-slate-500 mt-1">
-                      <Building2 className="w-3.5 h-3.5 text-[#2F7C7A]" />
+                      <Building2 className="w-3.5 h-3.5 text-[#23804A]" />
                       <span className="font-semibold text-slate-700">{cls?.name || 'Assigned Class'}</span>
                     </div>
                     {ay && (
@@ -198,7 +198,7 @@ export default function FacultySubjectsPage() {
                 <div className="pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
                   <Link
                     href={`/faculty/attendance?classId=${cls?._id}&subjectId=${sub?._id}`}
-                    className="inline-flex items-center justify-center px-2.5 py-1.5 rounded-lg bg-teal-50 text-[#2F7C7A] hover:bg-teal-100 font-semibold transition-all border border-teal-200"
+                    className="inline-flex items-center justify-center px-2.5 py-1.5 rounded-lg bg-green-50 text-[#23804A] hover:bg-green-100 font-semibold transition-all border border-green-200"
                   >
                     <CalendarCheck className="w-3.5 h-3.5 mr-1" /> Mark Attendance
                   </Link>

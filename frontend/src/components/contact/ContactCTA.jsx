@@ -9,14 +9,14 @@ export const ContactCTA = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative bg-[#132238] text-white py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-[#2F7C7A]/20">
+    <section className="relative bg-misc-navy text-white py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-misc-primary/20">
       <div className="relative misc-container z-10 text-center max-w-3xl mx-auto space-y-6">
         <div className="flex items-center justify-center space-x-3">
-          <span className="w-8 h-[2px] bg-[#2F7C7A]" />
-          <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#E6F2F1] uppercase">
+          <span className="w-8 h-[2px] bg-misc-primary" />
+          <span className="text-xs sm:text-sm font-semibold tracking-widest text-misc-dark-muted uppercase">
             EXPLORE MISC
           </span>
-          <span className="w-8 h-[2px] bg-[#2F7C7A]" />
+          <span className="w-8 h-[2px] bg-misc-primary" />
         </div>
 
         <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">

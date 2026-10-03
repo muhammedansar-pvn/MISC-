@@ -70,29 +70,29 @@ export default function FacultyProfilePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/faculty" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/faculty" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Faculty Profile</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Academic Faculty Profile
           </h1>
         </div>
 
         <Link
           href="/faculty"
-          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#2F7C7A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
+          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#23804A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to Dashboard
         </Link>
       </div>
 
       {/* Identity Hero Card */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] p-6 sm:p-8 shadow-2xs">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] p-6 sm:p-8 shadow-2xs">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-tr from-[#132238] to-[#2F7C7A] text-white flex items-center justify-center font-bold font-serif text-3xl shrink-0 shadow-md">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-tr from-[#171D19] to-[#23804A] text-white flex items-center justify-center font-bold font-serif text-3xl shrink-0 shadow-md">
             {profile?.photo ? (
               <img
                 src={profile.photo}
@@ -106,29 +106,29 @@ export default function FacultyProfilePage() {
 
           <div className="space-y-1.5 flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-[#132238]">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#171D19]">
                 {profile?.nameEnglish || user?.name || user?.username || 'Faculty Instructor'}
               </h2>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-100 text-teal-800 border border-teal-200">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200">
                 Authorized Evaluator
               </span>
             </div>
 
             {profile?.nameArabic && (
-              <p className="font-arabic text-lg text-[#2F7C7A]" dir="rtl">
+              <p className="font-arabic text-lg text-[#23804A]" dir="rtl">
                 {profile.nameArabic}
               </p>
             )}
 
             <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs text-slate-500 pt-1">
               <div className="flex items-center space-x-1.5">
-                <Briefcase className="w-4 h-4 text-[#2F7C7A]" />
+                <Briefcase className="w-4 h-4 text-[#23804A]" />
                 <span className="font-medium text-slate-700">
                   {profile?.designation || user?.department || 'Academic Faculty'}
                 </span>
               </div>
               <div className="flex items-center space-x-1.5">
-                <Building2 className="w-4 h-4 text-[#2F7C7A]" />
+                <Building2 className="w-4 h-4 text-[#23804A]" />
                 <span className="truncate max-w-xs">{institution?.name || 'Markaz Affiliated Center'}</span>
               </div>
               {profile?.facultyId && (
@@ -147,7 +147,7 @@ export default function FacultyProfilePage() {
       {/* Notice if profile linkage pending */}
       {!profile && (
         <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 flex items-start space-x-3 text-xs">
-          <ShieldCheck className="w-5 h-5 text-teal-600 shrink-0 mt-0.5" />
+          <ShieldCheck className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
           <div>
             <p className="font-bold text-slate-900">Active Faculty User Account</p>
             <p className="text-slate-500 mt-0.5 leading-relaxed">
@@ -160,10 +160,10 @@ export default function FacultyProfilePage() {
       {/* Information Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Professional & Qualifications */}
-        <div className="bg-white rounded-xl border border-[#E2E8E0] p-6 shadow-2xs space-y-4">
-          <div className="flex items-center space-x-2 border-b border-[#E2E8E0] pb-3">
-            <GraduationCap className="w-5 h-5 text-[#2F7C7A]" />
-            <h3 className="font-bold text-sm text-[#132238]">Professional & Academic Credentials</h3>
+        <div className="bg-white rounded-xl border border-[#E3EAE5] p-6 shadow-2xs space-y-4">
+          <div className="flex items-center space-x-2 border-b border-[#E3EAE5] pb-3">
+            <GraduationCap className="w-5 h-5 text-[#23804A]" />
+            <h3 className="font-bold text-sm text-[#171D19]">Professional & Academic Credentials</h3>
           </div>
 
           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -201,10 +201,10 @@ export default function FacultyProfilePage() {
         </div>
 
         {/* Institutional & Contact Information */}
-        <div className="bg-white rounded-xl border border-[#E2E8E0] p-6 shadow-2xs space-y-4">
-          <div className="flex items-center space-x-2 border-b border-[#E2E8E0] pb-3">
-            <Building2 className="w-5 h-5 text-[#2F7C7A]" />
-            <h3 className="font-bold text-sm text-[#132238]">Institution & Contact Details</h3>
+        <div className="bg-white rounded-xl border border-[#E3EAE5] p-6 shadow-2xs space-y-4">
+          <div className="flex items-center space-x-2 border-b border-[#E3EAE5] pb-3">
+            <Building2 className="w-5 h-5 text-[#23804A]" />
+            <h3 className="font-bold text-sm text-[#171D19]">Institution & Contact Details</h3>
           </div>
 
           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">

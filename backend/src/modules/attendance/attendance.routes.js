@@ -55,11 +55,11 @@ router.get(
 );
 
 // --- STUDENT PORTAL READ-ONLY & 360 ATTENDANCE ENDPOINTS ---
-router.get("/student/summary", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentSummary);
-router.get("/student/monthly", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentMonthly);
-router.get("/student/history", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentHistory);
-router.get("/student/subjects", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentSubjectAttendance);
-router.get("/student/sessions", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN"), handleGetStudentSessionAttendance);
+router.get("/student/summary", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN", "PARENT"), handleGetStudentSummary);
+router.get("/student/monthly", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN", "PARENT"), handleGetStudentMonthly);
+router.get("/student/history", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN", "PARENT"), handleGetStudentHistory);
+router.get("/student/subjects", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN", "PARENT"), handleGetStudentSubjectAttendance);
+router.get("/student/sessions", requireAuth, requireRole("STUDENT", "FACULTY", "ADMIN", "PARENT"), handleGetStudentSessionAttendance);
 
 // --- FACULTY CORRECTION REQUESTS ---
 router.post(

@@ -2,7 +2,9 @@ const {
   createFaculty,
   getFacultyMembers,
   getFacultyById,
+  getFacultyDetails,
   updateFaculty,
+  updateFacultyStatus,
   deleteFaculty,
   getFacultyDashboardStats,
   getFacultyMyTimetable,
@@ -46,8 +48,14 @@ const handleGetFacultyById = async (req, res) => {
       targetId = req.user?.facultyId || req.user?.userId || req.user?.id;
     }
 
-    const member = await getFacultyById(targetId);
+    const isDetailsRequest = Boolean(req.params.id);
+    const member = isDetailsRequest
+      ? await getFacultyDetails(targetId)
+      : await getFacultyById(targetId);
     if (!member) {
+      if (isDetailsRequest) {
+        return res.status(404).json({ success: false, message: "Faculty member not found" });
+      }
       return res.status(200).json({
         success: true,
         isSetupPending: true,
@@ -67,22 +75,38 @@ const handleUpdateFaculty = async (req, res) => {
     if (!member) return res.status(404).json({ success: false, message: "Faculty member not found" });
     return res.status(200).json({ success: true, message: "Faculty updated successfully", data: member });
   } catch (error) {
-    return res.status(400).json({ success: false, message: error.message || "Failed to update faculty profile" });
+    return res.status(error.statusCode || 400).json({ success: false, message: error.message || "Failed to update faculty profile" });
+  }
+};
+
+const handleUpdateFacultyStatus = async (req, res) => {
+  try {
+    const member = await updateFacultyStatus(req.params.id, req.body.status);
+    if (!member) return res.status(404).json({ success: false, message: "Faculty member not found" });
+    return res.status(200).json({
+      success: true,
+      message: `Faculty status updated to ${member.userId?.status || member.status}`,
+      data: member,
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 400).json({
+      success: false,
+      message: error.message || "Failed to update faculty status",
+    });
   }
 };
 
 const handleDeleteFaculty = async (req, res) => {
   try {
-    const hardDelete = req.query.permanent === "true";
-    const result = await deleteFaculty(req.params.id, hardDelete);
+    const result = await deleteFaculty(req.params.id);
     if (!result) return res.status(404).json({ success: false, message: "Faculty member not found" });
     return res.status(200).json({
       success: true,
-      message: hardDelete ? "Faculty profile permanently deleted" : "Faculty profile deactivated successfully",
+      message: "Faculty profile deleted successfully; academic records were preserved",
       data: result,
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Failed to delete faculty member" });
+    return res.status(error.statusCode || 500).json({ success: false, message: error.message || "Failed to delete faculty member" });
   }
 };
 
@@ -156,6 +180,7 @@ module.exports = {
   handleGetFacultyMembers,
   handleGetFacultyById,
   handleUpdateFaculty,
+  handleUpdateFacultyStatus,
   handleDeleteFaculty,
   handleGetFacultyDashboard,
   handleGetFacultyMyTimetable,

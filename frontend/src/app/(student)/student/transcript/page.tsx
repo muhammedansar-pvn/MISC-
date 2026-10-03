@@ -75,17 +75,17 @@ export default function StudentTranscriptPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
-            <Link href="/student/results" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student/results" className="hover:text-[#23804A] transition-colors">
               Results
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Academic Transcript</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Official Academic Transcript
           </h1>
         </div>
@@ -93,13 +93,13 @@ export default function StudentTranscriptPage() {
         <div className="flex items-center space-x-3 self-start sm:self-auto">
           <Link
             href="/student/results"
-            className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#2F7C7A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all"
+            className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#23804A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to Results
           </Link>
           <button
             onClick={handlePrint}
-            className="inline-flex items-center px-4 py-2 rounded-lg bg-[#2F7C7A] hover:bg-[#286b69] text-white text-xs font-semibold shadow-2xs transition-all"
+            className="inline-flex items-center px-4 py-2 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-semibold shadow-2xs transition-all"
           >
             <Printer className="w-3.5 h-3.5 mr-1.5" /> Print Transcript
           </button>
@@ -108,15 +108,15 @@ export default function StudentTranscriptPage() {
 
       {/* Transcript Document View */}
       <div
-        className="bg-white rounded-2xl border border-[#E2E8E0] p-6 sm:p-12 shadow-sm space-y-8 max-w-4xl mx-auto"
+        className="bg-white rounded-2xl border border-[#E3EAE5] p-6 sm:p-12 shadow-sm space-y-8 max-w-4xl mx-auto"
         id="official-transcript"
       >
         {/* Document Header */}
-        <div className="text-center border-b-2 border-[#132238] pb-6 space-y-2">
-          <div className="font-bold uppercase tracking-widest text-xs text-[#2F7C7A]">
+        <div className="text-center border-b-2 border-[#171D19] pb-6 space-y-2">
+          <div className="font-bold uppercase tracking-widest text-xs text-[#23804A]">
             Markaz Sanaviyya
           </div>
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#132238] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-[#171D19] tracking-tight">
             CONSOLIDATED STATEMENT OF ACADEMIC RECORD
           </h2>
           <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">
@@ -132,14 +132,14 @@ export default function StudentTranscriptPage() {
               {profile?.nameEnglish || 'Enrolled Student'}
             </p>
             {profile?.nameArabic && (
-              <p className="font-arabic text-[#2F7C7A] text-sm mt-0.5" dir="rtl">
+              <p className="font-arabic text-[#23804A] text-sm mt-0.5" dir="rtl">
                 {profile.nameArabic}
               </p>
             )}
           </div>
           <div>
             <span className="text-slate-400 font-medium">Registration Number:</span>
-            <p className="font-mono font-bold text-base text-[#132238] mt-0.5">
+            <p className="font-mono font-bold text-base text-[#171D19] mt-0.5">
               {profile?.registrationNumber || 'N/A'}
             </p>
           </div>
@@ -243,7 +243,7 @@ export default function StudentTranscriptPage() {
                 <span className="text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                   Cumulative Aggregate
                 </span>
-                <p className="font-mono font-bold text-base text-[#2F7C7A] mt-0.5">
+                <p className="font-mono font-bold text-base text-[#23804A] mt-0.5">
                   {cumulativePercentage}%
                 </p>
               </div>

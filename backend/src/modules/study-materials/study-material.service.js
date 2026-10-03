@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
 const StudyMaterial = require("./study-material.model");
 const FacultyProfile = require("../faculty/faculty.model");
+const { assertFacultyAvailableForAssignment } = require("../faculty/faculty.service");
 const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 exports.createStudyMaterial = async (data, file = null) => {
+  await assertFacultyAvailableForAssignment(data.facultyId);
+
   let fileUrl = data.fileUrl;
   let fileName = data.fileName || "";
   let fileType = data.fileType || "";

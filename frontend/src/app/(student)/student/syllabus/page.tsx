@@ -116,13 +116,13 @@ function SyllabusContent() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Syllabus Explorer</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Curriculum Syllabus & Units
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -130,7 +130,7 @@ function SyllabusContent() {
           </p>
         </div>
 
-        <div className="text-xs text-slate-500 bg-white px-3.5 py-2 rounded-xl border border-[#E2E8E0] self-start sm:self-auto shadow-xs">
+        <div className="text-xs text-slate-500 bg-white px-3.5 py-2 rounded-xl border border-[#E3EAE5] self-start sm:self-auto shadow-xs">
           Enrolled Class:{' '}
           <span className="font-semibold text-slate-800">
             {(profile?.classId as any)?.name || (profile?.classId as any)?.code || (profile?.classId as any)?.className || 'Markaz Sanaviyya'}
@@ -139,7 +139,7 @@ function SyllabusContent() {
       </div>
 
       {/* Filter Bar */}
-      <div className="p-4 bg-white rounded-xl border border-[#E2E8E0] shadow-2xs flex flex-col md:flex-row items-center gap-3">
+      <div className="p-4 bg-white rounded-xl border border-[#E3EAE5] shadow-2xs flex flex-col md:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -147,7 +147,7 @@ function SyllabusContent() {
             placeholder="Search by Kitab name, unit, or subject..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+            className="w-full pl-9 pr-4 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#23804A]"
           />
         </div>
 
@@ -156,7 +156,7 @@ function SyllabusContent() {
           <select
             value={selectedSubjectId}
             onChange={(e) => setSelectedSubjectId(e.target.value)}
-            className="w-full md:w-48 py-2 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white text-slate-700 font-medium"
+            className="w-full md:w-48 py-2 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white text-slate-700 font-medium"
           >
             <option value="">All Subjects</option>
             {subjects.map((sub: any) => (
@@ -169,7 +169,7 @@ function SyllabusContent() {
           <select
             value={selectedExamType}
             onChange={(e) => setSelectedExamType(e.target.value)}
-            className="w-full md:w-40 py-2 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white text-slate-700 font-medium"
+            className="w-full md:w-40 py-2 px-3 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white text-slate-700 font-medium"
           >
             <option value="">All Exam Types</option>
             <option value="HALF_YEARLY">Half Yearly</option>
@@ -181,7 +181,7 @@ function SyllabusContent() {
       {/* Syllabus List */}
       <div className="space-y-4">
         {filteredSyllabuses.length === 0 ? (
-          <div className="p-12 text-center bg-white rounded-xl border border-[#E2E8E0] space-y-3">
+          <div className="p-12 text-center bg-white rounded-xl border border-[#E3EAE5] space-y-3">
             <BookOpen className="w-10 h-10 text-slate-300 mx-auto" />
             <p className="text-sm font-bold text-slate-700">No syllabus entries found</p>
             <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -198,7 +198,7 @@ function SyllabusContent() {
             return (
               <div
                 key={syl._id}
-                className="bg-white rounded-xl border border-[#E2E8E0] shadow-xs overflow-hidden transition-all"
+                className="bg-white rounded-xl border border-[#E3EAE5] shadow-xs overflow-hidden transition-all"
               >
                 {/* Accordion Header */}
                 <button
@@ -225,13 +225,13 @@ function SyllabusContent() {
                         {syl.examType === 'ANNUAL' ? 'Annual' : 'Half Yearly'}
                       </span>
                       {syl.fileUrl && (
-                        <span className="inline-flex items-center text-[11px] font-semibold text-[#2F7C7A] bg-[#E6F2F1] px-2 py-0.5 rounded gap-1">
+                        <span className="inline-flex items-center text-[11px] font-semibold text-[#23804A] bg-[#EAF2EC] px-2 py-0.5 rounded gap-1">
                           <Paperclip className="w-3 h-3" /> Document
                         </span>
                       )}
                     </div>
 
-                    <h3 className="font-bold text-base text-[#132238]">
+                    <h3 className="font-bold text-base text-[#171D19]">
                       {syl.kitabName || syl.title}
                     </h3>
 
@@ -259,7 +259,7 @@ function SyllabusContent() {
                     {/* Units & Chapters */}
                     <div className="space-y-3">
                       <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center space-x-1.5">
-                        <Layers className="w-4 h-4 text-[#2F7C7A]" />
+                        <Layers className="w-4 h-4 text-[#23804A]" />
                         <span>Curriculum Units ({Array.isArray(syl.units) ? syl.units.length : 0})</span>
                       </span>
 
@@ -270,10 +270,10 @@ function SyllabusContent() {
                               key={uIdx}
                               className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 flex items-start gap-2.5"
                             >
-                              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#E6F2F1] text-[#2F7C7A] shrink-0 mt-0.5">
+                              <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-[#EAF2EC] text-[#23804A] shrink-0 mt-0.5">
                                 Unit {unit.unitNumber || uIdx + 1}
                               </span>
-                              <span className="text-xs font-semibold text-[#132238] leading-tight">
+                              <span className="text-xs font-semibold text-[#171D19] leading-tight">
                                 {unit.title}
                               </span>
                             </div>
@@ -288,7 +288,7 @@ function SyllabusContent() {
                     {syl.fileUrl && (
                       <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70 p-4 rounded-xl border border-slate-200">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-lg bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center shrink-0">
+                          <div className="w-9 h-9 rounded-lg bg-[#EAF2EC] text-[#23804A] flex items-center justify-center shrink-0">
                             <FileText className="w-5 h-5" />
                           </div>
                           <div>
@@ -305,7 +305,7 @@ function SyllabusContent() {
                           href={resolvedFileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-[#2F7C7A] hover:bg-[#256361] text-white text-xs font-bold transition-all shadow-xs gap-1.5 cursor-pointer self-start sm:self-auto"
+                          className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-bold transition-all shadow-xs gap-1.5 cursor-pointer self-start sm:self-auto"
                         >
                           <Download className="w-3.5 h-3.5" />
                           <span>Download / Open PDF</span>

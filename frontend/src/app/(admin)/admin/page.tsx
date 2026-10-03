@@ -60,8 +60,8 @@ export default function AdminDashboardPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <div className="w-10 h-10 border-4 border-[#2F7C7A] border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm font-semibold text-[#132238]">Loading dashboard statistics...</p>
+        <div className="w-10 h-10 border-4 border-[#23804A] border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm font-semibold text-[#171D19]">Loading dashboard statistics...</p>
       </div>
     );
   }
@@ -74,7 +74,7 @@ export default function AdminDashboardPage() {
         <p className="text-sm text-rose-700">{error}</p>
         <button
           onClick={fetchData}
-          className="inline-flex items-center px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-lg uppercase tracking-wider hover:bg-[#256361] transition-all cursor-pointer"
+          className="inline-flex items-center px-4 py-2 bg-[#23804A] text-white font-bold text-xs rounded-lg uppercase tracking-wider hover:bg-[#1B6F41] transition-all cursor-pointer"
         >
           <RefreshCw className="w-4 h-4 mr-2" /> Retry Loading
         </button>
@@ -85,9 +85,9 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       {/* Top Banner & Quick Action */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs">
         <div>
-          <h1 className="text-2xl font-serif font-bold text-[#132238]">System Overview</h1>
+          <h1 className="text-2xl font-serif font-bold text-[#171D19]">System Overview</h1>
           <p className="text-sm text-slate-500 mt-1">
             Real-time MISC Portal user management and operational metrics
           </p>
@@ -95,7 +95,7 @@ export default function AdminDashboardPage() {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setIsInviteModalOpen(true)}
-            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] transition-all shadow-sm cursor-pointer"
+            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] transition-all shadow-sm cursor-pointer"
           >
             <UserPlus className="w-4 h-4 mr-2" /> Invite New User
           </button>
@@ -114,8 +114,8 @@ export default function AdminDashboardPage() {
           title="Total Users"
           value={stats?.totalUsers}
           icon={Users}
-          colorBg="bg-purple-100"
-          colorText="text-purple-700"
+          colorBg="bg-green-100"
+          colorText="text-green-700"
           subtitle="Registered across system"
         />
         <StatCard
@@ -138,16 +138,16 @@ export default function AdminDashboardPage() {
           title="Institutions"
           value={stats?.institutions}
           icon={Building2}
-          colorBg="bg-blue-100"
-          colorText="text-blue-700"
+          colorBg="bg-green-100"
+          colorText="text-green-700"
           subtitle="Affiliated institutions"
         />
         <StatCard
           title="Faculty Members"
           value={stats?.faculty}
           icon={BookOpen}
-          colorBg="bg-teal-100"
-          colorText="text-teal-700"
+          colorBg="bg-green-100"
+          colorText="text-green-700"
           subtitle="Instructors & evaluators"
         />
         <StatCard
@@ -161,15 +161,15 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Recent Users Overview Table */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#E2E8E0] flex items-center justify-between bg-[#F7F8F5]">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs overflow-hidden">
+        <div className="px-6 py-5 border-b border-[#E3EAE5] flex items-center justify-between bg-[#FBFCFB]">
           <div>
-            <h3 className="text-base font-bold text-[#132238]">Recently Registered Users</h3>
+            <h3 className="text-base font-bold text-[#171D19]">Recently Registered Users</h3>
             <p className="text-xs text-slate-500">Latest accounts created or invited</p>
           </div>
           <button
             onClick={() => router.push('/admin/users')}
-            className="text-xs font-bold text-[#2F7C7A] hover:underline flex items-center cursor-pointer"
+            className="text-xs font-bold text-[#23804A] hover:underline flex items-center cursor-pointer"
           >
             View All Users <ArrowRight className="w-3.5 h-3.5 ml-1" />
           </button>
@@ -180,7 +180,7 @@ export default function AdminDashboardPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E2E8E0]">
+              <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E3EAE5]">
                 <tr>
                   <th className="px-6 py-3.5">Name</th>
                   <th className="px-6 py-3.5">Email</th>
@@ -189,10 +189,10 @@ export default function AdminDashboardPage() {
                   <th className="px-6 py-3.5">Created Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8E0]">
+              <tbody className="divide-y divide-[#E3EAE5]">
                 {recentUsers.map((u) => (
                   <tr key={u._id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-[#132238]">{u.name || 'N/A'}</td>
+                    <td className="px-6 py-4 font-semibold text-[#171D19]">{u.name || 'N/A'}</td>
                     <td className="px-6 py-4 text-slate-600">{u.email}</td>
                     <td className="px-6 py-4">
                       <RoleBadge role={u.role} />

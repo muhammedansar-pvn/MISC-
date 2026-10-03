@@ -147,14 +147,14 @@ export default function StudentAssignmentsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Assignments</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238] flex items-center gap-2">
-            <Award className="w-7 h-7 text-[#2F7C7A]" />
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19] flex items-center gap-2">
+            <Award className="w-7 h-7 text-[#23804A]" />
             Homework & Assignments
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -174,14 +174,14 @@ export default function StudentAssignmentsPage() {
       </div>
 
       {/* Program Context Banner */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] p-5 shadow-2xs flex flex-wrap items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] p-5 shadow-2xs flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-[#EAF2EC] text-[#23804A] flex items-center justify-center">
             <Building2 className="w-5 h-5" />
           </div>
           <div>
             <p className="text-xs text-slate-400 uppercase tracking-wider font-bold">Enrolled Class Cohort</p>
-            <h2 className="text-base font-bold text-[#132238]">
+            <h2 className="text-base font-bold text-[#171D19]">
               {enrolledClass?.name || 'Sanaviyya Standard'}
             </h2>
           </div>
@@ -194,7 +194,7 @@ export default function StudentAssignmentsPage() {
               onClick={() => setSelectedFilter(tab)}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 selectedFilter === tab
-                  ? 'bg-[#2F7C7A] text-white shadow-2xs'
+                  ? 'bg-[#23804A] text-white shadow-2xs'
                   : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
               }`}
             >
@@ -212,7 +212,7 @@ export default function StudentAssignmentsPage() {
 
       {/* Assignments List */}
       {filteredAssignments.length === 0 ? (
-        <div className="p-12 text-center bg-white rounded-2xl border border-[#E2E8E0] space-y-3">
+        <div className="p-12 text-center bg-white rounded-2xl border border-[#E3EAE5] space-y-3">
           <Award className="w-12 h-12 text-slate-300 mx-auto" />
           <h2 className="text-base font-bold text-slate-700">No Assignments in this category</h2>
           <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -231,13 +231,13 @@ export default function StudentAssignmentsPage() {
             return (
               <div
                 key={asgn._id}
-                className="bg-white rounded-2xl border border-[#E2E8E0] p-5 shadow-2xs hover:border-[#2F7C7A] transition-all flex flex-col justify-between space-y-4"
+                className="bg-white rounded-2xl border border-[#E3EAE5] p-5 shadow-2xs hover:border-[#23804A] transition-all flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
                   {/* Tags */}
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center space-x-2">
-                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-green-50 text-green-700 border border-green-200">
                         {asgn.subjectId?.name || asgn.subjectId?.subjectName || 'Subject'}
                       </span>
                       <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
@@ -250,7 +250,7 @@ export default function StudentAssignmentsPage() {
                         <CheckCircle2 className="w-3 h-3 mr-1" /> Graded
                       </span>
                     ) : isSubmitted ? (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-green-50 text-green-700 border border-green-200">
                         <CheckCircle2 className="w-3 h-3 mr-1" /> {sub.status === 'LATE' ? 'Submitted Late' : 'Submitted'}
                       </span>
                     ) : isOverdue ? (
@@ -266,7 +266,7 @@ export default function StudentAssignmentsPage() {
 
                   {/* Title & Description */}
                   <div>
-                    <h3 className="font-bold text-base text-[#132238]">{asgn.title}</h3>
+                    <h3 className="font-bold text-base text-[#171D19]">{asgn.title}</h3>
                     {asgn.description && (
                       <p className="text-xs text-slate-600 mt-1 leading-relaxed line-clamp-3">
                         {asgn.description}
@@ -299,9 +299,9 @@ export default function StudentAssignmentsPage() {
                               href={att.fileUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center px-2 py-1 rounded bg-white border border-slate-200 hover:border-[#2F7C7A] text-[11px] font-medium text-slate-700 transition-all"
+                              className="inline-flex items-center px-2 py-1 rounded bg-white border border-slate-200 hover:border-[#23804A] text-[11px] font-medium text-slate-700 transition-all"
                             >
-                              <Download className="w-3 h-3 mr-1 text-[#2F7C7A]" />
+                              <Download className="w-3 h-3 mr-1 text-[#23804A]" />
                               <span className="truncate max-w-[140px]">{att.fileName}</span>
                             </a>
                           ))}
@@ -334,9 +334,9 @@ export default function StudentAssignmentsPage() {
 
                   {/* If Submitted: Submission Info */}
                   {isSubmitted && !isGraded && (
-                    <div className="p-3 bg-blue-50/70 rounded-xl border border-blue-100 space-y-1 text-xs">
-                      <p className="text-blue-900 font-semibold flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
+                    <div className="p-3 bg-green-50/70 rounded-xl border border-green-100 space-y-1 text-xs">
+                      <p className="text-green-900 font-semibold flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
                         Submitted on {new Date(sub.submittedAt).toLocaleDateString('en-GB')} at {new Date(sub.submittedAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                       {sub.submittedFile?.fileName && (
@@ -344,7 +344,7 @@ export default function StudentAssignmentsPage() {
                           href={sub.submittedFile.fileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[11px] text-blue-700 hover:underline inline-flex items-center mt-1"
+                          className="text-[11px] text-green-700 hover:underline inline-flex items-center mt-1"
                         >
                           <ExternalLink className="w-3 h-3 mr-1" /> View My File ({sub.submittedFile.fileName})
                         </a>
@@ -363,7 +363,7 @@ export default function StudentAssignmentsPage() {
                   ) : (
                     <button
                       onClick={() => handleOpenSubmitModal(asgn)}
-                      className="inline-flex items-center px-4 py-2 rounded-xl bg-[#2F7C7A] hover:bg-[#286b69] text-white text-xs font-bold shadow-2xs transition-all w-full justify-center"
+                      className="inline-flex items-center px-4 py-2 rounded-xl bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-bold shadow-2xs transition-all w-full justify-center"
                     >
                       <Upload className="w-3.5 h-3.5 mr-1.5" />
                       {isSubmitted ? 'Revise Submission' : 'Submit Homework'}
@@ -382,8 +382,8 @@ export default function StudentAssignmentsPage() {
           <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <h3 className="font-bold text-base font-serif text-[#132238] flex items-center gap-2">
-                  <Upload className="w-5 h-5 text-[#2F7C7A]" /> Submit Assignment
+                <h3 className="font-bold text-base font-serif text-[#171D19] flex items-center gap-2">
+                  <Upload className="w-5 h-5 text-[#23804A]" /> Submit Assignment
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
                   {activeAssignmentForSubmit.title}
@@ -416,7 +416,7 @@ export default function StudentAssignmentsPage() {
                 <input
                   type="file"
                   onChange={(e) => setSubmissionFile(e.target.files ? e.target.files[0] : null)}
-                  className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#E6F2F1] file:text-[#2F7C7A] hover:file:bg-teal-100"
+                  className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#EAF2EC] file:text-[#23804A] hover:file:bg-green-100"
                 />
                 <p className="text-[10px] text-slate-400 mt-1">
                   Supported formats: PDF, DOCX, TXT, PNG, JPG (Max 25MB).
@@ -432,7 +432,7 @@ export default function StudentAssignmentsPage() {
                   placeholder="https://drive.google.com/..."
                   value={submissionLink}
                   onChange={(e) => setSubmissionLink(e.target.value)}
-                  className="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#2F7C7A]"
+                  className="w-full text-xs px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-hidden focus:border-[#23804A]"
                 />
               </div>
 
@@ -447,7 +447,7 @@ export default function StudentAssignmentsPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex items-center px-5 py-2.5 rounded-xl bg-[#2F7C7A] hover:bg-[#286b69] text-white text-xs font-bold shadow-2xs disabled:opacity-50"
+                  className="inline-flex items-center px-5 py-2.5 rounded-xl bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-bold shadow-2xs disabled:opacity-50"
                 >
                   {submitting ? 'Uploading Work...' : 'Confirm Submission'}
                 </button>

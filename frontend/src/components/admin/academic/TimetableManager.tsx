@@ -281,20 +281,20 @@ export default function TimetableManager({ standalone = true }: TimetableManager
       {/* Standalone Header */}
       {standalone && (
         <>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs">
             <div>
               <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-                <Link href="/admin" className="hover:text-[#2F7C7A] transition-colors">
+                <Link href="/admin" className="hover:text-[#23804A] transition-colors">
                   Dashboard
                 </Link>
                 <span>/</span>
-                <Link href="/admin/academic" className="hover:text-[#2F7C7A] transition-colors">
+                <Link href="/admin/academic" className="hover:text-[#23804A] transition-colors">
                   Academic Management
                 </Link>
                 <span>/</span>
                 <span className="text-slate-900 font-semibold">Timetable</span>
               </div>
-              <h1 className="text-2xl font-serif font-bold text-[#132238]">Class Timetable Management</h1>
+              <h1 className="text-2xl font-serif font-bold text-[#171D19]">Class Timetable Management</h1>
               <p className="text-sm text-slate-500 mt-1">
                 Configure weekly period sessions, session timings, subject assignments, and faculty allocations across classes.
               </p>
@@ -302,43 +302,43 @@ export default function TimetableManager({ standalone = true }: TimetableManager
             <button
               onClick={() => handleOpenModal()}
               disabled={!selectedClassId}
-              className="inline-flex items-center justify-center px-4 py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] cursor-pointer transition-all shadow-xs disabled:opacity-50"
+              className="inline-flex items-center justify-center px-4 py-2.5 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] cursor-pointer transition-all shadow-xs disabled:opacity-50"
             >
               <Plus className="w-4 h-4 mr-2" /> Add Period Entry
             </button>
           </div>
 
           {/* Academic Modules Navigation Tabs */}
-          <div className="flex space-x-2 border-b border-[#E2E8E0] pb-1 overflow-x-auto">
+          <div className="flex space-x-2 border-b border-[#E3EAE5] pb-1 overflow-x-auto">
             <Link
               href="/admin/academic"
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0] whitespace-nowrap"
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5] whitespace-nowrap"
             >
               <Calendar className="w-4 h-4" />
               <span>Academic Years</span>
             </Link>
             <Link
               href="/admin/academic?tab=classes"
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0] whitespace-nowrap"
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5] whitespace-nowrap"
             >
               <Layers className="w-4 h-4" />
               <span>Classes</span>
             </Link>
             <Link
               href="/admin/academic?tab=subjects"
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0] whitespace-nowrap"
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5] whitespace-nowrap"
             >
               <BookOpen className="w-4 h-4" />
               <span>Subjects</span>
             </Link>
             <Link
               href="/admin/academic/syllabus"
-              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0] whitespace-nowrap"
+              className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5] whitespace-nowrap"
             >
               <FileText className="w-4 h-4" />
               <span>Syllabus</span>
             </Link>
-            <div className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-[#2F7C7A] text-white shadow-xs whitespace-nowrap">
+            <div className="flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all bg-[#23804A] text-white shadow-xs whitespace-nowrap">
               <Clock className="w-4 h-4" />
               <span>Class Timetable</span>
               <span className="px-2 py-0.5 rounded-full text-[10px] bg-white/20 text-white">
@@ -350,7 +350,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
       )}
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-[#E2E8E0] shadow-xs space-y-3">
+      <div className="bg-white p-4 rounded-2xl border border-[#E3EAE5] shadow-xs space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
             <Filter className="w-3.5 h-3.5" /> Select Class & Schedule Filters
@@ -370,7 +370,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
             <select
               value={selectedYearId}
               onChange={(e) => setSelectedYearId(e.target.value)}
-              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white font-medium text-slate-800"
+              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white font-medium text-slate-800"
             >
               <option value="">All Academic Years</option>
               {academicYears.map((ay) => (
@@ -386,7 +386,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
             <select
               value={selectedClassId}
               onChange={(e) => setSelectedClassId(e.target.value)}
-              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white font-bold text-slate-900"
+              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white font-bold text-slate-900"
             >
               <option value="">Select a Class to manage timetable</option>
               {classesList.map((cls) => (
@@ -402,7 +402,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
             <select
               value={selectedDayFilter}
               onChange={(e) => setSelectedDayFilter(e.target.value)}
-              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] bg-white font-medium text-slate-800"
+              className="w-full px-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#23804A] bg-white font-medium text-slate-800"
             >
               <option value="">All Days (Mon - Sun)</option>
               {DAYS.map((day) => (
@@ -416,10 +416,10 @@ export default function TimetableManager({ standalone = true }: TimetableManager
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center space-y-3">
-            <div className="w-8 h-8 border-4 border-[#2F7C7A] border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-8 h-8 border-4 border-[#23804A] border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-sm font-semibold text-slate-600">Loading timetable entries...</p>
           </div>
         ) : error ? (
@@ -428,7 +428,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
             <p className="text-sm font-semibold text-rose-700">{error}</p>
             <button
               onClick={fetchEntries}
-              className="px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer"
+              className="px-4 py-2 bg-[#23804A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer"
             >
               <RefreshCw className="w-4 h-4 mr-2 inline" /> Retry
             </button>
@@ -449,7 +449,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
             </p>
             <button
               onClick={() => handleOpenModal(null, selectedDayFilter ? (selectedDayFilter as DayOfWeek) : 'MONDAY')}
-              className="inline-flex items-center px-4 py-2 bg-[#2F7C7A] text-white text-xs font-bold rounded-xl uppercase tracking-wider hover:bg-[#256361] cursor-pointer"
+              className="inline-flex items-center px-4 py-2 bg-[#23804A] text-white text-xs font-bold rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] cursor-pointer"
             >
               <Plus className="w-4 h-4 mr-1.5" /> Add First Period
             </button>
@@ -457,7 +457,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
+              <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
                 <tr>
                   <th className="px-5 py-4">Day</th>
                   <th className="px-5 py-4">Period</th>
@@ -469,7 +469,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                   <th className="px-5 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8E0]">
+              <tbody className="divide-y divide-[#E3EAE5]">
                 {filteredEntries.map((entry) => {
                   const subject = entry.subjectId as any;
                   const faculty = entry.facultyId as any;
@@ -489,7 +489,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                         {entry.startTime} - {entry.endTime}
                       </td>
                       <td className="px-5 py-4">
-                        <span className="font-bold text-[#132238]">
+                        <span className="font-bold text-[#171D19]">
                           {subject?.subjectName || subject?.name || 'Unassigned'}
                         </span>
                         {(subject?.subjectCode || subject?.code) && (
@@ -552,10 +552,10 @@ export default function TimetableManager({ standalone = true }: TimetableManager
       {/* Modal: Create / Edit Period Entry */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white max-w-lg w-full rounded-2xl shadow-xl border border-[#E2E8E0] p-6 space-y-4 my-8">
+          <div className="bg-white max-w-lg w-full rounded-2xl shadow-xl border border-[#E3EAE5] p-6 space-y-4 my-8">
             <div className="flex items-center justify-between border-b pb-3">
               <div>
-                <h3 className="text-lg font-bold text-[#132238]">
+                <h3 className="text-lg font-bold text-[#171D19]">
                   {editingItem ? 'Edit Timetable Period' : 'Add Timetable Period'}
                 </h3>
                 <p className="text-xs text-slate-500">
@@ -584,7 +584,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                     required
                     value={formData.academicYearId}
                     onChange={(e) => setFormData({ ...formData, academicYearId: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   >
                     <option value="">Select Year</option>
                     {academicYears.map((ay) => (
@@ -600,7 +600,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                     required
                     value={formData.classId}
                     onChange={(e) => setFormData({ ...formData, classId: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   >
                     <option value="">Select Class</option>
                     {classesList.map((cls) => (
@@ -619,7 +619,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                     required
                     value={formData.dayOfWeek}
                     onChange={(e) => setFormData({ ...formData, dayOfWeek: e.target.value as DayOfWeek })}
-                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] font-semibold"
+                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A] font-semibold"
                   >
                     {DAYS.map((day) => (
                       <option key={day} value={day}>
@@ -634,7 +634,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                     required
                     value={formData.periodNumber}
                     onChange={(e) => handlePeriodChange(parseInt(e.target.value, 10))}
-                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A] font-mono font-bold"
+                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A] font-mono font-bold"
                   >
                     {[1, 2, 3, 4, 5, 6, 7].map((num) => (
                       <option key={num} value={num}>
@@ -654,7 +654,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                     value={formData.startTime}
                     onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                     placeholder="08:30"
-                    className="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   />
                 </div>
                 <div>
@@ -665,7 +665,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                     value={formData.endTime}
                     onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                     placeholder="09:15"
-                    className="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   />
                 </div>
               </div>
@@ -676,7 +676,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                   required
                   value={formData.subjectId}
                   onChange={(e) => setFormData({ ...formData, subjectId: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                  className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                 >
                   <option value="">Select Subject</option>
                   {subjectsList.map((sbj: any) => (
@@ -693,7 +693,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                   required
                   value={formData.facultyId}
                   onChange={(e) => setFormData({ ...formData, facultyId: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                  className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                 >
                   <option value="">Select Faculty</option>
                   {facultyList.map((fac: any) => (
@@ -712,7 +712,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                     value={formData.room || ''}
                     onChange={(e) => setFormData({ ...formData, room: e.target.value })}
                     placeholder="e.g. Hall 1, Room 204"
-                    className="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   />
                 </div>
                 <div>
@@ -720,7 +720,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                   <select
                     value={formData.status || 'ACTIVE'}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as 'ACTIVE' | 'INACTIVE' })}
-                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#2F7C7A]"
+                    className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   >
                     <option value="ACTIVE">ACTIVE</option>
                     <option value="INACTIVE">INACTIVE</option>
@@ -739,7 +739,7 @@ export default function TimetableManager({ standalone = true }: TimetableManager
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className="px-5 py-2 bg-[#2F7C7A] text-white rounded-xl text-xs font-bold uppercase cursor-pointer hover:bg-[#256361] disabled:opacity-50 transition-colors shadow-xs"
+                  className="px-5 py-2 bg-[#23804A] text-white rounded-xl text-xs font-bold uppercase cursor-pointer hover:bg-[#1B6F41] disabled:opacity-50 transition-colors shadow-xs"
                 >
                   {formLoading ? 'Saving...' : editingItem ? 'Update Period' : 'Create Period'}
                 </button>

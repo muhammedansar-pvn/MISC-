@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
@@ -9,25 +9,8 @@ import MobileNav from '../navigation/MobileNav';
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === '/';
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 30) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const isTransparent = isHome && !isScrolled && !mobileMenuOpen;
 
   return (
     <header
@@ -35,70 +18,66 @@ export const Header = () => {
         isHome ? 'fixed top-0 left-0 right-0' : 'sticky top-0'
       } z-50 w-full transition-all duration-300 ${
         mobileMenuOpen
-          ? 'bg-[#0D1B2A] text-white border-b border-white/10'
-          : isTransparent
-          ? 'bg-gradient-to-b from-[#0D1B2A]/70 via-[#0D1B2A]/30 to-transparent text-white border-b border-transparent py-2.5'
-          : 'bg-white/95 backdrop-blur-md text-[#132238] border-b border-[rgba(19,34,56,0.12)] shadow-xs py-1.5'
+          ? 'bg-misc-navy text-white border-b border-white/10'
+          : 'bg-white/95 backdrop-blur-md text-misc-text border-b border-misc-border shadow-xs py-1.5'
       }`}
     >
       <div className="misc-container flex items-center justify-between transition-all duration-300">
-        {/* Brand / Logo */}
         <Link
           href="/"
           onClick={() => setMobileMenuOpen(false)}
-          className="flex items-center space-x-3.5 group min-w-0 pr-3"
+          className="group flex min-w-0 items-center space-x-3.5 pr-3"
           aria-label="MISC Homepage"
         >
           <img
             src="/logo.png"
             alt="MISC - Markaz Integrated Studies Council"
-            className={`h-10 sm:h-11 lg:h-12 w-auto object-contain shrink-0 transition-all duration-300 ${
-              isTransparent
-                ? 'brightness-0 invert drop-shadow-md'
-                : 'bg-white p-0.5 rounded-xs'
-            }`}
+            className="h-10 w-auto shrink-0 rounded-xs bg-white p-0.5 object-contain sm:h-11 lg:h-12"
           />
           <div className="flex flex-col text-left">
-            <span className={`font-serif text-lg sm:text-xl font-bold tracking-tight leading-none transition-colors ${
-              isTransparent ? 'text-white' : 'text-[#132238]'
-            }`}>
+            <span
+              className={
+                mobileMenuOpen
+                  ? 'font-serif text-lg font-bold leading-none tracking-tight text-white sm:text-xl'
+                  : 'font-serif text-lg font-bold leading-none tracking-tight text-misc-text sm:text-xl'
+              }
+            >
               SANAVIYYA
             </span>
-            <span className={`text-[9px] sm:text-[10px] font-mono tracking-[0.2em] uppercase mt-1 transition-colors ${
-              isTransparent ? 'text-[#F7F5EF]/80' : 'text-[#667085]'
-            }`}>
+            <span
+              className={
+                mobileMenuOpen
+                  ? 'mt-1 text-[9px] uppercase tracking-[0.2em] text-slate-300 sm:text-[10px]'
+                  : 'mt-1 text-[9px] uppercase tracking-[0.2em] text-misc-muted sm:text-[10px]'
+              }
+            >
               JAMIA MARKAZ, KARANTHUR
             </span>
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
-        <DesktopNav isTransparent={isTransparent} />
+        <DesktopNav />
 
-        {/* Mobile Hamburger / Close Toggle Button */}
         <button
           type="button"
           onClick={() => setMobileMenuOpen((prev) => !prev)}
-          className={`lg:hidden w-10 h-10 flex items-center justify-center rounded-xs border transition-all cursor-pointer shrink-0 focus-visible:ring-2 focus-visible:ring-[#2F7C7A] focus-visible:outline-none ${
+          className={`flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-xs border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-misc-primary lg:hidden ${
             mobileMenuOpen
-              ? 'bg-[#0D1B2A] border-white/20 text-white'
-              : isTransparent
-              ? 'bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20'
-              : 'bg-white border-[rgba(19,34,56,0.12)] text-[#132238] hover:bg-[#F7F7F3]'
+              ? 'border-white/20 bg-misc-navy text-white'
+              : 'border-misc-border bg-white text-misc-text hover:bg-misc-page'
           }`}
           aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           aria-expanded={mobileMenuOpen}
           aria-controls="mobile-navigation-menu"
         >
           {mobileMenuOpen ? (
-            <X className="w-5 h-5 stroke-[2]" />
+            <X className="h-5 w-5 stroke-[2]" />
           ) : (
-            <Menu className="w-5 h-5 stroke-[2]" />
+            <Menu className="h-5 w-5 stroke-[2]" />
           )}
         </button>
       </div>
 
-      {/* Mobile Navigation Panel */}
       <MobileNav isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
     </header>
   );

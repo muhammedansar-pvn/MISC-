@@ -101,15 +101,15 @@ export default function AdminEventsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E2E8E0] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#E3EAE5] shadow-xs">
         <div>
-          <h1 className="text-2xl font-serif font-bold text-[#132238]">Events & Registrations</h1>
+          <h1 className="text-2xl font-serif font-bold text-[#171D19]">Events & Registrations</h1>
           <p className="text-sm text-slate-500 mt-1">Organize institutional events, conferences, and track registrations</p>
         </div>
         {activeTab === 'events' && (
           <button
             onClick={() => handleOpenModal()}
-            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#2F7C7A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#256361] cursor-pointer"
+            className="inline-flex items-center justify-center px-4 py-2.5 bg-[#23804A] text-white font-bold text-xs rounded-xl uppercase tracking-wider hover:bg-[#1B6F41] cursor-pointer"
           >
             <Plus className="w-4 h-4 mr-2" /> Create New Event
           </button>
@@ -117,7 +117,7 @@ export default function AdminEventsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-2 border-b border-[#E2E8E0] pb-1 overflow-x-auto">
+      <div className="flex space-x-2 border-b border-[#E3EAE5] pb-1 overflow-x-auto">
         {[
           { id: 'events' as const, label: 'All Events', icon: Calendar, count: events.length },
           { id: 'registrations' as const, label: 'Event Registrations', icon: Users, count: registrations.length },
@@ -129,8 +129,8 @@ export default function AdminEventsPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center space-x-2 px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'bg-[#2F7C7A] text-white shadow-xs'
-                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-[#E2E8E0]'
+                  ? 'bg-[#23804A] text-white shadow-xs'
+                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-[#E3EAE5]'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -144,24 +144,24 @@ export default function AdminEventsPage() {
       </div>
 
       {/* Content Table */}
-      <div className="bg-white rounded-2xl border border-[#E2E8E0] shadow-xs overflow-hidden">
+      <div className="bg-white rounded-2xl border border-[#E3EAE5] shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center space-y-3">
-            <div className="w-8 h-8 border-4 border-[#2F7C7A] border-t-transparent rounded-full animate-spin mx-auto" />
+            <div className="w-8 h-8 border-4 border-[#23804A] border-t-transparent rounded-full animate-spin mx-auto" />
             <p className="text-sm font-semibold text-slate-600">Loading events data...</p>
           </div>
         ) : error ? (
           <div className="p-12 text-center space-y-4">
             <AlertCircle className="w-10 h-10 text-rose-500 mx-auto" />
             <p className="text-sm font-semibold text-rose-700">{error}</p>
-            <button onClick={fetchEventsData} className="px-4 py-2 bg-[#2F7C7A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer">
+            <button onClick={fetchEventsData} className="px-4 py-2 bg-[#23804A] text-white font-bold text-xs rounded-lg uppercase cursor-pointer">
               <RefreshCw className="w-4 h-4 mr-2 inline" /> Retry
             </button>
           </div>
         ) : activeTab === 'events' ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E2E8E0]">
+              <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E3EAE5]">
                 <tr>
                   <th className="px-6 py-4">Event Title</th>
                   <th className="px-6 py-4">Type</th>
@@ -171,10 +171,10 @@ export default function AdminEventsPage() {
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8E0]">
+              <tbody className="divide-y divide-[#E3EAE5]">
                 {events.map((evt) => (
                   <tr key={evt._id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-bold text-[#132238]">{evt.title}</td>
+                    <td className="px-6 py-4 font-bold text-[#171D19]">{evt.title}</td>
                     <td className="px-6 py-4">
                       <span className="px-2.5 py-0.5 text-xs font-bold bg-slate-100 text-slate-700 rounded-full border">{evt.eventType}</span>
                     </td>
@@ -196,7 +196,7 @@ export default function AdminEventsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[#F7F8F5] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E2E8E0]">
+              <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E3EAE5]">
                 <tr>
                   <th className="px-6 py-4">Participant Name</th>
                   <th className="px-6 py-4">Email</th>
@@ -205,10 +205,10 @@ export default function AdminEventsPage() {
                   <th className="px-6 py-4">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8E0]">
+              <tbody className="divide-y divide-[#E3EAE5]">
                 {registrations.map((reg) => (
                   <tr key={reg._id} className="hover:bg-slate-50">
-                    <td className="px-6 py-4 font-bold text-[#132238]">{reg.participantName || (reg.userId as any)?.name || 'Guest'}</td>
+                    <td className="px-6 py-4 font-bold text-[#171D19]">{reg.participantName || (reg.userId as any)?.name || 'Guest'}</td>
                     <td className="px-6 py-4 text-slate-600">{reg.email || (reg.userId as any)?.email}</td>
                     <td className="px-6 py-4 font-medium text-slate-800">{(reg.eventId as any)?.title || 'Event'}</td>
                     <td className="px-6 py-4 text-xs text-slate-500">{reg.createdAt ? new Date(reg.createdAt).toLocaleDateString() : 'N/A'}</td>
@@ -224,9 +224,9 @@ export default function AdminEventsPage() {
       {/* Event Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white max-w-lg w-full rounded-2xl shadow-xl border border-[#E2E8E0] p-6 space-y-4">
+          <div className="bg-white max-w-lg w-full rounded-2xl shadow-xl border border-[#E3EAE5] p-6 space-y-4">
             <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-lg font-bold text-[#132238]">{editingEvent ? 'Edit Event' : 'Create New Event'}</h3>
+              <h3 className="text-lg font-bold text-[#171D19]">{editingEvent ? 'Edit Event' : 'Create New Event'}</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer"><X className="w-5 h-5" /></button>
             </div>
 
@@ -283,7 +283,7 @@ export default function AdminEventsPage() {
 
               <div className="flex justify-end space-x-3 pt-3 border-t">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border rounded-lg text-xs font-bold cursor-pointer">Cancel</button>
-                <button type="submit" disabled={formLoading} className="px-5 py-2 bg-[#2F7C7A] text-white rounded-lg text-xs font-bold uppercase cursor-pointer">
+                <button type="submit" disabled={formLoading} className="px-5 py-2 bg-[#23804A] text-white rounded-lg text-xs font-bold uppercase cursor-pointer">
                   {formLoading ? 'Saving...' : editingEvent ? 'Update' : 'Create'}
                 </button>
               </div>

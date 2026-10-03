@@ -162,8 +162,8 @@ export default function StudentAttendancePage() {
         );
       case 'LEAVE':
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-            <CalendarDays className="w-3 h-3 mr-1 text-blue-600" /> Approved Leave
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200">
+            <CalendarDays className="w-3 h-3 mr-1 text-green-600" /> Approved Leave
           </span>
         );
       default:
@@ -184,13 +184,13 @@ export default function StudentAttendancePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-xs text-slate-500 mb-1">
-            <Link href="/student" className="hover:text-[#2F7C7A] transition-colors">
+            <Link href="/student" className="hover:text-[#23804A] transition-colors">
               Dashboard
             </Link>
             <span>/</span>
             <span className="text-slate-900 font-semibold">Attendance</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#132238]">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#171D19]">
             Attendance
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
@@ -204,7 +204,7 @@ export default function StudentAttendancePage() {
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="py-2 pl-3 pr-8 text-xs font-semibold text-slate-800 bg-white border border-[#E2E8E0] rounded-lg shadow-2xs focus:outline-hidden focus:border-[#2F7C7A] appearance-none cursor-pointer"
+              className="py-2 pl-3 pr-8 text-xs font-semibold text-slate-800 bg-white border border-[#E3EAE5] rounded-lg shadow-2xs focus:outline-hidden focus:border-[#23804A] appearance-none cursor-pointer"
             >
               {monthOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -218,24 +218,24 @@ export default function StudentAttendancePage() {
           <button
             onClick={() => loadAttendanceData(selectedMonth, true)}
             disabled={loading || refreshing}
-            className="p-2 rounded-lg border border-[#E2E8E0] bg-white text-slate-600 hover:text-[#2F7C7A] hover:bg-slate-50 shadow-2xs transition-all disabled:opacity-50"
+            className="p-2 rounded-lg border border-[#E3EAE5] bg-white text-slate-600 hover:text-[#23804A] hover:bg-slate-50 shadow-2xs transition-all disabled:opacity-50"
             title="Refresh records from biometric sync"
             aria-label="Refresh attendance"
           >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-[#2F7C7A]' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin text-[#23804A]' : ''}`} />
           </button>
         </div>
       </div>
 
       {/* 2. Biometric Information Banner */}
-      <div className="bg-white rounded-xl border border-[#E2E8E0] p-5 shadow-2xs">
+      <div className="bg-white rounded-xl border border-[#E3EAE5] p-5 shadow-2xs">
         <div className="flex items-start space-x-4">
-          <div className="w-10 h-10 rounded-xl bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center shrink-0 border border-[#2F7C7A]/20">
+          <div className="w-10 h-10 rounded-xl bg-[#EAF2EC] text-[#23804A] flex items-center justify-center shrink-0 border border-[#23804A]/20">
             <Fingerprint className="w-5 h-5" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2">
-              <h2 className="text-sm font-bold text-[#132238]">
+              <h2 className="text-sm font-bold text-[#171D19]">
                 Attendance is automatically recorded
               </h2>
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800">
@@ -252,17 +252,17 @@ export default function StudentAttendancePage() {
       {/* 3. Attendance Overview (Four Summary Cards) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Overall Attendance */}
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-2">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Overall Attendance
             </span>
-            <div className="w-8 h-8 rounded-lg bg-[#E6F2F1] text-[#2F7C7A] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#EAF2EC] text-[#23804A] flex items-center justify-center">
               <Fingerprint className="w-4 h-4" />
             </div>
           </div>
           <div className="flex items-baseline space-x-2">
-            <span className="text-2xl sm:text-3xl font-bold font-mono text-[#132238]">
+            <span className="text-2xl sm:text-3xl font-bold font-mono text-[#171D19]">
               {loading ? (
                 <span className="text-slate-300">...</span>
               ) : overview?.overallPercentage != null ? (
@@ -291,7 +291,7 @@ export default function StudentAttendancePage() {
         </div>
 
         {/* Present */}
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-2">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Present
@@ -313,7 +313,7 @@ export default function StudentAttendancePage() {
         </div>
 
         {/* Absent */}
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-2">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Absent
@@ -335,7 +335,7 @@ export default function StudentAttendancePage() {
         </div>
 
         {/* Late */}
-        <div className="bg-white p-5 rounded-xl border border-[#E2E8E0] shadow-2xs space-y-2">
+        <div className="bg-white p-5 rounded-xl border border-[#E3EAE5] shadow-2xs space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
               Late
@@ -358,13 +358,13 @@ export default function StudentAttendancePage() {
       </div>
 
       {/* 4. Monthly Attendance: Daily Attendance Table & Session-wise Records */}
-      <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
         {/* Table Header & Controls */}
-        <div className="p-5 border-b border-[#E2E8E0] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-5 border-b border-[#E3EAE5] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2">
-              <CalendarDays className="w-4 h-4 text-[#2F7C7A]" />
-              <h2 className="text-base font-bold text-[#132238]">
+              <CalendarDays className="w-4 h-4 text-[#23804A]" />
+              <h2 className="text-base font-bold text-[#171D19]">
                 Daily Session Attendance ({selectedMonthLabel})
               </h2>
             </div>
@@ -383,19 +383,19 @@ export default function StudentAttendancePage() {
                 placeholder="Search date or subject..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-[#E2E8E0] rounded-lg focus:outline-hidden focus:border-[#2F7C7A] text-slate-800 placeholder-slate-400"
+                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-[#E3EAE5] rounded-lg focus:outline-hidden focus:border-[#23804A] text-slate-800 placeholder-slate-400"
               />
             </div>
 
             {/* Status Filter Tabs */}
-            <div className="inline-flex rounded-lg border border-[#E2E8E0] bg-slate-50 p-0.5 text-xs">
+            <div className="inline-flex rounded-lg border border-[#E3EAE5] bg-slate-50 p-0.5 text-xs">
               {(['ALL', 'PRESENT', 'ABSENT', 'LATE'] as const).map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
                   className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all ${
                     statusFilter === st
-                      ? 'bg-white text-[#132238] shadow-2xs'
+                      ? 'bg-white text-[#171D19] shadow-2xs'
                       : 'text-slate-500 hover:text-slate-900'
                   }`}
                 >
@@ -409,7 +409,7 @@ export default function StudentAttendancePage() {
         {/* Content Section: Table or Specified Empty State */}
         {loading ? (
           <div className="p-12 text-center text-xs text-slate-400">
-            <div className="w-8 h-8 rounded-full border-2 border-[#2F7C7A] border-t-transparent animate-spin mx-auto mb-3" />
+            <div className="w-8 h-8 rounded-full border-2 border-[#23804A] border-t-transparent animate-spin mx-auto mb-3" />
             Loading biometric session records...
           </div>
         ) : filteredRecords.length === 0 ? (
@@ -428,7 +428,7 @@ export default function StudentAttendancePage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-[#E2E8E0] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                <tr className="bg-slate-50 border-b border-[#E3EAE5] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                   <th className="p-3.5">Date</th>
                   <th className="p-3.5">Day</th>
                   <th className="p-3.5">Session / Period</th>
@@ -471,11 +471,11 @@ export default function StudentAttendancePage() {
       </div>
 
       {/* 5. Subject-wise Attendance Breakdown */}
-      <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
-        <div className="p-5 border-b border-[#E2E8E0]">
+      <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
+        <div className="p-5 border-b border-[#E3EAE5]">
           <div className="flex items-center space-x-2">
-            <Layers className="w-4 h-4 text-[#2F7C7A]" />
-            <h2 className="text-base font-bold text-[#132238]">
+            <Layers className="w-4 h-4 text-[#23804A]" />
+            <h2 className="text-base font-bold text-[#171D19]">
               Subject-wise Attendance
             </h2>
           </div>
@@ -500,7 +500,7 @@ export default function StudentAttendancePage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-[#E2E8E0] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                <tr className="bg-slate-50 border-b border-[#E3EAE5] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                   <th className="p-3.5">Subject</th>
                   <th className="p-3.5 text-center">Total Sessions</th>
                   <th className="p-3.5 text-center">Present</th>
@@ -560,11 +560,11 @@ export default function StudentAttendancePage() {
       </div>
 
       {/* 6. Attendance History */}
-      <div className="bg-white rounded-xl border border-[#E2E8E0] shadow-2xs overflow-hidden">
-        <div className="p-5 border-b border-[#E2E8E0]">
+      <div className="bg-white rounded-xl border border-[#E3EAE5] shadow-2xs overflow-hidden">
+        <div className="p-5 border-b border-[#E3EAE5]">
           <div className="flex items-center space-x-2">
-            <History className="w-4 h-4 text-[#2F7C7A]" />
-            <h2 className="text-base font-bold text-[#132238]">
+            <History className="w-4 h-4 text-[#23804A]" />
+            <h2 className="text-base font-bold text-[#171D19]">
               Attendance History
             </h2>
           </div>
@@ -589,7 +589,7 @@ export default function StudentAttendancePage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-[#E2E8E0] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                <tr className="bg-slate-50 border-b border-[#E3EAE5] text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
                   <th className="p-3.5">Month</th>
                   <th className="p-3.5 text-center">Sessions</th>
                   <th className="p-3.5 text-center">Present</th>
@@ -628,8 +628,8 @@ export default function StudentAttendancePage() {
       </div>
 
       {/* 7. Information Footer */}
-      <div className="p-5 rounded-xl bg-slate-50 border border-[#E2E8E0] text-xs text-slate-600 flex flex-col sm:flex-row items-start gap-4">
-        <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-[#2F7C7A] flex items-center justify-center shrink-0 mt-0.5">
+      <div className="p-5 rounded-xl bg-slate-50 border border-[#E3EAE5] text-xs text-slate-600 flex flex-col sm:flex-row items-start gap-4">
+        <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 text-[#23804A] flex items-center justify-center shrink-0 mt-0.5">
           <Info className="w-4 h-4" />
         </div>
         <div className="space-y-1 text-xs">

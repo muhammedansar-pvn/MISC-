@@ -1,6 +1,8 @@
 const FacultyProfile = require("./faculty.model");
 const User = require("../users/user.model");
 const { escapeRegex } = require("../../shared/utils/regex");
+const { sendAndStoreOtp, maskEmail } = require("../auth/auth.service");
+const OtpVerification = require("../auth/otp-verification.model");
 
 const createFaculty = async (facultyData) => {
   const user = await User.findById(facultyData.userId);
@@ -41,23 +43,46 @@ const createFaculty = async (facultyData) => {
 };
 
 const getFacultyMembers = async (filter = {}, search = "", pagination = null) => {
-  const query = { isDeleted: { $ne: true }, ...filter };
+  const { status, department, ...profileFilter } = filter;
+  const userFilter = {
+    isDeleted: { $ne: true },
+    role: { $in: ["FACULTY", "HOD", "PRINCIPAL"] },
+  };
+  if (status) userFilter.status = status.toUpperCase();
+
+  const users = await User.find(userFilter)
+    .select("_id name email username mobile")
+    .lean();
+  const userIds = users.map((user) => user._id);
+  const query = {
+    isDeleted: { $ne: true },
+    userId: { $in: userIds },
+    ...profileFilter,
+  };
+
+  if (department) {
+    query.department = new RegExp(escapeRegex(department.trim()), "i");
+  }
 
   if (search) {
     const searchRegex = new RegExp(escapeRegex(search.trim()), "i");
+    const matchingUserIds = users
+      .filter((user) => [user.name, user.email, user.username, user.mobile].some((value) => searchRegex.test(value || "")))
+      .map((user) => user._id);
     query.$or = [
       { facultyId: searchRegex },
       { nameEnglish: searchRegex },
       { nameArabic: searchRegex },
       { contactNumber: searchRegex },
       { department: searchRegex },
+      { userId: { $in: matchingUserIds } },
     ];
   }
 
   if (pagination) {
     const [data, total] = await Promise.all([
       FacultyProfile.find(query)
-        .populate("userId", "name email username role status mobile")
+        .populate("userId", "name email pendingEmail username role status mobile isDeleted")
         .populate("institutionId", "name code")
         .populate("assignedClasses", "name code")
         .populate("assignedSubjects", "subjectName subjectCode category")
@@ -71,7 +96,7 @@ const getFacultyMembers = async (filter = {}, search = "", pagination = null) =>
   }
 
   return FacultyProfile.find(query)
-    .populate("userId", "name email username role status mobile")
+    .populate("userId", "name email pendingEmail username role status mobile isDeleted")
     .populate("institutionId", "name code")
     .populate("assignedClasses", "name code")
     .populate("assignedSubjects", "subjectName subjectCode category")
@@ -86,15 +111,86 @@ const getFacultyById = async (id) => {
     return null;
   }
 
-  return FacultyProfile.findOne({
+  const faculty = await FacultyProfile.findOne({
     $or: [{ _id: id }, { userId: id }],
     isDeleted: { $ne: true },
   })
-    .populate("userId", "name email username role status mobile")
+    .populate("userId", "name email pendingEmail username role status mobile isDeleted")
     .populate("institutionId", "name code")
     .populate("assignedClasses", "name code")
     .populate("assignedSubjects", "subjectName subjectCode category")
     .lean();
+
+  if (!faculty || !faculty.userId || faculty.userId.isDeleted === true) return null;
+  return faculty;
+};
+
+const assertFacultyAvailableForAssignment = async (facultyIdOrUserId) => {
+  const faculty = await FacultyProfile.findOne({
+    $or: [{ _id: facultyIdOrUserId }, { userId: facultyIdOrUserId }],
+  })
+    .populate("userId", "status isDeleted")
+    .lean();
+
+  if (!faculty || faculty.isDeleted === true || !faculty.userId || faculty.userId.isDeleted === true) {
+    const error = new Error("Active faculty profile not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  if (faculty.status === "INACTIVE" || ["INACTIVE", "SUSPENDED"].includes(faculty.userId.status)) {
+    const error = new Error("Inactive faculty cannot receive new academic responsibilities");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  return faculty;
+};
+
+const getFacultyDetails = async (id) => {
+  const faculty = await getFacultyById(id);
+  if (!faculty) return null;
+
+  const FacultyAssignment = require("../academics/faculty-assignment.model");
+  const Timetable = require("../academics/timetable.model");
+  const AttendanceRecord = require("../attendance/attendance-record.model");
+  const Assignment = require("../assignments/assignment.model");
+  const MarkEntry = require("../exams/mark-entry.model");
+  const MentorAssignment = require("../mentorship/mentor-assignment.model");
+
+  const [assignments, timetableEntriesCount, assignmentsCreatedCount, attendanceRecordsCount, marksEvaluatedCount, menteesCount] = await Promise.all([
+    FacultyAssignment.find({ facultyId: faculty._id, status: "ACTIVE" })
+      .populate("classId", "name code department")
+      .populate("subjectId", "name subjectName code subjectCode category")
+      .populate("academicYearId", "yearName yearCode")
+      .lean(),
+    Timetable.countDocuments({ facultyId: faculty._id, isDeleted: { $ne: true } }),
+    Assignment.countDocuments({ facultyId: faculty._id, isDeleted: { $ne: true } }),
+    AttendanceRecord.countDocuments({ markedBy: faculty.userId._id || faculty.userId }),
+    MarkEntry.countDocuments({ evaluatorId: faculty._id }),
+    MentorAssignment.countDocuments({ mentorId: faculty._id }),
+  ]);
+
+  const assignedClasses = [...new Map(
+    assignments.filter((item) => item.classId).map((item) => [item.classId._id.toString(), item.classId])
+  ).values()];
+  const assignedSubjects = [...new Map(
+    assignments.filter((item) => item.subjectId).map((item) => [item.subjectId._id.toString(), item.subjectId])
+  ).values()];
+
+  return {
+    ...faculty,
+    currentAssignments: assignments,
+    academicActivity: {
+      assignedClassesCount: assignedClasses.length,
+      assignedSubjectsCount: assignedSubjects.length,
+      activeAssignmentsCount: assignments.length,
+      timetableEntriesCount,
+      assignmentsCreatedCount,
+      attendanceRecordsCount,
+      marksEvaluatedCount,
+      menteesCount,
+    },
+  };
 };
 
 const ensureFacultyProfileForUser = async (userId) => {
@@ -131,23 +227,137 @@ const ensureFacultyProfileForUser = async (userId) => {
 };
 
 const updateFaculty = async (id, updateData) => {
-  return FacultyProfile.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
-    .populate("userId", "name email username role status mobile")
-    .populate("institutionId", "name code")
-    .populate("assignedClasses", "name code")
-    .populate("assignedSubjects", "subjectName subjectCode category")
-    .lean();
+  const faculty = await FacultyProfile.findOne({ _id: id, isDeleted: { $ne: true } });
+  if (!faculty) return null;
+
+  const user = await User.findById(faculty.userId);
+  if (!user || user.isDeleted === true) {
+    const error = new Error("Linked faculty user account not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const { email, nameEnglish, contactNumber, ...profileData } = updateData;
+  if (profileData.facultyId && profileData.facultyId !== faculty.facultyId) {
+    const duplicateFacultyId = await FacultyProfile.exists({
+      _id: { $ne: faculty._id },
+      facultyId: profileData.facultyId,
+    });
+    if (duplicateFacultyId) {
+      const error = new Error("Faculty ID already exists");
+      error.statusCode = 409;
+      throw error;
+    }
+  }
+
+  const allowedProfileFields = [
+    "facultyId", "nameArabic", "placeEnglish", "placeArabic", "designation",
+    "islamicQualification", "academicQualification", "joiningYear", "previousExperience",
+    "photo", "department", "institutionId", "assignedClasses", "assignedSubjects",
+  ];
+  for (const key of allowedProfileFields) {
+    if (profileData[key] !== undefined) faculty[key] = profileData[key];
+  }
+  if (nameEnglish !== undefined) {
+    faculty.nameEnglish = nameEnglish.trim();
+    user.name = nameEnglish.trim();
+  }
+  if (contactNumber !== undefined) {
+    faculty.contactNumber = contactNumber.trim();
+    user.mobile = contactNumber.trim() || undefined;
+  }
+
+  let emailChange = null;
+  if (email !== undefined) {
+    const normalizedEmail = email.toLowerCase().trim();
+    if (normalizedEmail === user.email && user.pendingEmail) {
+      await OtpVerification.deleteMany({ userId: user._id, purpose: "EMAIL_VERIFICATION" });
+      user.pendingEmail = undefined;
+    } else if (normalizedEmail !== user.email) {
+      const existingUser = await User.findOne({
+        _id: { $ne: user._id },
+        $or: [
+          { email: normalizedEmail },
+          { pendingEmail: normalizedEmail },
+          { username: normalizedEmail },
+        ],
+      });
+      if (existingUser) {
+        const error = new Error("Another user is already registered with this email address or username");
+        error.statusCode = 409;
+        throw error;
+      }
+
+      if (normalizedEmail !== user.pendingEmail) {
+        user.pendingEmail = normalizedEmail;
+      }
+      emailChange = {
+        requiresEmailVerification: true,
+        email: normalizedEmail,
+        maskedEmail: maskEmail(normalizedEmail),
+      };
+    }
+  }
+
+  await Promise.all([faculty.save(), user.save()]);
+
+  if (emailChange && emailChange.email !== user.email) {
+    try {
+      const otpResult = await sendAndStoreOtp(emailChange.email, "EMAIL_VERIFICATION", { userId: user._id });
+      emailChange.verificationId = otpResult.verificationId;
+      emailChange.expiresAt = otpResult.expiresAt;
+      if (otpResult.success === false) {
+        emailChange.message = otpResult.error?.message || otpResult.message || "Email update is pending verification";
+      }
+    } catch (error) {
+      emailChange.message = error.message || "Email update is pending verification";
+    }
+  }
+
+  const updatedFaculty = await getFacultyById(faculty._id);
+  return emailChange ? { ...updatedFaculty, ...emailChange } : updatedFaculty;
 };
 
-const deleteFaculty = async (id, hardDelete = false) => {
-  if (hardDelete) {
-    return FacultyProfile.findByIdAndDelete(id);
+const updateFacultyStatus = async (id, status) => {
+  const targetStatus = status ? status.toUpperCase() : "";
+  if (!["ACTIVE", "INACTIVE", "SUSPENDED"].includes(targetStatus)) {
+    const error = new Error("Status must be ACTIVE, INACTIVE, or SUSPENDED");
+    error.statusCode = 400;
+    throw error;
   }
-  return FacultyProfile.findByIdAndUpdate(
-    id,
-    { status: "INACTIVE", isDeleted: true },
-    { new: true }
-  );
+
+  const faculty = await FacultyProfile.findOne({ _id: id, isDeleted: { $ne: true } });
+  if (!faculty) return null;
+  const user = await User.findById(faculty.userId);
+  if (!user || user.isDeleted === true) {
+    const error = new Error("Linked faculty user account not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  // Update the user first so a partial failure always fails closed for login and protected APIs.
+  user.status = targetStatus;
+  await user.save();
+  faculty.status = targetStatus === "SUSPENDED" ? "INACTIVE" : targetStatus;
+  await faculty.save();
+  return getFacultyById(faculty._id);
+};
+
+const deleteFaculty = async (id) => {
+  const faculty = await FacultyProfile.findOne({ _id: id, isDeleted: { $ne: true } });
+  if (!faculty) return null;
+  const user = await User.findById(faculty.userId);
+
+  if (user) {
+    user.status = "INACTIVE";
+    user.isDeleted = true;
+    await user.save();
+  }
+
+  faculty.status = "INACTIVE";
+  faculty.isDeleted = true;
+  await faculty.save();
+  return faculty;
 };
 
 /**
@@ -556,8 +766,11 @@ module.exports = {
   createFaculty,
   getFacultyMembers,
   getFacultyById,
+  getFacultyDetails,
+  assertFacultyAvailableForAssignment,
   ensureFacultyProfileForUser,
   updateFaculty,
+  updateFacultyStatus,
   deleteFaculty,
   getFacultyDashboardStats,
   getFacultyMyTimetable,

@@ -1,125 +1,98 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from '@/hooks/useNavigate';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, BookOpen, Layers3, GraduationCap, FileText } from 'lucide-react';
+
+const programmes = [
+  {
+    title: 'Sanaviyya',
+    stream: 'Islamic Studies',
+    description: 'Classical Sharia, Hadith, Usul & Quranic Sciences',
+    image: '/MKZ01377.webp',
+    icon: BookOpen,
+  },
+  {
+    title: 'Muthawwal',
+    stream: 'Contemporary Studies',
+    description: 'University Arts, Commerce, Science & Humanities',
+    image: '/vision.webp',
+    icon: Layers3,
+  },
+  {
+    title: 'Special Programmes',
+    stream: 'Integrated Programmes',
+    description: 'Dual-Track Alim & Secondary / Higher Secondary Degrees',
+    image: '/DSC00390.webp',
+    icon: GraduationCap,
+  },
+  {
+    title: 'Certificate Courses',
+    stream: 'Professional Programmes',
+    description: 'Leadership, Pedagogical Training, Research & Languages',
+    image: '/Diwan.webp',
+    icon: FileText,
+  },
+];
 
 export const CoreServicesSection = () => {
   const navigate = useNavigate();
-  const [activeImage, setActiveImage] = useState('/MKZ01377.JPG.jpeg');
-
-  const programmes = [
-    {
-      number: '01',
-      title: 'Islamic Studies',
-      tagline: 'Classical Sharia, Hadith, Usul & Quranic Sciences',
-      image: '/MKZ01377.JPG.jpeg',
-      path: '/academics',
-    },
-    {
-      number: '02',
-      title: 'Contemporary Studies',
-      tagline: 'University Arts, Commerce, Science & Humanities',
-      image: '/campus.png',
-      path: '/academics',
-    },
-    {
-      number: '03',
-      title: 'Integrated Programmes',
-      tagline: 'Dual-Track Alim & Secondary / Higher Secondary Degrees',
-      image: '/DSC00390.JPG.jpeg',
-      path: '/academics',
-    },
-    {
-      number: '04',
-      title: 'Professional Programmes',
-      tagline: 'Leadership, Pedagogical Training, Research & Languages',
-      image: '/Diwan.JPG.jpeg',
-      path: '/academics',
-    },
-  ];
 
   return (
-    <section className="relative bg-[#FFFFFF] text-[#132238] py-24 sm:py-32 lg:py-36 xl:py-40 border-b border-[rgba(19,34,56,0.12)]">
+    <section className="border-b border-misc-border bg-misc-page py-16 text-misc-text sm:py-20 lg:py-24">
       <div className="misc-container">
-        
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 sm:mb-20 gap-6 pb-6 border-b border-[rgba(19,34,56,0.12)]">
-          <div className="space-y-3 max-w-2xl">
-            <div className="flex items-center space-x-3">
-              <span className="font-mono text-xs sm:text-sm font-semibold text-[#2F7C7A] tracking-wider">
-                05
-              </span>
-              <span className="text-xs sm:text-[13px] font-mono tracking-[0.25em] text-[#667085] uppercase">
-                ACADEMIC STREAMS
-              </span>
-            </div>
-
-            <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[#132238] leading-tight">
-              PROGRAMMES
+        <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-misc-primary">02 · Academic programmes</p>
+            <h2 className="mt-3 font-serif text-3xl font-semibold leading-tight tracking-tight text-misc-text sm:text-4xl lg:text-[2.75rem]">
+              Programmes for a Balanced Tomorrow
             </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-misc-muted sm:text-[15px]">
+              Our programmes bring classical Islamic scholarship together with contemporary academic disciplines.
+            </p>
           </div>
-
-          <p className="font-serif text-xl sm:text-2xl text-[#2F7C7A] italic font-normal max-w-md">
-            “Education shaped for scholarship and the future.”
-          </p>
+          <button
+            type="button"
+            onClick={() => navigate('/academics')}
+            className="group inline-flex min-h-10 shrink-0 items-center gap-2 text-xs font-semibold text-misc-primary transition-colors hover:text-misc-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-misc-primary"
+          >
+            <span>View All Programmes</span>
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </button>
         </div>
 
-        {/* Two-Column Composition: Left Interactive Horizontal Rows, Right Floating Dynamic Image Preview */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
-          {/* LEFT: Large Horizontal Editorial Rows */}
-          <div className="lg:col-span-7 divide-y divide-[rgba(19,34,56,0.12)] border-y border-[rgba(19,34,56,0.12)]">
-            {programmes.map((item) => (
-              <div
-                key={item.number}
-                onMouseEnter={() => setActiveImage(item.image)}
-                onClick={() => navigate(item.path)}
-                className="group py-7 sm:py-9 lg:py-10 cursor-pointer flex items-center justify-between transition-all duration-300 relative"
-              >
-                <div className="flex items-baseline space-x-6 sm:space-x-10 transform group-hover:translate-x-3 transition-transform duration-300">
-                  <span className="font-mono text-xs sm:text-sm font-semibold text-[#2F7C7A] tracking-widest shrink-0">
-                    {item.number}
-                  </span>
-
-                  <div>
-                    <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-[#132238] group-hover:text-[#2F7C7A] transition-colors duration-200">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-[#667085] font-normal mt-1 hidden sm:block">
-                      {item.tagline}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pl-4">
-                  <div className="w-10 h-10 rounded-full border border-[rgba(19,34,56,0.15)] group-hover:border-[#2F7C7A] group-hover:bg-[#2F7C7A] flex items-center justify-center transition-all duration-300">
-                    <ArrowRight className="w-4 h-4 text-[#132238] group-hover:text-white transform group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* RIGHT: High-Editorial Photographic Preview Container */}
-          <div className="lg:col-span-5 hidden lg:block">
-            <div className="relative overflow-hidden border border-[rgba(19,34,56,0.12)] shadow-sm bg-[#F7F7F3] p-3 aspect-[4/3] group">
-              <div className="relative w-full h-full overflow-hidden">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {programmes.map(({ title, stream, description, image, icon: Icon }) => (
+            <button
+              key={title}
+              type="button"
+              onClick={() => navigate('/academics')}
+              className="group overflow-hidden rounded-[14px] border border-misc-border bg-white text-left shadow-[0_8px_24px_-22px_rgba(18,35,63,0.5)] transition-all hover:-translate-y-1 hover:border-misc-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-misc-primary"
+            >
+              <span className="block overflow-hidden">
                 <img
-                  src={activeImage}
-                  alt="MISC Academic Stream Preview"
-                  className="w-full h-full object-cover object-center transition-all duration-700 ease-out transform group-hover:scale-105"
+                  src={image}
+                  alt=""
+                  className="aspect-[1.7] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute bottom-4 left-4 text-white text-[11px] font-mono tracking-widest uppercase">
-                  Academic Framework • Jamia Markaz
-                </div>
-              </div>
-            </div>
-          </div>
-
+              </span>
+              <span className="flex min-h-48 flex-col p-5">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-misc-soft-blue text-misc-primary">
+                  <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+                </span>
+                <span className="mt-3 block text-[9px] font-semibold uppercase tracking-[0.12em] text-misc-primary">{stream}</span>
+                <span className="mt-1 block font-serif text-xl font-semibold leading-tight text-misc-text">{title}</span>
+                <span className="mt-2 block text-xs leading-5 text-misc-muted">{description}</span>
+                <span className="mt-auto flex justify-end pt-3">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-misc-border text-misc-text transition-colors group-hover:border-misc-primary group-hover:bg-misc-primary group-hover:text-white">
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </span>
+                </span>
+              </span>
+            </button>
+          ))}
         </div>
-
       </div>
     </section>
   );

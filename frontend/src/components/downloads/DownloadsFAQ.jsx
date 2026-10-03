@@ -36,23 +36,23 @@ export const DownloadsFAQ = () => {
   };
 
   return (
-    <section className="relative bg-white py-14 sm:py-18 border-b border-[#E2E8E0]">
+    <section className="relative bg-white py-14 sm:py-18 border-b border-misc-border">
       <div className="misc-container">
         
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10 pb-4 border-b border-[#E2E8E0]">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10 pb-4 border-b border-misc-border">
           <div>
             <div className="flex items-center space-x-2.5 mb-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#2F7C7A]" />
-              <span className="text-xs font-bold uppercase tracking-wider text-[#2F7C7A]">
+              <span className="w-2.5 h-2.5 rounded-full bg-misc-primary" />
+              <span className="text-xs font-bold uppercase tracking-wider text-misc-primary">
                 SUPPORT
               </span>
             </div>
-            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#132238]">
+            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-misc-text">
               Frequently Asked Questions
             </h2>
           </div>
-          <span className="text-xs sm:text-sm text-[#475569] font-medium">
+          <span className="text-xs sm:text-sm text-misc-secondary font-medium">
             Common queries about academic resources
           </span>
         </div>
@@ -66,7 +66,7 @@ export const DownloadsFAQ = () => {
             return (
               <div
                 key={faq.id}
-                className="bg-[#F7F8F5] rounded-md border border-[#E2E8E0] overflow-hidden transition-all duration-200"
+                className="bg-misc-page rounded-md border border-misc-border overflow-hidden transition-all duration-200"
               >
                 <button
                   type="button"
@@ -75,13 +75,13 @@ export const DownloadsFAQ = () => {
                   aria-controls={contentId}
                   onClick={() => toggleFaq(index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
-                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between space-x-4 focus:outline-none focus:ring-2 focus:ring-[#2F7C7A] cursor-pointer"
+                  className="w-full p-5 sm:p-6 text-left flex items-center justify-between space-x-4 focus:outline-none focus:ring-2 focus:ring-misc-primary cursor-pointer"
                 >
-                  <span className="font-serif text-base sm:text-lg font-bold text-[#132238]">
+                  <span className="font-serif text-base sm:text-lg font-bold text-misc-text">
                     {faq.question}
                   </span>
                   <ChevronDown
-                    className={`w-5 h-5 text-[#2F7C7A] shrink-0 transition-transform duration-200 ${
+                    className={`w-5 h-5 text-misc-primary shrink-0 transition-transform duration-200 ${
                       isOpen ? 'rotate-180' : ''
                     }`}
                   />
@@ -92,7 +92,7 @@ export const DownloadsFAQ = () => {
                     id={contentId}
                     role="region"
                     aria-labelledby={headerId}
-                    className="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-[#475569] leading-relaxed font-normal border-t border-[#E2E8E0]/80 pt-4"
+                    className="px-5 sm:px-6 pb-6 text-xs sm:text-sm text-misc-secondary leading-relaxed font-normal border-t border-misc-border/80 pt-4"
                   >
                     {faq.answer}
                   </div>

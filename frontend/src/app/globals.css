@@ -5,44 +5,60 @@
 @source "./";
 
 @theme {
-  --font-serif: var(--font-cormorant), 'Noto Naskh Arabic', Georgia, serif;
-  --font-display: var(--font-cormorant), 'Noto Naskh Arabic', Georgia, serif;
-  --font-sans: var(--font-manrope), 'Noto Sans Malayalam', 'Noto Naskh Arabic', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Cormorant Garamond', 'Noto Naskh Arabic', Georgia, serif;
+  --font-display: 'Cormorant Garamond', 'Noto Naskh Arabic', Georgia, serif;
+  --font-sans: 'Manrope', 'Noto Sans Malayalam', 'Noto Naskh Arabic', system-ui, -apple-system, sans-serif;
+  --color-misc-primary: #2563EB;
+  --color-misc-primary-dark: #1D4ED8;
+  --color-misc-deep-blue: #1E3A8A;
+  --color-misc-blue: #3B82F6;
+  --color-misc-light-accent: #60A5FA;
+  --color-misc-soft-blue: #EFF6FF;
+  --color-misc-light-blue: #DBEAFE;
+  --color-misc-very-light-blue: #F8FBFF;
+  --color-misc-page: #FAFCFF;
+  --color-misc-text: #0F172A;
+  --color-misc-secondary: #475569;
+  --color-misc-muted: #64748B;
+  --color-misc-dark-muted: #CBD5E1;
+  --color-misc-border: #E2E8F0;
+  --color-misc-navy: #0F1F38;
+  --color-misc-navy-card: #132A46;
 }
 
 @layer base {
   :root {
     --misc-bg: #FFFFFF;
     --misc-bg-subtle: #F7F7F3;
-    --misc-bg-light-blue: #E6F2F1;
-    --misc-bg-soft-blue: #E6F2F1;
+    --misc-bg-light-blue: #DBEAFE;
+    --misc-bg-soft-blue: #EFF6FF;
     --misc-charcoal: #132238;
     --misc-text: #132238;
-    --misc-text-muted: #667085;
-    --misc-blue-accent: #2F7C7A;
-    --misc-blue-hover: #256664;
-    --misc-border: #E2E8E0;
-    --misc-border-thin: rgba(19, 34, 56, 0.12);
+    --misc-text-muted: #64748B;
+    --misc-blue-accent: #2563EB;
+    --misc-blue-hover: #1D4ED8;
+    --misc-border: #E2E8F0;
+    --misc-border-thin: rgba(15, 23, 42, 0.12);
   }
 
   body {
     background-color: var(--misc-bg-subtle);
     color: var(--misc-text);
-    font-family: var(--font-manrope), 'Noto Sans Malayalam', 'Noto Naskh Arabic', system-ui, -apple-system, sans-serif;
+    font-family: 'Manrope', 'Noto Sans Malayalam', 'Noto Naskh Arabic', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
   }
 
   h1, h2, h3, h4, .font-serif, .font-display, .font-serif-heading {
-    font-family: var(--font-cormorant), 'Noto Naskh Arabic', Georgia, Cambria, serif;
+    font-family: 'Cormorant Garamond', 'Noto Naskh Arabic', Georgia, Cambria, serif;
   }
 
   /* Script fallback rules for Malayalam and Arabic */
   [lang="ml"], :lang(ml) {
-    font-family: var(--font-noto-malayalam), 'Noto Sans Malayalam', var(--font-manrope), system-ui, sans-serif;
+    font-family: 'Noto Sans Malayalam', 'Manrope', system-ui, sans-serif;
   }
 
   [lang="ar"], :lang(ar), [dir="rtl"] {
-    font-family: var(--font-noto-arabic), 'Noto Naskh Arabic', var(--font-cormorant), Georgia, serif;
+    font-family: 'Noto Naskh Arabic', 'Cormorant Garamond', Georgia, serif;
   }
 }
 
@@ -58,42 +74,104 @@
   }
 }
 
+/* Public Sanaviyya palette. Kept on the public layout so portal colors stay independent. */
+.sanaviyya-site {
+  --sanaviyya-brand-blue: #1E5BB8;
+  --sanaviyya-brand-blue-hover: #174A96;
+  --sanaviyya-deep-navy: #12233F;
+  --sanaviyya-background: #F6F9FD;
+  --sanaviyya-surface: #FFFFFF;
+  --sanaviyya-soft-blue: #EDF4FC;
+  --sanaviyya-text-primary: #12233F;
+  --sanaviyya-text-secondary: #667085;
+  --sanaviyya-border: #E5E9EF;
+
+  --color-misc-primary: var(--sanaviyya-brand-blue);
+  --color-misc-primary-dark: var(--sanaviyya-brand-blue-hover);
+  --color-misc-deep-blue: var(--sanaviyya-deep-navy);
+  --color-misc-blue: var(--sanaviyya-brand-blue);
+  --color-misc-light-accent: var(--sanaviyya-brand-blue);
+  --color-misc-soft-blue: var(--sanaviyya-soft-blue);
+  --color-misc-light-blue: var(--sanaviyya-soft-blue);
+  --color-misc-very-light-blue: var(--sanaviyya-background);
+  --color-misc-page: var(--sanaviyya-background);
+  --color-misc-text: var(--sanaviyya-text-primary);
+  --color-misc-secondary: var(--sanaviyya-text-secondary);
+  --color-misc-muted: var(--sanaviyya-text-secondary);
+  --color-misc-dark-muted: #CBD5E1;
+  --color-misc-border: var(--sanaviyya-border);
+  --color-misc-navy: var(--sanaviyya-deep-navy);
+  --color-misc-navy-card: #1A3151;
+}
+
+/* Green-and-white workspace theme used by the admin, student, and faculty portals. */
+.misc-portal-theme {
+  --misc-bg: #FFFFFF;
+  --misc-bg-subtle: #FBFCFB;
+  --misc-bg-light-blue: #EAF2EC;
+  --misc-bg-soft-blue: #EAF2EC;
+  --misc-charcoal: #171D19;
+  --misc-text: #171D19;
+  --misc-text-muted: #66736A;
+  --misc-blue-accent: #23804A;
+  --misc-blue-hover: #1B6F41;
+  --misc-border: #E3EAE5;
+  --misc-border-thin: rgba(23, 29, 25, 0.12);
+
+  --color-misc-primary: #23804A;
+  --color-misc-primary-dark: #1B6F41;
+  --color-misc-deep-blue: #173B26;
+  --color-misc-blue: #23804A;
+  --color-misc-light-accent: #4E8C5F;
+  --color-misc-soft-blue: #EAF2EC;
+  --color-misc-light-blue: #EAF2EC;
+  --color-misc-very-light-blue: #FBFCFB;
+  --color-misc-page: #FBFCFB;
+  --color-misc-text: #171D19;
+  --color-misc-secondary: #66736A;
+  --color-misc-muted: #66736A;
+  --color-misc-dark-muted: #CBD5CE;
+  --color-misc-border: #E3EAE5;
+  --color-misc-navy: #173B26;
+  --color-misc-navy-card: #23452F;
+}
+
 /* Custom Utilities for Premium MISC Brand Identity */
 .bg-misc-charcoal {
-  background-color: #132238;
+  background-color: var(--color-misc-navy);
 }
 
 .bg-misc-light-blue {
-  background-color: #E6F2F1;
+  background-color: var(--color-misc-light-blue);
 }
 
 .bg-misc-soft-blue {
-  background-color: #E6F2F1;
+  background-color: var(--color-misc-soft-blue);
 }
 
 .text-misc-charcoal {
-  color: #132238;
+  color: var(--color-misc-text);
 }
 
 .text-misc-blue {
-  color: #2F7C7A;
+  color: var(--color-misc-primary);
 }
 
 .border-misc {
-  border-color: #E2E8E0;
+  border-color: var(--color-misc-border);
 }
 
 .border-misc-thin {
-  border-color: rgba(19, 34, 56, 0.12);
+  border-color: rgba(15, 23, 42, 0.12);
 }
 
-/* Container constraints: max-width 1320px */
+/* Container constraints: max-width 1280px */
 .misc-container {
-  max-width: 1320px;
+  max-width: 1280px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 @media (min-width: 640px) {

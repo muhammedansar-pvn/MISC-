@@ -114,6 +114,7 @@ export const API_ENDPOINTS = {
   faculty: {
     list: '/faculty',
     byId: (id) => `/faculty/${id}`,
+    status: (id) => `/faculty/${id}/status`,
     dashboardStats: '/faculty/dashboard-stats',
     myAssignments: '/faculty/my-assignments',
     myClasses: '/faculty/my-classes',
