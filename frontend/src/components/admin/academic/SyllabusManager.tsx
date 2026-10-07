@@ -152,7 +152,13 @@ export default function SyllabusManager({
 
     const defaultYear = academicYears[0]?._id || '';
     const defaultClass = classesList[0]?._id || '';
-    const defaultSubject = subjectsList[0]?._id || '';
+    const targetClass = item?.classId?._id || item?.classId || defaultClass;
+    const validSubs = subjectsList.filter((s: any) => {
+      if (!targetClass) return true;
+      if (!s.classes || s.classes.length === 0) return true;
+      return s.classes.some((c: any) => (c?._id || c) === targetClass);
+    });
+    const defaultSubject = validSubs[0]?._id || subjectsList[0]?._id || '';
 
     const initialUnits: SyllabusUnit[] = item?.units && item.units.length > 0
       ? item.units.map((u: any, idx: number) => ({
@@ -164,7 +170,7 @@ export default function SyllabusManager({
     setFormData({
       kitabName: item?.kitabName || item?.title || '',
       academicYearId: item?.academicYearId?._id || item?.academicYearId || defaultYear,
-      classId: item?.classId?._id || item?.classId || defaultClass,
+      classId: targetClass,
       subjectId: item?.subjectId?._id || item?.subjectId || defaultSubject,
       examType: (item?.examType as SyllabusExamType) || 'HALF_YEARLY',
       units: initialUnits,
@@ -751,7 +757,18 @@ export default function SyllabusManager({
                   <select
                     required
                     value={formData.classId}
-                    onChange={(e) => setFormData({ ...formData, classId: e.target.value })}
+                    onChange={(e) => {
+                      const newClassId = e.target.value;
+                      const validSubs = subjectsList.filter((s: any) => {
+                        if (!newClassId) return true;
+                        if (!s.classes || s.classes.length === 0) return true;
+                        return s.classes.some((c: any) => (c?._id || c) === newClassId);
+                      });
+                      const nextSubId = validSubs.some((s) => s._id === formData.subjectId)
+                        ? formData.subjectId
+                        : validSubs[0]?._id || '';
+                      setFormData({ ...formData, classId: newClassId, subjectId: nextSubId });
+                    }}
                     className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   >
                     <option value="">Select Class</option>
@@ -775,11 +792,17 @@ export default function SyllabusManager({
                     className="w-full px-3 py-2 border rounded-xl text-xs bg-white focus:outline-none focus:ring-1 focus:ring-[#23804A]"
                   >
                     <option value="">Select Subject</option>
-                    {subjectsList.map((sbj: any) => (
-                      <option key={sbj._id} value={sbj._id}>
-                        {sbj.subjectName || sbj.name} ({sbj.subjectCode || sbj.code})
-                      </option>
-                    ))}
+                    {subjectsList
+                      .filter((sbj: any) => {
+                        if (!formData.classId) return true;
+                        if (!sbj.classes || sbj.classes.length === 0) return true;
+                        return sbj.classes.some((c: any) => (c?._id || c) === formData.classId);
+                      })
+                      .map((sbj: any) => (
+                        <option key={sbj._id} value={sbj._id}>
+                          {sbj.subjectName || sbj.name} ({sbj.subjectCode || sbj.code})
+                        </option>
+                      ))}
                   </select>
                 </div>
                 <div>

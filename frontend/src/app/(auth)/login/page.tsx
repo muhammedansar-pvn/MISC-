@@ -173,8 +173,13 @@ function LoginForm() {
             </div>
           </form>
 
-          <div className="text-center pt-2 border-t border-[#E2E8E0]">
-            
+          <div className="text-center pt-4 border-t border-[#E2E8E0]">
+            <Link
+              href="/login/parent"
+              className="text-xs font-semibold text-[#2F7C7A] hover:underline transition-colors cursor-pointer"
+            >
+              Are you a Parent? Sign in with OTP &rarr;
+            </Link>
           </div>
         </>
       )}

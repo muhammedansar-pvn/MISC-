@@ -2,36 +2,42 @@
 
 import React from 'react';
 import { useNavigate } from '@/hooks/useNavigate';
-import { ArrowRight, BookOpen, Layers3, GraduationCap, FileText } from 'lucide-react';
+import { ArrowRight, Clock, GraduationCap, ArrowUpRight } from 'lucide-react';
 
-const programmes = [
+const flagshipProgramme = {
+  title: 'Sanaviyya Secondary & Higher Secondary',
+  category: 'Integrated Foundational Stream',
+  duration: '5 Years Continuous',
+  eligibility: 'Post-Primary Students',
+  description: 'The core integrated model of Jamia Markaz: a synchronized 5-year curriculum combining classical Islamic sciences (Hadith, Fiqh, Quranic Arabic) with state-accredited Secondary (SSLC) and Higher Secondary (+2) education.',
+  image: '/MKZ01377.webp',
+  path: '/academics',
+};
+
+const collegiateProgrammes = [
   {
-    title: 'Sanaviyya',
-    stream: 'Islamic Studies',
-    description: 'Classical Sharia, Hadith, Usul & Quranic Sciences',
-    image: '/MKZ01377.webp',
-    icon: BookOpen,
+    title: 'Muthawwal Programme',
+    category: 'Advanced Classical & Degree Stream',
+    duration: '3 Years Full-Time',
+    eligibility: 'Higher Secondary / Sanaviyya Graduates',
+    description: 'Advanced mastery in Islamic jurisprudence, Usul al-Fiqh, and Quranic exegesis coordinated with accredited University Bachelor of Arts degree programmes.',
+    path: '/academics',
   },
   {
-    title: 'Muthawwal',
-    stream: 'Contemporary Studies',
-    description: 'University Arts, Commerce, Science & Humanities',
-    image: '/vision.webp',
-    icon: Layers3,
+    title: 'Alimiyya Postgraduate Stream',
+    category: 'Theological Specialization & Research',
+    duration: '2 Years Intensive',
+    eligibility: 'Muthawwal Scholars',
+    description: 'Postgraduate immersion in Hadith textual criticism, comparative law, thesis research, and community leadership, culminating in the prestigious Alim degree.',
+    path: '/academics',
   },
   {
-    title: 'Special Programmes',
-    stream: 'Integrated Programmes',
-    description: 'Dual-Track Alim & Secondary / Higher Secondary Degrees',
-    image: '/DSC00390.webp',
-    icon: GraduationCap,
-  },
-  {
-    title: 'Certificate Courses',
-    stream: 'Professional Programmes',
-    description: 'Leadership, Pedagogical Training, Research & Languages',
-    image: '/Diwan.webp',
-    icon: FileText,
+    title: 'Pedagogical & Arabic Diplomas',
+    category: 'Faculty Development & Da‘wah Training',
+    duration: '1 Year Certification',
+    eligibility: 'Faculty & Senior Scholars',
+    description: 'Intensive diplomas in modern instructional psychology, Arabic rhetoric, English public oratory, and administrative institutional governance.',
+    path: '/academics',
   },
 ];
 
@@ -39,59 +45,128 @@ export const CoreServicesSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="border-b border-misc-border bg-misc-page py-16 text-misc-text sm:py-20 lg:py-24">
+    <section id="programmes" className="border-b border-misc-border bg-misc-page py-14 sm:py-18 lg:py-20 text-misc-text" aria-labelledby="programmes-heading">
       <div className="misc-container">
-        <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-misc-primary">02 · Academic programmes</p>
-            <h2 className="mt-3 font-serif text-3xl font-semibold leading-tight tracking-tight text-misc-text sm:text-4xl lg:text-[2.75rem]">
+        {/* Section Header */}
+        <div className="mb-10 flex flex-col justify-between gap-4 sm:mb-12 sm:flex-row sm:items-end">
+          <div>
+            <div className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-misc-primary">
+              <span className="h-1.5 w-1.5 rounded-full bg-misc-primary" />
+              <span>04 · Academic Catalogues</span>
+            </div>
+            <h2 id="programmes-heading" className="mt-2.5 font-serif text-3xl font-medium leading-tight tracking-tight text-misc-text sm:text-4xl lg:text-[2.65rem]">
               Programmes for a Balanced Tomorrow
             </h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-misc-muted sm:text-[15px]">
-              Our programmes bring classical Islamic scholarship together with contemporary academic disciplines.
-            </p>
           </div>
+
           <button
             type="button"
             onClick={() => navigate('/academics')}
-            className="group inline-flex min-h-10 shrink-0 items-center gap-2 text-xs font-semibold text-misc-primary transition-colors hover:text-misc-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-misc-primary"
+            className="group inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md border border-misc-border bg-white px-5 py-2.5 text-xs font-semibold uppercase tracking-wider text-misc-primary transition-all hover:border-misc-primary hover:bg-misc-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-misc-primary"
           >
-            <span>View All Programmes</span>
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            <span>View Full Curricula</span>
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {programmes.map(({ title, stream, description, image, icon: Icon }) => (
-            <button
-              key={title}
-              type="button"
-              onClick={() => navigate('/academics')}
-              className="group overflow-hidden rounded-[14px] border border-misc-border bg-white text-left shadow-[0_8px_24px_-22px_rgba(18,35,63,0.5)] transition-all hover:-translate-y-1 hover:border-misc-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-misc-primary"
-            >
-              <span className="block overflow-hidden">
+        {/* Editorial Programme Composition: 1 Featured Lead + 3 Horizontal Rows */}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10 items-stretch">
+          {/* Featured Flagship Lead (5 Cols) */}
+          <div className="lg:col-span-5 flex flex-col">
+            <div className="group relative flex flex-1 flex-col overflow-hidden rounded-2xl border border-misc-border bg-white shadow-xs transition-all hover:border-misc-primary/40 hover:shadow-md">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
                 <img
-                  src={image}
-                  alt=""
-                  className="aspect-[1.7] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                  src={flagshipProgramme.image}
+                  alt={flagshipProgramme.title}
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                 />
-              </span>
-              <span className="flex min-h-48 flex-col p-5">
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-misc-soft-blue text-misc-primary">
-                  <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+                <div className="absolute top-4 left-4 inline-flex items-center rounded-sm bg-misc-primary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                  <span>Flagship Stream</span>
+                </div>
+              </div>
+
+              <div className="flex flex-1 flex-col p-6 sm:p-7">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-misc-primary">
+                  {flagshipProgramme.category}
                 </span>
-                <span className="mt-3 block text-[9px] font-semibold uppercase tracking-[0.12em] text-misc-primary">{stream}</span>
-                <span className="mt-1 block font-serif text-xl font-semibold leading-tight text-misc-text">{title}</span>
-                <span className="mt-2 block text-xs leading-5 text-misc-muted">{description}</span>
-                <span className="mt-auto flex justify-end pt-3">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-misc-border text-misc-text transition-colors group-hover:border-misc-primary group-hover:bg-misc-primary group-hover:text-white">
-                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+
+                <h3 className="mt-2 font-serif text-2xl font-bold leading-snug text-misc-text group-hover:text-misc-primary transition-colors">
+                  {flagshipProgramme.title}
+                </h3>
+
+                <p className="mt-3 text-xs sm:text-sm leading-relaxed text-misc-secondary">
+                  {flagshipProgramme.description}
+                </p>
+
+                <div className="mt-5 pt-4 border-t border-misc-border/70 flex flex-wrap gap-4 text-xs text-misc-muted">
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-misc-primary" />
+                    <span>Duration: <strong className="text-misc-text">{flagshipProgramme.duration}</strong></span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <GraduationCap className="h-3.5 w-3.5 text-misc-primary" />
+                    <span>Eligibility: <strong className="text-misc-text">{flagshipProgramme.eligibility}</strong></span>
+                  </div>
+                </div>
+
+                <div className="mt-auto pt-6">
+                  <button
+                    type="button"
+                    onClick={() => navigate(flagshipProgramme.path)}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-misc-primary hover:text-misc-primary-dark transition-colors"
+                  >
+                    <span>Curriculum Syllabus</span>
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3 Horizontal Programme Strips (7 Cols) */}
+          <div className="lg:col-span-7 flex flex-col justify-between gap-4">
+            {collegiateProgrammes.map((prog) => (
+              <div
+                key={prog.title}
+                className="group flex flex-1 flex-col justify-between rounded-xl border border-misc-border bg-white p-6 transition-all duration-200 hover:border-misc-primary/40 hover:shadow-xs"
+              >
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="rounded-sm bg-misc-soft-blue px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-misc-primary">
+                      {prog.category}
+                    </span>
+                    <span className="text-[11px] font-mono text-misc-muted">
+                      {prog.duration}
+                    </span>
+                  </div>
+
+                  {/* Programme Name as visual focus */}
+                  <h4 className="mt-3 font-serif text-xl sm:text-2xl font-bold text-misc-text group-hover:text-misc-primary transition-colors">
+                    {prog.title}
+                  </h4>
+
+                  <p className="mt-2 text-xs sm:text-sm leading-relaxed text-misc-secondary">
+                    {prog.description}
+                  </p>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-misc-border/60 flex items-center justify-between text-xs">
+                  <span className="text-misc-muted">
+                    Eligibility: <strong className="text-misc-text font-medium">{prog.eligibility}</strong>
                   </span>
-                </span>
-              </span>
-            </button>
-          ))}
+                  <button
+                    type="button"
+                    onClick={() => navigate(prog.path)}
+                    className="inline-flex items-center gap-1 font-semibold text-misc-primary hover:text-misc-primary-dark transition-colors"
+                  >
+                    <span>Curriculum Details</span>
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

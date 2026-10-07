@@ -46,3 +46,12 @@ uploads/*
 backend/uploads/*
 !backend/uploads/.gitkeep
 
+# Database dumps and local backups
+*.jsonl
+*_backup.json
+backend/scripts/db_dump*
+backend/scripts/*_backup.json
+backend/scripts/audit_output.json
+backend/scripts/cleanup_manifest.json
+
+

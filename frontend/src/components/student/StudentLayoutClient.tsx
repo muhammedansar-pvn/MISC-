@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 import {
   LayoutDashboard,
   User,
@@ -21,6 +22,7 @@ import {
   Clock,
   ShieldCheck,
   FileCheck,
+  ClipboardList,
   CalendarCheck,
   CalendarDays,
   UserCheck,
@@ -68,6 +70,7 @@ export const StudentLayoutClient: React.FC<StudentLayoutClientProps> = ({ childr
       title: 'ACADEMICS',
       items: [
         { label: 'Academic Overview', path: '/student/academics', icon: GraduationCap },
+        { label: 'Analytics & Progress', path: '/student/analytics', icon: TrendingUp },
         { label: 'Class Timetable', path: '/student/timetable', icon: Clock },
         { label: 'Attendance', path: '/student/attendance', icon: CalendarCheck },
         { label: 'Assignments', path: '/student/assignments', icon: Award },
@@ -88,6 +91,7 @@ export const StudentLayoutClient: React.FC<StudentLayoutClientProps> = ({ childr
     {
       title: 'EXAMINATIONS',
       items: [
+        { label: 'Exam Registration', path: '/student/examinations/registration', icon: ClipboardList, exact: true },
         { label: 'Exam Schedules', path: '/student/examinations', icon: Calendar, exact: true },
         { label: 'Hall Tickets & Status', path: '/student/examinations/registrations', icon: FileCheck },
         { label: 'Exam Results', path: '/student/results', icon: Award },
@@ -255,7 +259,10 @@ export const StudentLayoutClient: React.FC<StudentLayoutClientProps> = ({ childr
             </div>
 
             {/* Right User Bar */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
+              {/* Notification Bell */}
+              <NotificationBell />
+
               {/* User Menu */}
               <div className="relative">
                 <button

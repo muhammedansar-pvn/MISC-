@@ -20,7 +20,7 @@ const parsePagination = (query = {}, defaultLimit = 50, maxLimit = 100) => {
  * Standardized pagination wrapper maintaining backward compatibility.
  * Always retains `data: [...]` and `count: N` fields so existing frontend callers never break.
  */
-const formatPaginatedResponse = ({ data = [], total, page = 1, limit = 50 }) => {
+const formatPaginatedResponse = ({ data = [], total, page = 1, limit = 50, ...rest }) => {
   const totalCount = typeof total === "number" ? total : data.length;
   return {
     success: true,
@@ -30,6 +30,7 @@ const formatPaginatedResponse = ({ data = [], total, page = 1, limit = 50 }) => 
     totalPages: Math.ceil(totalCount / limit) || 1,
     limit,
     data,
+    ...rest,
   };
 };
 

@@ -4,14 +4,18 @@ const {
   handleGetExams,
   handleGetExamById,
   handleUpdateExam,
+  handlePublishExam,
   handleCreateExamSchedule,
   handleGetExamSchedules,
   handleGetFacultyExamSchedules,
   handleGetExamScheduleById,
   handleUpdateExamSchedule,
   handleGetExamScheduleRoster,
+  handleGetAvailableExamsForStudent,
   handleRegisterStudentForExam,
   handleGetExamRegistrations,
+  handleGetExamRegistrationById,
+  handleCheckExamFeePayment,
   handleUpdateExamRegistrationStatus,
   handleSubmitMarkEntry,
   handleSubmitRosterMarks,
@@ -22,9 +26,11 @@ const {
   handleGetMarkCorrectionRequests,
   handleGenerateExamResults,
   handleGetExamResults,
+  handleGetExamResultById,
 } = require("./exam.controller");
 const {
   validateExam,
+  validatePublishExam,
   validateExamSchedule,
   validateExamRegistration,
   validateMarkEntry,
@@ -42,6 +48,7 @@ router.post("/exams", requireAuth, requireRole("ADMIN"), validateExam, handleCre
 router.get("/exams", requireAuth, handleGetExams);
 router.get("/exams/:id", requireAuth, handleGetExamById);
 router.put("/exams/:id", requireAuth, requireRole("ADMIN"), validateExam, handleUpdateExam);
+router.patch("/exams/:id/publish", requireAuth, requireRole("ADMIN"), validatePublishExam, handlePublishExam);
 
 // --- EXAM SCHEDULES & FACULTY SCOPE ---
 router.post("/exam-schedules", requireAuth, requireRole("ADMIN"), validateExamSchedule, handleCreateExamSchedule);
@@ -53,8 +60,12 @@ router.get("/exam-schedules/:id/roster", requireAuth, requireRole("FACULTY", "AD
 router.post("/exam-schedules/:id/roster-marks", requireAuth, requireRole("FACULTY", "ADMIN"), validateRosterMarks, handleSubmitRosterMarks);
 
 // --- EXAM REGISTRATIONS ---
+router.get("/available-for-registration", requireAuth, requireRole("ADMIN", "INSTITUTION", "STUDENT", "PARENT"), handleGetAvailableExamsForStudent);
 router.post("/exam-registrations", requireAuth, requireRole("ADMIN", "STUDENT"), validateExamRegistration, handleRegisterStudentForExam);
-router.get("/exam-registrations", requireAuth, requireRole("ADMIN", "INSTITUTION", "STUDENT"), handleGetExamRegistrations);
+router.get("/exam-registrations", requireAuth, requireRole("ADMIN", "INSTITUTION", "STUDENT", "PARENT"), handleGetExamRegistrations);
+router.get("/exam-registrations/:id", requireAuth, requireRole("ADMIN", "INSTITUTION", "STUDENT", "PARENT"), handleGetExamRegistrationById);
+router.get("/exam-registrations/:id/payment", requireAuth, requireRole("ADMIN", "INSTITUTION", "STUDENT", "PARENT"), handleCheckExamFeePayment);
+router.get("/exam-registrations/:id/payment-check", requireAuth, requireRole("ADMIN", "INSTITUTION", "STUDENT", "PARENT"), handleCheckExamFeePayment);
 router.put("/exam-registrations/:id/status", requireAuth, requireRole("ADMIN"), handleUpdateExamRegistrationStatus);
 
 // --- MARK ENTRIES ---
@@ -70,5 +81,6 @@ router.patch("/mark-corrections/:id/review", requireAuth, requireRole("ADMIN"), 
 // --- EXAM RESULTS ---
 router.post("/exam-results/generate", requireAuth, requireRole("ADMIN"), handleGenerateExamResults);
 router.get("/exam-results", requireAuth, handleGetExamResults);
+router.get("/exam-results/:id", requireAuth, handleGetExamResultById);
 
 module.exports = router;

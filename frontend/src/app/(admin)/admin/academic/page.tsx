@@ -45,6 +45,7 @@ function AdminAcademicContent() {
   const [academicYears, setAcademicYears] = useState<AcademicYear[]>([]);
   const [classesList, setClassesList] = useState<ClassModel[]>([]);
   const [subjectsList, setSubjectsList] = useState<Subject[]>([]);
+  const [subjectClassFilter, setSubjectClassFilter] = useState<string>('ALL');
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -126,15 +127,21 @@ function AdminAcademicContent() {
       setFormData({
         name: item?.name || '',
         code: item?.code || '',
+        department: item?.department || 'General',
         academicYearId: item?.academicYearId?._id || item?.academicYearId || (academicYears[0]?._id || ''),
+        workingDays: item?.workingDays && item.workingDays.length > 0
+          ? item.workingDays
+          : ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'],
         status: item?.status || 'ACTIVE',
       });
     } else if (activeTab === 'subjects') {
+      const assignedClasses = (item?.classes || []).map((c: any) => c?._id || c);
       setFormData({
         subjectName: item?.subjectName || item?.name || '',
         subjectCode: item?.subjectCode || item?.code || '',
         category: item?.category || 'GENERAL',
         description: item?.description || '',
+        classes: assignedClasses,
         status: item?.status || 'ACTIVE',
       });
     }
@@ -311,6 +318,7 @@ function AdminAcademicContent() {
                     <th className="px-6 py-4">Code</th>
                     <th className="px-6 py-4">Department</th>
                     <th className="px-6 py-4">Academic Year</th>
+                    <th className="px-6 py-4">Working Days</th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
@@ -318,7 +326,7 @@ function AdminAcademicContent() {
                 <tbody className="divide-y divide-[#E3EAE5]">
                   {classesList.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-8 text-center text-slate-400">No classes registered yet.</td>
+                      <td colSpan={7} className="px-6 py-8 text-center text-slate-400">No classes registered yet.</td>
                     </tr>
                   ) : (
                     classesList.map((cls: any) => (
@@ -333,6 +341,29 @@ function AdminAcademicContent() {
                         <td className="px-6 py-4 text-xs text-slate-600">
                           {cls.academicYearId?.yearName || cls.academicYearId?.yearCode || 'N/A'}
                         </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-1 max-w-[200px]">
+                            {['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'].map((day) => {
+                              const activeDays: string[] = cls.workingDays && cls.workingDays.length > 0
+                                ? cls.workingDays
+                                : ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'];
+                              const isScheduled = activeDays.includes(day);
+                              return (
+                                <span
+                                  key={day}
+                                  title={isScheduled ? `${day}: Scheduled` : `${day}: Off`}
+                                  className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                                    isScheduled
+                                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                      : 'bg-slate-100 text-slate-400 border border-slate-200 line-through opacity-60'
+                                  }`}
+                                >
+                                  {day.slice(0, 3)}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </td>
                         <td className="px-6 py-4"><StatusBadge status={cls.status} /></td>
                         <td className="px-6 py-4 text-right">
                           <button onClick={() => handleOpenModal(cls)} className="px-3 py-1.5 border rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">
@@ -346,43 +377,122 @@ function AdminAcademicContent() {
               </table>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
-                  <tr>
-                    <th className="px-6 py-4">Subject Name</th>
-                    <th className="px-6 py-4">Code</th>
-                    <th className="px-6 py-4">Category</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#E3EAE5]">
-                  {subjectsList.length === 0 ? (
+            <div>
+              {/* Subjects Header / Filter Bar */}
+              <div className="p-4 border-b border-[#E3EAE5] bg-[#FBFCFB] flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center space-x-2">
+                  <BookOpen className="w-4 h-4 text-[#23804A]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-700">Filter by Class:</span>
+                  <select
+                    value={subjectClassFilter}
+                    onChange={(e) => setSubjectClassFilter(e.target.value)}
+                    className="text-xs border border-slate-300 rounded-lg px-3 py-1.5 bg-white font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#23804A]"
+                  >
+                    <option value="ALL">All Classes ({subjectsList.length})</option>
+                    {classesList.map((cls) => (
+                      <option key={cls._id} value={cls._id}>
+                        {cls.name} ({cls.code})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="text-xs text-slate-500">
+                  Showing{' '}
+                  <span className="font-bold text-slate-800">
+                    {
+                      subjectsList.filter((sbj: any) => {
+                        if (subjectClassFilter === 'ALL') return true;
+                        const cList = (sbj.classes || []).map((c: any) => c?._id || c);
+                        return cList.includes(subjectClassFilter);
+                      }).length
+                    }
+                  </span>{' '}
+                  of {subjectsList.length} subjects
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b">
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-slate-400">No subjects found.</td>
+                      <th className="px-6 py-4">Subject Name</th>
+                      <th className="px-6 py-4">Code</th>
+                      <th className="px-6 py-4">Category</th>
+                      <th className="px-6 py-4">Class Assignment</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4 text-right">Actions</th>
                     </tr>
-                  ) : (
-                    subjectsList.map((sbj: any) => (
-                      <tr key={sbj._id} className="hover:bg-slate-50">
-                        <td className="px-6 py-4 font-bold text-[#171D19]">{sbj.subjectName || sbj.name}</td>
-                        <td className="px-6 py-4 font-mono text-slate-600">{sbj.subjectCode || sbj.code}</td>
-                        <td className="px-6 py-4">
-                          <span className="px-2.5 py-0.5 text-xs font-bold bg-slate-100 text-slate-700 rounded-full border">
-                            {sbj.category || 'GENERAL'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4"><StatusBadge status={sbj.status} /></td>
-                        <td className="px-6 py-4 text-right">
-                          <button onClick={() => handleOpenModal(sbj)} className="px-3 py-1.5 border rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">
-                            <Edit3 className="w-3.5 h-3.5 inline mr-1" /> Edit
-                          </button>
+                  </thead>
+                  <tbody className="divide-y divide-[#E3EAE5]">
+                    {subjectsList.filter((sbj: any) => {
+                      if (subjectClassFilter === 'ALL') return true;
+                      const cList = (sbj.classes || []).map((c: any) => c?._id || c);
+                      return cList.includes(subjectClassFilter);
+                    }).length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-8 text-center text-slate-400">
+                          {subjectClassFilter === 'ALL'
+                            ? 'No subjects found.'
+                            : 'No subjects assigned to the selected class.'}
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : (
+                      subjectsList
+                        .filter((sbj: any) => {
+                          if (subjectClassFilter === 'ALL') return true;
+                          const cList = (sbj.classes || []).map((c: any) => c?._id || c);
+                          return cList.includes(subjectClassFilter);
+                        })
+                        .map((sbj: any) => (
+                          <tr key={sbj._id} className="hover:bg-slate-50">
+                            <td className="px-6 py-4 font-bold text-[#171D19]">
+                              {sbj.subjectName || sbj.name}
+                            </td>
+                            <td className="px-6 py-4 font-mono text-slate-600">
+                              {sbj.subjectCode || sbj.code}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="px-2.5 py-0.5 text-xs font-bold bg-slate-100 text-slate-700 rounded-full border">
+                                {sbj.category || 'GENERAL'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              {sbj.classes && sbj.classes.length > 0 ? (
+                                <div className="flex flex-wrap gap-1.5 max-w-[280px]">
+                                  {sbj.classes.map((cls: any) => {
+                                    const cName = cls?.name || cls?.code || 'Class';
+                                    const cCode = cls?.code ? ` (${cls.code})` : '';
+                                    return (
+                                      <span
+                                        key={cls?._id || cls}
+                                        className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200"
+                                      >
+                                        {cName}{cCode}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              ) : (
+                                <span className="text-xs text-slate-400 italic">No classes assigned</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4">
+                              <StatusBadge status={sbj.status} />
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <button
+                                onClick={() => handleOpenModal(sbj)}
+                                className="px-3 py-1.5 border rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+                              >
+                                <Edit3 className="w-3.5 h-3.5 inline mr-1" /> Edit
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>
@@ -463,6 +573,49 @@ function AdminAcademicContent() {
                       ))}
                     </select>
                   </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase mb-1.5">Scheduled Working Days</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                      {[
+                        { day: 'SATURDAY', label: 'Sat' },
+                        { day: 'SUNDAY', label: 'Sun' },
+                        { day: 'MONDAY', label: 'Mon' },
+                        { day: 'TUESDAY', label: 'Tue' },
+                        { day: 'WEDNESDAY', label: 'Wed' },
+                        { day: 'THURSDAY', label: 'Thu' },
+                        { day: 'FRIDAY', label: 'Fri' },
+                      ].map(({ day, label }) => {
+                        const currentDays: string[] = formData.workingDays || [
+                          'SATURDAY',
+                          'SUNDAY',
+                          'MONDAY',
+                          'TUESDAY',
+                          'WEDNESDAY',
+                          'THURSDAY',
+                        ];
+                        const isChecked = currentDays.includes(day);
+                        return (
+                          <label key={day} className="flex items-center space-x-2 text-xs font-medium text-slate-700 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={(e) => {
+                                const updated = e.target.checked
+                                  ? [...currentDays, day]
+                                  : currentDays.filter((d) => d !== day);
+                                setFormData({ ...formData, workingDays: updated });
+                              }}
+                              className="rounded text-[#23804A] focus:ring-[#23804A]"
+                            />
+                            <span>{label}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Unchecking a day will disable timetable period allocations for this class on that day.
+                    </p>
+                  </div>
                 </>
               )}
 
@@ -490,6 +643,66 @@ function AdminAcademicContent() {
                   <div>
                     <label className="block text-xs font-bold uppercase mb-1">Description</label>
                     <textarea rows={2} value={formData.description || ''} onChange={(e) => setFormData({ ...formData, description: e.target.value })} placeholder="Subject curriculum overview..." className="w-full px-3 py-2 border rounded-lg text-sm" />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="block text-xs font-bold uppercase text-slate-700">
+                        Class Assignment (Cohorts)
+                      </label>
+                      <div className="space-x-2 text-[11px]">
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, classes: classesList.map((c) => c._id) })}
+                          className="text-[#23804A] font-semibold hover:underline cursor-pointer"
+                        >
+                          Select All
+                        </button>
+                        <span className="text-slate-300">|</span>
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, classes: [] })}
+                          className="text-slate-500 font-semibold hover:underline cursor-pointer"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mb-2">
+                      Assign which class(es) will study this subject.
+                    </p>
+                    <div className="max-h-40 overflow-y-auto border border-slate-200 bg-slate-50/50 rounded-xl p-3 grid grid-cols-2 gap-2">
+                      {classesList.length === 0 ? (
+                        <p className="col-span-2 text-xs text-slate-400 italic">No classes available.</p>
+                      ) : (
+                        classesList.map((cls) => {
+                          const isChecked = (formData.classes || []).includes(cls._id);
+                          return (
+                            <label
+                              key={cls._id}
+                              className={`flex items-center space-x-2 text-xs p-2 rounded-lg cursor-pointer border transition-colors ${
+                                isChecked
+                                  ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-semibold'
+                                  : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={(e) => {
+                                  const current = formData.classes || [];
+                                  const updated = e.target.checked
+                                    ? [...current, cls._id]
+                                    : current.filter((id: string) => id !== cls._id);
+                                  setFormData({ ...formData, classes: updated });
+                                }}
+                                className="rounded text-[#23804A] focus:ring-[#23804A] h-3.5 w-3.5"
+                              />
+                              <span className="truncate">{cls.name} ({cls.code})</span>
+                            </label>
+                          );
+                        })
+                      )}
+                    </div>
                   </div>
                 </>
               )}

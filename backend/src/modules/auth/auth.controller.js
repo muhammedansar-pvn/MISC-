@@ -118,6 +118,25 @@ const verifyEmailOtp = async (req, res) => {
 
     user.emailVerified = true;
 
+    // Sanaviyya: Parent accounts never use passwords and transition directly to ACTIVE
+    if (user.role === "PARENT") {
+      user.status = "ACTIVE";
+      await user.save();
+
+      const ParentProfile = require("../parents/parent.model");
+      await ParentProfile.findOneAndUpdate(
+        { userId: user._id },
+        { $set: { status: "ACTIVE" } }
+      );
+
+      return res.status(200).json({
+        success: true,
+        requiresPasswordSetup: false,
+        message: "Parent email verified successfully. You can now login with OTP.",
+        email: normalizedEmail,
+      });
+    }
+
     // Check if account onboarding requires password setup
     const needsPasswordSetup = user.status === "PENDING_SETUP" || !user.passwordHash;
     const isDeactivatedFaculty = ["FACULTY", "HOD", "PRINCIPAL"].includes(user.role) && ["INACTIVE", "SUSPENDED"].includes(user.status);
@@ -184,7 +203,10 @@ const resendEmailOtp = async (req, res) => {
       });
     }
 
-    await sendAndStoreOtp(normalizedEmail, "EMAIL_VERIFICATION", { userId: user._id });
+    await sendAndStoreOtp(normalizedEmail, "EMAIL_VERIFICATION", {
+      userId: user._id,
+      role: user.role,
+    });
 
     return res.status(200).json({
       success: true,
@@ -213,6 +235,13 @@ const login = async (req, res) => {
 
     if (!user || user.isDeleted === true) {
       return res.status(401).json({ success: false, message: "Invalid username or password" });
+    }
+
+    if (user.role === "PARENT") {
+      return res.status(403).json({
+        success: false,
+        message: "Parent accounts use OTP-based authentication. Password login is not allowed for parents.",
+      });
     }
 
     if (!user.passwordHash) {
@@ -438,6 +467,13 @@ const accountSetup = async (req, res) => {
       return res.status(404).json({ success: false, message: "User account not found" });
     }
 
+    if (user.role === "PARENT") {
+      return res.status(400).json({
+        success: false,
+        message: "Parent accounts use OTP-based authentication and do not use passwords.",
+      });
+    }
+
     const isDeactivatedFaculty = ["FACULTY", "HOD", "PRINCIPAL"].includes(user.role) && ["INACTIVE", "SUSPENDED"].includes(user.status);
 
     if (username && username.trim().toLowerCase() !== user.username) {
@@ -486,6 +522,13 @@ const forgotPassword = async (req, res) => {
       });
     }
 
+    if (user.role === "PARENT") {
+      return res.status(400).json({
+        success: false,
+        message: "Parent accounts use OTP-based authentication and do not use passwords.",
+      });
+    }
+
     const rawToken = crypto.randomBytes(32).toString("hex");
     const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
     const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
@@ -523,6 +566,13 @@ const resetPassword = async (req, res) => {
     const user = await User.findOne({ _id: resetTokenDoc.userId, isDeleted: { $ne: true } });
     if (!user) {
       return res.status(404).json({ success: false, message: "User account not found" });
+    }
+
+    if (user.role === "PARENT") {
+      return res.status(400).json({
+        success: false,
+        message: "Parent accounts use OTP-based authentication and do not use passwords.",
+      });
     }
 
     user.passwordHash = await hashPassword(password);
@@ -616,6 +666,229 @@ const resendAccountSetupLink = async (req, res) => {
   }
 };
 
+// 13. Parent OTP Authentication - Request Login OTP
+const parentRequestLoginOtp = async (req, res) => {
+  try {
+    const { email, purpose } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email address is required" });
+    }
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+      role: "PARENT",
+      isDeleted: { $ne: true },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No registered parent account found with this email",
+      });
+    }
+
+    // Support dedicated EMAIL_VERIFICATION purpose for parent onboarding
+    if (purpose && purpose.toUpperCase() === "EMAIL_VERIFICATION") {
+      if (user.emailVerified === true && user.status === "ACTIVE") {
+        return res.status(200).json({
+          success: true,
+          alreadyVerified: true,
+          message: "Parent email is already verified. You can login directly.",
+        });
+      }
+
+      const otpResult = await sendAndStoreOtp(normalizedEmail, "EMAIL_VERIFICATION", {
+        userId: user._id,
+        role: "PARENT",
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Verification OTP sent to your parent email address.",
+        email: otpResult.maskedEmail,
+        verificationId: otpResult.verificationId,
+        expiresAt: otpResult.expiresAt,
+      });
+    }
+
+    if (user.emailVerified === false) {
+      return res.status(403).json({
+        success: false,
+        requiresEmailVerification: true,
+        message: "Parent email is not verified. Please verify your email first.",
+        email: normalizedEmail,
+      });
+    }
+
+    if (user.status === "SUSPENDED") {
+      return res.status(403).json({
+        success: false,
+        message: "Parent account has been suspended. Please contact the institution.",
+      });
+    }
+
+    if (user.status !== "ACTIVE" && user.status !== "EMAIL_VERIFIED") {
+      return res.status(403).json({
+        success: false,
+        message: "Parent account is not active. Please contact the institution.",
+      });
+    }
+
+    const ParentProfile = require("../parents/parent.model");
+    const parentProfile = await ParentProfile.findOne({
+      userId: user._id,
+      isDeleted: { $ne: true },
+    });
+
+    if (!parentProfile || parentProfile.status === "INACTIVE") {
+      return res.status(403).json({
+        success: false,
+        message: "Parent profile is inactive. Please contact the institution.",
+      });
+    }
+
+    const otpResult = await sendAndStoreOtp(normalizedEmail, "PARENT_LOGIN", {
+      userId: user._id,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Login OTP sent to your registered email address.",
+      email: otpResult.maskedEmail,
+      verificationId: otpResult.verificationId,
+      expiresAt: otpResult.expiresAt,
+    });
+  } catch (error) {
+    console.error("Parent Request Login OTP Error:", error);
+    const statusCode = error.message && error.message.includes("wait 30 seconds") ? 429 : 400;
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message || "Failed to generate parent login OTP",
+    });
+  }
+};
+
+// 14. Parent OTP Authentication - Verify Login OTP
+const parentVerifyLoginOtp = async (req, res) => {
+  try {
+    const { email, otp, purpose } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: "Email and OTP are required" });
+    }
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+      role: "PARENT",
+      isDeleted: { $ne: true },
+    });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "Parent account not found" });
+    }
+
+    // Support dedicated EMAIL_VERIFICATION purpose for parent onboarding
+    if (purpose && purpose.toUpperCase() === "EMAIL_VERIFICATION") {
+      if (user.emailVerified === true && user.status === "ACTIVE") {
+        return res.status(200).json({
+          success: true,
+          alreadyVerified: true,
+          message: "Parent email is already verified. You can now login.",
+          email: normalizedEmail,
+        });
+      }
+
+      await verifyOtpCode(normalizedEmail, otp, "EMAIL_VERIFICATION");
+
+      user.emailVerified = true;
+      user.status = "ACTIVE";
+      await user.save();
+
+      const ParentProfile = require("../parents/parent.model");
+      await ParentProfile.findOneAndUpdate(
+        { userId: user._id },
+        { $set: { status: "ACTIVE" } }
+      );
+
+      return res.status(200).json({
+        success: true,
+        requiresPasswordSetup: false,
+        message: "Parent email verified successfully. You can now login with OTP.",
+        email: normalizedEmail,
+      });
+    }
+
+    if (user.emailVerified === false) {
+      return res.status(403).json({
+        success: false,
+        message: "Parent email is not verified. Please verify your email first.",
+      });
+    }
+
+    if (user.status === "SUSPENDED") {
+      return res.status(403).json({
+        success: false,
+        message: "Parent account has been suspended.",
+      });
+    }
+
+    if (user.status !== "ACTIVE" && user.status !== "EMAIL_VERIFIED") {
+      return res.status(403).json({
+        success: false,
+        message: "Parent account is not active.",
+      });
+    }
+
+    const ParentProfile = require("../parents/parent.model");
+    const parentProfile = await ParentProfile.findOne({
+      userId: user._id,
+      isDeleted: { $ne: true },
+    }).populate("studentIds", "nameEnglish registrationNumber classId");
+
+    if (!parentProfile || parentProfile.status === "INACTIVE") {
+      return res.status(403).json({
+        success: false,
+        message: "Parent profile is inactive.",
+      });
+    }
+
+    await verifyOtpCode(normalizedEmail, otp, "PARENT_LOGIN");
+
+    const token = generateToken({
+      userId: user._id.toString(),
+      role: user.role,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Parent login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        status: user.status,
+        mobile: user.mobile,
+      },
+      parentProfile: {
+        id: parentProfile._id,
+        name: parentProfile.name,
+        relationType: parentProfile.relationType,
+        contactNumber: parentProfile.contactNumber,
+        students: parentProfile.studentIds || [],
+      },
+    });
+  } catch (error) {
+    console.error("Parent Verify Login OTP Error:", error);
+    return res.status(400).json({
+      success: false,
+      message: error.message || "Invalid or expired OTP",
+    });
+  }
+};
+
 module.exports = {
   register,
   verifyEmailOtp,
@@ -630,4 +903,6 @@ module.exports = {
   forgotPassword,
   resetPassword,
   sendOtp,
+  parentRequestLoginOtp,
+  parentVerifyLoginOtp,
 };

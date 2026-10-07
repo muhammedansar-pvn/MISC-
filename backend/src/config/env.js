@@ -1,3 +1,5 @@
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 require("dotenv").config();
 
 const DEV_DEFAULT_JWT_SECRET = "default_jwt_secret_dev_key";
@@ -26,9 +28,10 @@ const env = {
   SMTP_FROM_NAME: process.env.SMTP_FROM_NAME || "MISC",
   SMTP_FROM_EMAIL: process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || "no-reply@misc.edu",
 
-  // Payment Gateways
-  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || "",
-  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || "",
+  // Payment Gateways (Strict production isolation)
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || (process.env.NODE_ENV === "production" ? "" : "rzp_test_T2CUQ6SUgQAvux"),
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || (process.env.NODE_ENV === "production" ? "" : "8uMFk50wA5kUolX0CNkNSiAB"),
+  RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET || (process.env.NODE_ENV === "production" ? "" : "8uMFk50wA5kUolX0CNkNSiAB"),
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
 };
 

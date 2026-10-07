@@ -6,6 +6,7 @@ import {
   ExamSchedulePayload,
   ExamRegistration,
   ExamRegistrationPayload,
+  AvailableExamForRegistration,
   MarkEntry,
   MarkEntryPayload,
   ExamResult,
@@ -34,6 +35,15 @@ export const updateExam = async (id: string, data: Partial<ExamPayload>): Promis
   return response.data;
 };
 
+export const publishExam = async (id: string, published: boolean = true): Promise<ApiResponse<Exam>> => {
+  const response = await apiClient.patch<ApiResponse<Exam>>(API_ENDPOINTS.exams.publish(id), {
+    status: published ? 'PUBLISHED' : 'DRAFT',
+    isPublished: published,
+  });
+  return response.data;
+};
+
+
 // --- EXAM SCHEDULES ---
 export const getExamSchedules = async (params: PaginationParams = {}): Promise<ApiResponse<ExamSchedule[]>> => {
   const response = await apiClient.get<ApiResponse<ExamSchedule[]>>(API_ENDPOINTS.exams.schedules, { params });
@@ -54,6 +64,16 @@ export const updateExamSchedule = async (
 };
 
 // --- EXAM REGISTRATIONS ---
+export const getAvailableExamsForRegistration = async (
+  params: { studentId?: string } = {}
+): Promise<ApiResponse<AvailableExamForRegistration[]>> => {
+  const response = await apiClient.get<ApiResponse<AvailableExamForRegistration[]>>(
+    API_ENDPOINTS.exams.availableForRegistration,
+    { params }
+  );
+  return response.data;
+};
+
 export const getExamRegistrations = async (
   params: PaginationParams = {}
 ): Promise<ApiResponse<ExamRegistration[]>> => {
@@ -65,6 +85,32 @@ export const registerStudentForExam = async (
   data: ExamRegistrationPayload
 ): Promise<ApiResponse<ExamRegistration>> => {
   const response = await apiClient.post<ApiResponse<ExamRegistration>>(API_ENDPOINTS.exams.registrations, data);
+  return response.data;
+};
+
+export interface ExamFeePaymentCheckResponse {
+  isPaid: boolean;
+  status: 'PAID' | 'PENDING' | 'UNPAID';
+  payment: any;
+  registration: ExamRegistration;
+  message: string;
+}
+
+export const getExamRegistrationById = async (
+  id: string
+): Promise<ApiResponse<ExamRegistration>> => {
+  const response = await apiClient.get<ApiResponse<ExamRegistration>>(
+    API_ENDPOINTS.exams.registrationById(id)
+  );
+  return response.data;
+};
+
+export const checkExamFeePayment = async (
+  id: string
+): Promise<ApiResponse<ExamFeePaymentCheckResponse>> => {
+  const response = await apiClient.get<ApiResponse<ExamFeePaymentCheckResponse>>(
+    API_ENDPOINTS.exams.registrationPayment(id)
+  );
   return response.data;
 };
 
@@ -197,6 +243,8 @@ export default {
   createExamSchedule,
   updateExamSchedule,
   getExamRegistrations,
+  getExamRegistrationById,
+  checkExamFeePayment,
   registerStudentForExam,
   updateExamRegistrationStatus,
   getMarkEntries,

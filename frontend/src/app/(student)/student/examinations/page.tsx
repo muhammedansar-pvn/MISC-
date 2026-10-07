@@ -11,6 +11,7 @@ import {
   BookOpen,
   ArrowRight,
   FileCheck,
+  ClipboardList,
   CheckCircle2,
   AlertCircle,
 } from 'lucide-react';
@@ -89,12 +90,20 @@ export default function StudentExaminationsPage() {
           </h1>
         </div>
 
-        <Link
-          href="/student/examinations/registrations"
-          className="inline-flex items-center text-xs font-semibold text-white px-4 py-2 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] shadow-2xs transition-all self-start sm:self-auto"
-        >
-          <FileCheck className="w-3.5 h-3.5 mr-1.5" /> View Hall Tickets & Status
-        </Link>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <Link
+            href="/student/examinations/registration"
+            className="inline-flex items-center text-xs font-semibold text-white px-4 py-2 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] shadow-2xs transition-all"
+          >
+            <ClipboardList className="w-3.5 h-3.5 mr-1.5" /> Register for Exams
+          </Link>
+          <Link
+            href="/student/examinations/registrations"
+            className="inline-flex items-center text-xs font-semibold text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 shadow-2xs transition-all"
+          >
+            <FileCheck className="w-3.5 h-3.5 mr-1.5 text-[#23804A]" /> Hall Tickets & Status
+          </Link>
+        </div>
       </div>
 
       {/* Select Examination */}

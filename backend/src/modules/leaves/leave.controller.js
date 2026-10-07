@@ -3,7 +3,14 @@ const { parsePagination, formatPaginatedResponse } = require("../../shared/utils
 
 const handleApplyLeave = async (req, res) => {
   try {
-    const result = await leaveService.applyLeave(req.user.userId, req.body);
+    if (req.user && req.user.role === "STUDENT") {
+      return res.status(403).json({
+        success: false,
+        message: "Students are not permitted to submit leave requests. Leave must be applied by a parent.",
+      });
+    }
+
+    const result = await leaveService.applyLeave(req.user, req.body);
     return res.status(201).json({
       success: true,
       message: "Leave application submitted successfully",
@@ -23,7 +30,7 @@ const handleApproveLeave = async (req, res) => {
     const { reviewRemarks } = req.body;
     const result = await leaveService.approveLeave(
       req.params.id,
-      req.user.userId,
+      req.user,
       reviewRemarks
     );
     return res.status(200).json({
@@ -45,7 +52,7 @@ const handleRejectLeave = async (req, res) => {
     const { reviewRemarks } = req.body;
     const result = await leaveService.rejectLeave(
       req.params.id,
-      req.user.userId,
+      req.user,
       reviewRemarks
     );
     return res.status(200).json({
@@ -67,9 +74,34 @@ const handleGetLeaves = async (req, res) => {
     const filter = {};
 
     if (req.user.role === "PARENT") {
-      filter.appliedBy = req.user.userId;
+      let linkedIds = req.user.parentStudentIds || [];
+      if (!linkedIds.length) {
+        const ParentProfile = require("../parents/parent.model");
+        const parent = await ParentProfile.findOne({ userId: req.user.userId || req.user.id }).lean();
+        if (parent && parent.studentIds) {
+          linkedIds = parent.studentIds.map((id) => id.toString());
+        }
+      }
+
+      if (req.query.studentId) {
+        if (!linkedIds.includes(req.query.studentId.toString())) {
+          return res.status(403).json({
+            success: false,
+            message: "Access denied: You are not authorized to view leaves for this student",
+          });
+        }
+        filter.studentId = req.query.studentId;
+      } else {
+        filter.studentId = { $in: linkedIds };
+      }
     } else if (req.user.role === "STUDENT") {
-      filter.studentId = req.user.studentId;
+      let studentId = req.user.studentId;
+      if (!studentId) {
+        const StudentProfile = require("../students/student.model");
+        const student = await StudentProfile.findOne({ userId: req.user.userId || req.user.id }).lean();
+        if (student) studentId = student._id;
+      }
+      filter.studentId = studentId;
     } else if (req.user.role === "FACULTY") {
       const { getFacultyAuthorizedClasses } = require("../academics/academic-auth.service");
       const StudentProfile = require("../students/student.model");
@@ -108,8 +140,19 @@ const handleGetLeaves = async (req, res) => {
       } else {
         filter.studentId = { $in: allowedStudentIds };
       }
-    } else if (req.query.studentId) {
-      filter.studentId = req.query.studentId;
+    } else if (req.user.role === "ADMIN") {
+      if (req.query.studentId) {
+        filter.studentId = req.query.studentId;
+      } else if (req.query.classId) {
+        const StudentProfile = require("../students/student.model");
+        const studentsInClass = await StudentProfile.find({
+          classId: req.query.classId,
+          isDeleted: { $ne: true },
+        })
+          .select("_id")
+          .lean();
+        filter.studentId = { $in: studentsInClass.map((s) => s._id) };
+      }
     }
 
     if (req.query.status) {

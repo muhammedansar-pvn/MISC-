@@ -8,12 +8,23 @@ export interface Exam {
   code?: string;
   examName?: string;
   examCode?: string;
+  description?: string;
   term?: string;
   examType?: string;
   academicYearId?: string | AcademicYear;
   startDate?: string;
   endDate?: string;
+  registrationStartDate?: string;
+  registrationEndDate?: string;
+  eligibleClassIds?: any[];
+  subjectIds?: any[];
+  fee?: number;
   status: string;
+  publishedAt?: string;
+  resultPublicationDate?: string | null;
+  registeredStudentsCount?: number;
+  registrationState?: string;
+  isRegistrationOpen?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -24,14 +35,25 @@ export interface ExamPayload {
   code?: string;
   examName?: string;
   examCode?: string;
+  description?: string;
   term?: string;
   examType?: string;
   academicYearId?: string;
   startDate?: string;
   endDate?: string;
+  examStartDate?: string;
+  examEndDate?: string;
+  registrationStartDate?: string;
+  registrationEndDate?: string;
+  resultPublicationDate?: string | null;
+  eligibleClassIds?: string[];
+  subjectIds?: string[];
+  fee?: number;
   status?: string;
+  publishedAt?: string;
   [key: string]: any;
 }
+
 
 export interface ExamSchedule {
   _id: string;
@@ -79,11 +101,41 @@ export interface ExamRegistration {
 
 
 export interface ExamRegistrationPayload {
-  studentId: string;
+  studentId?: string;
   examId: string;
   registrationStatus?: string;
   status?: string;
   [key: string]: any;
+}
+
+export interface AvailableExamForRegistration {
+  _id: string;
+  title: string;
+  name?: string;
+  code: string;
+  term?: string;
+  examType?: string;
+  startDate: string;
+  endDate: string;
+  registrationStartDate?: string | null;
+  registrationEndDate?: string | null;
+  fee: number;
+  status: string;
+  academicYear?: any;
+  eligibleClasses?: any[];
+  schedulesCount: number;
+  schedules?: ExamSchedule[];
+  isRegistered: boolean;
+  registration?: {
+    _id: string;
+    rollNumber: string;
+    registrationStatus: string;
+    paymentStatus: string;
+    isPaid: boolean;
+    createdAt?: string;
+  } | null;
+  isRegistrationOpen: boolean;
+  registrationCloseReason?: string | null;
 }
 
 export interface MarkEntry {

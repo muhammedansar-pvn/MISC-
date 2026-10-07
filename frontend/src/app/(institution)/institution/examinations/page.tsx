@@ -360,13 +360,18 @@ export default function InstitutionExaminationsPage() {
                     <th className="p-4">Candidate Student</th>
                     <th className="p-4">Examination</th>
                     <th className="p-4">Registration Date</th>
-                    <th className="p-4">Status</th>
+                    <th className="p-4">Fee Status</th>
+                    <th className="p-4">Registration / Hall Ticket</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredRegistrations.map((reg) => {
                     const ex = (reg.examId as any);
                     const stu = (reg.studentId as any);
+                    const payment = (reg.paymentId as any);
+                    const isPaid = payment?.status === 'SUCCESS' || reg.registrationStatus === 'HALL_TICKET_ISSUED';
+                    const isPending = payment?.status === 'PENDING';
+
                     return (
                       <tr key={reg._id} className="hover:bg-slate-50/70 transition-colors">
                         <td className="p-4 font-mono font-bold text-slate-800">
@@ -379,10 +384,25 @@ export default function InstitutionExaminationsPage() {
                           )}
                         </td>
                         <td className="p-4 text-slate-700 font-medium">
-                          {ex?.name || 'Board Examination'}
+                          {ex?.name || ex?.title || 'Board Examination'}
                         </td>
                         <td className="p-4 text-slate-600 font-mono">
                           {reg.createdAt ? new Date(reg.createdAt).toLocaleDateString('en-GB') : '—'}
+                        </td>
+                        <td className="p-4">
+                          {isPaid ? (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                              Fee Paid {payment?.amount ? `(₹${payment.amount})` : ''}
+                            </span>
+                          ) : isPending ? (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                              Payment Pending
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                              Fee Unpaid
+                            </span>
+                          )}
                         </td>
                         <td className="p-4">
                           <span

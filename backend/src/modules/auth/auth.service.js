@@ -55,7 +55,7 @@ const sendAndStoreOtp = async (identifier, purpose, options = {}) => {
 
   let emailResult = { success: true };
   if (normalizedIdentifier.includes("@")) {
-    emailResult = await sendOtpEmail(normalizedIdentifier, rawOtp, purpose);
+    emailResult = await sendOtpEmail(normalizedIdentifier, rawOtp, purpose, options);
   }
 
   const isSuccess = emailResult.success !== false;

@@ -86,6 +86,28 @@ export const resendEmailOtp = async (payload: ResendEmailOtpPayload): Promise<Ap
   return response.data;
 };
 
+export interface ParentRequestOtpPayload {
+  email: string;
+  purpose?: string;
+}
+
+export interface ParentVerifyOtpPayload {
+  email: string;
+  otp: string;
+  purpose?: string;
+  verificationId?: string;
+}
+
+export const parentRequestOtp = async (payload: ParentRequestOtpPayload): Promise<ApiResponse> => {
+  const response = await apiClient.post<ApiResponse>(API_ENDPOINTS.auth.parentRequestOtp, payload);
+  return response.data;
+};
+
+export const parentVerifyOtp = async (payload: ParentVerifyOtpPayload): Promise<LoginResponse> => {
+  const response = await apiClient.post<LoginResponse>(API_ENDPOINTS.auth.parentVerifyOtp, payload);
+  return response.data;
+};
+
 export default {
   login,
   verify2FAOtp,
@@ -101,4 +123,6 @@ export default {
   register,
   verifyEmailOtp,
   resendEmailOtp,
+  parentRequestOtp,
+  parentVerifyOtp,
 };

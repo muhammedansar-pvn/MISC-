@@ -7,6 +7,9 @@ const ExamResult = require("./exam-result.model");
 const MarkCorrectionRequest = require("./mark-correction-request.model");
 const StudentProfile = require("../students/student.model");
 const academicAuthService = require("../academics/academic-auth.service");
+const Payment = require("../payments/payment.model");
+const notificationService = require("../notifications/notification.service");
+require("../academics/subject.model");
 
 // Grading scale helper preserving existing project rules
 const calculateGrade = (percentage, hasFailed = false) => {
@@ -22,33 +25,430 @@ const calculateGrade = (percentage, hasFailed = false) => {
 // ==========================================
 // 1. EXAMS
 // ==========================================
-const createExam = async (data) => Exam.create(data);
+const enrichExams = async (exams) => {
+  if (!exams || exams.length === 0) return exams;
+  const examIds = exams.map((e) => e._id);
+  const regCounts = await ExamRegistration.aggregate([
+    { $match: { examId: { $in: examIds } } },
+    { $group: { _id: "$examId", count: { $sum: 1 } } },
+  ]);
+  const countMap = new Map(regCounts.map((r) => [r._id.toString(), r.count]));
+  const now = new Date();
+
+  return exams.map((exam) => {
+    const examObj = exam.toObject ? exam.toObject() : { ...exam };
+    const regCount = countMap.get(examObj._id.toString()) || 0;
+
+    let registrationState = "DRAFT";
+    if (examObj.status === "PUBLISHED") {
+      if (!examObj.registrationStartDate || !examObj.registrationEndDate) {
+        registrationState = "UNSCHEDULED";
+      } else if (now < new Date(examObj.registrationStartDate)) {
+        registrationState = "NOT_STARTED";
+      } else if (now > new Date(examObj.registrationEndDate)) {
+        registrationState = "CLOSED";
+      } else {
+        registrationState = "OPEN";
+      }
+    } else {
+      registrationState = examObj.status;
+    }
+
+    return {
+      ...examObj,
+      registeredStudentsCount: regCount,
+      registrationState,
+      isRegistrationOpen: registrationState === "OPEN",
+    };
+  });
+};
+
+const createExam = async (data) => {
+  const payload = { ...data };
+  if (!payload.title && payload.name) payload.title = payload.name;
+  if (!payload.name && payload.title) payload.name = payload.title;
+  if (payload.examStartDate && !payload.startDate) payload.startDate = payload.examStartDate;
+  if (payload.examEndDate && !payload.endDate) payload.endDate = payload.examEndDate;
+
+  if (payload.status === "PUBLISHED") {
+    if (
+      !payload.academicYearId ||
+      !payload.startDate ||
+      !payload.endDate ||
+      !payload.registrationStartDate ||
+      !payload.registrationEndDate ||
+      !payload.eligibleClassIds ||
+      payload.eligibleClassIds.length === 0
+    ) {
+      const error = new Error("Cannot publish examination without complete configuration (academic year, dates, registration window, and eligible classes)");
+      error.statusCode = 400;
+      throw error;
+    }
+    if (!payload.publishedAt) payload.publishedAt = new Date();
+  }
+
+  const created = await Exam.create(payload);
+  if (created.status === "PUBLISHED") {
+    notificationService.notifyExamPublished(created).catch((e) => console.error("Non-fatal notifyExamPublished error:", e.message));
+  }
+  return created;
+};
 
 const getExams = async (filter = {}, pagination = null) => {
   if (pagination) {
-    const [data, total] = await Promise.all([
+    const [rawExams, total] = await Promise.all([
       Exam.find(filter)
         .populate("academicYearId", "yearCode title yearName status")
+        .populate("eligibleClassIds", "name className code section")
+        .populate("subjectIds", "subjectName subjectCode name code category")
         .sort({ startDate: -1 })
         .skip(pagination.skip)
         .limit(pagination.limit)
         .lean(),
       Exam.countDocuments(filter),
     ]);
+    const data = await enrichExams(rawExams);
     return { data, total };
   }
-  return Exam.find(filter)
+  const rawExams = await Exam.find(filter)
     .populate("academicYearId", "yearCode title yearName status")
+    .populate("eligibleClassIds", "name className code section")
+    .populate("subjectIds", "subjectName subjectCode name code category")
     .sort({ startDate: -1 })
     .lean();
+  return enrichExams(rawExams);
 };
 
-const getExamById = async (id) =>
-  Exam.findById(id)
+const getExamById = async (id) => {
+  const exam = await Exam.findById(id)
     .populate("academicYearId", "yearCode title yearName status")
+    .populate("eligibleClassIds", "name className code section")
+    .populate("subjectIds", "subjectName subjectCode name code category")
+    .lean();
+  if (!exam) return null;
+  const enriched = await enrichExams([exam]);
+  return enriched[0];
+};
+
+const updateExam = async (id, data) => {
+  const existingExam = await Exam.findById(id);
+  if (!existingExam) {
+    const error = new Error("Exam not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const payload = { ...data };
+  if (!payload.title && payload.name) payload.title = payload.name;
+  if (!payload.name && payload.title) payload.name = payload.title;
+  if (payload.examStartDate && !payload.startDate) payload.startDate = payload.examStartDate;
+  if (payload.examEndDate && !payload.endDate) payload.endDate = payload.examEndDate;
+
+  // Safeguard 1: Fee alteration check if payments exist
+  if (payload.fee !== undefined && payload.fee !== existingExam.fee) {
+    const registrations = await ExamRegistration.find({ examId: id }).select("_id paymentId").lean();
+    if (registrations.length > 0) {
+      const regIds = registrations.map((r) => r._id);
+      const paymentIds = registrations.map((r) => r.paymentId).filter(Boolean);
+      const hasSuccessfulPayment = await Payment.exists({
+        $or: [
+          { examRegistrationId: { $in: regIds }, status: "SUCCESS" },
+          { _id: { $in: paymentIds }, status: "SUCCESS" },
+        ],
+      });
+      if (hasSuccessfulPayment) {
+        const error = new Error("Cannot modify examination fee after student fee payments have been processed");
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+  }
+
+  // Safeguard 2: Eligible class alteration check if registered students exist
+  if (payload.eligibleClassIds !== undefined) {
+    const registrations = await ExamRegistration.find({ examId: id })
+      .populate("studentId", "classId")
+      .lean();
+    if (registrations.length > 0) {
+      const newClassIdStrs = (payload.eligibleClassIds || []).map((c) => (c._id || c).toString());
+      const hasExcludedRegisteredStudents = registrations.some((reg) => {
+        const studentClassId = reg.studentId?.classId ? (reg.studentId.classId._id || reg.studentId.classId).toString() : null;
+        return studentClassId && !newClassIdStrs.includes(studentClassId);
+      });
+      if (hasExcludedRegisteredStudents) {
+        const error = new Error("Cannot remove eligible classes that already have registered students");
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+  }
+
+  // Effective status determination and completeness check
+  const targetStatus = payload.status !== undefined ? payload.status : existingExam.status;
+  if (targetStatus === "PUBLISHED") {
+    const effectiveYear = payload.academicYearId !== undefined ? payload.academicYearId : existingExam.academicYearId;
+    const effectiveStart = payload.startDate !== undefined ? payload.startDate : existingExam.startDate;
+    const effectiveEnd = payload.endDate !== undefined ? payload.endDate : existingExam.endDate;
+    const effectiveRegStart = payload.registrationStartDate !== undefined ? payload.registrationStartDate : existingExam.registrationStartDate;
+    const effectiveRegEnd = payload.registrationEndDate !== undefined ? payload.registrationEndDate : existingExam.registrationEndDate;
+    const effectiveClasses = payload.eligibleClassIds !== undefined ? payload.eligibleClassIds : existingExam.eligibleClassIds;
+
+    if (
+      !effectiveYear ||
+      !effectiveStart ||
+      !effectiveEnd ||
+      !effectiveRegStart ||
+      !effectiveRegEnd ||
+      !effectiveClasses ||
+      effectiveClasses.length === 0
+    ) {
+      const error = new Error("Cannot publish examination without complete configuration (academic year, dates, registration window, and eligible classes)");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (!existingExam.publishedAt && !payload.publishedAt) {
+      payload.publishedAt = new Date();
+    }
+  }
+
+  const updated = await Exam.findByIdAndUpdate(id, payload, { new: true })
+    .populate("academicYearId", "yearCode title yearName status")
+    .populate("eligibleClassIds", "name className code section")
+    .populate("subjectIds", "subjectName subjectCode name code category");
+
+  if (updated && updated.status === "PUBLISHED" && (!existingExam || existingExam.status !== "PUBLISHED")) {
+    notificationService.notifyExamPublished(updated).catch((e) => console.error("Non-fatal notifyExamPublished error:", e.message));
+  }
+
+  return updated;
+};
+
+const publishExam = async (id, shouldPublish = true) => {
+  const existingExam = await Exam.findById(id);
+  if (!existingExam) {
+    const error = new Error("Exam not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (shouldPublish) {
+    if (
+      !existingExam.academicYearId ||
+      !existingExam.startDate ||
+      !existingExam.endDate ||
+      !existingExam.registrationStartDate ||
+      !existingExam.registrationEndDate ||
+      !existingExam.eligibleClassIds ||
+      existingExam.eligibleClassIds.length === 0
+    ) {
+      const error = new Error("Cannot publish examination without complete configuration (academic year, dates, registration window, and eligible classes)");
+      error.statusCode = 400;
+      throw error;
+    }
+    existingExam.status = "PUBLISHED";
+    if (!existingExam.publishedAt) {
+      existingExam.publishedAt = new Date();
+    }
+  } else {
+    existingExam.status = "DRAFT";
+  }
+
+  await existingExam.save();
+  if (shouldPublish) {
+    notificationService.notifyExamPublished(existingExam).catch((e) => console.error("Non-fatal notifyExamPublished error:", e.message));
+  }
+  return existingExam;
+};
+
+
+// ==========================================
+// 1b. AVAILABLE EXAMINATIONS FOR STUDENT
+// ==========================================
+const getAvailableExamsForStudent = async (studentProfileId) => {
+  const student = await StudentProfile.findById(studentProfileId)
+    .populate("classId", "name className code")
     .lean();
 
-const updateExam = async (id, data) => Exam.findByIdAndUpdate(id, data, { new: true });
+  if (!student) {
+    const error = new Error("Student profile record not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (student.status === "INACTIVE" || student.status === "SUSPENDED" || student.isDeleted) {
+    const error = new Error("Cannot retrieve examinations for an inactive or suspended student");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // Find candidate exams that are scheduled/ongoing/published
+  const examQuery = {
+    status: { $in: ["SCHEDULED", "PUBLISHED", "ONGOING"] },
+  };
+
+  if (student.academicYearId) {
+    examQuery.$or = [
+      { academicYearId: student.academicYearId },
+      { academicYearId: { $exists: false } },
+      { academicYearId: null },
+    ];
+  }
+
+  const exams = await Exam.find(examQuery)
+    .populate("academicYearId", "yearCode title yearName status")
+    .populate("eligibleClassIds", "name className code section")
+    .sort({ startDate: 1 })
+    .lean();
+
+  if (!exams || exams.length === 0) {
+    return [];
+  }
+
+  // Pre-fetch all registrations of this student for these exams
+  const examIds = exams.map((e) => e._id);
+  const existingRegistrations = await ExamRegistration.find({
+    studentId: student._id,
+    examId: { $in: examIds },
+  })
+    .populate("paymentId", "transactionId status amount currency gateway receiptUrl paidAt")
+    .lean();
+
+  const regMap = new Map();
+  for (const reg of existingRegistrations) {
+    regMap.set(reg.examId.toString(), reg);
+  }
+
+  // Pre-fetch all schedules for these candidate exams
+  const allSchedules = await ExamSchedule.find({
+    examId: { $in: examIds },
+  })
+    .populate("subjectId", "subjectName subjectCode name code")
+    .select("examId classId subjectId examDate startTime endTime maxMarks passMarks status")
+    .sort({ examDate: 1, startTime: 1 })
+    .lean();
+
+  const schedulesByExam = new Map();
+  for (const sched of allSchedules) {
+    const key = sched.examId.toString();
+    if (!schedulesByExam.has(key)) {
+      schedulesByExam.set(key, []);
+    }
+    schedulesByExam.get(key).push(sched);
+  }
+
+  const now = new Date();
+  const availableExams = [];
+
+  for (const exam of exams) {
+    const examKey = exam._id.toString();
+    const schedules = schedulesByExam.get(examKey) || [];
+
+    // Check Class Eligibility
+    let isClassEligible = true;
+    if (exam.eligibleClassIds && exam.eligibleClassIds.length > 0) {
+      const studentClassIdStr = student.classId ? (student.classId._id || student.classId).toString() : null;
+      isClassEligible = exam.eligibleClassIds.some(
+        (c) => (c._id || c).toString() === studentClassIdStr
+      );
+    } else if (student.classId && schedules.length > 0) {
+      const studentClassIdStr = (student.classId._id || student.classId).toString();
+      isClassEligible = schedules.some((s) => s.classId?.toString() === studentClassIdStr);
+    }
+
+    // If not class eligible and not already registered, skip from available list
+    const existingReg = regMap.get(examKey);
+    if (!isClassEligible && !existingReg) {
+      continue;
+    }
+
+    // Determine registration window status
+    let isRegistrationOpen = true;
+    let registrationCloseReason = null;
+
+    if (exam.registrationStartDate && now < new Date(exam.registrationStartDate)) {
+      isRegistrationOpen = false;
+      registrationCloseReason = `Registration opens on ${new Date(exam.registrationStartDate).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })}`;
+    } else if (exam.registrationEndDate && now > new Date(exam.registrationEndDate)) {
+      isRegistrationOpen = false;
+      registrationCloseReason = `Registration closed on ${new Date(exam.registrationEndDate).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })}`;
+    } else if (!exam.registrationEndDate && now > new Date(exam.startDate)) {
+      isRegistrationOpen = false;
+      registrationCloseReason = "Registration closed (examination already commenced)";
+    }
+
+    // Filter student schedules for this class
+    const studentClassIdStr = student.classId ? (student.classId._id || student.classId).toString() : null;
+    const studentSchedules = studentClassIdStr
+      ? schedules.filter((s) => s.classId?.toString() === studentClassIdStr)
+      : schedules;
+
+    // Check payment status on registration
+    const effectiveFee = Number(exam.fee !== undefined && exam.fee !== null ? exam.fee : (exam.examFee || 0));
+    let isPaid = false;
+    let paymentStatus = "UNPAID";
+    if (existingReg) {
+      if (existingReg.registrationStatus === "HALL_TICKET_ISSUED") {
+        isPaid = true;
+        paymentStatus = "PAID";
+      } else if (existingReg.paymentId && existingReg.paymentId.status === "SUCCESS") {
+        isPaid = true;
+        paymentStatus = "PAID";
+      } else if (existingReg.paymentId && existingReg.paymentId.status === "PENDING") {
+        paymentStatus = "PENDING";
+      } else if (effectiveFee === 0) {
+        isPaid = true;
+        paymentStatus = "PAID";
+      }
+    }
+
+    availableExams.push({
+      _id: exam._id,
+      title: exam.title || exam.name,
+      name: exam.name || exam.title,
+      code: exam.code,
+      term: exam.term,
+      examType: exam.examType,
+      fee: effectiveFee,
+      examFee: effectiveFee,
+      startDate: exam.startDate,
+      endDate: exam.endDate,
+      registrationStartDate: exam.registrationStartDate || null,
+      registrationEndDate: exam.registrationEndDate || null,
+      status: exam.status,
+      academicYear: exam.academicYearId,
+      eligibleClasses: exam.eligibleClassIds || [],
+      schedulesCount: studentSchedules.length,
+      schedules: studentSchedules,
+      isRegistered: Boolean(existingReg),
+      isPaid: Boolean(isPaid),
+      paymentStatus,
+      registrationStatus: existingReg?.registrationStatus || null,
+      registration: existingReg
+        ? {
+            _id: existingReg._id,
+            rollNumber: existingReg.rollNumber,
+            registrationStatus: existingReg.registrationStatus,
+            paymentStatus,
+            isPaid,
+            createdAt: existingReg.createdAt,
+          }
+        : null,
+      isRegistrationOpen: isRegistrationOpen && !existingReg,
+      registrationCloseReason: existingReg ? "Already Registered" : registrationCloseReason,
+    });
+  }
+
+  return availableExams;
+};
 
 // ==========================================
 // 2. EXAM SCHEDULES
@@ -58,6 +458,22 @@ const createExamSchedule = async (data) => {
     const exam = await Exam.findById(data.examId).select("academicYearId").lean();
     if (exam && exam.academicYearId) {
       data.academicYearId = exam.academicYearId;
+    }
+  }
+
+  const Subject = require("../academics/subject.model");
+  const subject = await Subject.findById(data.subjectId);
+  if (!subject) {
+    const error = new Error("Subject not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  if (Array.isArray(subject.classes) && subject.classes.length > 0) {
+    const isAssigned = subject.classes.some((c) => c.toString() === data.classId.toString());
+    if (!isAssigned) {
+      const error = new Error("Subject is not assigned to the selected class");
+      error.statusCode = 400;
+      throw error;
     }
   }
 
@@ -108,7 +524,34 @@ const getExamScheduleById = async (id) =>
     .populate("academicYearId", "yearName yearCode")
     .lean();
 
-const updateExamSchedule = async (id, data) => ExamSchedule.findByIdAndUpdate(id, data, { new: true });
+const updateExamSchedule = async (id, data) => {
+  const current = await ExamSchedule.findById(id);
+  if (!current) {
+    const error = new Error("Exam schedule not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  const targetClassId = data.classId || current.classId;
+  const targetSubjectId = data.subjectId || current.subjectId;
+  if (data.classId || data.subjectId) {
+    const Subject = require("../academics/subject.model");
+    const subject = await Subject.findById(targetSubjectId);
+    if (!subject) {
+      const error = new Error("Subject not found");
+      error.statusCode = 404;
+      throw error;
+    }
+    if (Array.isArray(subject.classes) && subject.classes.length > 0) {
+      const isAssigned = subject.classes.some((c) => c.toString() === targetClassId.toString());
+      if (!isAssigned) {
+        const error = new Error("Subject is not assigned to the selected class");
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+  }
+  return ExamSchedule.findByIdAndUpdate(id, data, { new: true });
+};
 
 // Scoped schedules for faculty assignments
 const getFacultyExamSchedules = async (facultyUserId, filter = {}) => {
@@ -235,39 +678,158 @@ const getExamScheduleRoster = async (examScheduleId, requestingUser = null) => {
 // 4. EXAM REGISTRATIONS
 // ==========================================
 const registerStudentForExam = async (data) => {
-  const existingReg = await ExamRegistration.exists({ examId: data.examId, studentId: data.studentId });
+  // 1. Verify Exam existence and status
+  const exam = await Exam.findById(data.examId).lean();
+  if (!exam) {
+    const error = new Error("Examination record not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  if (exam.status === "COMPLETED") {
+    const error = new Error("Registration is closed for completed examinations");
+    error.statusCode = 400;
+    throw error;
+  }
+  if (exam.status === "DRAFT") {
+    const error = new Error("Registration is not open for draft examinations");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // 2. Verify Student Profile existence and active status
+  const student = await StudentProfile.findById(data.studentId).lean();
+  if (!student) {
+    const error = new Error("Student profile record not found");
+    error.statusCode = 404;
+    throw error;
+  }
+  if (student.status === "INACTIVE" || student.status === "SUSPENDED" || student.isDeleted) {
+    const error = new Error("Cannot register an inactive or suspended student for examinations");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // 3. Class Eligibility Check
+  if (exam.eligibleClassIds && exam.eligibleClassIds.length > 0) {
+    const studentClassIdStr = student.classId ? (student.classId._id || student.classId).toString() : null;
+    const isEligible = exam.eligibleClassIds.some(
+      (c) => (c._id || c).toString() === studentClassIdStr
+    );
+    if (!isEligible) {
+      const error = new Error("Student's class is not eligible for this examination");
+      error.statusCode = 400;
+      throw error;
+    }
+  } else if (student.classId) {
+    const studentClassIdStr = (student.classId._id || student.classId).toString();
+    const totalSchedules = await ExamSchedule.countDocuments({ examId: exam._id });
+    if (totalSchedules > 0) {
+      const hasClassSchedule = await ExamSchedule.exists({ examId: exam._id, classId: studentClassIdStr });
+      if (!hasClassSchedule) {
+        const error = new Error("Examination schedule is not configured for student's class");
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+  }
+
+  // 4. Registration Window Check
+  const now = new Date();
+  if (exam.registrationStartDate && now < new Date(exam.registrationStartDate)) {
+    const error = new Error(
+      `Examination registration has not opened yet (Opens: ${new Date(exam.registrationStartDate).toLocaleDateString("en-IN")})`
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+  if (exam.registrationEndDate && now > new Date(exam.registrationEndDate)) {
+    const error = new Error(
+      `Examination registration has closed (Closed: ${new Date(exam.registrationEndDate).toLocaleDateString("en-IN")})`
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+  if (!exam.registrationEndDate && now > new Date(exam.startDate)) {
+    const error = new Error("Registration is closed because examination has already commenced");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // 5. Prevent duplicate candidate registration
+  const existingReg = await ExamRegistration.findOne({ examId: data.examId, studentId: data.studentId });
   if (existingReg) {
     const error = new Error("Student is already registered for this examination");
     error.statusCode = 409;
     throw error;
   }
 
-  if (data.rollNumber) {
-    const existingRoll = await ExamRegistration.exists({ rollNumber: data.rollNumber });
+  // 4. Validate or generate roll number
+  if (data.rollNumber && data.rollNumber.trim()) {
+    const existingRoll = await ExamRegistration.exists({ rollNumber: data.rollNumber.trim() });
     if (existingRoll) {
       const error = new Error("Roll number is already assigned");
       error.statusCode = 409;
       throw error;
     }
+    data.rollNumber = data.rollNumber.trim();
   } else {
-    data.rollNumber = `ROLL-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+    const baseCode = (exam.code || "EXAM").replace(/[^A-Za-z0-9]/g, "").slice(0, 8);
+    const regPart = (student.registrationNumber || Date.now().toString().slice(-4)).replace(/[^A-Za-z0-9]/g, "").slice(-4);
+    let candidateRoll = `ROLL-${baseCode}-${regPart}`;
+    const rollTaken = await ExamRegistration.exists({ rollNumber: candidateRoll });
+    if (rollTaken) {
+      candidateRoll = `ROLL-${baseCode}-${regPart}-${Math.floor(100 + Math.random() * 900)}`;
+    }
+    data.rollNumber = candidateRoll;
   }
 
-  if (!data.registrationStatus) {
-    data.registrationStatus = "REGISTERED";
+  // 5. Check and reconcile fee payment upon registration
+  let isPaid = false;
+  let linkedPaymentId = data.paymentId || null;
+
+  if (linkedPaymentId) {
+    const payment = await Payment.findById(linkedPaymentId).lean();
+    if (payment && payment.status === "SUCCESS") {
+      isPaid = true;
+    }
+  } else {
+    // Only link if there's an unlinked successful payment explicitly designated for this exam
+    const existingPayment = await Payment.findOne({
+      userId: student.userId,
+      paymentType: "EXAM_FEE",
+      status: "SUCCESS",
+      examRegistrationId: null,
+      $or: [
+        { "metadata.examId": exam._id },
+        { "metadata.notes.examId": exam._id.toString() },
+      ],
+    }).sort({ createdAt: -1 }).lean();
+
+    if (existingPayment) {
+      linkedPaymentId = existingPayment._id;
+      isPaid = true;
+    }
   }
 
-  return ExamRegistration.create(data);
+  data.paymentId = linkedPaymentId;
+  data.registrationStatus = isPaid ? "HALL_TICKET_ISSUED" : (data.registrationStatus || "REGISTERED");
+
+  const createdReg = await ExamRegistration.create(data);
+  notificationService.notifyExamRegistration(createdReg, exam).catch((e) => console.error("Non-fatal notifyExamRegistration error:", e.message));
+  if (createdReg.registrationStatus === "HALL_TICKET_ISSUED") {
+    notificationService.notifyHallTicketIssued(createdReg, exam).catch((e) => console.error("Non-fatal notifyHallTicketIssued error:", e.message));
+  }
+  return createdReg;
 };
 
 const getExamRegistrations = async (filter = {}, pagination = null) => {
   if (pagination) {
     const [data, total] = await Promise.all([
       ExamRegistration.find(filter)
-        .populate("examId", "title code examCode startDate endDate")
-        .populate("studentId", "nameEnglish name registrationNumber classId")
+        .populate("examId", "title code examCode startDate endDate status")
+        .populate("studentId", "nameEnglish name registrationNumber admissionNumber classId")
         .populate("institutionId", "name code")
-        .populate("paymentId", "transactionId status amount")
+        .populate("paymentId", "transactionId status amount currency gateway receiptUrl paidAt createdAt")
         .skip(pagination.skip)
         .limit(pagination.limit)
         .lean(),
@@ -276,15 +838,187 @@ const getExamRegistrations = async (filter = {}, pagination = null) => {
     return { data, total };
   }
   return ExamRegistration.find(filter)
-    .populate("examId", "title code examCode startDate endDate")
-    .populate("studentId", "nameEnglish name registrationNumber classId")
+    .populate("examId", "title code examCode startDate endDate status")
+    .populate("studentId", "nameEnglish name registrationNumber admissionNumber classId")
     .populate("institutionId", "name code")
-    .populate("paymentId", "transactionId status amount")
+    .populate("paymentId", "transactionId status amount currency gateway receiptUrl paidAt createdAt")
     .lean();
 };
 
+const getExamRegistrationById = async (id, requestingUser = null) => {
+  const registration = await ExamRegistration.findById(id)
+    .populate("examId", "title code examCode startDate endDate status")
+    .populate("studentId", "nameEnglish name registrationNumber admissionNumber classId photo contactNumber")
+    .populate("institutionId", "name code")
+    .populate("paymentId", "transactionId status amount currency gateway receiptUrl paidAt createdAt")
+    .lean();
+
+  if (!registration) {
+    const error = new Error("Exam registration record not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  // IDOR & Authorization check
+  if (requestingUser) {
+    if (requestingUser.role === "STUDENT") {
+      const studentProfileId = registration.studentId?._id
+        ? registration.studentId._id.toString()
+        : registration.studentId.toString();
+      if (studentProfileId !== requestingUser.studentId?.toString()) {
+        const error = new Error("Access denied: You are not authorized to view this exam registration");
+        error.statusCode = 403;
+        throw error;
+      }
+    } else if (requestingUser.role === "PARENT") {
+      const studentProfileId = registration.studentId?._id
+        ? registration.studentId._id.toString()
+        : registration.studentId.toString();
+      const parentStudents = (requestingUser.parentStudentIds || []).map((s) => s.toString());
+      if (!parentStudents.includes(studentProfileId)) {
+        const error = new Error("Access denied: You are not authorized to view this exam registration");
+        error.statusCode = 403;
+        throw error;
+      }
+    }
+  }
+
+  return registration;
+};
+
+const checkExamFeePaymentStatus = async (registrationId, requestingUser = null) => {
+  const registration = await ExamRegistration.findById(registrationId)
+    .populate("examId", "title code examCode startDate endDate status")
+    .populate("studentId", "nameEnglish name registrationNumber admissionNumber classId")
+    .populate("institutionId", "name code");
+
+  if (!registration) {
+    const error = new Error("Exam registration record not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  // IDOR & Authorization check
+  if (requestingUser) {
+    if (requestingUser.role === "STUDENT") {
+      const studentProfileId = registration.studentId?._id
+        ? registration.studentId._id.toString()
+        : registration.studentId.toString();
+      if (studentProfileId !== requestingUser.studentId?.toString()) {
+        const error = new Error("Access denied: You are not authorized to check exam fee for this registration");
+        error.statusCode = 403;
+        throw error;
+      }
+    } else if (requestingUser.role === "PARENT") {
+      const studentProfileId = registration.studentId?._id
+        ? registration.studentId._id.toString()
+        : registration.studentId.toString();
+      const parentStudents = (requestingUser.parentStudentIds || []).map((s) => s.toString());
+      if (!parentStudents.includes(studentProfileId)) {
+        const error = new Error("Access denied: You are not authorized to check exam fee for this registration");
+        error.statusCode = 403;
+        throw error;
+      }
+    }
+  }
+
+  let payment = null;
+
+  // 1. If registration already has paymentId linked, inspect it
+  if (registration.paymentId) {
+    payment = await Payment.findById(registration.paymentId).lean();
+    if (payment && payment.status === "SUCCESS") {
+      if (registration.registrationStatus !== "HALL_TICKET_ISSUED") {
+        registration.registrationStatus = "HALL_TICKET_ISSUED";
+        await registration.save();
+      }
+      return {
+        isPaid: true,
+        status: "PAID",
+        payment,
+        registration,
+        message: "Exam fee payment confirmed and Hall Ticket is available.",
+      };
+    }
+  }
+
+  // 2. Auto-reconcile: Check if a successful payment exists for this exam registration
+  const successfulPayment = await Payment.findOne({
+    examRegistrationId: registration._id,
+    paymentType: "EXAM_FEE",
+    status: "SUCCESS",
+  })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  if (successfulPayment) {
+    registration.paymentId = successfulPayment._id;
+    registration.registrationStatus = "HALL_TICKET_ISSUED";
+    await registration.save();
+    return {
+      isPaid: true,
+      status: "PAID",
+      payment: successfulPayment,
+      registration,
+      message: "Exam fee payment reconciled successfully. Hall Ticket issued.",
+    };
+  }
+
+  // 3. Check for any pending or initiated payment
+  const pendingPayment = await Payment.findOne({
+    examRegistrationId: registration._id,
+    paymentType: "EXAM_FEE",
+    status: { $in: ["PENDING", "INITIATED"] },
+  })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  if (pendingPayment) {
+    return {
+      isPaid: false,
+      status: "PENDING",
+      payment: pendingPayment,
+      registration,
+      message: "Exam fee payment transaction is pending confirmation.",
+    };
+  }
+
+  // 4. Check for any failed payment
+  const failedPayment = await Payment.findOne({
+    examRegistrationId: registration._id,
+    paymentType: "EXAM_FEE",
+    status: "FAILED",
+  })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  if (failedPayment) {
+    return {
+      isPaid: false,
+      status: "FAILED",
+      payment: failedPayment,
+      registration,
+      message: failedPayment.failureReason || "Last payment attempt failed. You may retry.",
+    };
+  }
+
+  // 5. Default: No payment record found
+  return {
+    isPaid: false,
+    status: "UNPAID",
+    payment: null,
+    registration,
+    message: "Exam fee has not been paid.",
+  };
+};
+
 const updateExamRegistrationStatus = async (id, registrationStatus) => {
-  return ExamRegistration.findByIdAndUpdate(id, { registrationStatus }, { new: true });
+  const updatedReg = await ExamRegistration.findByIdAndUpdate(id, { registrationStatus }, { new: true });
+  if (updatedReg && updatedReg.registrationStatus === "HALL_TICKET_ISSUED") {
+    const exam = await Exam.findById(updatedReg.examId).select("title name code").lean();
+    notificationService.notifyHallTicketIssued(updatedReg, exam).catch((e) => console.error("Non-fatal notifyHallTicketIssued error:", e.message));
+  }
+  return updatedReg;
 };
 
 // ==========================================
@@ -919,6 +1653,15 @@ const aggregateAndGenerateResults = async (examId, classId, publishingUser = nul
     { $set: { status: "PUBLISHED", publishedAt, publishedBy: publishingUser ? publishingUser.userId || publishingUser._id : undefined } }
   );
 
+  try {
+    const examDoc = await Exam.findById(examId).lean();
+    if (examDoc && isExamResultPublished(examDoc)) {
+      notificationService.notifyResultPublished(examDoc, classId).catch((e) => console.error("Non-fatal notifyResultPublished error:", e.message));
+    }
+  } catch (notifErr) {
+    console.error("Non-fatal error in result publication notification:", notifErr.message);
+  }
+
   return ExamResult.find({ examId, classId })
     .populate("examId", "title code")
     .populate("studentId", "nameEnglish name registrationNumber admissionNumber")
@@ -926,8 +1669,23 @@ const aggregateAndGenerateResults = async (examId, classId, publishingUser = nul
     .lean();
 };
 
+/**
+ * Centralized rule for exam result visibility.
+ * Returns true if the results for this exam are publicly visible to students and parents.
+ */
+const isExamResultPublished = (exam, currentTime = new Date()) => {
+  if (!exam) return false;
+  if (exam.resultPublicationDate) {
+    return new Date(currentTime).getTime() >= new Date(exam.resultPublicationDate).getTime();
+  }
+  // Backward compatibility: If no resultPublicationDate is configured,
+  // it is visible if the exam status is PUBLISHED or COMPLETED (legacy behavior)
+  return exam.status === "PUBLISHED" || exam.status === "COMPLETED";
+};
+
 const getExamResults = async (filter = {}, pagination = null, requestingUser = null) => {
   const query = { ...filter };
+  const currentTime = new Date();
 
   if (requestingUser) {
     if (requestingUser.role === "STUDENT") {
@@ -938,6 +1696,38 @@ const getExamResults = async (filter = {}, pagination = null, requestingUser = n
       }
       query.studentId = requestingUser.studentId;
       query.status = "PUBLISHED";
+
+      // If specific examId is queried
+      if (query.examId) {
+        const targetExam = await Exam.findById(query.examId).lean();
+        if (!targetExam) {
+          return pagination ? { data: [], total: 0 } : [];
+        }
+        if (!isExamResultPublished(targetExam, currentTime)) {
+          return {
+            data: [],
+            total: 0,
+            isPublished: false,
+            publicationStatus: "SCHEDULED",
+            resultPublicationDate: targetExam.resultPublicationDate || null,
+            examTitle: targetExam.title || targetExam.name || "Examination",
+            message: targetExam.resultPublicationDate
+              ? `Results for ${targetExam.title || targetExam.name || "this examination"} will be published on ${new Date(targetExam.resultPublicationDate).toISOString()}`
+              : "Results for this examination have not been published yet.",
+          };
+        }
+      } else {
+        // Exclude unpublished exams from the student's result feed
+        const unpublishedExams = await Exam.find({
+          resultPublicationDate: { $gt: currentTime },
+        })
+          .select("_id")
+          .lean();
+        const unpublishedIds = unpublishedExams.map((e) => e._id);
+        if (unpublishedIds.length > 0) {
+          query.examId = { $nin: unpublishedIds };
+        }
+      }
     } else if (requestingUser.role === "FACULTY") {
       const authorizedClasses = await academicAuthService.getFacultyAuthorizedClasses(
         requestingUser.userId || requestingUser._id
@@ -964,13 +1754,45 @@ const getExamResults = async (filter = {}, pagination = null, requestingUser = n
         query.studentId = { $in: parentStudentIds };
       }
       query.status = "PUBLISHED";
+
+      // If specific examId is queried
+      if (query.examId) {
+        const targetExam = await Exam.findById(query.examId).lean();
+        if (!targetExam) {
+          return pagination ? { data: [], total: 0 } : [];
+        }
+        if (!isExamResultPublished(targetExam, currentTime)) {
+          return {
+            data: [],
+            total: 0,
+            isPublished: false,
+            publicationStatus: "SCHEDULED",
+            resultPublicationDate: targetExam.resultPublicationDate || null,
+            examTitle: targetExam.title || targetExam.name || "Examination",
+            message: targetExam.resultPublicationDate
+              ? `Results for ${targetExam.title || targetExam.name || "this examination"} will be published on ${new Date(targetExam.resultPublicationDate).toISOString()}`
+              : "Results for this examination have not been published yet.",
+          };
+        }
+      } else {
+        // Exclude unpublished exams from the parent's result feed
+        const unpublishedExams = await Exam.find({
+          resultPublicationDate: { $gt: currentTime },
+        })
+          .select("_id")
+          .lean();
+        const unpublishedIds = unpublishedExams.map((e) => e._id);
+        if (unpublishedIds.length > 0) {
+          query.examId = { $nin: unpublishedIds };
+        }
+      }
     }
   }
 
   if (pagination) {
-    const [data, total] = await Promise.all([
+    const [rawResults, total] = await Promise.all([
       ExamResult.find(query)
-        .populate("examId", "title code examCode")
+        .populate("examId", "title code examCode resultPublicationDate status")
         .populate("studentId", "nameEnglish name registrationNumber admissionNumber")
         .populate("classId", "name className code")
         .sort({ createdAt: -1 })
@@ -979,22 +1801,108 @@ const getExamResults = async (filter = {}, pagination = null, requestingUser = n
         .lean(),
       ExamResult.countDocuments(query),
     ]);
+
+    // Defense-in-depth: ensure no unpublished exam slips through for student/parent
+    let data = rawResults;
+    if (requestingUser && (requestingUser.role === "STUDENT" || requestingUser.role === "PARENT")) {
+      data = rawResults.filter((r) => isExamResultPublished(r.examId, currentTime));
+    }
+
     return { data, total };
   }
 
-  return ExamResult.find(query)
-    .populate("examId", "title code examCode")
+  const rawResults = await ExamResult.find(query)
+    .populate("examId", "title code examCode resultPublicationDate status")
     .populate("studentId", "nameEnglish name registrationNumber admissionNumber")
     .populate("classId", "name className code")
     .sort({ createdAt: -1 })
     .lean();
+
+  let data = rawResults;
+  if (requestingUser && (requestingUser.role === "STUDENT" || requestingUser.role === "PARENT")) {
+    data = rawResults.filter((r) => isExamResultPublished(r.examId, currentTime));
+  }
+
+  return data;
+};
+
+const getExamResultById = async (id, requestingUser = null) => {
+  const result = await ExamResult.findById(id)
+    .populate("examId", "title code examCode resultPublicationDate status")
+    .populate("studentId", "nameEnglish name registrationNumber admissionNumber")
+    .populate("classId", "name className code")
+    .lean();
+
+  if (!result) {
+    const error = new Error("Exam result not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const currentTime = new Date();
+
+  if (requestingUser) {
+    if (requestingUser.role === "STUDENT") {
+      const studentIdStr = result.studentId?._id?.toString() || result.studentId?.toString();
+      if (studentIdStr !== requestingUser.studentId?.toString()) {
+        const error = new Error("Forbidden: You are not authorized to view this result");
+        error.statusCode = 403;
+        throw error;
+      }
+      if (!isExamResultPublished(result.examId, currentTime)) {
+        const error = new Error(
+          result.examId?.resultPublicationDate
+            ? `Results for this examination have not been published yet. Scheduled for: ${new Date(result.examId.resultPublicationDate).toISOString()}`
+            : "Results for this examination have not been published yet."
+        );
+        error.statusCode = 403;
+        error.isPublished = false;
+        error.resultPublicationDate = result.examId?.resultPublicationDate;
+        throw error;
+      }
+    } else if (requestingUser.role === "PARENT") {
+      const parentStudentIds = (requestingUser.parentStudentIds || []).map((sId) => sId.toString());
+      const studentIdStr = result.studentId?._id?.toString() || result.studentId?.toString();
+      if (!parentStudentIds.includes(studentIdStr)) {
+        const error = new Error("Forbidden: You are not authorized to view this student's results");
+        error.statusCode = 403;
+        throw error;
+      }
+      if (!isExamResultPublished(result.examId, currentTime)) {
+        const error = new Error(
+          result.examId?.resultPublicationDate
+            ? `Results for this examination have not been published yet. Scheduled for: ${new Date(result.examId.resultPublicationDate).toISOString()}`
+            : "Results for this examination have not been published yet."
+        );
+        error.statusCode = 403;
+        error.isPublished = false;
+        error.resultPublicationDate = result.examId?.resultPublicationDate;
+        throw error;
+      }
+    } else if (requestingUser.role === "FACULTY") {
+      const authorizedClasses = await academicAuthService.getFacultyAuthorizedClasses(
+        requestingUser.userId || requestingUser._id
+      );
+      const authClassIds = authorizedClasses.map((c) => c._id.toString());
+      const classIdStr = result.classId?._id?.toString() || result.classId?.toString();
+      if (!authClassIds.includes(classIdStr)) {
+        const error = new Error("Forbidden: You are not assigned to this class");
+        error.statusCode = 403;
+        throw error;
+      }
+    }
+  }
+
+  return result;
 };
 
 module.exports = {
   createExam,
   getExams,
   getExamById,
+  getAvailableExamsForStudent,
   updateExam,
+  publishExam,
   createExamSchedule,
   getExamSchedules,
   getExamScheduleById,
@@ -1003,6 +1911,8 @@ module.exports = {
   getExamScheduleRoster,
   registerStudentForExam,
   getExamRegistrations,
+  getExamRegistrationById,
+  checkExamFeePaymentStatus,
   updateExamRegistrationStatus,
   submitOrUpdateMarkEntry,
   submitRosterMarks,
@@ -1013,4 +1923,6 @@ module.exports = {
   getMarkCorrectionRequests,
   aggregateAndGenerateResults,
   getExamResults,
+  getExamResultById,
+  isExamResultPublished,
 };

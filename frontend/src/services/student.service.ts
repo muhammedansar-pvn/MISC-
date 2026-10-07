@@ -57,6 +57,23 @@ export const updateMyProfile = async (
   return response.data;
 };
 
+export const uploadStudentPhoto = async (file: File): Promise<ApiResponse<StudentProfile & { photoUrl?: string }>> => {
+  const formData = new FormData();
+  formData.append('photo', file);
+  const response = await apiClient.post<ApiResponse<any>>(API_ENDPOINTS.students.photo, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+export const deleteStudentPhoto = async (): Promise<ApiResponse<StudentProfile>> => {
+  const response = await apiClient.delete<ApiResponse<StudentProfile>>(API_ENDPOINTS.students.photo);
+  return response.data;
+};
+
+
 export const updateStudentStatus = async (
   id: string,
   status: string
@@ -80,15 +97,43 @@ export const getMyTeachers = async (): Promise<ApiResponse<SubjectTeacherItem[]>
   return response.data;
 };
 
+export const linkParent = async (
+  data: {
+    parentName: string;
+    parentEmail: string;
+    relationship?: string;
+    relationType?: string;
+    parentMobile?: string;
+  }
+): Promise<ApiResponse<any>> => {
+  const response = await apiClient.post<ApiResponse<any>>(API_ENDPOINTS.students.parent, data);
+  return response.data;
+};
+
+export const getLinkedParent = async (): Promise<ApiResponse<any>> => {
+  const response = await apiClient.get<ApiResponse<any>>(API_ENDPOINTS.students.parent);
+  return response.data;
+};
+
+export const resendParentVerificationOtp = async (): Promise<ApiResponse<any>> => {
+  const response = await apiClient.post<ApiResponse<any>>(API_ENDPOINTS.students.resendParentOtp);
+  return response.data;
+};
+
 export default {
   getStudents,
   getStudentById,
   getStudentProfile,
   updateMyProfile,
+  uploadStudentPhoto,
+  deleteStudentPhoto,
   registerStudent,
   registerStudentFull,
   updateStudent,
   updateStudentStatus,
   deleteStudent,
   getMyTeachers,
+  linkParent,
+  getLinkedParent,
+  resendParentVerificationOtp,
 };

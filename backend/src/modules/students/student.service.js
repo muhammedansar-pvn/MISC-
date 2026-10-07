@@ -6,6 +6,7 @@ const Class = require("../academics/class.model");
 const Timetable = require("../academics/timetable.model");
 const FacultyAssignment = require("../academics/faculty-assignment.model");
 const FacultyProfile = require("../faculty/faculty.model");
+const ParentProfile = require("../parents/parent.model");
 const { generateAccountSetupToken, sendAndStoreOtp, maskEmail } = require("../auth/auth.service");
 const OtpVerification = require("../auth/otp-verification.model");
 const studentLifecycleService = require("./student-lifecycle.service");
@@ -39,6 +40,89 @@ const generateRegistrationNumber = async (session = null) => {
   }
 
   return `MISC${year}${String(nextNumber).padStart(4, "0")}`;
+};
+
+const ensureParentLinked = async (studentProfile, parentData) => {
+  if (!parentData || !studentProfile) return;
+  const {
+    parentUserId,
+    parentEmail,
+    parentName,
+    parentMobile,
+    relationship,
+    relationType,
+    fatherName,
+  } = parentData;
+
+  let targetParentUserId = parentUserId || null;
+
+  if (parentEmail && parentEmail.trim()) {
+    const normParentEmail = parentEmail.toLowerCase().trim();
+    let parentUser = await User.findOne({
+      email: normParentEmail,
+      isDeleted: { $ne: true },
+    });
+
+    if (parentUser) {
+      if (parentUser.role !== "PARENT") {
+        const error = new Error("The specified parent email is already registered as a different account role.");
+        error.statusCode = 409;
+        throw error;
+      }
+      targetParentUserId = parentUser._id;
+    } else {
+      // 1. New parent account created without password
+      parentUser = await User.create({
+        name: (parentName && parentName.trim()) || (fatherName && fatherName.trim()) || "Parent",
+        email: normParentEmail,
+        username: normParentEmail,
+        role: "PARENT",
+        status: "PENDING_EMAIL_VERIFICATION",
+        mobile: parentMobile ? parentMobile.trim() : undefined,
+        emailVerified: false,
+        isDeleted: false,
+      });
+      targetParentUserId = parentUser._id;
+
+      // 2. Verification OTP sent
+      try {
+        await sendAndStoreOtp(normParentEmail, "EMAIL_VERIFICATION", { userId: parentUser._id, role: "PARENT" });
+      } catch (err) {
+        console.error("Failed to send parent verification OTP:", err.message);
+      }
+    }
+  }
+
+  if (targetParentUserId) {
+    studentProfile.parentUserId = targetParentUserId;
+    await studentProfile.save();
+
+    let parentProfile = await ParentProfile.findOne({
+      userId: targetParentUserId,
+      isDeleted: { $ne: true },
+    });
+
+    const studentIdStr = studentProfile._id.toString();
+
+    if (!parentProfile) {
+      await ParentProfile.create({
+        userId: targetParentUserId,
+        name: (parentName && parentName.trim()) || (fatherName && fatherName.trim()) || "Parent",
+        relationType: relationship || relationType || "FATHER",
+        contactNumber: parentMobile ? parentMobile.trim() : undefined,
+        studentIds: [studentProfile._id],
+        status: "ACTIVE",
+        isDeleted: false,
+      });
+    } else {
+      // 13. Same parent email registering second child reuses existing Parent account
+      const existingIds = (parentProfile.studentIds || []).map((id) => id.toString());
+      if (!existingIds.includes(studentIdStr)) {
+        parentProfile.studentIds.push(studentProfile._id);
+        await parentProfile.save();
+      }
+    }
+  }
 };
 
 const createStudent = async (studentData) => {
@@ -125,6 +209,8 @@ const createStudent = async (studentData) => {
     skills: studentData.skills || undefined,
     parentUserId: studentData.parentUserId || undefined,
   });
+
+  await ensureParentLinked(studentProfile, studentData);
 
   return StudentProfile.findById(studentProfile._id)
     .populate("userId", "name email username role status mobile")
@@ -511,6 +597,9 @@ const registerStudentWithAccount = async (payload, caller = null) => {
   } finally {
     await session.endSession();
   }
+
+  // Ensure parent account creation / linking if parent details provided
+  await ensureParentLinked(createdStudentProfile, payload);
 
   // Post-commit: trigger OTP / email verification flow
   let otpData = null;

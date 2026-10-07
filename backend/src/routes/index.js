@@ -19,6 +19,9 @@ const activityRoutes = require("../modules/activities/activity.routes");
 const disciplineRoutes = require("../modules/discipline/discipline.routes");
 const assignmentRoutes = require("../modules/assignments/assignment.routes");
 const studyMaterialRoutes = require("../modules/study-materials/study-material.routes");
+const parentRoutes = require("../modules/parents/parent.routes");
+const analyticsRoutes = require("../modules/analytics/analytics.routes");
+const notificationRoutes = require("../modules/notifications/notification.routes");
 const { sendTestEmail } = require("../shared/services/email.service");
 
 const router = express.Router();
@@ -62,6 +65,7 @@ router.use("/auth", authRoutes);
 router.use("/admin", adminRoutes);
 router.use("/institutions", institutionRoutes);
 router.use("/academic", academicRoutes);
+router.use("/academics", academicRoutes);
 router.use("/students", studentRoutes);
 router.use("/faculty", facultyRoutes);
 router.use("/exams", examRoutes);
@@ -75,6 +79,9 @@ router.use("/activities", activityRoutes);
 router.use("/discipline", disciplineRoutes);
 router.use("/assignments", assignmentRoutes);
 router.use("/study-materials", studyMaterialRoutes);
+router.use("/parents", parentRoutes);
+router.use("/analytics", analyticsRoutes);
+router.use("/notifications", notificationRoutes);
 
 // CMS, Downloads & Enquiries Mounts (Retaining 100% frontend API compatibility)
 router.use("/cms", cmsRoutes);

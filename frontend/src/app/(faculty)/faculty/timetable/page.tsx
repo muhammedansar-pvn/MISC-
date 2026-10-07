@@ -14,12 +14,12 @@ import {
   CalendarDays,
 } from 'lucide-react';
 
-const DAYS_OF_WEEK = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+const DAYS_OF_WEEK = ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
 
 export default function FacultyTimetablePage() {
   const [timetable, setTimetable] = useState<FacultyTimetableEntry[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedDay, setSelectedDay] = useState<string>('MONDAY');
+  const [selectedDay, setSelectedDay] = useState<string>('SATURDAY');
   const [viewMode, setViewMode] = useState<'day' | 'week'>('week');
 
   useEffect(() => {

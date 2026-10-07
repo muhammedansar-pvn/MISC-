@@ -1,5 +1,13 @@
-const { getSmtpTransporter, verifySmtpConnection, validateEmailConfig } = require("../../config/mail");
+const {
+  getSmtpTransporter,
+  setTestTransporter,
+  resetTransporter,
+  verifySmtpConnection,
+  validateEmailConfig,
+} = require("../../config/mail");
 const env = require("../../config/env");
+const EmailEvent = require("../../modules/notifications/email-event.model");
+const User = require("../../modules/users/user.model");
 
 const classifySmtpError = (err) => {
   const msg = (err.message || "").toLowerCase();
@@ -104,9 +112,32 @@ const sendEmail = async ({ to, subject, html, emailType = "GENERIC" }) => {
   }
 };
 
-const sendOtpEmail = async (to, otp, purpose = "EMAIL_VERIFICATION") => {
-  const subject = `Markaz Sanaviyya Verification Code - ${otp}`;
-  const verifyLink = `${env.APP_URL}/verify-email?email=${encodeURIComponent(to)}`;
+const sendOtpEmail = async (to, otp, purpose = "EMAIL_VERIFICATION", options = {}) => {
+  const isParentLogin = purpose === "PARENT_LOGIN";
+  const isParentVerification = purpose === "EMAIL_VERIFICATION" && options?.role === "PARENT";
+
+  let subject;
+  let verifyLink;
+  let purposeText;
+  let ctaText = "Go to Verification Page";
+
+  if (isParentLogin) {
+    subject = `Markaz Sanaviyya - Parent Portal Login OTP: ${otp}`;
+    verifyLink = `${env.APP_URL}/login/parent`;
+    purposeText = "Parent Portal Login";
+    ctaText = "Go to Parent Login";
+  } else if (isParentVerification) {
+    subject = `Markaz Sanaviyya - Parent Email Verification Code: ${otp}`;
+    verifyLink = `${env.APP_URL}/auth/parent/verify-email?email=${encodeURIComponent(to)}`;
+    purposeText = "Parent Email Verification";
+    ctaText = "Verify Parent Email";
+  } else {
+    subject = `Markaz Sanaviyya Verification Code - ${otp}`;
+    verifyLink = `${env.APP_URL}/verify-email?email=${encodeURIComponent(to)}`;
+    purposeText = purpose;
+    ctaText = "Go to Verification Page";
+  }
+
   const html = `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 32px; background-color: #F7F8F5; color: #132238;">
       <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; border: 1px solid #E2E8E0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
@@ -117,7 +148,7 @@ const sendOtpEmail = async (to, otp, purpose = "EMAIL_VERIFICATION") => {
         <div style="padding: 32px;">
           <p style="font-size: 16px; margin-top: 0;">Assalamu Alaikum,</p>
           <p style="font-size: 14px; color: #475569; line-height: 1.6;">
-            Your verification code for Markaz Sanaviyya (${purpose}) is:
+            Your verification code for Markaz Sanaviyya (${purposeText}) is:
           </p>
           <div style="margin: 28px 0; text-align: center;">
             <span style="display: inline-block; background-color: #F7F8F5; border: 2px dashed #2F7C7A; border-radius: 8px; padding: 14px 28px; font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #132238;">
@@ -125,11 +156,11 @@ const sendOtpEmail = async (to, otp, purpose = "EMAIL_VERIFICATION") => {
             </span>
           </div>
           <p style="font-size: 13px; color: #64748B; line-height: 1.5; text-align: center;">
-            This code will expire in <strong>10 minutes</strong>. Click below or enter this code on the verification page to proceed:
+            This code will expire in <strong>10 minutes</strong>. ${isParentLogin ? "Enter this code on the Parent login page to access your portal." : "Click below or enter this code on the verification page to proceed:"}
           </p>
           <div style="margin: 24px 0; text-align: center;">
             <a href="${verifyLink}" style="display: inline-block; background-color: #2F7C7A; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
-              Go to Verification Page
+              ${ctaText}
             </a>
           </div>
           <p style="font-size: 12px; color: #64748B; text-align: center; word-break: break-all;">
@@ -282,11 +313,165 @@ const sendTestEmail = async (to) => {
   return sendEmail({ to: recipient, subject, html, emailType: "SYSTEM_TEST" });
 };
 
+/**
+ * Transactional & Event-Based Email Dispatcher
+ * Dispatches emails with recipient validation, deduplication, audit logging in EmailEvent,
+ * and guaranteed failure isolation (never throws).
+ */
+const sendEventEmail = async ({
+  eventType,
+  to,
+  subject,
+  html,
+  text = "",
+  userId = null,
+  dedupKey = null,
+  metadata = {},
+}) => {
+  if (!eventType || !to || !subject || !html) {
+    console.warn(`[EMAIL EVENT SKIPPED] Missing required parameters for eventType=${eventType}`);
+    return { success: false, skipped: true, reason: "MISSING_REQUIRED_PARAMS" };
+  }
+
+  const normalizedEmail = to.trim().toLowerCase();
+  const maskedTo = maskEmailAddress(normalizedEmail);
+  const from = getSenderAddress();
+  const maskedFrom = maskEmailAddress(env.SMTP_FROM_EMAIL);
+
+  // 1. Recipient Validation: If userId is provided, ensure user exists, is ACTIVE, and is not soft-deleted
+  if (userId) {
+    try {
+      const userDoc = await User.findById(userId).select("status isDeleted email").lean();
+      if (!userDoc || userDoc.status !== "ACTIVE" || userDoc.isDeleted) {
+        console.warn(
+          `[EMAIL EVENT SKIPPED] Recipient userId=${userId} is invalid, inactive, or deleted. eventType=${eventType} to=${maskedTo}`
+        );
+        const skippedDoc = await EmailEvent.create({
+          eventType,
+          recipientEmail: normalizedEmail,
+          recipientUserId: userId,
+          subject,
+          dedupKey: dedupKey || null,
+          status: "SKIPPED",
+          errorMessage: "Recipient user is inactive, deleted, or does not exist",
+          metadata: metadata || {},
+        });
+        return { success: false, skipped: true, reason: "INACTIVE_OR_DELETED_USER", emailEventId: skippedDoc._id };
+      }
+    } catch (valErr) {
+      console.error(`[EMAIL EVENT] User validation error userId=${userId}:`, valErr.message);
+    }
+  }
+
+  // 2. Deduplication Check
+  if (dedupKey) {
+    try {
+      const existing = await EmailEvent.findOne({
+        dedupKey,
+        status: "SENT",
+      }).lean();
+
+      if (existing) {
+        console.log(
+          `[EMAIL EVENT DEDUPLICATED] Event already sent for dedupKey=${dedupKey} type=${eventType} to=${maskedTo}`
+        );
+        return {
+          success: true,
+          duplicate: true,
+          skipped: true,
+          emailEventId: existing._id,
+        };
+      }
+    } catch (dedupErr) {
+      console.error(`[EMAIL EVENT] Deduplication check error:`, dedupErr.message);
+    }
+  }
+
+  // 3. Dispatch Email via Transporter
+  try {
+    const transporter = await getSmtpTransporter();
+    const mailOptions = {
+      from,
+      to: [normalizedEmail],
+      subject,
+      html,
+    };
+    if (text) {
+      mailOptions.text = text;
+    }
+
+    const info = await transporter.sendMail(mailOptions);
+
+    console.log(
+      `[EMAIL EVENT SENT] type=${eventType} to=${maskedTo} from=${maskedFrom} messageId="${info.messageId}" dedupKey="${dedupKey || ""}"`
+    );
+
+    // 4. Record Audit Log in EmailEvent
+    const emailEventDoc = await EmailEvent.create({
+      eventType,
+      recipientEmail: normalizedEmail,
+      recipientUserId: userId || null,
+      subject,
+      dedupKey: dedupKey || null,
+      status: "SENT",
+      providerMessageId: info.messageId || null,
+      metadata: metadata || {},
+      sentAt: new Date(),
+    });
+
+    return {
+      success: true,
+      id: info.messageId,
+      accepted: info.accepted,
+      emailEventId: emailEventDoc._id,
+    };
+  } catch (sendErr) {
+    const classified = classifySmtpError(sendErr);
+    console.error(
+      `[EMAIL EVENT FAILED] type=${eventType} to=${maskedTo} code=${classified.code} message=${sendErr.message}`
+    );
+
+    try {
+      const failedDoc = await EmailEvent.create({
+        eventType,
+        recipientEmail: normalizedEmail,
+        recipientUserId: userId || null,
+        subject,
+        dedupKey: dedupKey || null,
+        status: "FAILED",
+        errorMessage: `${classified.code}: ${sendErr.message}`,
+        metadata: metadata || {},
+      });
+
+      return {
+        success: false,
+        error: {
+          code: classified.code,
+          message: classified.message,
+        },
+        emailEventId: failedDoc._id,
+      };
+    } catch (logErr) {
+      console.error(`[EMAIL EVENT] Failed to record failure event in DB:`, logErr.message);
+      return {
+        success: false,
+        error: {
+          code: classified.code,
+          message: classified.message,
+        },
+      };
+    }
+  }
+};
+
 module.exports = {
   validateEmailConfig,
   getSmtpTransporter,
+  setTestTransporter,
+  resetTransporter,
   verifySmtpConnection,
   sendEmail,
+  sendEventEmail,
   sendOtpEmail,
   sendPasswordResetEmail,
   sendUserInvitationEmail,

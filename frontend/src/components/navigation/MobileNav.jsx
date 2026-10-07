@@ -57,8 +57,25 @@ export const MobileNav = ({ isOpen, onClose }) => {
         </nav>
 
         {/* Footer Info & CTA Area in Normal Document Flow */}
-        <div className="pt-6 border-t border-slate-800 space-y-5">
-          <div className="space-y-2.5 text-xs text-slate-300">
+        <div className="pt-6 border-t border-slate-800 space-y-4">
+          <Link
+            href="/auth/login"
+            onClick={onClose}
+            className="flex items-center justify-center space-x-2 w-full text-center bg-white/10 hover:bg-white/15 text-white text-[13px] font-semibold tracking-wide px-4 py-3 rounded-lg border border-white/20 transition-colors"
+          >
+            <span>Portal Access (Student / Faculty)</span>
+          </Link>
+
+          <Link
+            href={applyCta.path}
+            onClick={onClose}
+            className="flex items-center justify-center space-x-2 w-full text-center bg-misc-primary text-white hover:bg-misc-primary-dark text-[13.5px] sm:text-[14px] font-bold tracking-wider uppercase px-4 py-3.5 rounded-lg transition-colors shadow-sm cursor-pointer"
+          >
+            <span>{applyCta.name}</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+
+          <div className="pt-2 space-y-2 text-xs text-slate-300">
             <div className="flex items-center space-x-2.5">
               <Mail className="w-4 h-4 text-misc-primary shrink-0" />
               <span className="font-mono text-xs">{miscInfo.email}</span>
@@ -68,15 +85,6 @@ export const MobileNav = ({ isOpen, onClose }) => {
               <span className="font-mono text-xs">{miscInfo.phone}</span>
             </div>
           </div>
-
-          <Link
-            href={applyCta.path}
-            onClick={onClose}
-            className="flex items-center justify-center space-x-2 w-full text-center bg-misc-primary text-white hover:bg-misc-primary-dark text-[13.5px] sm:text-[14px] font-bold tracking-wider uppercase px-4 py-3.5 rounded-lg transition-colors shadow-sm cursor-pointer"
-          >
-            <span>ENQUIRY</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
 
       </div>

@@ -1,14 +1,15 @@
 export const navLinks = [
-  { name: "Home", path: "/" },
   { name: "About", path: "/about" },
   { name: "Academics", path: "/academics" },
   { name: "Institutions", path: "/institutions" },
-  { name: "Downloads", path: "/downloads" },
+  { name: "Campus Life", path: "/#campus-life" },
+  { name: "News & Events", path: "/#news" },
   { name: "Examination", path: "/examination" },
+  { name: "Downloads", path: "/downloads" },
   { name: "Contact", path: "/contact" }
 ];
 
 export const applyCta = {
-  name: "APPLY NOW",
+  name: "ADMISSIONS",
   path: "/contact"
 };

@@ -1,11 +1,11 @@
 import { apiClient, API_ENDPOINTS } from '@/api/axios';
-import { LeaveApplication, LeaveFilterParams, ApiResponse } from '@/types';
+import { LeaveApplication, LeaveFilterParams, ApplyLeavePayload, ApiResponse } from '@/types';
 
 /**
  * Fetch leaves for the authenticated user (Student, Parent, Faculty, Admin).
  */
 export const getLeaves = async (
-  params?: LeaveFilterParams & { studentId?: string; status?: string }
+  params?: LeaveFilterParams & { studentId?: string; status?: string; classId?: string }
 ): Promise<ApiResponse<LeaveApplication[]>> => {
   const response = await apiClient.get<ApiResponse<LeaveApplication[]>>(
     API_ENDPOINTS.leaves.list,
@@ -17,7 +17,20 @@ export const getLeaves = async (
 export const getStudentLeaves = getLeaves;
 
 /**
- * Approve a pending leave request (Faculty).
+ * Submit a leave application (Student or Parent).
+ */
+export const applyLeave = async (
+  payload: ApplyLeavePayload
+): Promise<ApiResponse<LeaveApplication>> => {
+  const response = await apiClient.post<ApiResponse<LeaveApplication>>(
+    API_ENDPOINTS.leaves.apply,
+    payload
+  );
+  return response.data;
+};
+
+/**
+ * Approve a pending leave request (Faculty or Admin).
  */
 export const approveLeave = async (
   id: string,
@@ -31,7 +44,7 @@ export const approveLeave = async (
 };
 
 /**
- * Reject a pending leave request (Faculty).
+ * Reject a pending leave request (Faculty or Admin).
  */
 export const rejectLeave = async (
   id: string,
@@ -47,6 +60,7 @@ export const rejectLeave = async (
 export default {
   getLeaves,
   getStudentLeaves,
+  applyLeave,
   approveLeave,
   rejectLeave,
 };

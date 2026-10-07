@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getExamRegistrations, getExamSchedules } from '@/services/exam.service';
+import { getExamRegistrations, getExamSchedules, checkExamFeePayment } from '@/services/exam.service';
+import { createPaymentOrder, verifyPayment } from '@/services/payment.service';
 import { getStudentProfile } from '@/services/student.service';
 import { ExamRegistration, ExamSchedule, StudentProfile } from '@/types';
 import {
@@ -16,6 +17,11 @@ import {
   Clock,
   ArrowLeft,
   AlertCircle,
+  CreditCard,
+  RefreshCw,
+  CheckCircle2,
+  Lock,
+  ClipboardList,
 } from 'lucide-react';
 
 export default function StudentRegistrationsPage() {
@@ -24,6 +30,9 @@ export default function StudentRegistrationsPage() {
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [selectedHallTicket, setSelectedHallTicket] = useState<ExamRegistration | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [checkingPaymentId, setCheckingPaymentId] = useState<string | null>(null);
+  const [payingRegistrationId, setPayingRegistrationId] = useState<string | null>(null);
+  const [paymentFeedback, setPaymentFeedback] = useState<{ id: string; message: string; type: 'success' | 'info' | 'error' } | null>(null);
 
   useEffect(() => {
     async function loadRegistrations() {
@@ -58,6 +67,189 @@ export default function StudentRegistrationsPage() {
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleCheckPayment = async (regId: string) => {
+    try {
+      setCheckingPaymentId(regId);
+      setPaymentFeedback(null);
+      const res = await checkExamFeePayment(regId);
+      if (res.success && res.data) {
+        const { isPaid, status, registration, message } = res.data;
+        const paymentData = res.data?.payment;
+        setRegistrations((prev) =>
+          prev.map((r) =>
+            r._id === regId
+              ? {
+                  ...r,
+                  registrationStatus: registration?.registrationStatus || r.registrationStatus,
+                  paymentId: registration?.paymentId || paymentData || r.paymentId,
+                }
+              : r
+          )
+        );
+        if (selectedHallTicket && selectedHallTicket._id === regId) {
+          setSelectedHallTicket((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  registrationStatus: registration?.registrationStatus || prev.registrationStatus,
+                  paymentId: registration?.paymentId || paymentData || prev.paymentId,
+                }
+              : null
+          );
+        }
+        setPaymentFeedback({
+          id: regId,
+          message: message || (isPaid ? 'Exam fee verified successfully! Hall Ticket issued.' : `Fee Status: ${status}`),
+          type: isPaid ? 'success' : 'info',
+        });
+      } else {
+        setPaymentFeedback({
+          id: regId,
+          message: res.message || 'Unable to check fee status at this time.',
+          type: 'error',
+        });
+      }
+    } catch (err: any) {
+      setPaymentFeedback({
+        id: regId,
+        message: err.response?.data?.message || err.message || 'Payment status check failed.',
+        type: 'error',
+      });
+    } finally {
+      setCheckingPaymentId(null);
+    }
+  };
+
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (typeof window === 'undefined') return resolve(false);
+      if ((window as any).Razorpay) return resolve(true);
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleInitiatePayment = async (reg: ExamRegistration) => {
+    try {
+      setPayingRegistrationId(reg._id);
+      setPaymentFeedback(null);
+
+      // 1. Request secure payment order from backend
+      const res = await createPaymentOrder(reg._id);
+      if (!res.success || !res.data) {
+        throw new Error(res.message || 'Failed to create payment order');
+      }
+
+      const order = res.data;
+
+      // Handle 0-fee free examination auto-clear
+      if (order.freeExam) {
+        setPaymentFeedback({
+          id: reg._id,
+          message: 'Exam fee is ₹0. Registration confirmed and Admit Card issued!',
+          type: 'success',
+        });
+        await handleCheckPayment(reg._id);
+        return;
+      }
+
+      // 2. Load Gateway SDK dynamically
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        throw new Error('Payment gateway SDK could not be loaded. Please verify your connection.');
+      }
+
+      // 3. Launch Checkout Modal
+      const options = {
+        key: order.keyId,
+        amount: order.amountInPaise,
+        currency: order.currency || 'INR',
+        name: order.institutionName || 'Markaz Sanaviyya',
+        description: `${order.examTitle} Fee Payment`,
+        order_id: order.orderId,
+        prefill: {
+          name: order.studentName || profile?.nameEnglish || '',
+          email: (profile?.userId as any)?.email || '',
+        },
+        notes: {
+          examRegistrationId: reg._id,
+          rollNumber: order.rollNumber,
+        },
+        theme: {
+          color: '#23804A',
+        },
+        handler: async function (response: any) {
+          try {
+            setPayingRegistrationId(reg._id);
+            // 4. Verify payment cryptographically with backend
+            const verifyRes = await verifyPayment({
+              transactionId: order.transactionId,
+              razorpayOrderId: response.razorpay_order_id || order.orderId,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              gateway: 'RAZORPAY',
+            });
+
+            if (verifyRes.success) {
+              setPaymentFeedback({
+                id: reg._id,
+                message: 'Payment verified successfully! Hall Ticket has been issued.',
+                type: 'success',
+              });
+              await handleCheckPayment(reg._id);
+            } else {
+              setPaymentFeedback({
+                id: reg._id,
+                message: verifyRes.message || 'Payment verification failed.',
+                type: 'error',
+              });
+            }
+          } catch (vErr: any) {
+            setPaymentFeedback({
+              id: reg._id,
+              message: vErr.response?.data?.message || vErr.message || 'Payment verification failed.',
+              type: 'error',
+            });
+          } finally {
+            setPayingRegistrationId(null);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setPayingRegistrationId(null);
+            setPaymentFeedback({
+              id: reg._id,
+              message: 'Checkout window closed. You can retry payment at any time.',
+              type: 'info',
+            });
+          },
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (resp: any) {
+        setPaymentFeedback({
+          id: reg._id,
+          message: resp.error?.description || 'Payment was declined by your bank.',
+          type: 'error',
+        });
+        setPayingRegistrationId(null);
+      });
+      rzp.open();
+    } catch (err: any) {
+      setPaymentFeedback({
+        id: reg._id,
+        message: err.response?.data?.message || err.message || 'Failed to initiate payment.',
+        type: 'error',
+      });
+      setPayingRegistrationId(null);
+    }
   };
 
   if (loading) {
@@ -97,12 +289,20 @@ export default function StudentRegistrationsPage() {
           </h1>
         </div>
 
-        <Link
-          href="/student/examinations"
-          className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#23804A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all self-start sm:self-auto"
-        >
-          <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to Timetable
-        </Link>
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <Link
+            href="/student/examinations/registration"
+            className="inline-flex items-center text-xs font-semibold text-white px-3.5 py-2 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] shadow-2xs transition-all"
+          >
+            <ClipboardList className="w-3.5 h-3.5 mr-1.5" /> Register for Exam
+          </Link>
+          <Link
+            href="/student/examinations"
+            className="inline-flex items-center text-xs font-semibold text-slate-600 hover:text-[#23804A] px-3 py-2 rounded-lg border border-slate-200 bg-white shadow-2xs hover:bg-slate-50 transition-all"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to Timetable
+          </Link>
+        </div>
       </div>
 
       {/* Info Notice regarding registration workflow */}
@@ -129,61 +329,143 @@ export default function StudentRegistrationsPage() {
         <div className="space-y-4">
           {registrations.map((reg) => {
             const exam = (reg.examId as any);
+            const payment = (reg.paymentId as any);
             const isIssued = reg.registrationStatus === 'HALL_TICKET_ISSUED';
             const isCancelled = reg.registrationStatus === 'CANCELLED';
+            const isPaid = payment?.status === 'SUCCESS' || (isIssued && payment);
+            const isPendingPayment = payment?.status === 'PENDING';
+            const isChecking = checkingPaymentId === reg._id;
 
             return (
               <div
                 key={reg._id}
-                className="bg-white rounded-xl border border-[#E3EAE5] p-6 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-[#23804A] transition-all"
+                className="bg-white rounded-xl border border-[#E3EAE5] p-6 shadow-2xs hover:border-[#23804A] transition-all space-y-4"
               >
-                <div className="space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-                      {exam?.examCode || 'EXAM'}
-                    </span>
-                    <h2 className="text-base font-bold text-[#171D19]">{exam?.title || 'Examination Term'}</h2>
-                    <span
-                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                        isIssued
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : isCancelled
-                          ? 'bg-rose-100 text-rose-800'
-                          : 'bg-green-100 text-green-800'
-                      }`}
-                    >
-                      {reg.registrationStatus || 'REGISTERED'}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
-                    <div className="flex items-center space-x-1 font-mono">
-                      <span className="text-slate-400">Roll Number:</span>
-                      <span className="font-bold text-slate-800">{reg.rollNumber || 'Under Generation'}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400">Registered On:</span>{' '}
-                      <span className="text-slate-700 font-medium">
-                        {reg.createdAt ? new Date(reg.createdAt).toLocaleDateString('en-GB') : 'Verified'}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                        {exam?.examCode || 'EXAM'}
                       </span>
+                      <h2 className="text-base font-bold text-[#171D19]">{exam?.title || 'Examination Term'}</h2>
+                      <span
+                        className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                          isIssued
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : isCancelled
+                            ? 'bg-rose-100 text-rose-800'
+                            : 'bg-green-100 text-green-800'
+                        }`}
+                      >
+                        {reg.registrationStatus || 'REGISTERED'}
+                      </span>
+
+                      {/* Fee Payment Badge */}
+                      {isPaid ? (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 inline-flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                          Fee Paid {payment?.amount ? `(₹${payment.amount})` : ''}
+                        </span>
+                      ) : isPendingPayment ? (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 inline-flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-amber-600" />
+                          Payment Pending
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 inline-flex items-center gap-1">
+                          <CreditCard className="w-3 h-3 text-slate-500" />
+                          Fee Unpaid
+                        </span>
+                      )}
                     </div>
+
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
+                      <div className="flex items-center space-x-1 font-mono">
+                        <span className="text-slate-400">Roll Number:</span>
+                        <span className="font-bold text-slate-800">{reg.rollNumber || 'Under Generation'}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400">Registered On:</span>{' '}
+                        <span className="text-slate-700 font-medium">
+                          {reg.createdAt ? new Date(reg.createdAt).toLocaleDateString('en-GB') : 'Verified'}
+                        </span>
+                      </div>
+                      {payment?.transactionId && (
+                        <div className="flex items-center space-x-1 font-mono">
+                          <span className="text-slate-400">Txn ID:</span>
+                          <span className="text-slate-700 font-medium">{payment.transactionId}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3 self-start md:self-auto shrink-0 flex-wrap gap-y-2">
+                    {!isPaid && !isCancelled && (
+                      <button
+                        onClick={() => handleInitiatePayment(reg)}
+                        disabled={payingRegistrationId === reg._id || isChecking}
+                        className="inline-flex items-center px-4 py-2.5 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-semibold shadow-2xs transition-all disabled:opacity-60 cursor-pointer"
+                        title="Proceed to secure Razorpay checkout"
+                      >
+                        <CreditCard
+                          className={`w-3.5 h-3.5 mr-1.5 ${
+                            payingRegistrationId === reg._id ? 'animate-pulse' : ''
+                          }`}
+                        />
+                        {payingRegistrationId === reg._id
+                          ? 'Connecting Gateway...'
+                          : `Pay Exam Fee ₹${exam?.fee ?? 500}`}
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => handleCheckPayment(reg._id)}
+                      disabled={isChecking || payingRegistrationId === reg._id}
+                      className="inline-flex items-center px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition-all disabled:opacity-60"
+                      title="Verify and check fee payment status"
+                    >
+                      <RefreshCw
+                        className={`w-3.5 h-3.5 mr-1.5 ${
+                          isChecking ? 'animate-spin text-[#23804A]' : 'text-slate-400'
+                        }`}
+                      />
+                      {isChecking ? 'Checking...' : 'Check Payment Status'}
+                    </button>
+
+                    {isIssued ? (
+                      <button
+                        onClick={() => setSelectedHallTicket(reg)}
+                        className="inline-flex items-center px-4 py-2.5 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-semibold shadow-2xs transition-all"
+                      >
+                        <Printer className="w-3.5 h-3.5 mr-1.5" /> View / Print Hall Ticket
+                      </button>
+                    ) : !isPaid ? null : (
+                      <span className="text-xs text-slate-400 italic bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
+                        Admit Card in preparation
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-3 self-start md:self-auto shrink-0">
-                  {isIssued ? (
-                    <button
-                      onClick={() => setSelectedHallTicket(reg)}
-                      className="inline-flex items-center px-4 py-2.5 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-semibold shadow-2xs transition-all"
-                    >
-                      <Printer className="w-3.5 h-3.5 mr-1.5" /> View / Print Hall Ticket
-                    </button>
-                  ) : (
-                    <span className="text-xs text-slate-400 italic bg-slate-50 px-3 py-2 rounded-lg border border-slate-200">
-                      Admit Card in preparation
-                    </span>
-                  )}
-                </div>
+                {/* Inline payment check notification / alert */}
+                {paymentFeedback?.id === reg._id && (
+                  <div
+                    className={`p-3 rounded-lg text-xs flex items-center space-x-2 animate-in fade-in duration-150 ${
+                      paymentFeedback.type === 'success'
+                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                        : paymentFeedback.type === 'error'
+                        ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                        : 'bg-sky-50 text-sky-800 border border-sky-200'
+                    }`}
+                  >
+                    {paymentFeedback.type === 'success' ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                    )}
+                    <span>{paymentFeedback.message}</span>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -268,6 +550,32 @@ export default function StudentRegistrationsPage() {
                     Markaz Sanaviyya (SANAVIYYA)
                   </p>
                 </div>
+              </div>
+
+              {/* Fee Clearance & Verification */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
+                <div className="flex items-center space-x-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
+                  <div>
+                    <span className="font-bold text-emerald-950">Exam Fee Clearance: </span>
+                    <span className="font-semibold text-emerald-800">
+                      {(selectedHallTicket.paymentId as any)?.status === 'SUCCESS' ||
+                      selectedHallTicket.registrationStatus === 'HALL_TICKET_ISSUED'
+                        ? 'PAID & VERIFIED'
+                        : 'PENDING'}
+                    </span>
+                    {(selectedHallTicket.paymentId as any)?.amount && (
+                      <span className="ml-1 text-emerald-700 font-mono">
+                        (₹{(selectedHallTicket.paymentId as any).amount})
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {(selectedHallTicket.paymentId as any)?.transactionId && (
+                  <div className="text-[11px] font-mono text-emerald-800">
+                    Ref ID: {(selectedHallTicket.paymentId as any).transactionId}
+                  </div>
+                )}
               </div>
 
               {/* Instructions */}

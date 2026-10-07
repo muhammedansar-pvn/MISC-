@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Manrope:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @source "../components";
@@ -76,32 +77,34 @@
 
 /* Public Sanaviyya palette. Kept on the public layout so portal colors stay independent. */
 .sanaviyya-site {
-  --sanaviyya-brand-blue: #1E5BB8;
-  --sanaviyya-brand-blue-hover: #174A96;
-  --sanaviyya-deep-navy: #12233F;
-  --sanaviyya-background: #F6F9FD;
+  --sanaviyya-brand-teal: #2F7C7A;
+  --sanaviyya-brand-teal-hover: #246462;
+  --sanaviyya-deep-navy: #132238;
+  --sanaviyya-navy-card: #1B2D47;
+  --sanaviyya-background: #F8FAFC;
   --sanaviyya-surface: #FFFFFF;
-  --sanaviyya-soft-blue: #EDF4FC;
-  --sanaviyya-text-primary: #12233F;
-  --sanaviyya-text-secondary: #667085;
-  --sanaviyya-border: #E5E9EF;
+  --sanaviyya-soft-teal: #F0F7F6;
+  --sanaviyya-soft-blue: #F0F7F6;
+  --sanaviyya-text-primary: #132238;
+  --sanaviyya-text-secondary: #475569;
+  --sanaviyya-border: #E2E8F0;
 
-  --color-misc-primary: var(--sanaviyya-brand-blue);
-  --color-misc-primary-dark: var(--sanaviyya-brand-blue-hover);
-  --color-misc-deep-blue: var(--sanaviyya-deep-navy);
-  --color-misc-blue: var(--sanaviyya-brand-blue);
-  --color-misc-light-accent: var(--sanaviyya-brand-blue);
-  --color-misc-soft-blue: var(--sanaviyya-soft-blue);
-  --color-misc-light-blue: var(--sanaviyya-soft-blue);
-  --color-misc-very-light-blue: var(--sanaviyya-background);
-  --color-misc-page: var(--sanaviyya-background);
-  --color-misc-text: var(--sanaviyya-text-primary);
-  --color-misc-secondary: var(--sanaviyya-text-secondary);
-  --color-misc-muted: var(--sanaviyya-text-secondary);
+  --color-misc-primary: #2F7C7A;
+  --color-misc-primary-dark: #246462;
+  --color-misc-deep-blue: #132238;
+  --color-misc-blue: #2F7C7A;
+  --color-misc-light-accent: #3E9996;
+  --color-misc-soft-blue: #F0F7F6;
+  --color-misc-light-blue: #E2EFEF;
+  --color-misc-very-light-blue: #F8FAFC;
+  --color-misc-page: #F8FAFC;
+  --color-misc-text: #132238;
+  --color-misc-secondary: #475569;
+  --color-misc-muted: #64748B;
   --color-misc-dark-muted: #CBD5E1;
-  --color-misc-border: var(--sanaviyya-border);
-  --color-misc-navy: var(--sanaviyya-deep-navy);
-  --color-misc-navy-card: #1A3151;
+  --color-misc-border: #E2E8F0;
+  --color-misc-navy: #132238;
+  --color-misc-navy-card: #1A2E49;
 }
 
 /* Green-and-white workspace theme used by the admin, student, and faculty portals. */

@@ -12,6 +12,9 @@ const createRateLimiter = ({
   max = 10,
   message = "Too many requests. Please try again later.",
 } = {}) => {
+  if (process.env.NODE_ENV === "test") {
+    return (req, res, next) => next();
+  }
   return rateLimit({
     windowMs,
     max,

@@ -29,7 +29,8 @@ const requireAuth = async (req, res, next) => {
 
     // Database-backed verification: Enforce that user exists, is not deleted, and is active for ALL roles
     const user = await User.findById(decoded.userId).select("role status isDeleted name email username");
-    if (!user || user.isDeleted === true || user.status !== "ACTIVE" || user.role !== decoded.role) {
+    const isActive = user && (user.status === "ACTIVE" || user.status === "EMAIL_VERIFIED");
+    if (!user || user.isDeleted === true || !isActive || user.role !== decoded.role) {
       return res.status(401).json({
         success: false,
         message: "Account is not active or has been deactivated",
@@ -89,7 +90,15 @@ const requireAuth = async (req, res, next) => {
       }
       if (parentProfile) {
         req.user.parentId = parentProfile._id;
-        req.user.parentStudentIds = (parentProfile.studentIds || []).map((id) => id.toString());
+        const profileStudentIds = (parentProfile.studentIds || []).map((id) => id.toString());
+        const linkedStudents = await StudentProfile.find({
+          parentUserId: decoded.userId,
+          isDeleted: { $ne: true },
+        }).select("_id").lean();
+        const extraStudentIds = linkedStudents.map((s) => s._id.toString());
+        req.user.parentStudentIds = Array.from(new Set([...profileStudentIds, ...extraStudentIds]));
+      } else {
+        req.user.parentStudentIds = [];
       }
     } else if (decoded.role === "INSTITUTION") {
       // Legacy backward-compatibility for existing sessions

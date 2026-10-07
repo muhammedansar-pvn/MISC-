@@ -17,7 +17,14 @@ app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
 // Global Middleware
 app.use(corsMiddleware);
-app.use(express.json({ limit: "25mb" }));
+app.use(
+  express.json({
+    limit: "25mb",
+    verify: (req, res, buf) => {
+      req.rawBody = buf ? buf.toString() : "";
+    },
+  })
+);
 
 // Static File Storage Serving (for uploaded files, syllabuses, etc.)
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));

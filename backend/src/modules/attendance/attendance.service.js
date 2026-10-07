@@ -940,6 +940,24 @@ const markClassAttendance = async (payload, requestingUser) => {
 
   const bulkResult = await AttendanceRecord.bulkWrite(bulkOps);
 
+  // Trigger attendance warning notifications asynchronously if student overall percentage drops below 75%
+  try {
+    const notificationService = require("../notifications/notification.service");
+    for (const sId of studentIds) {
+      getStudentAttendanceOverview(sId, academicYearId)
+        .then((overview) => {
+          if (overview && overview.overallPercentage !== null && overview.overallPercentage < 75) {
+            return notificationService.notifyAttendanceWarning(sId, overview.overallPercentage, normalizedDate);
+          }
+        })
+        .catch((err) => {
+          console.error("Non-fatal: failed to check attendance warning for student", sId, err.message);
+        });
+    }
+  } catch (notifErr) {
+    console.error("Non-fatal error in attendance warning notification trigger:", notifErr.message);
+  }
+
   return {
     classId,
     subjectId,

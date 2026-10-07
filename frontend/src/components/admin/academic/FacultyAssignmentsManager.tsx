@@ -125,6 +125,15 @@ export default function FacultyAssignmentsManager({
     });
   };
 
+  // Filter subjects available for chosen class
+  const availableSubjectsForClass = (classId: string) => {
+    if (!classId) return preloadedSubjects;
+    return preloadedSubjects.filter((sub: any) => {
+      if (!sub.classes || sub.classes.length === 0) return true;
+      return sub.classes.some((c: any) => (c?._id || c) === classId);
+    });
+  };
+
   // Open modal handler
   const handleOpenModal = () => {
     setFormError('');
@@ -493,7 +502,14 @@ export default function FacultyAssignmentsManager({
                 </label>
                 <select
                   value={formClassId}
-                  onChange={(e) => setFormClassId(e.target.value)}
+                  onChange={(e) => {
+                    const newClassId = e.target.value;
+                    setFormClassId(newClassId);
+                    if (formSubjectId && newClassId) {
+                      const valid = availableSubjectsForClass(newClassId).some((s) => s._id === formSubjectId);
+                      if (!valid) setFormSubjectId('');
+                    }
+                  }}
                   required
                   disabled={!formYearId}
                   className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#23804A] disabled:opacity-50"
@@ -509,7 +525,7 @@ export default function FacultyAssignmentsManager({
                 </select>
               </div>
 
-              {/* Subject Selection */}
+              {/* Subject Selection (Scoped to Class) */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
                   Subject <span className="text-rose-500">*</span>
@@ -518,12 +534,15 @@ export default function FacultyAssignmentsManager({
                   value={formSubjectId}
                   onChange={(e) => setFormSubjectId(e.target.value)}
                   required
-                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#23804A]"
+                  disabled={!formClassId}
+                  className="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-800 focus:outline-hidden focus:border-[#23804A] disabled:opacity-50"
                 >
-                  <option value="">Select Subject...</option>
-                  {preloadedSubjects.map((sub) => (
+                  <option value="">
+                    {formClassId ? 'Select Subject...' : 'Select a Class first...'}
+                  </option>
+                  {availableSubjectsForClass(formClassId).map((sub: any) => (
                     <option key={sub._id} value={sub._id}>
-                      {sub.name} ({sub.code}) - {sub.category || 'General'}
+                      {sub.name || sub.subjectName} ({sub.code || sub.subjectCode}) - {sub.category || 'General'}
                     </option>
                   ))}
                 </select>

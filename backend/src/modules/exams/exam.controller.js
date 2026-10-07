@@ -1,4 +1,5 @@
 const examService = require("./exam.service");
+const StudentProfile = require("../students/student.model");
 const { parsePagination, formatPaginatedResponse } = require("../../shared/utils/pagination");
 
 // ==========================================
@@ -48,6 +49,26 @@ const handleUpdateExam = async (req, res) => {
     return res.status(statusCode).json({ success: false, message: error.message || "Failed to update exam" });
   }
 };
+
+const handlePublishExam = async (req, res) => {
+  try {
+    const shouldPublish = req.body.status
+      ? req.body.status === "PUBLISHED"
+      : req.body.isPublished !== undefined
+      ? Boolean(req.body.isPublished)
+      : true;
+    const exam = await examService.publishExam(req.params.id, shouldPublish);
+    return res.status(200).json({
+      success: true,
+      message: shouldPublish ? "Examination published successfully" : "Examination unpublished and reverted to draft",
+      data: exam,
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 400;
+    return res.status(statusCode).json({ success: false, message: error.message || "Failed to update examination publication status" });
+  }
+};
+
 
 // ==========================================
 // 2. EXAM SCHEDULES
@@ -127,17 +148,85 @@ const handleGetExamScheduleRoster = async (req, res) => {
 // ==========================================
 // 3. EXAM REGISTRATIONS
 // ==========================================
-const handleRegisterStudentForExam = async (req, res) => {
+const handleGetAvailableExamsForStudent = async (req, res) => {
   try {
-    const regData = { ...req.body };
-    if (req.user && req.user.role === "STUDENT") {
-      if (!req.user.studentId) {
+    let studentProfileId = null;
+
+    if (req.user.role === "STUDENT") {
+      studentProfileId = req.user.studentId;
+      if (!studentProfileId) {
+        const profile = await StudentProfile.findOne({ userId: req.user.userId || req.user._id }).select("_id");
+        if (profile) studentProfileId = profile._id;
+      }
+      if (!studentProfileId) {
         return res.status(403).json({
           success: false,
           message: "No student profile associated with this account",
         });
       }
-      regData.studentId = req.user.studentId;
+    } else if (req.user.role === "PARENT") {
+      const parentStudents = (req.user.parentStudentIds || []).map((id) => id.toString());
+      if (req.query.studentId) {
+        if (!parentStudents.includes(req.query.studentId.toString())) {
+          return res.status(403).json({
+            success: false,
+            message: "Access denied: You are not authorized to view examinations for this student",
+          });
+        }
+        studentProfileId = req.query.studentId;
+      } else if (parentStudents.length > 0) {
+        studentProfileId = parentStudents[0];
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "No student linked to this parent account",
+        });
+      }
+    } else if (["ADMIN", "INSTITUTION"].includes(req.user.role)) {
+      studentProfileId = req.query.studentId;
+      if (!studentProfileId) {
+        return res.status(400).json({
+          success: false,
+          message: "studentId query parameter is required for administrative lookup",
+        });
+      }
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized to access student available examinations",
+      });
+    }
+
+    const availableExams = await examService.getAvailableExamsForStudent(studentProfileId);
+    return res.status(200).json({
+      success: true,
+      data: availableExams,
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message || "Failed to retrieve available examinations",
+    });
+  }
+};
+
+const handleRegisterStudentForExam = async (req, res) => {
+  try {
+    const regData = { ...req.body };
+    if (req.user && req.user.role === "STUDENT") {
+      let studentProfileId = req.user.studentId;
+      if (!studentProfileId) {
+        const profile = await StudentProfile.findOne({ userId: req.user.userId || req.user._id }).select("_id");
+        if (profile) studentProfileId = profile._id;
+      }
+      if (!studentProfileId) {
+        return res.status(403).json({
+          success: false,
+          message: "No student profile associated with this account",
+        });
+      }
+      regData.studentId = studentProfileId;
     }
     const registration = await examService.registerStudentForExam(regData);
     return res.status(201).json({ success: true, message: "Registered student for exam successfully", data: registration });
@@ -152,6 +241,21 @@ const handleGetExamRegistrations = async (req, res) => {
     const filter = {};
     if (req.user.role === "STUDENT") {
       filter.studentId = req.user.studentId;
+    } else if (req.user.role === "PARENT") {
+      const parentStudents = (req.user.parentStudentIds || []).map((id) => id.toString());
+      if (req.query.studentId) {
+        if (!parentStudents.includes(req.query.studentId.toString())) {
+          return res.status(403).json({
+            success: false,
+            message: "Access denied: You are not authorized to view registrations for this student",
+          });
+        }
+        filter.studentId = req.query.studentId;
+      } else {
+        filter.studentId = { $in: req.user.parentStudentIds || [] };
+      }
+    } else if (req.query.studentId && ["ADMIN", "INSTITUTION"].includes(req.user.role)) {
+      filter.studentId = req.query.studentId;
     }
     if (req.query.examId) filter.examId = req.query.examId;
 
@@ -160,6 +264,33 @@ const handleGetExamRegistrations = async (req, res) => {
     return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve exam registrations" });
+  }
+};
+
+const handleGetExamRegistrationById = async (req, res) => {
+  try {
+    const registration = await examService.getExamRegistrationById(req.params.id, req.user);
+    return res.status(200).json({ success: true, data: registration });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ success: false, message: error.message || "Failed to retrieve exam registration" });
+  }
+};
+
+const handleCheckExamFeePayment = async (req, res) => {
+  try {
+    const result = await examService.checkExamFeePaymentStatus(req.params.id, req.user);
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+      data: result,
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message || "Failed to check exam fee payment status",
+    });
   }
 };
 
@@ -308,13 +439,34 @@ const handleGetExamResults = async (req, res) => {
     const filter = {};
     if (req.query.examId) filter.examId = req.query.examId;
     if (req.query.classId) filter.classId = req.query.classId;
+    if (req.query.studentId) filter.studentId = req.query.studentId;
 
     const { page, limit, skip } = parsePagination(req.query);
-    const { data, total } = await examService.getExamResults(filter, { page, limit, skip }, req.user);
-    return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
+    const resultObj = await examService.getExamResults(filter, { page, limit, skip }, req.user);
+    if (resultObj && Array.isArray(resultObj.data)) {
+      const { data, total, ...extra } = resultObj;
+      return res.status(200).json(formatPaginatedResponse({ data, total, page, limit, ...extra }));
+    }
+    const data = Array.isArray(resultObj) ? resultObj : [];
+    return res.status(200).json(formatPaginatedResponse({ data, total: data.length, page, limit }));
   } catch (error) {
     const statusCode = error.statusCode || 500;
     return res.status(statusCode).json({ success: false, message: error.message || "Failed to retrieve exam results" });
+  }
+};
+
+const handleGetExamResultById = async (req, res) => {
+  try {
+    const result = await examService.getExamResultById(req.params.id, req.user);
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      success: false,
+      isPublished: error.isPublished !== undefined ? error.isPublished : undefined,
+      resultPublicationDate: error.resultPublicationDate,
+      message: error.message || "Failed to retrieve exam result",
+    });
   }
 };
 
@@ -323,14 +475,18 @@ module.exports = {
   handleGetExams,
   handleGetExamById,
   handleUpdateExam,
+  handlePublishExam,
   handleCreateExamSchedule,
   handleGetExamSchedules,
   handleGetFacultyExamSchedules,
   handleGetExamScheduleById,
   handleUpdateExamSchedule,
   handleGetExamScheduleRoster,
+  handleGetAvailableExamsForStudent,
   handleRegisterStudentForExam,
   handleGetExamRegistrations,
+  handleGetExamRegistrationById,
+  handleCheckExamFeePayment,
   handleUpdateExamRegistrationStatus,
   handleSubmitMarkEntry,
   handleSubmitRosterMarks,
@@ -341,4 +497,5 @@ module.exports = {
   handleGetMarkCorrectionRequests,
   handleGenerateExamResults,
   handleGetExamResults,
+  handleGetExamResultById,
 };

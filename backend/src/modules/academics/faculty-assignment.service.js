@@ -62,6 +62,18 @@ const createAssignment = async ({
     throw error;
   }
 
+  // 4b. Verify subject is assigned to this class
+  if (Array.isArray(subject.classes) && subject.classes.length > 0) {
+    const isAssigned = subject.classes.some((c) => c.toString() === classId.toString());
+    if (!isAssigned) {
+      const error = new Error(
+        `Subject "${subject.subjectName || subject.name}" is not assigned to class "${classDoc.name}"`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+  }
+
   // 5. Check for existing assignment
   const existing = await FacultyAssignment.findOne({
     facultyId,

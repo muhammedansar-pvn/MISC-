@@ -13,6 +13,9 @@ const {
   createFacultyRemark,
   getFacultyRemarks,
 } = require("./faculty.service");
+const FacultyProfile = require("./faculty.model");
+const User = require("../users/user.model");
+const { removeUploadedFile } = require("../../middleware/upload.middleware");
 
 const handleCreateFaculty = async (req, res) => {
   try {
@@ -175,10 +178,175 @@ const handleGetFacultyRemarks = async (req, res) => {
   }
 };
 
+const handleGetMyProfile = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.user?.id;
+    const member = await getFacultyById(userId);
+    if (!member) {
+      return res.status(200).json({
+        success: true,
+        isSetupPending: true,
+        data: null,
+        message: "Faculty profile not yet set up",
+      });
+    }
+    return res.status(200).json({ success: true, isSetupPending: false, data: member });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Failed to retrieve faculty profile" });
+  }
+};
+
+const handleUpdateMyProfile = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.user?.id;
+    const faculty = await FacultyProfile.findOne({ userId, isDeleted: { $ne: true } });
+    if (!faculty) {
+      return res.status(404).json({ success: false, message: "Faculty profile not found" });
+    }
+
+    const allowedUpdates = [
+      "nameEnglish",
+      "nameArabic",
+      "placeEnglish",
+      "placeArabic",
+      "designation",
+      "islamicQualification",
+      "academicQualification",
+      "previousExperience",
+      "contactNumber",
+    ];
+
+    const updates = {};
+    for (const key of allowedUpdates) {
+      if (req.body[key] !== undefined) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    if (req.body.name && !updates.nameEnglish) {
+      updates.nameEnglish = req.body.name;
+    }
+    if (req.body.mobile && !updates.contactNumber) {
+      updates.contactNumber = req.body.mobile;
+    }
+
+    const updated = await FacultyProfile.findByIdAndUpdate(
+      faculty._id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    )
+      .populate("userId", "name email pendingEmail username role status mobile")
+      .populate("institutionId", "name code")
+      .populate("assignedClasses", "name code")
+      .populate("assignedSubjects", "subjectName subjectCode category");
+
+    // Sync to User model
+    const userUpdates = {};
+    if (updates.nameEnglish) userUpdates.name = updates.nameEnglish;
+    if (updates.contactNumber) userUpdates.mobile = updates.contactNumber;
+    if (Object.keys(userUpdates).length > 0) {
+      await User.findByIdAndUpdate(userId, { $set: userUpdates });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Faculty profile updated successfully",
+      data: updated,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message || "Failed to update faculty profile",
+    });
+  }
+};
+
+const handleUploadMyPhoto = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "Please select an image file to upload." });
+    }
+
+    const userId = req.user?.userId || req.user?.id;
+    const faculty = await FacultyProfile.findOne({ userId, isDeleted: { $ne: true } });
+    if (!faculty) {
+      removeUploadedFile(`/uploads/${req.file.filename}`);
+      return res.status(404).json({ success: false, message: "Faculty profile not found" });
+    }
+
+    if (faculty.photo) {
+      removeUploadedFile(faculty.photo);
+    }
+
+    const photoUrl = `/uploads/${req.file.filename}`;
+    faculty.photo = photoUrl;
+    await faculty.save();
+
+    const updated = await FacultyProfile.findById(faculty._id)
+      .populate("userId", "name email pendingEmail username role status mobile")
+      .populate("institutionId", "name code")
+      .populate("assignedClasses", "name code")
+      .populate("assignedSubjects", "subjectName subjectCode category");
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile photo uploaded successfully",
+      data: updated,
+      photoUrl,
+    });
+  } catch (error) {
+    if (req.file) {
+      removeUploadedFile(`/uploads/${req.file.filename}`);
+    }
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to upload profile photo",
+    });
+  }
+};
+
+const handleDeleteMyPhoto = async (req, res) => {
+  try {
+    const userId = req.user?.userId || req.user?.id;
+    const faculty = await FacultyProfile.findOne({ userId, isDeleted: { $ne: true } });
+    if (!faculty) {
+      return res.status(404).json({ success: false, message: "Faculty profile not found" });
+    }
+
+    if (faculty.photo) {
+      removeUploadedFile(faculty.photo);
+    }
+
+    faculty.photo = "";
+    await faculty.save();
+
+    const updated = await FacultyProfile.findById(faculty._id)
+      .populate("userId", "name email pendingEmail username role status mobile")
+      .populate("institutionId", "name code")
+      .populate("assignedClasses", "name code")
+      .populate("assignedSubjects", "subjectName subjectCode category");
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile photo removed successfully",
+      data: updated,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to remove profile photo",
+    });
+  }
+};
+
 module.exports = {
   handleCreateFaculty,
   handleGetFacultyMembers,
   handleGetFacultyById,
+  handleGetMyProfile,
+  handleUpdateMyProfile,
+  handleUploadMyPhoto,
+  handleDeleteMyPhoto,
   handleUpdateFaculty,
   handleUpdateFacultyStatus,
   handleDeleteFaculty,

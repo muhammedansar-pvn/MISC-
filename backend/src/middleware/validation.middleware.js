@@ -9,6 +9,12 @@ const validateSchema = (schema) => (req, res, next) => {
   });
 
   if (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(
+        `[Validation Error] ${req.method} ${req.originalUrl || req.url}:`,
+        error.details.map((d) => `${d.path.join(".")}: ${d.message}`).join("; ")
+      );
+    }
     return res.status(400).json({
       success: false,
       message: "Validation failed",

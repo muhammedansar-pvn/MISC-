@@ -88,9 +88,77 @@ const handleUpload = (uploadMiddleware) => {
   };
 };
 
+// Profile photo upload filter & limits (5MB, strictly jpg/jpeg/png/webp)
+const PHOTO_ALLOWED_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
+const PHOTO_ALLOWED_MIMETYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+const photoFileFilter = (req, file, cb) => {
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (!PHOTO_ALLOWED_EXTENSIONS.has(ext)) {
+    return cb(new Error("Invalid image format. Only JPEG, PNG, and WebP images are allowed."));
+  }
+  if (!PHOTO_ALLOWED_MIMETYPES.has(file.mimetype)) {
+    return cb(new Error("Invalid image MIME type. Only JPEG, PNG, and WebP images are allowed."));
+  }
+  cb(null, true);
+};
+
+const photoUpload = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit for profile photos
+  },
+  fileFilter: photoFileFilter,
+});
+
+const handlePhotoUpload = (photoUploadMiddleware) => {
+  return (req, res, next) => {
+    photoUploadMiddleware(req, res, (err) => {
+      if (err) {
+        if (err instanceof multer.MulterError) {
+          if (err.code === "LIMIT_FILE_SIZE") {
+            return res.status(400).json({
+              success: false,
+              message: "Profile photo exceeds maximum permitted size of 5MB.",
+            });
+          }
+          return res.status(400).json({
+            success: false,
+            message: `Upload error: ${err.message}`,
+          });
+        }
+        return res.status(400).json({
+          success: false,
+          message: err.message || "Profile photo upload failed.",
+        });
+      }
+      next();
+    });
+  };
+};
+
+/**
+ * Safely remove an uploaded file from disk
+ */
+const removeUploadedFile = (filePath) => {
+  if (!filePath || typeof filePath !== "string") return;
+  if (filePath.startsWith("http://") || filePath.startsWith("https://")) return;
+  try {
+    const cleanRelative = filePath.replace(/^\/?uploads\/?/, "");
+    const fullPath = path.resolve(uploadDir, cleanRelative);
+    if (fullPath.startsWith(uploadDir) && fs.existsSync(fullPath)) {
+      fs.unlinkSync(fullPath);
+    }
+  } catch (err) {
+    console.warn("Failed to remove old file:", filePath, err.message);
+  }
+};
+
 module.exports = {
   upload,
   handleUpload,
   uploadSingle: (fieldName) => handleUpload(upload.single(fieldName)),
   uploadArray: (fieldName, maxCount = 5) => handleUpload(upload.array(fieldName, maxCount)),
+  uploadProfilePhoto: (fieldName = "photo") => handlePhotoUpload(photoUpload.single(fieldName)),
+  removeUploadedFile,
 };

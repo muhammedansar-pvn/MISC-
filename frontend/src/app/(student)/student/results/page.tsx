@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getExamResults } from '@/services/exam.service';
-import { ExamResult } from '@/types';
+import { getExamResults, getExams } from '@/services/exam.service';
+import { ExamResult, Exam } from '@/types';
 import {
   Award,
   CheckCircle2,
@@ -16,10 +16,13 @@ import {
   ChevronDown,
   ChevronUp,
   BookOpen,
+  Calendar,
 } from 'lucide-react';
 
 export default function StudentResultsPage() {
   const [results, setResults] = useState<ExamResult[]>([]);
+  const [scheduledExams, setScheduledExams] = useState<Exam[]>([]);
+  const [publicationNotice, setPublicationNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [expandedResultId, setExpandedResultId] = useState<string | null>(null);
 
@@ -27,13 +30,29 @@ export default function StudentResultsPage() {
     async function loadResults() {
       try {
         setLoading(true);
-        const res = await getExamResults();
+        const [res, examsRes] = await Promise.all([
+          getExamResults(),
+          getExams().catch(() => ({ success: false, data: [] as Exam[] })),
+        ]);
+
         if (res.success && Array.isArray(res.data)) {
           setResults(res.data);
           // auto-expand the first term if available
           if (res.data.length > 0) {
             setExpandedResultId(res.data[0]._id);
           }
+        }
+
+        if ((res as any)?.message && (res as any)?.isPublished === false) {
+          setPublicationNotice((res as any).message);
+        }
+
+        if (examsRes.success && Array.isArray(examsRes.data)) {
+          const now = new Date();
+          const upcoming = examsRes.data.filter((ex: Exam) =>
+            ex.resultPublicationDate && new Date(ex.resultPublicationDate) > now
+          );
+          setScheduledExams(upcoming);
         }
       } catch (err) {
         console.error('Failed to load student results:', err);
@@ -129,13 +148,66 @@ export default function StudentResultsPage() {
         </div>
       </div>
 
+      {/* Scheduled Result Publications Notice / Banner */}
+      {publicationNotice && (
+        <div className="p-4 bg-indigo-50/80 border border-indigo-200/90 rounded-xl flex items-start space-x-3 text-indigo-900 text-xs">
+          <Clock className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+          <div>
+            <span className="font-bold block text-sm">Notice: Result Publication Scheduled</span>
+            <p className="text-indigo-800 mt-0.5">{publicationNotice}</p>
+          </div>
+        </div>
+      )}
+
+      {scheduledExams.length > 0 && (
+        <div className="bg-gradient-to-r from-slate-50 to-indigo-50/30 p-5 rounded-2xl border border-indigo-100/80 space-y-3">
+          <div className="flex items-center space-x-2">
+            <Clock className="w-4 h-4 text-indigo-600" />
+            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+              Upcoming Result Releases
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {scheduledExams.map((ex) => (
+              <div
+                key={ex._id}
+                className="bg-white p-4 rounded-xl border border-indigo-100 flex items-center justify-between shadow-2xs"
+              >
+                <div>
+                  <p className="text-xs font-bold text-[#171D19]">{ex.title || ex.name}</p>
+                  <p className="font-mono text-[11px] text-slate-500 mt-0.5">{ex.code}</p>
+                </div>
+                <div className="text-right">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    <Clock className="w-2.5 h-2.5 mr-1" /> Scheduled
+                  </span>
+                  <p className="text-xs font-semibold text-slate-700 mt-1">
+                    {ex.resultPublicationDate
+                      ? new Date(ex.resultPublicationDate).toLocaleString('en-IN', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })
+                      : 'Pending'}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Results Scorecards / Table */}
       {results.length === 0 ? (
         <div className="p-12 text-center bg-white rounded-xl border border-[#E3EAE5] space-y-3">
           <Award className="w-10 h-10 text-slate-300 mx-auto" />
           <p className="text-sm font-bold text-slate-700">No examination results available</p>
           <p className="text-xs text-slate-400 max-w-sm mx-auto">
-            Your exam results will appear here once verified and officially published by the council examination board.
+            {scheduledExams.length > 0
+              ? 'Results for your completed examinations are scheduled to be published on the dates indicated above.'
+              : 'Your exam results will appear here once verified and officially published by the council examination board.'}
           </p>
         </div>
       ) : (

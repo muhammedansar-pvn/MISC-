@@ -1,49 +1,35 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, ChevronDown, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { navLinks, applyCta } from '../../data/navigationData';
 
-export const DesktopNav = ({ isTransparent = false }) => {
+export const DesktopNav = () => {
   const pathname = usePathname();
-  const [lang, setLang] = useState('EN');
-  const [showLangMenu, setShowLangMenu] = useState(false);
-
-  const languages = [
-    { code: 'EN', label: 'English' },
-    { code: 'ML', label: 'Malayalam' },
-    { code: 'AR', label: 'العربية' },
-  ];
 
   return (
-    <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+    <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
       {/* Primary Navigation Links */}
-      <nav className="flex items-center space-x-5 xl:space-x-7">
+      <nav className="flex items-center space-x-3.5 xl:space-x-5" aria-label="Main Navigation">
         {navLinks.map((link) => {
           const isActive = pathname === link.path;
           return (
             <Link
               key={link.path}
               href={link.path}
-              className={`relative text-[13.5px] xl:text-[14px] font-medium tracking-wide py-1.5 transition-colors duration-200 group ${
-                isTransparent
-                  ? isActive
-                    ? 'text-white font-semibold'
-                    : 'text-white/85 hover:text-white'
-                  : isActive
+              className={`relative text-[13px] xl:text-[13.5px] font-medium tracking-wide py-1.5 transition-colors duration-150 group whitespace-nowrap ${
+                isActive
                   ? 'text-misc-primary font-semibold'
                   : 'text-misc-secondary hover:text-misc-primary'
               }`}
             >
               <span>{link.name}</span>
               <span
-                className={`absolute left-0 bottom-0 w-full h-[1.5px] transition-transform duration-300 origin-left ${
+                className={`absolute left-0 bottom-0 w-full h-[1.5px] transition-transform duration-200 origin-left ${
                   isActive
                     ? 'scale-x-100 bg-misc-primary'
-                    : isTransparent
-                    ? 'scale-x-0 group-hover:scale-x-100 bg-white/70'
                     : 'scale-x-0 group-hover:scale-x-100 bg-misc-primary'
                 }`}
               />
@@ -53,71 +39,23 @@ export const DesktopNav = ({ isTransparent = false }) => {
       </nav>
 
       {/* Thin Separator */}
-      <div
-        className={`h-4 w-px transition-colors duration-300 ${
-          isTransparent ? 'bg-white/25' : 'bg-misc-border'
-        }`}
-      />
+      <div className="h-4 w-px bg-misc-border shrink-0" aria-hidden="true" />
 
-      {/* Right Controls: Search, Language, Enquiry */}
-      <div className="flex items-center space-x-4">
-        {/* Search Icon Button */}
+      {/* Right Controls: Portal Access & Admissions */}
+      <div className="flex items-center space-x-2.5 xl:space-x-3 shrink-0">
         <Link
-          href="/downloads"
-          className={`p-1.5 transition-colors cursor-pointer ${
-            isTransparent ? 'text-white/80 hover:text-white' : 'text-misc-text/80 hover:text-misc-primary'
-          }`}
-          aria-label="Search MISC Portal"
+          href="/auth/login"
+          className="text-xs font-semibold px-3 py-1.5 rounded-md border border-misc-border text-misc-text hover:border-misc-primary/50 hover:text-misc-primary hover:bg-misc-soft-blue/60 transition-all whitespace-nowrap"
+          aria-label="Portal Access"
         >
-          <Search className="w-4 h-4 stroke-[1.8]" />
+          <span>Portal Access</span>
         </Link>
 
-        {/* Language Selector */}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setShowLangMenu(!showLangMenu)}
-            className={`flex items-center space-x-1 text-xs font-mono font-medium px-2 py-1 transition-all cursor-pointer ${
-              isTransparent
-                ? 'text-white/90 hover:text-white'
-                : 'text-misc-text hover:text-misc-primary'
-            }`}
-            aria-expanded={showLangMenu}
-            aria-label="Select Language"
-          >
-            <span>{lang}</span>
-            <ChevronDown className="w-3 h-3 opacity-70" />
-          </button>
-
-          {showLangMenu && (
-            <div className="absolute right-0 mt-2 w-32 bg-white border border-misc-border rounded-xs shadow-lg py-1 z-50 animate-in fade-in zoom-in-95 duration-150">
-              {languages.map((item) => (
-                <button
-                  key={item.code}
-                  type="button"
-                  onClick={() => {
-                    setLang(item.code);
-                    setShowLangMenu(false);
-                  }}
-                  className={`w-full text-left px-3 py-1.5 text-xs transition-colors cursor-pointer ${
-                    lang === item.code
-                      ? 'bg-misc-soft-blue text-misc-primary font-semibold'
-                      : 'text-misc-text hover:bg-misc-page'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* ENQUIRY → Button (blue filled, rectangular with small border radius) */}
         <Link
           href={applyCta.path}
-          className="bg-misc-primary text-white hover:bg-misc-primary-dark active:bg-misc-deep-blue text-xs font-semibold tracking-wider uppercase px-4 py-2 rounded-xs transition-all duration-200 flex items-center space-x-1.5 shrink-0 shadow-2xs hover:translate-x-0.5"
+          className="bg-misc-primary text-white hover:bg-misc-primary-dark active:bg-misc-deep-blue text-xs font-semibold tracking-wider uppercase px-4 py-2 rounded-md transition-all duration-150 flex items-center space-x-1.5 shrink-0 shadow-xs hover:translate-x-0.5 whitespace-nowrap"
         >
-          <span>ENQUIRY</span>
+          <span>{applyCta.name}</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>

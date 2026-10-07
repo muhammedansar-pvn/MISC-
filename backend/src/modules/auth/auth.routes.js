@@ -13,6 +13,8 @@ const {
   forgotPassword,
   resetPassword,
   sendOtp,
+  parentRequestLoginOtp,
+  parentVerifyLoginOtp,
 } = require("./auth.controller");
 
 const {
@@ -72,5 +74,9 @@ router.post("/set-password", accountSetupLimiter, validateAccountSetup, setPassw
 router.post("/forgot-password", passwordResetLimiter, validateForgotPassword, forgotPassword);
 router.post("/reset-password", passwordResetLimiter, validateResetPassword, resetPassword);
 router.post("/send-otp", otpLimiter, validateSendOtp, sendOtp);
+
+// Sanaviyya: Dedicated Parent OTP Authentication Routes
+router.post("/parent/request-otp", otpLimiter, parentRequestLoginOtp);
+router.post("/parent/verify-otp", otpLimiter, parentVerifyLoginOtp);
 
 module.exports = router;

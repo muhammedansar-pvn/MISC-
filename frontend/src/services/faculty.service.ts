@@ -18,6 +18,34 @@ export const getFacultyById = async (id: string): Promise<ApiResponse<FacultyPro
   return response.data;
 };
 
+export const getFacultyProfile = async (): Promise<ApiResponse<FacultyProfile>> => {
+  const response = await apiClient.get<ApiResponse<FacultyProfile>>(API_ENDPOINTS.faculty.profile);
+  return response.data;
+};
+
+export const updateFacultyProfile = async (
+  data: Partial<FacultyPayload> & { name?: string; mobile?: string }
+): Promise<ApiResponse<FacultyProfile>> => {
+  const response = await apiClient.put<ApiResponse<FacultyProfile>>(API_ENDPOINTS.faculty.profile, data);
+  return response.data;
+};
+
+export const uploadFacultyPhoto = async (file: File): Promise<ApiResponse<FacultyProfile & { photoUrl?: string }>> => {
+  const formData = new FormData();
+  formData.append('photo', file);
+  const response = await apiClient.post<ApiResponse<any>>(API_ENDPOINTS.faculty.photo, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+export const deleteFacultyPhoto = async (): Promise<ApiResponse<FacultyProfile>> => {
+  const response = await apiClient.delete<ApiResponse<FacultyProfile>>(API_ENDPOINTS.faculty.photo);
+  return response.data;
+};
+
 export const createFaculty = async (data: FacultyPayload): Promise<ApiResponse<FacultyProfile>> => {
   const response = await apiClient.post<ApiResponse<FacultyProfile>>(API_ENDPOINTS.faculty.list, data);
   return response.data;
@@ -118,6 +146,10 @@ export const getFacultyRemarks = async (id: string): Promise<ApiResponse<any[]>>
 export default {
   getFacultyMembers,
   getFacultyById,
+  getFacultyProfile,
+  updateFacultyProfile,
+  uploadFacultyPhoto,
+  deleteFacultyPhoto,
   createFaculty,
   updateFaculty,
   updateFacultyStatus,

@@ -29,7 +29,7 @@ const otpVerificationSchema = new mongoose.Schema(
     purpose: {
       type: String,
       required: true,
-      enum: ["LOGIN_2FA", "EMAIL_VERIFICATION", "MOBILE_VERIFICATION", "PASSWORD_RESET"],
+      enum: ["LOGIN_2FA", "EMAIL_VERIFICATION", "MOBILE_VERIFICATION", "PASSWORD_RESET", "PARENT_LOGIN"],
     },
 
     attempts: {

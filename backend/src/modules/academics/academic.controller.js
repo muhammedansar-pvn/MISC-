@@ -98,7 +98,56 @@ const handleCreateSubject = async (req, res) => {
 const handleGetSubjects = async (req, res) => {
   try {
     const { page, limit, skip } = parsePagination(req.query);
-    const { data, total } = await academicService.getSubjects({}, { page, limit, skip });
+    const filter = {};
+
+    if (req.query.status) {
+      filter.status = req.query.status;
+    }
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+
+    let classId = req.query.classId;
+
+    // Role-based scoping for Student
+    if (req.user && req.user.role === "STUDENT" && !classId) {
+      const StudentProfile = require("../students/student.model");
+      const profile = await StudentProfile.findOne({
+        userId: req.user.userId || req.user.id,
+      }).select("classId");
+      if (profile && profile.classId) {
+        classId = profile.classId.toString();
+      }
+    }
+
+    // Role-based scoping for Parent
+    if (req.user && req.user.role === "PARENT" && !classId) {
+      const StudentProfile = require("../students/student.model");
+      const linkedStudents = await StudentProfile.find({
+        $or: [
+          { parentId: req.user.userId || req.user.id },
+          { "parentInfo.email": req.user.email },
+        ],
+        status: "ACTIVE",
+        isDeleted: { $ne: true },
+      }).select("classId");
+
+      const allowedClassIds = linkedStudents
+        .map((s) => s.classId?.toString())
+        .filter(Boolean);
+
+      if (allowedClassIds.length === 1) {
+        classId = allowedClassIds[0];
+      } else if (allowedClassIds.length > 1) {
+        filter.classes = { $in: allowedClassIds };
+      }
+    }
+
+    if (classId) {
+      filter.classes = classId;
+    }
+
+    const { data, total } = await academicService.getSubjects(filter, { page, limit, skip });
     return res.status(200).json(formatPaginatedResponse({ data, total, page, limit }));
   } catch (error) {
     return res.status(500).json({ success: false, message: "Failed to retrieve subjects" });
@@ -128,10 +177,13 @@ const handleUpdateSubject = async (req, res) => {
 // Syllabus Controllers
 const handleCreateSyllabus = async (req, res) => {
   try {
+    req.body.createdBy = req.user.userId || req.user.id;
+    req.body.lastUpdatedBy = req.user.userId || req.user.id;
     const record = await academicService.createSyllabus(req.body);
     return res.status(201).json({ success: true, message: "Syllabus created successfully", data: record });
   } catch (error) {
-    return res.status(400).json({ success: false, message: error.message || "Failed to create syllabus" });
+    const statusCode = error.statusCode || 400;
+    return res.status(statusCode).json({ success: false, message: error.message || "Failed to create syllabus" });
   }
 };
 
@@ -139,7 +191,7 @@ const handleGetSyllabuses = async (req, res) => {
   try {
     const filter = {};
 
-    // Strict Class Scoping for Students
+    // 1. Strict Class Scoping for Students
     if (req.user?.role === "STUDENT") {
       let classId = req.user.classId;
       if (!classId) {
@@ -150,9 +202,79 @@ const handleGetSyllabuses = async (req, res) => {
       if (!classId) {
         return res.status(200).json(formatPaginatedResponse({ data: [], total: 0 }));
       }
+      if (req.query.classId && req.query.classId.toString() !== classId.toString()) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: You are not authorized to view syllabus for another class",
+        });
+      }
       filter.classId = classId;
-      filter.status = "ACTIVE";
-    } else if (req.user?.role === "FACULTY") {
+      filter.status = { $in: ["ACTIVE", "PUBLISHED"] };
+    }
+    // 2. Strict Scoping for Parents (Linked students only)
+    else if (req.user?.role === "PARENT") {
+      const ParentProfile = require("../parents/parent.model");
+      const StudentProfile = require("../students/student.model");
+
+      const parentProfile = await ParentProfile.findOne({
+        userId: req.user.userId || req.user.id,
+        isDeleted: { $ne: true },
+        status: "ACTIVE",
+      }).lean();
+
+      if (!parentProfile || !parentProfile.studentIds || parentProfile.studentIds.length === 0) {
+        return res.status(200).json(formatPaginatedResponse({ data: [], total: 0 }));
+      }
+
+      const linkedStudentIds = parentProfile.studentIds.map((id) => id.toString());
+
+      // If client requests syllabus for a specific student, enforce linkage
+      if (req.query.studentId) {
+        if (!linkedStudentIds.includes(req.query.studentId.toString())) {
+          return res.status(403).json({
+            success: false,
+            message: "Access denied: Requested student is not linked to your parent account",
+          });
+        }
+        const student = await StudentProfile.findById(req.query.studentId).lean();
+        if (!student || !student.classId) {
+          return res.status(200).json(formatPaginatedResponse({ data: [], total: 0 }));
+        }
+        filter.classId = student.classId;
+      } else if (req.query.classId) {
+        // Enforce that requested classId belongs to at least one linked student
+        const linkedStudents = await StudentProfile.find({
+          _id: { $in: parentProfile.studentIds },
+          isDeleted: { $ne: true },
+        }).select("classId").lean();
+
+        const allowedClassIds = linkedStudents.map((s) => s.classId?.toString()).filter(Boolean);
+        if (!allowedClassIds.includes(req.query.classId.toString())) {
+          return res.status(403).json({
+            success: false,
+            message: "Access denied: Requested class is not associated with any of your linked students",
+          });
+        }
+        filter.classId = req.query.classId;
+      } else {
+        // Default to all linked students' classes
+        const linkedStudents = await StudentProfile.find({
+          _id: { $in: parentProfile.studentIds },
+          isDeleted: { $ne: true },
+        }).select("classId").lean();
+
+        const allowedClassIds = [...new Set(linkedStudents.map((s) => s.classId?.toString()).filter(Boolean))];
+        if (allowedClassIds.length === 0) {
+          return res.status(200).json(formatPaginatedResponse({ data: [], total: 0 }));
+        }
+        filter.classId = { $in: allowedClassIds };
+      }
+
+      if (req.query.subjectId) filter.subjectId = req.query.subjectId;
+      filter.status = { $in: ["ACTIVE", "PUBLISHED"] };
+    }
+    // 3. Faculty Teaching Scope
+    else if (req.user?.role === "FACULTY") {
       const { isFacultyAssigned, resolveFacultyProfileId } = require("./academic-auth.service");
       const facultyProfileId = await resolveFacultyProfileId(req.user.facultyId || req.user.userId || req.user.id);
       const FacultyAssignment = require("./faculty-assignment.model");
@@ -234,6 +356,40 @@ const handleGetSyllabusById = async (req, res) => {
       }
     }
 
+    // Enforce class isolation for parents (must match a linked student's class)
+    if (req.user?.role === "PARENT") {
+      const ParentProfile = require("../parents/parent.model");
+      const StudentProfile = require("../students/student.model");
+
+      const parentProfile = await ParentProfile.findOne({
+        userId: req.user.userId || req.user.id,
+        isDeleted: { $ne: true },
+        status: "ACTIVE",
+      }).lean();
+
+      if (!parentProfile || !parentProfile.studentIds || parentProfile.studentIds.length === 0) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: No active linked students found for your account",
+        });
+      }
+
+      const linkedStudents = await StudentProfile.find({
+        _id: { $in: parentProfile.studentIds },
+        isDeleted: { $ne: true },
+      }).select("classId").lean();
+
+      const allowedClassIds = linkedStudents.map((s) => s.classId?.toString()).filter(Boolean);
+      const recordClassId = record.classId?._id?.toString() || record.classId?.toString();
+
+      if (!recordClassId || !allowedClassIds.includes(recordClassId)) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied: Syllabus does not belong to any of your linked students' classes",
+        });
+      }
+    }
+
     // Enforce class & subject authorization for faculty
     if (req.user?.role === "FACULTY") {
       const { isFacultyAssigned } = require("./academic-auth.service");
@@ -310,7 +466,8 @@ const handleUpdateSyllabus = async (req, res) => {
     const record = await academicService.updateSyllabus(req.params.id, req.body);
     return res.status(200).json({ success: true, message: "Syllabus updated successfully", data: record });
   } catch (error) {
-    return res.status(400).json({ success: false, message: error.message || "Failed to update syllabus" });
+    const statusCode = error.statusCode || 400;
+    return res.status(statusCode).json({ success: false, message: error.message || "Failed to update syllabus" });
   }
 };
 

@@ -16,3 +16,4 @@ export * from './development';
 export * from './discipline';
 export * from './activity';
 export * from './timetable';
+export * from './notification';

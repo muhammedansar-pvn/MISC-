@@ -1,3 +1,5 @@
+import type { DayOfWeek } from './timetable';
+
 export interface AcademicYear {
   _id: string;
   yearName: string;
@@ -29,6 +31,7 @@ export interface ClassModel {
   department?: string;
   academicYearId?: string | AcademicYear;
   institutionId?: string | any;
+  workingDays?: DayOfWeek[];
   status: string;
   createdAt?: string;
   updatedAt?: string;
@@ -39,6 +42,7 @@ export interface ClassPayload {
   code: string;
   department?: string;
   academicYearId?: string;
+  workingDays?: DayOfWeek[];
   status?: string;
 }
 
@@ -47,24 +51,34 @@ export type SubjectType = 'THEORY' | 'PRACTICAL' | 'BOTH';
 export interface Subject {
   _id: string;
   name: string;
+  subjectName?: string;
   arabicName?: string;
   code: string;
+  subjectCode?: string;
   category?: string;
   description?: string;
-  type: SubjectType;
-  credits: number;
+  type?: SubjectType;
+  credits?: number;
+  classes?: Array<{ _id: string; name: string; code: string; department?: string; [key: string]: any } | any>;
+  academicYearId?: any;
   status: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface SubjectPayload {
-  name: string;
-  code: string;
+  name?: string;
+  subjectName?: string;
+  code?: string;
+  subjectCode?: string;
   category?: string;
   description?: string;
-  type: SubjectType;
-  credits: number;
+  type?: SubjectType;
+  credits?: number;
+  classes?: string[];
+  classIds?: string[];
+  classId?: string;
+  academicYearId?: string;
   status?: string;
 }
 

@@ -3,6 +3,14 @@ const env = require("./env");
 
 let smtpTransporter = null;
 
+const setTestTransporter = (transporter) => {
+  smtpTransporter = transporter;
+};
+
+const resetTransporter = () => {
+  smtpTransporter = null;
+};
+
 const getSmtpTransporter = async () => {
   if (smtpTransporter) {
     return smtpTransporter;
@@ -53,6 +61,8 @@ const validateEmailConfig = () => {
 
 module.exports = {
   getSmtpTransporter,
+  setTestTransporter,
+  resetTransporter,
   verifySmtpConnection,
   validateEmailConfig,
 };

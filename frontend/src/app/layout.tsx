@@ -45,14 +45,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Manrope:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body className="bg-[#F7F7F3] text-[#132238] antialiased selection:bg-[#2F7C7A]/30 selection:text-[#132238]" suppressHydrationWarning>
         <AuthProvider>{children}</AuthProvider>
       </body>

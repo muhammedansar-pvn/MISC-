@@ -66,6 +66,15 @@ export const API_ENDPOINTS = {
     accountSetupToken: (token) => `/auth/account-setup/${token}`,
     resendSetupLink: '/auth/resend-setup-link',
     sendOtp: '/auth/send-otp',
+    parentRequestOtp: '/auth/parent/request-otp',
+    parentVerifyOtp: '/auth/parent/verify-otp',
+  },
+
+  parents: {
+    me: '/parents/me',
+    students: '/parents/students',
+    studentById: (id) => `/parents/students/${id}`,
+    studentSyllabus: (id) => `/parents/students/${id}/syllabus`,
   },
 
   admin: {
@@ -107,13 +116,18 @@ export const API_ENDPOINTS = {
     byId: (id) => `/students/${id}`,
     status: (id) => `/students/${id}/status`,
     profile: '/students/profile',
+    photo: '/students/profile/photo',
     timetable: '/students/timetable',
     teachers: '/students/teachers',
+    parent: '/students/parent',
+    resendParentOtp: '/students/parent/resend-otp',
   },
 
   faculty: {
     list: '/faculty',
     byId: (id) => `/faculty/${id}`,
+    profile: '/faculty/profile',
+    photo: '/faculty/profile/photo',
     status: (id) => `/faculty/${id}/status`,
     dashboardStats: '/faculty/dashboard-stats',
     myAssignments: '/faculty/my-assignments',
@@ -157,19 +171,25 @@ export const API_ENDPOINTS = {
 
   payments: {
     list: '/payments',
+    createOrder: '/payments/create-order',
     byTransactionId: (txId) => `/payments/${txId}`,
     verify: '/payments/verify',
+    overview: '/payments/overview',
   },
 
   exams: {
     list: '/exams/exams',
     byId: (id) => `/exams/exams/${id}`,
+    publish: (id) => `/exams/exams/${id}/publish`,
     schedules: '/exams/exam-schedules',
     scheduleById: (id) => `/exams/exam-schedules/${id}`,
     facultySchedules: '/exams/faculty/schedules',
     scheduleRoster: (id) => `/exams/exam-schedules/${id}/roster`,
     submitRosterMarks: (id) => `/exams/exam-schedules/${id}/roster-marks`,
     registrations: '/exams/exam-registrations',
+    availableForRegistration: '/exams/available-for-registration',
+    registrationById: (id) => `/exams/exam-registrations/${id}`,
+    registrationPayment: (id) => `/exams/exam-registrations/${id}/payment`,
     registrationStatus: (id) => `/exams/exam-registrations/${id}/status`,
     markEntries: '/exams/mark-entries',
     verifyMarkEntries: (scheduleId) => `/exams/mark-entries/verify/${scheduleId}`,
@@ -225,6 +245,21 @@ export const API_ENDPOINTS = {
 
   activities: {
     myAchievements: '/activities/achievements/my',
+  },
+
+  analytics: {
+    admin: '/analytics/admin',
+    faculty: '/analytics/faculty',
+    student: '/analytics/student',
+    parent: '/analytics/parent',
+    export: '/analytics/export',
+  },
+
+  notifications: {
+    list: '/notifications',
+    unreadCount: '/notifications/unread-count',
+    markRead: (id) => `/notifications/${id}/read`,
+    markAllRead: '/notifications/read-all',
   },
 };
 

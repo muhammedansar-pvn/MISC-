@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { CreditCard, ShieldCheck, RefreshCw, AlertCircle, Eye, X } from 'lucide-react';
+import { CreditCard, ShieldCheck, RefreshCw, AlertCircle, Eye, X, DollarSign, CheckCircle2, Clock, XCircle } from 'lucide-react';
 import StatusBadge from '@/components/admin/StatusBadge';
-import { getPayments } from '@/services/payment.service';
-import { Payment } from '@/types';
+import { getPayments, getPaymentOverview } from '@/services/payment.service';
+import { Payment, PaymentOverviewData } from '@/types';
 
 export default function AdminPaymentsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [overview, setOverview] = useState<PaymentOverviewData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -23,9 +24,17 @@ export default function AdminPaymentsPage() {
       if (statusFilter) params.status = statusFilter;
       if (typeFilter) params.paymentType = typeFilter;
 
-      const res = await getPayments(params);
-      if (res.success && res.data) {
-        setPayments(res.data);
+      const [listRes, overviewRes] = await Promise.allSettled([
+        getPayments(params),
+        getPaymentOverview(),
+      ]);
+
+      if (listRes.status === 'fulfilled' && listRes.value.success && listRes.value.data) {
+        setPayments(listRes.value.data);
+      }
+
+      if (overviewRes.status === 'fulfilled' && overviewRes.value.success && overviewRes.value.data) {
+        setOverview(overviewRes.value.data);
       }
     } catch (err: any) {
       console.error('Failed to retrieve payment records:', err);
@@ -54,9 +63,58 @@ export default function AdminPaymentsPage() {
         </div>
       </div>
 
+      {/* Financial Overview Cards */}
+      {overview && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white p-5 rounded-2xl border border-[#E3EAE5] shadow-xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500">
+              <span className="text-xs font-semibold uppercase tracking-wider">Total Revenue</span>
+              <DollarSign className="w-4 h-4 text-[#23804A]" />
+            </div>
+            <p className="text-2xl font-bold font-serif text-[#171D19]">
+              ₹{overview.totalRevenue?.toLocaleString()}
+            </p>
+            <p className="text-[11px] text-emerald-700 font-medium">Verified gateway & offline collections</p>
+          </div>
+
+          <div className="bg-white p-5 rounded-2xl border border-[#E3EAE5] shadow-xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500">
+              <span className="text-xs font-semibold uppercase tracking-wider">Success</span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            </div>
+            <p className="text-2xl font-bold font-serif text-[#171D19]">
+              {overview.successfulPayments}
+            </p>
+            <p className="text-[11px] text-slate-400">Captured & reconciled transactions</p>
+          </div>
+
+          <div className="bg-white p-5 rounded-2xl border border-[#E3EAE5] shadow-xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500">
+              <span className="text-xs font-semibold uppercase tracking-wider">Pending</span>
+              <Clock className="w-4 h-4 text-amber-500" />
+            </div>
+            <p className="text-2xl font-bold font-serif text-[#171D19]">
+              {overview.pendingPayments}
+            </p>
+            <p className="text-[11px] text-slate-400">Initiated or awaiting confirmation</p>
+          </div>
+
+          <div className="bg-white p-5 rounded-2xl border border-[#E3EAE5] shadow-xs space-y-1">
+            <div className="flex items-center justify-between text-slate-500">
+              <span className="text-xs font-semibold uppercase tracking-wider">Failed</span>
+              <XCircle className="w-4 h-4 text-rose-500" />
+            </div>
+            <p className="text-2xl font-bold font-serif text-[#171D19]">
+              {overview.failedPayments}
+            </p>
+            <p className="text-[11px] text-slate-400">Declined attempts</p>
+          </div>
+        </div>
+      )}
+
       {/* Payment Security Audit Notice Banner */}
       <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 flex items-start space-x-3.5 shadow-xs">
-        <ShieldCheck className="w-6 h-6 text-emerald-600 flex-shrink-0 mt-0.5" />
+        <ShieldCheck className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
         <div className="space-y-1 text-xs text-emerald-900">
           <p className="font-bold text-sm">Server-Side Payment Security Enforced</p>
           <p className="leading-relaxed text-emerald-800">
@@ -129,8 +187,8 @@ export default function AdminPaymentsPage() {
               <thead className="bg-[#FBFCFB] text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-[#E3EAE5]">
                 <tr>
                   <th className="px-6 py-4">Transaction ID</th>
-                  <th className="px-6 py-4">Payer / User</th>
-                  <th className="px-6 py-4">Payment Type</th>
+                  <th className="px-6 py-4">Candidate / Payer</th>
+                  <th className="px-6 py-4">Examination / Purpose</th>
                   <th className="px-6 py-4">Amount</th>
                   <th className="px-6 py-4">Gateway</th>
                   <th className="px-6 py-4">Status</th>
@@ -138,33 +196,43 @@ export default function AdminPaymentsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E3EAE5]">
-                {payments.map((tx) => (
-                  <tr key={tx._id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-6 py-4 font-mono font-bold text-[#171D19]">{tx.transactionId}</td>
-                    <td className="px-6 py-4">
-                      <p className="font-semibold text-slate-900">{(tx.userId as any)?.name || 'Anonymous / Student'}</p>
-                      <p className="text-xs text-slate-400">{(tx.userId as any)?.email || 'N/A'}</p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="px-2.5 py-0.5 text-xs font-bold bg-slate-100 text-slate-700 rounded-full border">
-                        {tx.paymentType}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 font-bold text-[#171D19]">
-                      ₹{tx.amount} <span className="text-xs text-slate-400 font-normal">{tx.currency || 'INR'}</span>
-                    </td>
-                    <td className="px-6 py-4 font-mono text-xs text-slate-600">{tx.gateway}</td>
-                    <td className="px-6 py-4"><StatusBadge status={tx.status} /></td>
-                    <td className="px-6 py-4 text-right">
-                      <button
-                        onClick={() => setSelectedTx(tx)}
-                        className="px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
-                      >
-                        <Eye className="w-3.5 h-3.5 inline mr-1" /> View
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {payments.map((tx) => {
+                  const student = tx.studentId as any;
+                  const exam = (tx.examRegistrationId as any)?.examId as any;
+
+                  return (
+                    <tr key={tx._id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 font-mono font-bold text-[#171D19]">{tx.transactionId}</td>
+                      <td className="px-6 py-4">
+                        <p className="font-semibold text-slate-900">
+                          {student?.nameEnglish || (tx.userId as any)?.name || 'Candidate'}
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          {student?.registrationNumber ? `Reg: ${student.registrationNumber}` : (tx.userId as any)?.email || 'N/A'}
+                        </p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="font-medium text-slate-800 block">
+                          {exam?.title || (tx.paymentType === 'EXAM_FEE' ? 'Sanaviyya Exam Fee' : tx.paymentType)}
+                        </span>
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider">{tx.paymentType}</span>
+                      </td>
+                      <td className="px-6 py-4 font-bold text-[#171D19]">
+                        ₹{tx.amount} <span className="text-xs text-slate-400 font-normal">{tx.currency || 'INR'}</span>
+                      </td>
+                      <td className="px-6 py-4 font-mono text-xs text-slate-600">{tx.gateway}</td>
+                      <td className="px-6 py-4"><StatusBadge status={tx.status} /></td>
+                      <td className="px-6 py-4 text-right">
+                        <button
+                          onClick={() => setSelectedTx(tx)}
+                          className="px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+                        >
+                          <Eye className="w-3.5 h-3.5 inline mr-1" /> View
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -185,9 +253,23 @@ export default function AdminPaymentsPage() {
                 <span className="font-semibold text-slate-500">Transaction ID:</span>
                 <span className="font-mono font-bold text-slate-900">{selectedTx.transactionId}</span>
               </div>
+              {selectedTx.gatewayOrderId && (
+                <div className="flex justify-between border-b pb-2">
+                  <span className="font-semibold text-slate-500">Gateway Order ID:</span>
+                  <span className="font-mono text-slate-900">{selectedTx.gatewayOrderId}</span>
+                </div>
+              )}
+              {selectedTx.gatewayPaymentId && (
+                <div className="flex justify-between border-b pb-2">
+                  <span className="font-semibold text-slate-500">Gateway Payment ID:</span>
+                  <span className="font-mono text-slate-900">{selectedTx.gatewayPaymentId}</span>
+                </div>
+              )}
               <div className="flex justify-between border-b pb-2">
                 <span className="font-semibold text-slate-500">Payer Name:</span>
-                <span className="font-bold text-slate-900">{(selectedTx.userId as any)?.name || 'N/A'}</span>
+                <span className="font-bold text-slate-900">
+                  {(selectedTx.studentId as any)?.nameEnglish || (selectedTx.userId as any)?.name || 'N/A'}
+                </span>
               </div>
               <div className="flex justify-between border-b pb-2">
                 <span className="font-semibold text-slate-500">Payment Type:</span>
@@ -205,10 +287,22 @@ export default function AdminPaymentsPage() {
                 <span className="font-semibold text-slate-500">Verification Status:</span>
                 <StatusBadge status={selectedTx.status} />
               </div>
+              {selectedTx.failureReason && (
+                <div className="flex justify-between border-b pb-2 text-rose-700">
+                  <span className="font-semibold">Failure Reason:</span>
+                  <span className="text-right">{selectedTx.failureReason}</span>
+                </div>
+              )}
               <div className="flex justify-between border-b pb-2">
                 <span className="font-semibold text-slate-500">Created Date:</span>
                 <span>{selectedTx.createdAt ? new Date(selectedTx.createdAt).toLocaleString() : 'N/A'}</span>
               </div>
+              {selectedTx.paidAt && (
+                <div className="flex justify-between border-b pb-2">
+                  <span className="font-semibold text-slate-500">Paid At:</span>
+                  <span>{new Date(selectedTx.paidAt).toLocaleString()}</span>
+                </div>
+              )}
             </div>
 
             <div className="pt-2 flex justify-end">

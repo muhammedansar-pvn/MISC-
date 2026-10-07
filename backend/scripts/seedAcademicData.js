@@ -8,6 +8,11 @@ const AcademicYear = require("../src/modules/academics/academic-year.model");
 const Class = require("../src/modules/academics/class.model");
 
 const seedAcademicData = async () => {
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_PROD_SEED !== "true") {
+    console.error("Refusing to run seedAcademicData in production. Set ALLOW_PROD_SEED=true to override.");
+    process.exit(1);
+  }
+
   try {
     await connectDB();
 

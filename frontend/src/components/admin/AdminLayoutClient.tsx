@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 import {
   LayoutDashboard,
   Users,
@@ -26,6 +27,8 @@ import {
   Search,
   Bell,
   Clock as ClockIcon,
+  BarChart3,
+  CalendarDays,
 } from 'lucide-react';
 
 interface AdminLayoutClientProps {
@@ -143,6 +146,7 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
       title: null,
       items: [
         { label: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
+        { label: 'Analytics & Reports', path: '/admin/analytics', icon: BarChart3 },
       ],
     },
     {
@@ -167,6 +171,7 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
         { label: 'Subjects', path: '/admin/academic?tab=subjects', icon: BookOpen },
         { label: 'Syllabus', path: '/admin/academic/syllabus', icon: FileText },
         { label: 'Class Timetable', path: '/admin/academic/timetable', icon: ClockIcon },
+        { label: 'Leave Oversight', path: '/admin/leaves', icon: CalendarDays },
       ],
     },
     {
@@ -333,12 +338,7 @@ export const AdminLayoutClient: React.FC<AdminLayoutClientProps> = ({ children }
               </div>
 
               {/* Notification Bell */}
-              <button className="relative p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all cursor-pointer">
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-rose-500 text-white font-bold text-[9px] flex items-center justify-center">
-                  47
-                </span>
-              </button>
+              <NotificationBell />
 
               {/* User Dropdown */}
               <div className="relative">

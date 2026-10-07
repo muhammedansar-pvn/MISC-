@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 import {
   LayoutDashboard,
   User,
@@ -27,6 +28,7 @@ import {
   Activity,
   AlertTriangle,
   FileCheck,
+  BarChart3,
 } from 'lucide-react';
 
 interface FacultyLayoutClientProps {
@@ -68,6 +70,7 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
       title: 'ACADEMICS',
       items: [
         { label: 'Academic Overview', path: '/faculty/academics', icon: GraduationCap, exact: true },
+        { label: 'Analytics & Performance', path: '/faculty/analytics', icon: BarChart3, exact: true },
         { label: 'Attendance Marking', path: '/faculty/attendance', icon: CalendarCheck, exact: true },
         { label: 'Assigned Classes', path: '/faculty/classes', icon: Building2, exact: true },
         { label: 'Teaching Allocations', path: '/faculty/subjects', icon: Layers, exact: true },
@@ -249,7 +252,10 @@ export const FacultyLayoutClient: React.FC<FacultyLayoutClientProps> = ({ childr
             </div>
 
             {/* Right User Bar */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
+              {/* Notification Bell */}
+              <NotificationBell />
+
               {/* User Menu */}
               <div className="relative">
                 <button

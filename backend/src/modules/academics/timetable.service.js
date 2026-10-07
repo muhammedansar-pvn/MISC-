@@ -6,13 +6,13 @@ const StudentProfile = require("../students/student.model");
 const { assertFacultyAvailableForAssignment } = require("../faculty/faculty.service");
 
 const DAY_ORDER = {
-  MONDAY: 1,
-  TUESDAY: 2,
-  WEDNESDAY: 3,
-  THURSDAY: 4,
-  FRIDAY: 5,
-  SATURDAY: 6,
-  SUNDAY: 7,
+  SATURDAY: 1,
+  SUNDAY: 2,
+  MONDAY: 3,
+  TUESDAY: 4,
+  WEDNESDAY: 5,
+  THURSDAY: 6,
+  FRIDAY: 7,
 };
 
 const createTimetableEntry = async (data) => {
@@ -22,6 +22,19 @@ const createTimetableEntry = async (data) => {
   const classObj = await Class.findById(classId);
   if (!classObj) {
     throw new Error("Class not found");
+  }
+
+  // 1b. Verify Class Working Days
+  const allowedDays = Array.isArray(classObj.workingDays) && classObj.workingDays.length > 0
+    ? classObj.workingDays.map((d) => d.toUpperCase())
+    : ["SATURDAY", "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY"];
+
+  const targetDay = (dayOfWeek || "").toUpperCase();
+  if (!allowedDays.includes(targetDay)) {
+    const dayDisplay = targetDay.charAt(0).toUpperCase() + targetDay.slice(1).toLowerCase();
+    const error = new Error(`Timetable cannot be assigned on ${dayDisplay} because this class has no scheduled classes on ${dayDisplay}.`);
+    error.statusCode = 400;
+    throw error;
   }
 
   // 2. Verify Academic Year
@@ -34,6 +47,18 @@ const createTimetableEntry = async (data) => {
   const subjectObj = await Subject.findById(subjectId);
   if (!subjectObj) {
     throw new Error("Subject not found");
+  }
+
+  // 3b. Verify Subject is assigned to this Class
+  if (Array.isArray(subjectObj.classes) && subjectObj.classes.length > 0) {
+    const isAssigned = subjectObj.classes.some((c) => c.toString() === classId.toString());
+    if (!isAssigned) {
+      const error = new Error(
+        `Subject "${subjectObj.subjectName || subjectObj.name}" is not assigned to class "${classObj.name}"`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
   }
 
   // 4. Verify Faculty
@@ -75,12 +100,22 @@ const createTimetableEntry = async (data) => {
     institutionId: data.institutionId || classObj.institutionId,
   });
 
-  return Timetable.findById(newEntry._id)
+  const populated = await Timetable.findById(newEntry._id)
     .populate("subjectId", "subjectName subjectCode category")
     .populate("facultyId", "nameEnglish nameArabic designation contactNumber")
     .populate("classId", "name code")
     .populate("academicYearId", "yearName yearCode")
     .lean();
+
+  // Asynchronous & Fail-safe Notification Trigger AFTER successful database creation
+  try {
+    const { notifyTimetableAssigned } = require("../notifications/notification.service");
+    await notifyTimetableAssigned(populated);
+  } catch (notifErr) {
+    console.error("Non-fatal error in notifyTimetableAssigned:", notifErr.message);
+  }
+
+  return populated;
 };
 
 const getTimetableEntries = async (filter = {}, pagination = null) => {
@@ -136,6 +171,23 @@ const updateTimetableEntry = async (id, data) => {
   const targetDay = (data.dayOfWeek || current.dayOfWeek).toUpperCase();
   const targetPeriod = data.periodNumber !== undefined ? data.periodNumber : current.periodNumber;
 
+  // Verify Class & Working Days
+  const classObj = await Class.findById(targetClassId);
+  if (!classObj) {
+    throw new Error("Class not found");
+  }
+
+  const allowedDays = Array.isArray(classObj.workingDays) && classObj.workingDays.length > 0
+    ? classObj.workingDays.map((d) => d.toUpperCase())
+    : ["SATURDAY", "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY"];
+
+  if (!allowedDays.includes(targetDay)) {
+    const dayDisplay = targetDay.charAt(0).toUpperCase() + targetDay.slice(1).toLowerCase();
+    const error = new Error(`Timetable cannot be assigned on ${dayDisplay} because this class has no scheduled classes on ${dayDisplay}.`);
+    error.statusCode = 400;
+    throw error;
+  }
+
   // Check clash if time/slot moved
   if (
     targetClassId.toString() !== current.classId.toString() ||
@@ -174,10 +226,20 @@ const updateTimetableEntry = async (id, data) => {
     );
   }
 
-  // Validate subject if changed
-  if (data.subjectId) {
-    const subj = await Subject.findById(data.subjectId);
-    if (!subj) throw new Error("Subject not found");
+  // Validate subject and class-subject compatibility
+  const targetSubjectId = data.subjectId || current.subjectId;
+  const subj = await Subject.findById(targetSubjectId);
+  if (!subj) throw new Error("Subject not found");
+
+  if (Array.isArray(subj.classes) && subj.classes.length > 0) {
+    const isAssigned = subj.classes.some((c) => c.toString() === targetClassId.toString());
+    if (!isAssigned) {
+      const error = new Error(
+        `Subject "${subj.subjectName || subj.name}" is not assigned to class "${classObj.name}"`
+      );
+      error.statusCode = 400;
+      throw error;
+    }
   }
 
   // Validate faculty if changed
@@ -188,12 +250,31 @@ const updateTimetableEntry = async (id, data) => {
   const payload = { ...data };
   if (data.dayOfWeek) payload.dayOfWeek = data.dayOfWeek.toUpperCase();
 
-  return Timetable.findByIdAndUpdate(id, payload, { new: true })
+  const updated = await Timetable.findByIdAndUpdate(id, payload, { new: true })
     .populate("subjectId", "subjectName subjectCode category")
     .populate("facultyId", "nameEnglish nameArabic designation")
     .populate("classId", "name code")
     .populate("academicYearId", "yearName yearCode")
     .lean();
+
+  // Asynchronous & Fail-safe Notification Trigger AFTER successful database update
+  try {
+    const { notifyTimetableAssigned, notifyTimetableUpdated } = require("../notifications/notification.service");
+    const oldFacultyId = current.facultyId?.toString();
+    const newFacultyId = (updated.facultyId?._id || updated.facultyId)?.toString();
+
+    if (newFacultyId && oldFacultyId !== newFacultyId) {
+      // Reassigned to a different faculty member: notify newly assigned faculty
+      await notifyTimetableAssigned(updated);
+    } else if (newFacultyId) {
+      // Same faculty: notify if schedule or teaching details were updated
+      await notifyTimetableUpdated(updated, { previousEntry: current });
+    }
+  } catch (notifErr) {
+    console.error("Non-fatal error in notifyTimetableUpdated:", notifErr.message);
+  }
+
+  return updated;
 };
 
 const deleteTimetableEntry = async (id, hardDelete = false) => {

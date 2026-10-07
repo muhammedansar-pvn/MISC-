@@ -50,7 +50,11 @@ function SyllabusContent() {
         }
 
         if (subjectsRes.status === 'fulfilled' && subjectsRes.value.success && Array.isArray(subjectsRes.value.data)) {
-          setSubjects(subjectsRes.value.data);
+          const rawSubs = subjectsRes.value.data;
+          const filtered = classId
+            ? rawSubs.filter((s: any) => !s.classes || s.classes.length === 0 || s.classes.some((c: any) => (c?._id || c) === classId))
+            : rawSubs;
+          setSubjects(filtered);
         }
 
         // Fetch syllabuses (optionally filtered by student's classId if available)

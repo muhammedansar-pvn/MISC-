@@ -26,6 +26,20 @@ const subjectSchema = new mongoose.Schema(
       trim: true,
     },
 
+    classes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Class",
+        index: true,
+      },
+    ],
+
+    academicYearId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicYear",
+      index: true,
+    },
+
     status: {
       type: String,
       required: true,
@@ -41,5 +55,7 @@ const subjectSchema = new mongoose.Schema(
 
 // Indexes
 subjectSchema.index({ subjectCode: 1 }, { unique: true });
+subjectSchema.index({ classes: 1, status: 1 });
+subjectSchema.index({ academicYearId: 1, status: 1 });
 
 module.exports = mongoose.model("Subject", subjectSchema);

@@ -2,13 +2,73 @@ const Joi = require("joi");
 const { validateSchema } = require("../../middleware/validation.middleware");
 
 const examSchema = Joi.object({
-  title: Joi.string().trim().required(),
+  title: Joi.string().trim().optional(),
+  name: Joi.string().trim().optional(),
   code: Joi.string().trim().uppercase().required(),
+  description: Joi.string().trim().allow("", null).optional(),
   academicYearId: Joi.string().hex().length(24).required(),
-  startDate: Joi.date().iso().required(),
-  endDate: Joi.date().iso().greater(Joi.ref("startDate")).required(),
-  status: Joi.string().valid("DRAFT", "SCHEDULED", "ONGOING", "COMPLETED", "PUBLISHED").required(),
+  term: Joi.string().trim().allow("").optional(),
+  examType: Joi.string().trim().allow("").optional(),
+  fee: Joi.number().min(0).allow(null).optional(),
+  examFee: Joi.number().min(0).allow(null).optional(),
+  startDate: Joi.date().iso().optional(),
+  endDate: Joi.date().iso().optional(),
+  examStartDate: Joi.date().iso().optional(),
+  examEndDate: Joi.date().iso().optional(),
+  registrationStartDate: Joi.date().iso().allow(null).optional(),
+  registrationEndDate: Joi.date().iso().allow(null).optional(),
+  eligibleClassIds: Joi.array().items(Joi.string().hex().length(24)).optional(),
+  subjectIds: Joi.array().items(Joi.string().hex().length(24)).optional(),
+  status: Joi.string().valid("DRAFT", "SCHEDULED", "ONGOING", "COMPLETED", "PUBLISHED").default("SCHEDULED"),
+  publishedAt: Joi.date().iso().allow(null).optional(),
+  resultPublicationDate: Joi.date().iso().allow(null).optional(),
+})
+  .or("title", "name")
+  .custom((value, helpers) => {
+    if (value.fee !== undefined && value.examFee === undefined) {
+      value.examFee = value.fee;
+    }
+    if (value.examFee !== undefined && value.fee === undefined) {
+      value.fee = value.examFee;
+    }
+    const sDate = value.startDate || value.examStartDate;
+    const eDate = value.endDate || value.examEndDate;
+    if (!sDate) {
+      return helpers.message("Start date is required");
+    }
+    if (!eDate) {
+      return helpers.message("End date is required");
+    }
+    if (new Date(eDate) <= new Date(sDate)) {
+      return helpers.message("End date must be greater than start date");
+    }
+    if (value.registrationStartDate && value.registrationEndDate) {
+      if (new Date(value.registrationEndDate) < new Date(value.registrationStartDate)) {
+        return helpers.message("Registration end date cannot be earlier than registration start date");
+      }
+    }
+    if (value.status === "PUBLISHED") {
+      if (!value.registrationStartDate || !value.registrationEndDate) {
+        return helpers.message("Published examinations must have registration start and end dates configured");
+      }
+      if (!value.eligibleClassIds || value.eligibleClassIds.length === 0) {
+        return helpers.message("Published examinations must have at least one eligible class configured");
+      }
+    }
+    if (value.resultPublicationDate) {
+      const pubDate = new Date(value.resultPublicationDate);
+      if (isNaN(pubDate.getTime())) {
+        return helpers.message("Result publication date must be a valid date");
+      }
+    }
+    return value;
+  });
+
+const publishExamSchema = Joi.object({
+  status: Joi.string().valid("DRAFT", "PUBLISHED").optional(),
+  isPublished: Joi.boolean().optional(),
 });
+
 
 const examScheduleSchema = Joi.object({
   examId: Joi.string().hex().length(24).required(),
@@ -96,4 +156,6 @@ module.exports = {
   validateMarkCorrectionRequest: validateSchema(markCorrectionRequestSchema),
   validateReviewCorrectionRequest: validateSchema(reviewCorrectionRequestSchema),
   validateExamResult: validateSchema(examResultSchema),
+  validatePublishExam: validateSchema(publishExamSchema),
 };
+

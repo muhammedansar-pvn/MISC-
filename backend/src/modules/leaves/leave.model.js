@@ -14,6 +14,18 @@ const leaveSchema = new mongoose.Schema(
       required: true,
     },
 
+    applicantRole: {
+      type: String,
+      enum: ["STUDENT", "PARENT"],
+      default: "STUDENT",
+    },
+
+    leaveType: {
+      type: String,
+      enum: ["CASUAL", "MEDICAL", "DUTY", "FAMILY_EMERGENCY", "OTHER"],
+      default: "CASUAL",
+    },
+
     dateRange: {
       startDate: {
         type: Date,
@@ -59,7 +71,8 @@ const leaveSchema = new mongoose.Schema(
 );
 
 // Indexes
-leaveSchema.index({ studentId: 1, "dateRange.startDate": 1 });
+leaveSchema.index({ studentId: 1, status: 1 });
+leaveSchema.index({ studentId: 1, "dateRange.startDate": 1, "dateRange.endDate": 1 });
 leaveSchema.index({ appliedBy: 1 });
 leaveSchema.index({ status: 1 });
 

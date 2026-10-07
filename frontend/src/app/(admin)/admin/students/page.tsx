@@ -130,6 +130,9 @@ export default function AdminStudentsPage() {
     contactNumber: '',
     fatherName: '',
     motherName: '',
+    parentEmail: '',
+    parentMobile: '',
+    relationship: 'FATHER',
   });
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState('');
@@ -203,6 +206,9 @@ export default function AdminStudentsPage() {
         contactNumber: '',
         fatherName: '',
         motherName: '',
+        parentEmail: '',
+        parentMobile: '',
+        relationship: 'FATHER',
       });
       setFormLoading(false);
     }
@@ -1322,6 +1328,58 @@ export default function AdminStudentsPage() {
                         placeholder="Mother's full name"
                         className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
                       />
+                    </div>
+                  </div>
+
+                  {/* Parent / Guardian Account Creation (Password-free OTP Authentication) */}
+                  <div className="border-t pt-3 mt-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                        Parent / Guardian Portal (Password-Free OTP Access)
+                      </h4>
+                      <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        OTP Authentication
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold uppercase mb-1 text-slate-700">
+                          Parent Email
+                        </label>
+                        <input
+                          type="email"
+                          value={formData.parentEmail || ''}
+                          onChange={(e) => setFormData({ ...formData, parentEmail: e.target.value })}
+                          placeholder="parent@example.com"
+                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase mb-1 text-slate-700">
+                          Parent Mobile
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.parentMobile || ''}
+                          onChange={(e) => setFormData({ ...formData, parentMobile: e.target.value })}
+                          placeholder="9876543210"
+                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase mb-1 text-slate-700">
+                          Relationship
+                        </label>
+                        <select
+                          value={formData.relationship || 'FATHER'}
+                          onChange={(e) => setFormData({ ...formData, relationship: e.target.value })}
+                          className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] text-xs bg-white"
+                        >
+                          <option value="FATHER">Father</option>
+                          <option value="MOTHER">Mother</option>
+                          <option value="GUARDIAN">Guardian</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>

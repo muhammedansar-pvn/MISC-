@@ -12,14 +12,20 @@ const {
   handleGetFacultyStudent360,
   handleCreateFacultyRemark,
   handleGetFacultyRemarks,
+  handleGetMyProfile,
+  handleUpdateMyProfile,
+  handleUploadMyPhoto,
+  handleDeleteMyPhoto,
 } = require("./faculty.controller");
 const {
   validateCreateFaculty,
   validateUpdateFaculty,
   validateUpdateFacultyStatus,
+  validateUpdateMyFacultyProfile,
 } = require("./faculty.validator");
 const { requireAuth } = require("../../middleware/auth.middleware");
 const { requireRole } = require("../../middleware/role.middleware");
+const { uploadProfilePhoto } = require("../../middleware/upload.middleware");
 
 const router = express.Router();
 
@@ -85,6 +91,37 @@ router.get(
   requireAuth,
   requireRole("ADMIN", "PRINCIPAL", "HOD", "FACULTY", "INSTITUTION"),
   handleGetFacultyById
+);
+
+router.put(
+  "/profile",
+  requireAuth,
+  requireRole("FACULTY", "HOD", "PRINCIPAL"),
+  validateUpdateMyFacultyProfile,
+  handleUpdateMyProfile
+);
+
+router.patch(
+  "/profile",
+  requireAuth,
+  requireRole("FACULTY", "HOD", "PRINCIPAL"),
+  validateUpdateMyFacultyProfile,
+  handleUpdateMyProfile
+);
+
+router.post(
+  "/profile/photo",
+  requireAuth,
+  requireRole("FACULTY", "HOD", "PRINCIPAL"),
+  uploadProfilePhoto("photo"),
+  handleUploadMyPhoto
+);
+
+router.delete(
+  "/profile/photo",
+  requireAuth,
+  requireRole("FACULTY", "HOD", "PRINCIPAL"),
+  handleDeleteMyPhoto
 );
 
 router.get(

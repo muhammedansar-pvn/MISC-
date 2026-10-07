@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import {
   login as apiLogin,
   verify2FAOtp as apiVerify2FA,
@@ -85,13 +85,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       logout();
     };
 
+    // Event listener for decoupled login events (e.g., OTP login)
+    const handleLoginSync = () => {
+      try {
+        const token = getToken();
+        const user = getUser();
+        if (token && user) {
+          setTokenState(token);
+          setUserState(user);
+        }
+      } catch {
+        // Ignore
+      }
+    };
+
     if (typeof window !== 'undefined') {
       window.addEventListener('auth:unauthorized', handleUnauthorized);
+      window.addEventListener('auth:login', handleLoginSync);
     }
 
     return () => {
       if (typeof window !== 'undefined') {
         window.removeEventListener('auth:unauthorized', handleUnauthorized);
+        window.removeEventListener('auth:login', handleLoginSync);
       }
     };
   }, []);
@@ -181,18 +197,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const value: AuthContextType = {
-    user: userState,
-    token: tokenState,
-    isAuthenticated: !!tokenState && !!userState,
-    loading,
-    isLoading: loading,
-    login,
-    verify2FA,
-    resend2FA,
-    logout,
-    getRoleRedirectPath,
-  };
+  const value = useMemo<AuthContextType>(
+    () => ({
+      user: userState,
+      token: tokenState,
+      isAuthenticated: !!tokenState && !!userState,
+      loading,
+      isLoading: loading,
+      login,
+      verify2FA,
+      resend2FA,
+      logout,
+      getRoleRedirectPath,
+    }),
+    [userState, tokenState, loading]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

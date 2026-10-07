@@ -14,7 +14,7 @@ const { requireRole } = require("../../middleware/role.middleware");
 
 const router = express.Router();
 
-// --- PARENT LEAVE APPLICATION (STRICTLY RESTRICTED TO PARENT ROLE) ---
+// --- LEAVE APPLICATION (PARENT ONLY) ---
 router.post(
   "/",
   requireAuth,
@@ -23,18 +23,18 @@ router.post(
   handleApplyLeave
 );
 
-// --- FACULTY LEAVE APPROVAL & REJECTION ---
+// --- FACULTY & ADMIN LEAVE APPROVAL & REJECTION ---
 router.patch(
   "/:id/approve",
   requireAuth,
-  requireRole("FACULTY"),
+  requireRole("FACULTY", "ADMIN"),
   validateReviewLeave,
   handleApproveLeave
 );
 router.put(
   "/:id/approve",
   requireAuth,
-  requireRole("FACULTY"),
+  requireRole("FACULTY", "ADMIN"),
   validateReviewLeave,
   handleApproveLeave
 );
@@ -42,14 +42,14 @@ router.put(
 router.patch(
   "/:id/reject",
   requireAuth,
-  requireRole("FACULTY"),
+  requireRole("FACULTY", "ADMIN"),
   validateReviewLeave,
   handleRejectLeave
 );
 router.put(
   "/:id/reject",
   requireAuth,
-  requireRole("FACULTY"),
+  requireRole("FACULTY", "ADMIN"),
   validateReviewLeave,
   handleRejectLeave
 );

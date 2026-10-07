@@ -16,6 +16,9 @@ const classSchema = Joi.object({
   institutionId: Joi.string().hex().length(24).allow(null, "").optional(),
   academicYearId: Joi.string().hex().length(24).required(),
   department: Joi.string().trim().optional(),
+  workingDays: Joi.array()
+    .items(Joi.string().valid("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"))
+    .optional(),
   status: Joi.string().valid("ACTIVE", "INACTIVE").default("ACTIVE"),
 });
 
@@ -28,6 +31,10 @@ const subjectSchema = Joi.object({
   type: Joi.string().valid("THEORY", "PRACTICAL", "BOTH").optional(),
   credits: Joi.number().optional(),
   description: Joi.string().trim().allow(""),
+  classes: Joi.array().items(Joi.string().hex().length(24)).optional(),
+  classIds: Joi.array().items(Joi.string().hex().length(24)).optional(),
+  classId: Joi.string().hex().length(24).allow(null, "").optional(),
+  academicYearId: Joi.string().hex().length(24).allow(null, "").optional(),
   status: Joi.string().valid("ACTIVE", "INACTIVE").default("ACTIVE"),
 }).or("subjectName", "name").or("subjectCode", "code");
 
@@ -39,6 +46,7 @@ const topicItemSchema = Joi.object({
 
 const unitItemSchema = Joi.object({
   unitNumber: Joi.number().optional().allow(null),
+  order: Joi.number().optional().allow(null),
   title: Joi.string().trim().required(),
   topics: Joi.array().items(topicItemSchema).optional(),
   plannedHours: Joi.number().min(0).optional(),
@@ -50,12 +58,14 @@ const unitItemSchema = Joi.object({
 const syllabusSchema = Joi.object({
   kitabName: Joi.string().trim().required(),
   title: Joi.string().trim().allow("").optional(),
+  description: Joi.string().trim().allow("").optional(),
   examType: Joi.string().valid("HALF_YEARLY", "ANNUAL").required(),
   units: Joi.array().items(unitItemSchema).default([]),
   completionPercentage: Joi.number().min(0).max(100).optional(),
   subjectId: Joi.string().hex().length(24).required(),
   classId: Joi.string().hex().length(24).required(),
   academicYearId: Joi.string().hex().length(24).required(),
+  institutionId: Joi.string().hex().length(24).allow(null, "").optional(),
   fileUrl: Joi.string().trim().allow("").optional(),
   fileName: Joi.string().trim().allow("").optional(),
   version: Joi.string().trim().default("1.0"),
@@ -65,12 +75,14 @@ const syllabusSchema = Joi.object({
 const updateSyllabusSchema = Joi.object({
   kitabName: Joi.string().trim().optional(),
   title: Joi.string().trim().allow("").optional(),
+  description: Joi.string().trim().allow("").optional(),
   examType: Joi.string().valid("HALF_YEARLY", "ANNUAL").optional(),
   units: Joi.array().items(unitItemSchema).optional(),
   completionPercentage: Joi.number().min(0).max(100).optional(),
   subjectId: Joi.string().hex().length(24).optional(),
   classId: Joi.string().hex().length(24).optional(),
   academicYearId: Joi.string().hex().length(24).optional(),
+  institutionId: Joi.string().hex().length(24).allow(null, "").optional(),
   fileUrl: Joi.string().trim().allow("").optional(),
   fileName: Joi.string().trim().allow("").optional(),
   version: Joi.string().trim().optional(),

@@ -39,6 +39,12 @@ const classSchema = new mongoose.Schema(
       trim: true,
       default: "General",
     },
+
+    workingDays: {
+      type: [String],
+      enum: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"],
+      default: ["SATURDAY", "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY"],
+    },
   },
   {
     timestamps: true,

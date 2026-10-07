@@ -8,8 +8,12 @@ const seedAdmin = async () => {
   try {
     await connectDB();
 
-    const username = "admin";
-    const password = "Admin@12345";
+    const username = process.env.ADMIN_INITIAL_USERNAME || "admin";
+    const password = process.env.ADMIN_INITIAL_PASSWORD || (process.env.NODE_ENV === "production" ? null : "Admin@12345");
+
+    if (!password) {
+      throw new Error("ADMIN_INITIAL_PASSWORD environment variable is required to seed admin in production.");
+    }
 
     const existingAdmin = await User.findOne({ username });
 
@@ -28,10 +32,7 @@ const seedAdmin = async () => {
       mobile: "0000000000",
     });
 
-    console.log("Admin user created successfully.");
-    console.log("Username:", username);
-    console.log("Password:", password);
-
+    console.log(`Admin user '${username}' created successfully.`);
     process.exit(0);
   } catch (error) {
     console.error("Admin seed failed:", error.message);

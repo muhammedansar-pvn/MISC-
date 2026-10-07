@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["PENDING_SETUP", "ACTIVE", "SUSPENDED", "INVITED", "INACTIVE"],
+      enum: ["PENDING_SETUP", "PENDING_EMAIL_VERIFICATION", "EMAIL_VERIFIED", "ACTIVE", "SUSPENDED", "INVITED", "INACTIVE"],
     },
 
     department: {

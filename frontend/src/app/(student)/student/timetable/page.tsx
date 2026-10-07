@@ -19,12 +19,12 @@ import { getMyTimetable } from '@/services/timetable.service';
 import { StudentTimetableData, TimetableEntry, DayOfWeek } from '@/types';
 
 const WEEKDAYS: { key: DayOfWeek; label: string; short: string }[] = [
+  { key: 'SATURDAY', label: 'Saturday', short: 'Sat' },
+  { key: 'SUNDAY', label: 'Sunday', short: 'Sun' },
   { key: 'MONDAY', label: 'Monday', short: 'Mon' },
   { key: 'TUESDAY', label: 'Tuesday', short: 'Tue' },
   { key: 'WEDNESDAY', label: 'Wednesday', short: 'Wed' },
   { key: 'THURSDAY', label: 'Thursday', short: 'Thu' },
-  { key: 'FRIDAY', label: 'Friday', short: 'Fri' },
-  { key: 'SATURDAY', label: 'Saturday', short: 'Sat' },
 ];
 
 const getTodayKey = (): DayOfWeek => {
@@ -39,7 +39,7 @@ const getTodayKey = (): DayOfWeek => {
     5: 'FRIDAY',
     6: 'SATURDAY',
   };
-  return map[dayIndex] || 'MONDAY';
+  return map[dayIndex] || 'SATURDAY';
 };
 
 export default function StudentTimetablePage() {
@@ -47,7 +47,7 @@ export default function StudentTimetablePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [viewMode, setViewMode] = useState<'today' | 'weekly'>('today');
-  const [selectedWeeklyDay, setSelectedWeeklyDay] = useState<DayOfWeek>(getTodayKey() === 'SUNDAY' ? 'MONDAY' : getTodayKey());
+  const [selectedWeeklyDay, setSelectedWeeklyDay] = useState<DayOfWeek>(getTodayKey() === 'FRIDAY' ? 'SATURDAY' : getTodayKey());
 
   const todayKey = getTodayKey();
 
@@ -239,7 +239,7 @@ export default function StudentTimetablePage() {
             </span>
           </div>
 
-          {todayKey === 'SUNDAY' || todayEntries.length === 0 ? (
+          {todayKey === 'FRIDAY' || todayEntries.length === 0 ? (
             <div className="bg-white p-10 rounded-2xl border border-[#E3EAE5] shadow-xs text-center space-y-2">
               <Sparkles className="w-10 h-10 text-emerald-500 mx-auto" />
               <p className="font-bold text-sm text-slate-800">No classes scheduled for today!</p>

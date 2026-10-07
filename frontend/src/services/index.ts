@@ -48,3 +48,6 @@ export { default as activityService } from './activity.service';
 
 export * from './timetable.service';
 export { default as timetableService } from './timetable.service';
+
+export * from './notification.service';
+

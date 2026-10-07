@@ -74,12 +74,19 @@ export default function StudentAcademicsPage() {
   }
 
   const enrolledClass = (profile?.classId as any);
+  const studentClassId = enrolledClass?._id || enrolledClass;
   const institution = (profile?.institutionId as any);
   const activeAcademicYear = academicYears.find((y) => y.isCurrent || y.status === 'ACTIVE') || academicYears[0];
 
+  const classScopedSubjects = subjects.filter((s: any) => {
+    if (!studentClassId) return true;
+    if (!s.classes || s.classes.length === 0) return true;
+    return s.classes.some((c: any) => (c?._id || c) === studentClassId);
+  });
+
   const items: SubjectTeacherItem[] = subjectTeachers.length > 0
     ? subjectTeachers
-    : subjects.map((s) => ({
+    : classScopedSubjects.map((s) => ({
         subjectId: s._id,
         subjectName: s.name || (s as any).subjectName || 'Subject',
         subjectCode: s.code || (s as any).subjectCode || 'SUB',

@@ -28,6 +28,11 @@ const createStudentSchema = Joi.object({
     leadership: Joi.number().min(0).max(100),
   }).optional(),
   parentUserId: Joi.string().hex().length(24).allow(null, "").optional(),
+  parentName: Joi.string().trim().min(2).max(100).allow("", null).optional(),
+  parentEmail: Joi.string().email().lowercase().trim().allow("", null).optional(),
+  parentMobile: Joi.string().trim().allow("", null).optional(),
+  relationship: Joi.string().valid("FATHER", "MOTHER", "GUARDIAN").allow("", null).optional(),
+  relationType: Joi.string().valid("FATHER", "MOTHER", "GUARDIAN").allow("", null).optional(),
 });
 
 const updateStudentSchema = Joi.object({
@@ -91,6 +96,11 @@ const registerStudentSchema = Joi.object({
     leadership: Joi.number().min(0).max(100),
   }).optional(),
   parentUserId: Joi.string().hex().length(24).allow(null, "").optional(),
+  parentName: Joi.string().trim().min(2).max(100).allow("", null).optional(),
+  parentEmail: Joi.string().email().lowercase().trim().allow("", null).optional(),
+  parentMobile: Joi.string().trim().allow("", null).optional(),
+  relationship: Joi.string().valid("FATHER", "MOTHER", "GUARDIAN").allow("", null).optional(),
+  relationType: Joi.string().valid("FATHER", "MOTHER", "GUARDIAN").allow("", null).optional(),
 });
 
 const studentSelfProfileSchema = Joi.object({
@@ -101,20 +111,28 @@ const studentSelfProfileSchema = Joi.object({
   nameArabic: Joi.string().trim().max(100).allow("").optional(),
   placeEnglish: Joi.string().trim().max(100).allow("").optional(),
   placeArabic: Joi.string().trim().max(100).allow("").optional(),
+  dateOfBirth: Joi.date().iso().optional(),
   contactNumber: Joi.string().trim().allow("").optional(),
+  fatherName: Joi.string().trim().min(2).max(100).optional(),
+  motherName: Joi.string().trim().min(2).max(100).optional(),
   photo: Joi.string().trim().allow("").optional(),
 
   // Explicitly reject administrative and academic placement fields
+  registrationNumber: Joi.forbidden().messages({ "any.unknown": "Updating registrationNumber is not permitted for students" }),
+  admissionYear: Joi.forbidden().messages({ "any.unknown": "Updating admissionYear is not permitted for students" }),
   classId: Joi.forbidden().messages({ "any.unknown": "Updating classId is not permitted for students" }),
+  academicYearId: Joi.forbidden().messages({ "any.unknown": "Updating academicYearId is not permitted for students" }),
   institutionId: Joi.forbidden().messages({ "any.unknown": "Updating institutionId is not permitted for students" }),
   mentorId: Joi.forbidden().messages({ "any.unknown": "Updating mentorId is not permitted for students" }),
   disciplineScore: Joi.forbidden().messages({ "any.unknown": "Updating disciplineScore is not permitted for students" }),
   house: Joi.forbidden().messages({ "any.unknown": "Updating house is not permitted for students" }),
   skills: Joi.forbidden().messages({ "any.unknown": "Updating skills is not permitted for students" }),
-  admissionYear: Joi.forbidden().messages({ "any.unknown": "Updating admissionYear is not permitted for students" }),
   parentUserId: Joi.forbidden().messages({ "any.unknown": "Updating parentUserId is not permitted for students" }),
   biometricId: Joi.forbidden().messages({ "any.unknown": "Updating biometricId is not permitted for students" }),
   status: Joi.forbidden().messages({ "any.unknown": "Updating status is not permitted for students" }),
+  role: Joi.forbidden().messages({ "any.unknown": "Updating role is not permitted for students" }),
+  userId: Joi.forbidden().messages({ "any.unknown": "Updating userId is not permitted for students" }),
+  _id: Joi.forbidden().messages({ "any.unknown": "Updating _id is not permitted for students" }),
   isDeleted: Joi.forbidden().messages({ "any.unknown": "Updating isDeleted is not permitted for students" }),
 }).unknown(false);
 

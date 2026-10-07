@@ -14,12 +14,10 @@ export const Header = () => {
 
   return (
     <header
-      className={`${
-        isHome ? 'fixed top-0 left-0 right-0' : 'sticky top-0'
-      } z-50 w-full transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         mobileMenuOpen
           ? 'bg-misc-navy text-white border-b border-white/10'
-          : 'bg-white/95 backdrop-blur-md text-misc-text border-b border-misc-border shadow-xs py-1.5'
+          : 'bg-white/95 backdrop-blur-md text-misc-text border-b border-misc-border shadow-2xs py-2'
       }`}
     >
       <div className="misc-container flex items-center justify-between transition-all duration-300">
