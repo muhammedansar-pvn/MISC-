@@ -276,7 +276,18 @@ const login = async (req, res) => {
       }
     }
 
-    if (requires2FA === true) {
+    // Server-side authoritative 2FA decision:
+    // Privileged administrative accounts enforce 2FA unconditionally; other accounts respect twoFactorEnabled or explicit request
+    const isPrivilegedRole = ["ADMIN", "PRINCIPAL", "HOD"].includes(user.role);
+    const shouldRequire2FA = isPrivilegedRole || user.twoFactorEnabled === true || requires2FA === true;
+
+    if (shouldRequire2FA) {
+      if (!user.email) {
+        return res.status(403).json({
+          success: false,
+          message: "Two-factor authentication is required for your role, but no email address is linked to this account.",
+        });
+      }
       const otpResult = await sendAndStoreOtp(user.email, "LOGIN_2FA", { userId: user._id });
       return res.status(200).json({
         success: true,
