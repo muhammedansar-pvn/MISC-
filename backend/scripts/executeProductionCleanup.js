@@ -3,6 +3,10 @@ const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
 const connectDB = require("../src/config/db");
+const { assertNotProduction } = require("./preventProductionExecution");
+
+// Production Safety Guard: Prevent accidental data wipe on live production databases
+assertNotProduction("executeProductionCleanup");
 
 async function executeCleanup() {
   const manifestPath = path.resolve(__dirname, "cleanup_manifest.json");
