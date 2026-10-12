@@ -36,7 +36,28 @@ router.get("/health", (req, res) => {
 
 const { requireAuth } = require("../middleware/auth.middleware");
 const { requireRole } = require("../middleware/role.middleware");
+const { generateFileAccessToken } = require("../shared/utils/jwt");
+const path = require("path");
 const env = require("../config/env");
+
+// Generate time-limited signed URL for private file access
+router.get("/uploads/signed-url", requireAuth, (req, res) => {
+  const filePath = req.query.file;
+  if (!filePath || typeof filePath !== "string") {
+    return res.status(400).json({ success: false, message: "Query parameter 'file' is required" });
+  }
+  const cleanFilename = path.basename(filePath.trim());
+  const token = generateFileAccessToken(cleanFilename, "1h");
+  return res.status(200).json({
+    success: true,
+    data: {
+      file: cleanFilename,
+      token,
+      signedUrl: `/uploads/${cleanFilename}?token=${token}`,
+      expiresIn: 3600,
+    },
+  });
+});
 
 // Dev/Test Email Endpoint (Restricted to non-production and ADMIN only)
 if (env.NODE_ENV !== "production") {

@@ -6,6 +6,7 @@ const apiRoutes = require("./routes/index");
 const { validateEmailConfig } = require("./config/mail");
 const { notFoundHandler, globalErrorHandler } = require("./middleware/error.middleware");
 const { globalApiLimiter } = require("./middleware/rate-limit.middleware");
+const { servePrivateUploads } = require("./middleware/private-upload.middleware");
 
 const app = express();
 
@@ -26,8 +27,8 @@ app.use(
   })
 );
 
-// Static File Storage Serving (for uploaded files, syllabuses, etc.)
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+// Protected Private File Storage Serving (requires authentication or signed URL)
+app.use("/uploads", servePrivateUploads);
 
 // Initialize & Validate Email Config
 validateEmailConfig();

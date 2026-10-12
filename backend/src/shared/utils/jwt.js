@@ -9,7 +9,17 @@ const verifyToken = (token) => {
   return jwt.verify(token, env.JWT_SECRET);
 };
 
+const generateFileAccessToken = (filename, expiresIn = "1h") => {
+  return jwt.sign({ file: filename, purpose: "FILE_ACCESS" }, env.JWT_SECRET, { expiresIn });
+};
+
+const verifyFileAccessToken = (token) => {
+  return jwt.verify(token, env.JWT_SECRET);
+};
+
 module.exports = {
   generateToken,
   verifyToken,
+  generateFileAccessToken,
+  verifyFileAccessToken,
 };
