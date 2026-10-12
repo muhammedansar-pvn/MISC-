@@ -140,6 +140,12 @@ const createExamPaymentOrder = async ({ examRegistrationId }, reqUser) => {
     .slice(0, 40);
 
   // 6. Attempt Razorpay Order Creation via official REST API
+  if (env.NODE_ENV === "production" && (!env.RAZORPAY_KEY_ID || !env.RAZORPAY_KEY_SECRET)) {
+    const error = new Error("Payment gateway configuration missing: RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET must be configured in production");
+    error.statusCode = 500;
+    throw error;
+  }
+
   let gatewayOrderId = null;
   if (env.RAZORPAY_KEY_ID && env.RAZORPAY_KEY_SECRET) {
     try {
@@ -168,12 +174,17 @@ const createExamPaymentOrder = async ({ examRegistrationId }, reqUser) => {
         gatewayOrderId = rzpData.id;
       }
     } catch (netErr) {
-      // Gateway network error fallback to sandbox order
+      // Gateway network error
     }
   }
 
   if (!gatewayOrderId) {
-    // Reliable Sandbox / Test Environment Fallback
+    if (env.NODE_ENV === "production") {
+      const error = new Error("Payment gateway unavailable: Failed to initialize order with Razorpay");
+      error.statusCode = 502;
+      throw error;
+    }
+    // Sandbox / Test Environment Fallback for local development only
     gatewayOrderId = `order_sbx_${Date.now()}_${crypto.randomBytes(6).toString("hex")}`;
   }
 
@@ -206,7 +217,7 @@ const createExamPaymentOrder = async ({ examRegistrationId }, reqUser) => {
     gatewayOrderId,
     transactionId: payment.transactionId,
     paymentId: payment._id,
-    keyId: env.RAZORPAY_KEY_ID || "rzp_test_T2CUQ6SUgQAvux",
+    keyId: env.RAZORPAY_KEY_ID || "",
     amount: feeAmount,
     amountInPaise,
     currency: "INR",
@@ -453,9 +464,9 @@ const verifyAndProcessPayment = async (data, reqUser) => {
  * Production-Safe Razorpay Webhook Handler
  */
 const processRazorpayWebhook = async (rawBody, signature) => {
-  const webhookSecret = env.RAZORPAY_WEBHOOK_SECRET || env.RAZORPAY_KEY_SECRET;
+  const webhookSecret = env.RAZORPAY_WEBHOOK_SECRET || (env.NODE_ENV === "production" ? null : env.RAZORPAY_KEY_SECRET);
   if (!webhookSecret) {
-    const error = new Error("Payment webhook secret is not configured on the server");
+    const error = new Error("Payment webhook secret (RAZORPAY_WEBHOOK_SECRET) is not configured on the server");
     error.statusCode = 500;
     throw error;
   }

@@ -2,20 +2,23 @@ const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 require("dotenv").config();
 
-const DEV_DEFAULT_JWT_SECRET = "default_jwt_secret_dev_key";
+const isProduction = process.env.NODE_ENV === "production";
 
-if (
-  process.env.NODE_ENV === "production" &&
-  (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim() === "" || process.env.JWT_SECRET === DEV_DEFAULT_JWT_SECRET)
-) {
-  throw new Error("FATAL: JWT_SECRET must be explicitly set to a secure string in production and cannot equal the dev default.");
+// Fail-fast validation for mandatory production secrets
+if (isProduction) {
+  if (!process.env.JWT_SECRET || process.env.JWT_SECRET.trim().length < 32) {
+    throw new Error("FATAL: JWT_SECRET must be set to a secure string of at least 32 characters in production.");
+  }
+  if (!process.env.MONGODB_URI || process.env.MONGODB_URI.trim() === "") {
+    throw new Error("FATAL: MONGODB_URI must be explicitly set in production.");
+  }
 }
 
 const env = {
   NODE_ENV: process.env.NODE_ENV || "development",
   PORT: parseInt(process.env.PORT || "5000", 10),
   MONGODB_URI: process.env.MONGODB_URI || "mongodb://localhost:27017/misc",
-  JWT_SECRET: process.env.JWT_SECRET || DEV_DEFAULT_JWT_SECRET,
+  JWT_SECRET: process.env.JWT_SECRET || (isProduction ? "" : "dev_jwt_secret_insecure_local_only"),
   APP_URL: process.env.APP_URL || "http://localhost:3000",
   SETUP_BASE_URL: process.env.SETUP_BASE_URL || "http://localhost:3000/account-setup",
   
@@ -28,10 +31,10 @@ const env = {
   SMTP_FROM_NAME: process.env.SMTP_FROM_NAME || "MISC",
   SMTP_FROM_EMAIL: process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || "no-reply@misc.edu",
 
-  // Payment Gateways (Strict production isolation)
-  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || (process.env.NODE_ENV === "production" ? "" : "rzp_test_T2CUQ6SUgQAvux"),
-  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || (process.env.NODE_ENV === "production" ? "" : "8uMFk50wA5kUolX0CNkNSiAB"),
-  RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET || process.env.RAZORPAY_KEY_SECRET || (process.env.NODE_ENV === "production" ? "" : "8uMFk50wA5kUolX0CNkNSiAB"),
+  // Payment Gateways (Strict production isolation - zero hardcoded fallback credentials)
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || "",
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || "",
+  RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET || "",
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
 };
 
