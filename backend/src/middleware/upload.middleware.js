@@ -23,15 +23,16 @@ const storage = multer.diskStorage({
 // Dangerous file extensions to reject (per BE-03)
 const BLOCKED_EXTENSIONS = new Set([
   ".exe", ".sh", ".bat", ".cmd", ".msi", ".php", ".phtml", ".pl", ".py",
-  ".js", ".mjs", ".cjs", ".vbs", ".ps1", ".scr", ".jar", ".dll", ".so", ".bin"
+  ".js", ".mjs", ".cjs", ".vbs", ".ps1", ".scr", ".jar", ".dll", ".so", ".bin",
+  ".svg", ".html", ".htm"
 ]);
 
-// Allowed extensions
+// Allowed extensions (SVG excluded to prevent Stored XSS)
 const ALLOWED_EXTENSIONS = new Set([
   ".pdf", ".doc", ".docx", ".txt", ".rtf", ".odt",
   ".xls", ".xlsx", ".csv", ".ods",
   ".ppt", ".pptx", ".odp",
-  ".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg",
+  ".png", ".jpg", ".jpeg", ".webp", ".gif",
   ".zip", ".rar", ".7z", ".tar", ".gz",
   ".mp3", ".wav", ".mp4", ".webm"
 ]);
@@ -41,6 +42,10 @@ const fileFilter = (req, file, cb) => {
 
   if (BLOCKED_EXTENSIONS.has(ext)) {
     return cb(new Error(`File type ${ext} is blocked for security reasons.`));
+  }
+
+  if (file.mimetype === "image/svg+xml" || file.mimetype === "text/html") {
+    return cb(new Error("File content type rejected for security reasons."));
   }
 
   if (!ALLOWED_EXTENSIONS.has(ext)) {
