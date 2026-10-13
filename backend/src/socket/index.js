@@ -6,6 +6,7 @@ let io = null;
 
 const allowedOrigins = [
   env.APP_URL,
+  "https://misc-eight-khaki.vercel.app",
   "http://localhost:3000",
   "http://127.0.0.1:3000",
   "http://localhost:3001",
