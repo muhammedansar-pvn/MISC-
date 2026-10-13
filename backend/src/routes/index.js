@@ -40,13 +40,25 @@ const { generateFileAccessToken } = require("../shared/utils/jwt");
 const path = require("path");
 const env = require("../config/env");
 
+const { canAccessUploadedFile } = require("../shared/utils/file-access");
+
 // Generate time-limited signed URL for private file access
-router.get("/uploads/signed-url", requireAuth, (req, res) => {
+router.get("/uploads/signed-url", requireAuth, async (req, res) => {
   const filePath = req.query.file;
   if (!filePath || typeof filePath !== "string") {
     return res.status(400).json({ success: false, message: "Query parameter 'file' is required" });
   }
   const cleanFilename = path.basename(filePath.trim());
+
+  // Enforce domain ownership and role verification
+  const isAllowed = await canAccessUploadedFile(cleanFilename, req.user);
+  if (!isAllowed) {
+    return res.status(403).json({
+      success: false,
+      message: "Forbidden: You do not have permission to access this file",
+    });
+  }
+
   const token = generateFileAccessToken(cleanFilename, "1h");
   return res.status(200).json({
     success: true,
