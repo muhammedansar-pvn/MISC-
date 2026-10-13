@@ -342,7 +342,7 @@ export default function StudentAssignmentsPage() {
                       {sub.submittedFile?.fileName && (
                         <button
                           type="button"
-                          onClick={() => openSecureFile(sub.submittedFile.fileUrl)}
+                          onClick={() => openSecureFile(sub.submittedFile?.fileUrl || '')}
                           className="text-[11px] text-green-700 hover:underline inline-flex items-center mt-1 cursor-pointer"
                         >
                           <ExternalLink className="w-3 h-3 mr-1" /> View My File ({sub.submittedFile.fileName})

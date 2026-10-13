@@ -88,7 +88,7 @@ export async function resolveFileUrl(url?: string): Promise<string> {
 /**
  * Helper to trigger an authenticated, signed download or browser tab navigation.
  */
-export async function openSecureFile(url: string, target = '_blank') {
+export async function openSecureFile(url?: string, target = '_blank') {
   if (!url) return;
   const resolved = await resolveFileUrl(url);
   if (typeof window !== 'undefined') {

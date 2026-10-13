@@ -659,7 +659,7 @@ export default function FacultyAssignmentsPage() {
                             {sub.submittedFile?.fileUrl && (
                               <button
                                 type="button"
-                                onClick={() => openSecureFile(sub.submittedFile.fileUrl)}
+                                onClick={() => openSecureFile(sub.submittedFile?.fileUrl || '')}
                                 className="inline-flex items-center px-3 py-1.5 rounded-lg bg-green-50 text-[#23804A] hover:bg-green-100 font-semibold text-xs border border-green-200 transition-all cursor-pointer"
                               >
                                 <ExternalLink className="w-3.5 h-3.5 mr-1" /> View File ({sub.submittedFile.fileName})
