@@ -3,10 +3,36 @@ import { AuthUser } from '@/types';
 const TOKEN_KEY = 'misc_auth_token';
 const USER_KEY = 'misc_auth_user';
 
+export const isTokenExpired = (token: string): boolean => {
+  if (!token) return true;
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return true;
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    const payload = JSON.parse(jsonPayload);
+    if (!payload.exp) return false;
+    return Date.now() >= payload.exp * 1000 - 10000;
+  } catch {
+    return true;
+  }
+};
+
 export const getToken = (): string | null => {
   if (typeof window === 'undefined') return null;
   try {
-    return localStorage.getItem(TOKEN_KEY);
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) return null;
+    if (isTokenExpired(token)) {
+      clearAuthStorage();
+      return null;
+    }
+    return token;
   } catch {
     return null;
   }

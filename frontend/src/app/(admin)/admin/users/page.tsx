@@ -38,7 +38,7 @@ import UserPasswordResetModal from '@/components/admin/UserPasswordResetModal';
 import { getUsers, getDashboardStats, updateUserStatus } from '@/services/admin.service';
 import { User, DashboardStats } from '@/types';
 
-export default function AdminUsersPage() {
+export default function Vision() {
   const [users, setUsers] = useState<User[]>([]);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ export default function AdminUsersPage() {
   const [roleFilter, setRoleFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('table');
-
+   const [sortOrder,setSortOrder]= useState <'asc' | 'desc '>('asc')
   // Frontend Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 12;
@@ -141,7 +141,7 @@ export default function AdminUsersPage() {
 
   // Memoized Filtered Users
   const filteredUsers = useMemo(() => {
-    return users.filter((u) => {
+    const filtered= users.filter((u) => {
       // 1. Search Query
       if (search.trim()) {
         const q = search.trim().toLowerCase();
@@ -167,6 +167,9 @@ export default function AdminUsersPage() {
 
       return true;
     });
+
+
+    return filtered;
   }, [users, search, roleFilter, statusFilter]);
 
   // Reset page when filter changes

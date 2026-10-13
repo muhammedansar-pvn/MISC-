@@ -214,14 +214,20 @@ export default function AdminFacultyPage() {
 
     setFormLoading(true);
 
+    const payload = {
+      ...formData,
+      institutionId: formData.institutionId ? formData.institutionId : null,
+      joiningYear: formData.joiningYear ? Number(formData.joiningYear) : null,
+    };
+
     try {
       if (editingFaculty) {
-        const response = await updateFaculty(editingFaculty._id, formData);
+        const response = await updateFaculty(editingFaculty._id, payload);
         setNotice(response.data?.requiresEmailVerification
           ? `Faculty profile saved. Verify the new email address at ${response.data.email || formData.email} to complete the change.`
           : 'Faculty profile updated.');
       } else {
-        await createFaculty(formData);
+        await createFaculty(payload);
         setNotice('Faculty profile created.');
       }
       setFormLoading(false);
@@ -485,185 +491,223 @@ export default function AdminFacultyPage() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white max-w-xl w-full rounded-2xl shadow-xl border border-[#E3EAE5] p-6 space-y-4 my-8">
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-lg font-bold text-[#171D19]">
-                {editingFaculty ? 'Edit Faculty Profile' : 'Add Faculty Profile'}
-              </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 cursor-pointer"><X className="w-5 h-5" /></button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white max-w-xl w-full rounded-2xl shadow-xl border border-[#E3EAE5] flex flex-col max-h-[88vh] overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            {/* Modal Header */}
+            <div className="px-5 py-3.5 border-b border-[#E3EAE5] flex items-center justify-between shrink-0 bg-white">
+              <div>
+                <h3 className="text-base font-bold text-[#171D19]">
+                  {editingFaculty ? 'Edit Faculty Profile' : 'Add Faculty Profile'}
+                </h3>
+                <p className="text-[11px] text-slate-500">
+                  {editingFaculty ? 'Update faculty record and academic assignments' : 'Register a new faculty member profile'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer transition-colors"
+                aria-label="Close modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {formError && <div className="p-3 bg-rose-50 border-l-4 border-rose-500 text-rose-700 text-xs rounded font-medium">{formError}</div>}
+            {/* Modal Form */}
+            <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+              <div className="p-4 sm:p-5 overflow-y-auto space-y-3 flex-1 text-xs">
+                {formError && (
+                  <div className="p-2.5 bg-rose-50 border-l-4 border-rose-500 text-rose-700 text-xs rounded-md font-medium">
+                    {formError}
+                  </div>
+                )}
 
-            <form onSubmit={handleSubmit} className="space-y-4 text-sm">
-              {/* Registered User Selection / Preview */}
-              {!editingFaculty ? (
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1 text-slate-700">Select Registered Faculty Account *</label>
-                  {availableUsers.length === 0 ? (
-                    <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-medium">
-                      No available registered faculty users found. Please register a faculty user in User Management first.
+                {/* Registered User Selection */}
+                {!editingFaculty && (
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-1">
+                      Select Registered Faculty Account *
+                    </label>
+                    {availableUsers.length === 0 ? (
+                      <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-medium">
+                        No available registered faculty users found. Please register a faculty user in User Management first.
+                      </div>
+                    ) : (
+                      <select
+                        value={formData.userId}
+                        onChange={(e) => handleUserSelect(e.target.value)}
+                        className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg bg-slate-50 text-slate-800 font-medium focus:outline-none focus:ring-1.5 focus:ring-[#23804A] focus:border-[#23804A] cursor-pointer"
+                        required
+                      >
+                        {availableUsers.map((u) => (
+                          <option key={u._id} value={u._id}>
+                            {u.name} ({u.email}) - Username: {u.username}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                )}
+
+                {/* Read-only Account Info Card */}
+                {selectedUser && (
+                  <div className="p-2.5 bg-[#FBFCFB] rounded-xl border border-[#E3EAE5] space-y-1">
+                    <div className="flex items-center justify-between font-bold text-[#171D19] uppercase tracking-wider text-[11px]">
+                      <span className="flex items-center gap-1.5">
+                        <UserIcon className="w-3.5 h-3.5 text-[#23804A]" /> Linked Account Info
+                      </span>
+                      <span className="px-2 py-0.5 bg-green-100 text-green-800 rounded-full font-bold text-[10px]">
+                        {selectedUser.role}
+                      </span>
                     </div>
-                  ) : (
-                    <select
-                      value={formData.userId}
-                      onChange={(e) => handleUserSelect(e.target.value)}
-                      className="w-full px-3 py-2 border rounded-xl bg-slate-50 text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-[#23804A] cursor-pointer"
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1 text-slate-600 text-xs pt-0.5">
+                      <div><span className="font-semibold text-slate-700">Name:</span> {selectedUser.name}</div>
+                      <div><span className="font-semibold text-slate-700">Email:</span> {selectedUser.email}</div>
+                      <div><span className="font-semibold text-slate-700">Username:</span> {selectedUser.username}</div>
+                      <div><span className="font-semibold text-slate-700">User ID:</span> <span className="font-mono text-[11px]">{selectedUser._id}</span></div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Row 1: Name & Email */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-1">Name *</label>
+                    <input
+                      type="text"
                       required
+                      minLength={2}
+                      value={formData.nameEnglish}
+                      onChange={(e) => setFormData({ ...formData, nameEnglish: e.target.value })}
+                      className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1.5 focus:ring-[#23804A] focus:border-[#23804A] bg-white transition-shadow"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-1">Email</label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      readOnly={!editingFaculty}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1.5 focus:ring-[#23804A] focus:border-[#23804A] read-only:bg-slate-50 read-only:text-slate-500 bg-white transition-shadow"
+                    />
+                    {editingFaculty && <p className="text-[10px] text-slate-500 mt-0.5">Email changes require faculty verification.</p>}
+                  </div>
+                </div>
+
+                {/* Row 2: Employee ID & Designation */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-1">Employee ID (Emp ID) *</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.facultyId}
+                      onChange={(e) => setFormData({ ...formData, facultyId: e.target.value })}
+                      placeholder="FAC-1001"
+                      className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1.5 focus:ring-[#23804A] focus:border-[#23804A] bg-white transition-shadow"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-1">Designation</label>
+                    <input
+                      type="text"
+                      value={formData.designation}
+                      onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+                      placeholder="e.g. Senior Lecturer"
+                      className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1.5 focus:ring-[#23804A] focus:border-[#23804A] bg-white transition-shadow"
+                    />
+                  </div>
+                </div>
+
+                {/* Row 3: Academic Qualification & Islamic Qualification */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-1">Academic Qualification</label>
+                    <input
+                      type="text"
+                      value={formData.academicQualification}
+                      onChange={(e) => setFormData({ ...formData, academicQualification: e.target.value })}
+                      placeholder="e.g. M.A., Ph.D."
+                      className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1.5 focus:ring-[#23804A] focus:border-[#23804A] bg-white transition-shadow"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-1">Islamic Qualification</label>
+                    <input
+                      type="text"
+                      value={formData.islamicQualification}
+                      onChange={(e) => setFormData({ ...formData, islamicQualification: e.target.value })}
+                      placeholder="e.g. Al-Azhar, Fazil"
+                      className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1.5 focus:ring-[#23804A] focus:border-[#23804A] bg-white transition-shadow"
+                    />
+                  </div>
+                </div>
+
+                {/* Row 4: Joining Year & Contact Number */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-1">Joining Year</label>
+                    <input
+                      type="number"
+                      min="1950"
+                      max="2100"
+                      value={formData.joiningYear}
+                      onChange={(e) => setFormData({ ...formData, joiningYear: parseInt(e.target.value, 10) || '' })}
+                      className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1.5 focus:ring-[#23804A] focus:border-[#23804A] bg-white transition-shadow"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-1">Contact Number</label>
+                    <input
+                      type="text"
+                      value={formData.contactNumber}
+                      onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
+                      placeholder="+91 9876543210"
+                      className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1.5 focus:ring-[#23804A] focus:border-[#23804A] bg-white transition-shadow"
+                    />
+                  </div>
+                </div>
+
+                {/* Row 5: Department & Institution */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-1">Department</label>
+                    <input
+                      type="text"
+                      value={formData.department}
+                      onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                      placeholder="e.g. Arabic"
+                      className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1.5 focus:ring-[#23804A] focus:border-[#23804A] bg-white transition-shadow"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-1">Institution</label>
+                    <select
+                      value={formData.institutionId}
+                      onChange={(e) => setFormData({ ...formData, institutionId: e.target.value })}
+                      className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1.5 focus:ring-[#23804A] focus:border-[#23804A] bg-white cursor-pointer transition-shadow"
                     >
-                      {availableUsers.map((u) => (
-                        <option key={u._id} value={u._id}>
-                          {u.name} ({u.email}) - Username: {u.username}
-                        </option>
-                      ))}
+                      <option value="">-- Select Institution --</option>
+                      {institutions.map((i) => <option key={i._id} value={i._id}>{i.institutionName || i.name}</option>)}
                     </select>
-                  )}
-                </div>
-              ) : null}
-
-              {/* Read-only Account Info Card */}
-              {selectedUser && (
-                <div className="p-3 bg-[#FBFCFB] rounded-xl border border-[#E3EAE5] space-y-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-[#171D19] uppercase tracking-wider">
-                    <span className="flex items-center gap-1.5"><UserIcon className="w-3.5 h-3.5 text-[#23804A]" /> Linked Account Info</span>
-                    <span className="px-2 py-0.5 bg-green-100 text-green-800 rounded-full font-bold text-[10px]">{selectedUser.role}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 pt-1">
-                    <div><span className="font-semibold text-slate-700">Name:</span> {selectedUser.name}</div>
-                    <div><span className="font-semibold text-slate-700">Email:</span> {selectedUser.email}</div>
-                    <div><span className="font-semibold text-slate-700">Username:</span> {selectedUser.username}</div>
-                    <div><span className="font-semibold text-slate-700">User ID:</span> <span className="font-mono text-[11px]">{selectedUser._id}</span></div>
                   </div>
                 </div>
-              )}
-
-              {/* Profile Specific Fields */}
-              <div className="grid grid-cols-2 gap-4 pt-1">
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1 text-slate-700">Name *</label>
-                  <input
-                    type="text"
-                    required
-                    minLength={2}
-                    value={formData.nameEnglish}
-                    onChange={(e) => setFormData({ ...formData, nameEnglish: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1 text-slate-700">Email</label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    readOnly={!editingFaculty}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] read-only:bg-slate-50 read-only:text-slate-500"
-                  />
-                  {editingFaculty && <p className="text-[11px] text-slate-500 mt-1">Email changes are saved as pending until verified by the faculty member.</p>}
-                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-1">
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1 text-slate-700">Employee ID (Emp ID) *</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.facultyId}
-                    onChange={(e) => setFormData({ ...formData, facultyId: e.target.value })}
-                    placeholder="FAC-1001"
-                    className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1 text-slate-700">Designation</label>
-                  <input
-                    type="text"
-                    value={formData.designation}
-                    onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                    placeholder="e.g. Senior Lecturer"
-                    className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1 text-slate-700">Academic Qualification</label>
-                  <input
-                    type="text"
-                    value={formData.academicQualification}
-                    onChange={(e) => setFormData({ ...formData, academicQualification: e.target.value })}
-                    placeholder="e.g. M.A., Ph.D."
-                    className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1 text-slate-700">Islamic Qualification</label>
-                  <input
-                    type="text"
-                    value={formData.islamicQualification}
-                    onChange={(e) => setFormData({ ...formData, islamicQualification: e.target.value })}
-                    placeholder="e.g. Al-Azhar, Fazil"
-                    className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1 text-slate-700">Joining Year</label>
-                  <input
-                    type="number"
-                    min="1950"
-                    max="2100"
-                    value={formData.joiningYear}
-                    onChange={(e) => setFormData({ ...formData, joiningYear: parseInt(e.target.value, 10) || '' })}
-                    className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase mb-1 text-slate-700">Contact Number</label>
-                  <input
-                    type="text"
-                    value={formData.contactNumber}
-                    onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
-                    placeholder="+91 9876543210"
-                    className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase mb-1 text-slate-700">Department</label>
-                <input
-                  type="text"
-                  value={formData.department}
-                  onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                  placeholder="e.g. Arabic"
-                  className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase mb-1 text-slate-700">Institution</label>
-                <select
-                  value={formData.institutionId}
-                  onChange={(e) => setFormData({ ...formData, institutionId: e.target.value })}
-                  className="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#23804A] cursor-pointer"
+              {/* Modal Footer */}
+              <div className="px-5 py-3 border-t border-[#E3EAE5] flex items-center justify-end gap-2.5 shrink-0 bg-slate-50/70">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-3.5 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-white hover:border-slate-300 transition-colors cursor-pointer"
                 >
-                  <option value="">-- Select Institution --</option>
-                  {institutions.map((i) => <option key={i._id} value={i._id}>{i.institutionName || i.name}</option>)}
-                </select>
-              </div>
-
-              <div className="flex justify-end space-x-3 pt-3 border-t">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 border rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer">Cancel</button>
+                  Cancel
+                </button>
                 <button
                   type="submit"
                   disabled={formLoading || (!editingFaculty && availableUsers.length === 0)}
-                  className="px-5 py-2 bg-[#23804A] text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#1B6F41] disabled:opacity-50 cursor-pointer"
+                  className="px-4 py-1.5 bg-[#23804A] text-white rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-[#1B6F41] disabled:opacity-50 transition-colors cursor-pointer shadow-sm shadow-[#23804A]/20"
                 >
                   {formLoading ? 'Saving...' : editingFaculty ? 'Update Profile' : 'Save Profile'}
                 </button>

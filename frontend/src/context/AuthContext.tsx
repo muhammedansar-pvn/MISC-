@@ -117,7 +117,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await apiLogin({ username, password });
       setLoading(false);
-
+console.log(response,"login response")
       if (response.success && response.requires2FA) {
         return {
           success: false,
@@ -125,6 +125,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           verificationId: response.verificationId,
           email: response.email,
           message: response.message,
+
         };
       }
 

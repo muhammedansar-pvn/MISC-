@@ -46,6 +46,10 @@ export default function AdminDashboardPage() {
         setRecentUsers((usersRes.data || []).slice(0, 5));
       }
     } catch (err: any) {
+      if (err.response?.status === 401) {
+        // Session expired or unauthenticated; handled by auth interceptor and login redirect
+        return;
+      }
       console.error('Failed to load dashboard data:', err);
       setError('Unable to load dashboard statistics. Please check server connection.');
     } finally {

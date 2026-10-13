@@ -1,5 +1,6 @@
 const FacultyProfile = require("./faculty.model");
 const User = require("../users/user.model");
+require("../institutions/institution.model");
 const { escapeRegex } = require("../../shared/utils/regex");
 const { sendAndStoreOtp, maskEmail } = require("../auth/auth.service");
 const OtpVerification = require("../auth/otp-verification.model");
@@ -31,6 +32,13 @@ const createFaculty = async (facultyData) => {
     const err = new Error("Faculty ID already exists");
     err.statusCode = 409;
     throw err;
+  }
+
+  if ("institutionId" in facultyData && !facultyData.institutionId) {
+    facultyData.institutionId = null;
+  }
+  if ("joiningYear" in facultyData && !facultyData.joiningYear) {
+    facultyData.joiningYear = null;
   }
 
   const createdFaculty = await FacultyProfile.create(facultyData);
@@ -256,7 +264,15 @@ const updateFaculty = async (id, updateData) => {
     "photo", "department", "institutionId", "assignedClasses", "assignedSubjects",
   ];
   for (const key of allowedProfileFields) {
-    if (profileData[key] !== undefined) faculty[key] = profileData[key];
+    if (profileData[key] !== undefined) {
+      if (key === "institutionId") {
+        faculty.institutionId = profileData.institutionId ? profileData.institutionId : null;
+      } else if (key === "joiningYear") {
+        faculty.joiningYear = profileData.joiningYear ? Number(profileData.joiningYear) : null;
+      } else {
+        faculty[key] = profileData[key];
+      }
+    }
   }
   if (nameEnglish !== undefined) {
     faculty.nameEnglish = nameEnglish.trim();

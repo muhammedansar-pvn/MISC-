@@ -33,6 +33,7 @@ function FacultyLeavesContent() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+
   useEffect(() => {
     loadLeaves();
   }, [statusFilter]);

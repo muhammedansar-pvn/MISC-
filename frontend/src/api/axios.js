@@ -34,9 +34,10 @@ apiClient.interceptors.response.use(
 
     if (status === 401 && typeof window !== 'undefined') {
       try {
-        if (getToken()) {
-          clearAuthStorage();
-          window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+        clearAuthStorage();
+        window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+        if (!window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/auth')) {
+          window.location.replace('/login');
         }
       } catch {
         // Ignore storage access errors
