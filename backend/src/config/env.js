@@ -2,6 +2,10 @@ const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 require("dotenv").config();
 
+if (!process.env.NODE_ENV || !process.env.NODE_ENV.trim()) {
+  throw new Error("FATAL: NODE_ENV is not set. It must be explicitly set to 'production', 'development', or 'test'.");
+}
+
 const isProduction = process.env.NODE_ENV === "production";
 
 // Fail-fast validation for mandatory production secrets
