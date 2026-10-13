@@ -26,11 +26,33 @@ const { sendTestEmail } = require("../shared/services/email.service");
 
 const router = express.Router();
 
-// Health Check Endpoint
+const mongoose = require("mongoose");
+
+// Database-Aware Health Check Endpoint
 router.get("/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "MISC Integrated Portal API Server is running",
+  const dbState = mongoose.connection.readyState;
+  const isDbConnected = dbState === 1;
+
+  const states = {
+    0: "disconnected",
+    1: "connected",
+    2: "connecting",
+    3: "disconnecting",
+  };
+
+  const status = isDbConnected ? 200 : 503;
+  return res.status(status).json({
+    success: isDbConnected,
+    status: isDbConnected ? "UP" : "DOWN",
+    message: isDbConnected
+      ? "MISC Integrated Portal API Server is operational"
+      : "Database connection unavailable",
+    timestamp: new Date().toISOString(),
+    database: {
+      status: states[dbState] || "unknown",
+      readyState: dbState,
+    },
+    uptime: process.uptime(),
   });
 });
 

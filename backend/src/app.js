@@ -3,6 +3,7 @@ const path = require("path");
 const helmet = require("helmet");
 const corsMiddleware = require("./config/cors");
 const apiRoutes = require("./routes/index");
+const mongoSanitize = require("express-mongo-sanitize");
 const { validateEmailConfig } = require("./config/mail");
 const { notFoundHandler, globalErrorHandler } = require("./middleware/error.middleware");
 const { globalApiLimiter } = require("./middleware/rate-limit.middleware");
@@ -26,6 +27,9 @@ app.use(
     },
   })
 );
+
+// Prevent NoSQL Injection attacks by stripping MongoDB operators ($ and .) from inputs
+app.use(mongoSanitize());
 
 // Public Uploads Serving (unauthenticated assets like logos, CMS public downloads)
 app.use("/uploads/public", express.static(path.resolve(__dirname, "../uploads/public"), {
