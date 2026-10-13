@@ -23,6 +23,13 @@ const requireAuth = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
     const decoded = verifyToken(token);
 
+    if (decoded && decoded.purpose === "FILE_ACCESS") {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token: File access tokens cannot be used for user session authentication",
+      });
+    }
+
     req.user = decoded;
     req.user.id = decoded.userId; // Ensure req.user.id is consistently populated across controllers
     req.user.userId = decoded.userId;

@@ -42,33 +42,23 @@ const servePrivateUploads = (req, res) => {
   const requestedFilename = path.basename(normalizedPath);
 
   // 3. Cryptographically verify token
-  let authorized = false;
-
-  // Check if token is a dedicated signed file access token
+  // Strictly require dedicated FILE_ACCESS signed token matching requested filename
   try {
     const decodedFile = verifyFileAccessToken(token);
-    if (decodedFile && decodedFile.purpose === "FILE_ACCESS") {
-      if (decodedFile.file === requestedFilename || decodedFile.file === normalizedPath) {
-        authorized = true;
-      }
+    if (!decodedFile || decodedFile.purpose !== "FILE_ACCESS") {
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden: Invalid token purpose. Dedicated file access token required.",
+      });
+    }
+
+    if (decodedFile.file !== requestedFilename && decodedFile.file !== normalizedPath) {
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden: Token is not valid for the requested file",
+      });
     }
   } catch (err) {
-    // Fall through to test if it's an authenticated session JWT
-  }
-
-  // If not a signed file token, check if it's a valid user session token
-  if (!authorized) {
-    try {
-      const decodedUser = verifyToken(token);
-      if (decodedUser && (decodedUser.userId || decodedUser.id)) {
-        authorized = true;
-      }
-    } catch (err) {
-      // Invalid user token
-    }
-  }
-
-  if (!authorized) {
     return res.status(401).json({
       success: false,
       message: "Unauthorized: Invalid or expired file access token",
