@@ -23,6 +23,7 @@ import {
   FolderOpen,
   Layers,
 } from 'lucide-react';
+import { openSecureFile } from '@/utils/fileUrl';
 
 export default function FacultyResourcesPage() {
   const [activeTab, setActiveTab] = useState<'study-materials' | 'guidelines'>('study-materials');
@@ -330,14 +331,13 @@ export default function FacultyResourcesPage() {
                     <span className="text-[11px] text-slate-400">
                       {new Date(mat.createdAt).toLocaleDateString('en-GB')}
                     </span>
-                    <a
-                      href={mat.fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#23804A] text-white text-xs font-semibold hover:bg-[#1B6F41] transition-all shadow-2xs"
+                    <button
+                      type="button"
+                      onClick={() => openSecureFile(mat.fileUrl)}
+                      className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#23804A] text-white text-xs font-semibold hover:bg-[#1B6F41] transition-all shadow-2xs cursor-pointer"
                     >
                       <Download className="w-3.5 h-3.5 mr-1" /> Download
-                    </a>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -391,14 +391,13 @@ export default function FacultyResourcesPage() {
                   )}
                   <div className="pt-2 border-t border-slate-100 text-right">
                     {res.fileUrl && (
-                      <a
-                        href={res.fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center px-3 py-1.5 rounded-lg bg-green-50 text-[#23804A] hover:bg-green-100 text-xs font-semibold border border-green-200 transition-all"
+                      <button
+                        type="button"
+                        onClick={() => openSecureFile(res.fileUrl)}
+                        className="inline-flex items-center px-3 py-1.5 rounded-lg bg-green-50 text-[#23804A] hover:bg-green-100 text-xs font-semibold border border-green-200 transition-all cursor-pointer"
                       >
                         <Download className="w-3.5 h-3.5 mr-1" /> Download
-                      </a>
+                      </button>
                     )}
                   </div>
                 </div>

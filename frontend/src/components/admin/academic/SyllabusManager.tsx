@@ -34,7 +34,7 @@ import {
   uploadSyllabusFile,
 } from '@/services/academic.service';
 import { AcademicYear, ClassModel, Subject, Syllabus, SyllabusExamType, SyllabusUnit } from '@/types';
-import { getFileUrl } from '@/utils/fileUrl';
+import { getFileUrl, openSecureFile } from '@/utils/fileUrl';
 
 interface SyllabusManagerProps {
   standalone?: boolean;
@@ -664,16 +664,15 @@ export default function SyllabusManager({
                         </td>
                         <td className="px-5 py-4">
                           {syl.fileUrl ? (
-                            <a
-                              href={resolvedFileUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center text-xs font-semibold text-[#23804A] hover:text-[#1B6F41] hover:underline gap-1.5 max-w-[130px] truncate"
+                            <button
+                              type="button"
+                              onClick={() => openSecureFile(syl.fileUrl)}
+                              className="inline-flex items-center text-xs font-semibold text-[#23804A] hover:text-[#1B6F41] hover:underline gap-1.5 max-w-[130px] truncate cursor-pointer"
                               title={syl.fileName || 'View uploaded document'}
                             >
                               <Paperclip className="w-3.5 h-3.5 shrink-0" />
                               <span className="truncate">{syl.fileName || 'View File'}</span>
-                            </a>
+                            </button>
                           ) : (
                             <span className="text-xs text-slate-400">No file</span>
                           )}
@@ -908,14 +907,13 @@ export default function SyllabusManager({
                         <p className="text-xs font-semibold text-slate-800 truncate">
                           {formData.fileName || 'Uploaded Syllabus File'}
                         </p>
-                        <a
-                          href={getFileUrl(formData.fileUrl)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[11px] text-[#23804A] hover:underline inline-flex items-center gap-1"
+                        <button
+                          type="button"
+                          onClick={() => openSecureFile(formData.fileUrl)}
+                          className="text-[11px] text-[#23804A] hover:underline inline-flex items-center gap-1 cursor-pointer"
                         >
                           <ExternalLink className="w-3 h-3" /> View / Download
-                        </a>
+                        </button>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">

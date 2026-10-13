@@ -26,6 +26,7 @@ import {
   ArrowRight,
   Filter,
 } from 'lucide-react';
+import { openSecureFile } from '@/utils/fileUrl';
 
 export default function StudentAssignmentsPage() {
   const [profile, setProfile] = useState<StudentProfile | null>(null);
@@ -294,16 +295,15 @@ export default function StudentAssignmentsPage() {
                         </span>
                         <div className="flex flex-wrap gap-1.5">
                           {asgn.attachments.map((att, idx) => (
-                            <a
+                            <button
                               key={idx}
-                              href={att.fileUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center px-2 py-1 rounded bg-white border border-slate-200 hover:border-[#23804A] text-[11px] font-medium text-slate-700 transition-all"
+                              type="button"
+                              onClick={() => openSecureFile(att.fileUrl)}
+                              className="inline-flex items-center px-2 py-1 rounded bg-white border border-slate-200 hover:border-[#23804A] text-[11px] font-medium text-slate-700 transition-all cursor-pointer"
                             >
                               <Download className="w-3 h-3 mr-1 text-[#23804A]" />
                               <span className="truncate max-w-[140px]">{att.fileName}</span>
-                            </a>
+                            </button>
                           ))}
                         </div>
                       </div>
@@ -340,14 +340,13 @@ export default function StudentAssignmentsPage() {
                         Submitted on {new Date(sub.submittedAt).toLocaleDateString('en-GB')} at {new Date(sub.submittedAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                       {sub.submittedFile?.fileName && (
-                        <a
-                          href={sub.submittedFile.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[11px] text-green-700 hover:underline inline-flex items-center mt-1"
+                        <button
+                          type="button"
+                          onClick={() => openSecureFile(sub.submittedFile.fileUrl)}
+                          className="text-[11px] text-green-700 hover:underline inline-flex items-center mt-1 cursor-pointer"
                         >
                           <ExternalLink className="w-3 h-3 mr-1" /> View My File ({sub.submittedFile.fileName})
-                        </a>
+                        </button>
                       )}
                     </div>
                   )}

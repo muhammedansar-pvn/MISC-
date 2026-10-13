@@ -19,6 +19,7 @@ import {
   ArrowLeft,
   CheckCircle2,
 } from 'lucide-react';
+import { openSecureFile } from '@/utils/fileUrl';
 
 export default function InstitutionAcademicsPage() {
   const [activeTab, setActiveTab] = useState<'years' | 'classes' | 'subjects' | 'syllabus'>('years');
@@ -317,15 +318,14 @@ export default function InstitutionAcademicsPage() {
                             </td>
                             <td className="p-4 text-right">
                               {syl.fileUrl ? (
-                                <a
-                                  href={syl.fileUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="inline-flex items-center space-x-1 text-[#2F7C7A] hover:underline font-semibold"
+                                <button
+                                  type="button"
+                                  onClick={() => openSecureFile(syl.fileUrl)}
+                                  className="inline-flex items-center space-x-1 text-[#2F7C7A] hover:underline font-semibold cursor-pointer"
                                 >
                                   <span>Download</span>
                                   <ExternalLink className="w-3.5 h-3.5" />
-                                </a>
+                                </button>
                               ) : (
                                 <span className="text-slate-400">Online Only</span>
                               )}

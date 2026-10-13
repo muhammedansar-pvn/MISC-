@@ -12,7 +12,7 @@ import {
   getLinkedParent,
   resendParentVerificationOtp,
 } from '@/services/student.service';
-import { getFileUrl } from '@/utils/fileUrl';
+import { getFileUrl, resolveFileUrl } from '@/utils/fileUrl';
 import { verifyEmailOtp, resendEmailOtp } from '@/services/auth.service';
 import { setUser } from '@/utils/token';
 import { StudentProfile } from '@/types';
@@ -97,6 +97,21 @@ export default function StudentProfilePage() {
   const photoInputRef = useRef<HTMLInputElement | null>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [photoFeedback, setPhotoFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [resolvedPhotoUrl, setResolvedPhotoUrl] = useState<string>('');
+
+  useEffect(() => {
+    let isMounted = true;
+    if (profile?.photo) {
+      resolveFileUrl(profile.photo).then((url) => {
+        if (isMounted) setResolvedPhotoUrl(url);
+      });
+    } else {
+      setResolvedPhotoUrl('');
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [profile?.photo]);
 
   // Profile Edit Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -623,7 +638,7 @@ export default function StudentProfilePage() {
                     <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-to-tr from-[#EAF2EC] to-[#DCEBE0] text-[#23804A] border-2 border-[#D8E5DA] flex items-center justify-center font-bold font-serif text-3xl shrink-0 overflow-hidden shadow-xs relative">
                       {profile.photo ? (
                         <img
-                          src={getFileUrl(profile.photo)}
+                          src={resolvedPhotoUrl || getFileUrl(profile.photo)}
                           alt={profile.nameEnglish || 'Student'}
                           className="w-full h-full object-cover"
                         />

@@ -27,6 +27,14 @@ app.use(
   })
 );
 
+// Public Uploads Serving (unauthenticated assets like logos, CMS public downloads)
+app.use("/uploads/public", express.static(path.resolve(__dirname, "../uploads/public"), {
+  setHeaders: (res) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  },
+}));
+
 // Protected Private File Storage Serving (requires authentication or signed URL)
 app.use("/uploads", servePrivateUploads);
 

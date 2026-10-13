@@ -20,6 +20,7 @@ import {
   Clock,
   CheckSquare,
 } from 'lucide-react';
+import { openSecureFile } from '@/utils/fileUrl';
 
 function FacultySyllabusContent() {
   const searchParams = useSearchParams();
@@ -457,14 +458,13 @@ function FacultySyllabusContent() {
                     {syl.fileUrl && (
                       <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
                         <span className="text-xs text-slate-500">Official Syllabus Document:</span>
-                        <a
-                          href={syl.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-semibold"
+                        <button
+                          type="button"
+                          onClick={() => openSecureFile(syl.fileUrl)}
+                          className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-semibold cursor-pointer"
                         >
                           <FileText className="w-3.5 h-3.5 mr-1.5" /> View Document
-                        </a>
+                        </button>
                       </div>
                     )}
                   </div>

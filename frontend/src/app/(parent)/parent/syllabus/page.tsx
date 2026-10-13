@@ -22,7 +22,7 @@ import {
 import { getParentStudents, getLinkedStudentSyllabus, ParentStudent } from '@/services/parent.service';
 import { getSubjects } from '@/services/academic.service';
 import { Syllabus, Subject } from '@/types';
-import { getFileUrl } from '@/utils/fileUrl';
+import { getFileUrl, openSecureFile } from '@/utils/fileUrl';
 
 function ParentSyllabusContent() {
   const router = useRouter();
@@ -488,15 +488,14 @@ function ParentSyllabusContent() {
                           </div>
                         </div>
 
-                        <a
-                          href={resolvedFileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          type="button"
+                          onClick={() => openSecureFile(syl.fileUrl)}
                           className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-[#23804A] hover:bg-[#1B6F41] text-white text-xs font-bold transition-all shadow-xs gap-1.5 cursor-pointer self-start sm:self-auto"
                         >
                           <Download className="w-3.5 h-3.5" />
                           <span>Download / Open PDF</span>
-                        </a>
+                        </button>
                       </div>
                     )}
                   </div>

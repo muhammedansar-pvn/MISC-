@@ -32,6 +32,7 @@ import {
   Check,
   Edit3,
 } from 'lucide-react';
+import { openSecureFile } from '@/utils/fileUrl';
 
 export default function FacultyAssignmentsPage() {
   const [assignments, setAssignments] = useState<AssignmentItem[]>([]);
@@ -656,14 +657,13 @@ export default function FacultyAssignmentsPage() {
 
                           <div className="flex items-center space-x-2">
                             {sub.submittedFile?.fileUrl && (
-                              <a
-                                href={sub.submittedFile.fileUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center px-3 py-1.5 rounded-lg bg-green-50 text-[#23804A] hover:bg-green-100 font-semibold text-xs border border-green-200 transition-all"
+                              <button
+                                type="button"
+                                onClick={() => openSecureFile(sub.submittedFile.fileUrl)}
+                                className="inline-flex items-center px-3 py-1.5 rounded-lg bg-green-50 text-[#23804A] hover:bg-green-100 font-semibold text-xs border border-green-200 transition-all cursor-pointer"
                               >
                                 <ExternalLink className="w-3.5 h-3.5 mr-1" /> View File ({sub.submittedFile.fileName})
-                              </a>
+                              </button>
                             )}
                             {sub.link && (
                               <a

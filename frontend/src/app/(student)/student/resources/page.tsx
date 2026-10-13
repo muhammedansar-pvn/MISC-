@@ -14,6 +14,7 @@ import {
   FileCheck,
   Tag,
 } from 'lucide-react';
+import { openSecureFile } from '@/utils/fileUrl';
 
 export default function StudentResourcesPage() {
   const [resources, setResources] = useState<DownloadResource[]>([]);
@@ -157,14 +158,13 @@ export default function StudentResourcesPage() {
                   {res.createdAt ? new Date(res.createdAt).toLocaleDateString('en-GB') : 'Verified'}
                 </span>
                 {res.fileUrl ? (
-                  <a
-                    href={res.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#23804A] text-white text-xs font-semibold hover:bg-[#1B6F41] transition-all shadow-2xs"
+                  <button
+                    type="button"
+                    onClick={() => openSecureFile(res.fileUrl)}
+                    className="inline-flex items-center px-3 py-1.5 rounded-lg bg-[#23804A] text-white text-xs font-semibold hover:bg-[#1B6F41] transition-all shadow-2xs cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5 mr-1.5" /> Download
-                  </a>
+                  </button>
                 ) : (
                   <span className="text-xs text-slate-400 italic">Available in Library</span>
                 )}
