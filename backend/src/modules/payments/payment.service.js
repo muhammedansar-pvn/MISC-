@@ -591,7 +591,15 @@ const getPayments = async (filter = {}, pagination = null, reqUser = null) => {
       throw error;
     } else if (reqUser.role === "ADMIN") {
       // Unrestricted
+    } else {
+      const error = new Error("Access denied: Unauthorized role for payment records");
+      error.statusCode = 403;
+      throw error;
     }
+  } else {
+    const error = new Error("Authentication required");
+    error.statusCode = 401;
+    throw error;
   }
 
   const queryBuilder = Payment.find(query)
