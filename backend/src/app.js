@@ -48,17 +48,16 @@ validateEmailConfig();
 
 // Global API Rate Limiter
 app.use("/api", globalApiLimiter);
+app.use(globalApiLimiter);
 
-// Mount Central API Router
+// Mount Central API Router under canonical /api prefix
 app.use("/api", apiRoutes);
 
-// Direct /auth mount for root-level API access compatibility
-const authRoutes = require("./modules/auth/auth.routes");
-app.use("/auth", authRoutes);
+// Direct root-level mount compatibility (handles clients configured without /api, e.g. /auth/*, /admin/*)
+app.use(apiRoutes);
 
 // Catch-all 404 for unknown endpoints
-app.use("/api/*", notFoundHandler);
-app.use("/auth/*", notFoundHandler);
+app.use(notFoundHandler);
 
 // Global Error Handling Middleware
 app.use(globalErrorHandler);

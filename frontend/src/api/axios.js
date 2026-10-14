@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { getToken, clearAuthStorage } from '../utils/token';
 
-const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api';
+const rawBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api';
+const trimmedBaseURL = rawBaseURL.replace(/\/+$/, '');
+const baseURL = trimmedBaseURL.endsWith('/api') ? trimmedBaseURL : `${trimmedBaseURL}/api`;
 
 export const apiClient = axios.create({
   baseURL,
