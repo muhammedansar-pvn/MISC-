@@ -52,8 +52,13 @@ app.use("/api", globalApiLimiter);
 // Mount Central API Router
 app.use("/api", apiRoutes);
 
-// Catch-all 404 for unknown /api/* endpoints
+// Direct /auth mount for root-level API access compatibility
+const authRoutes = require("./modules/auth/auth.routes");
+app.use("/auth", authRoutes);
+
+// Catch-all 404 for unknown endpoints
 app.use("/api/*", notFoundHandler);
+app.use("/auth/*", notFoundHandler);
 
 // Global Error Handling Middleware
 app.use(globalErrorHandler);
