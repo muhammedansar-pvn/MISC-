@@ -25,6 +25,7 @@ const env = {
   JWT_SECRET: process.env.JWT_SECRET || (isProduction ? "" : "dev_jwt_secret_insecure_local_only"),
   APP_URL: process.env.APP_URL || "http://localhost:3000",
   SETUP_BASE_URL: process.env.SETUP_BASE_URL || "http://localhost:3000/account-setup",
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL ? process.env.ADMIN_EMAIL.toLowerCase().trim() : "",
   
   // SMTP Configuration
   SMTP_HOST: process.env.SMTP_HOST || "smtp.gmail.com",

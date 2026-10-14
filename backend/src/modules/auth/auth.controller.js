@@ -286,18 +286,31 @@ const login = async (req, res) => {
     const shouldRequire2FA = isPrivilegedRole || user.twoFactorEnabled === true || requires2FA === true;
 
     if (shouldRequire2FA) {
-      if (!user.email) {
+      // Determine recipient email: user.email -> pendingEmail -> env.ADMIN_EMAIL (for initial admin)
+      let recipientEmail = user.email || user.pendingEmail;
+      if (!recipientEmail && user.role === "ADMIN") {
+        recipientEmail = env.ADMIN_EMAIL || env.SMTP_USER;
+        // If an admin email was configured in environment, persist it to the account
+        if (recipientEmail) {
+          user.email = recipientEmail;
+          user.emailVerified = true;
+          await user.save().catch((err) => console.error("Non-fatal error updating admin email:", err.message));
+        }
+      }
+
+      if (!recipientEmail) {
         return res.status(403).json({
           success: false,
-          message: "Two-factor authentication is required for your role, but no email address is linked to this account.",
+          message: "Two-factor authentication is required for your role, but no email address is linked to this account. Please set ADMIN_EMAIL in your environment variables.",
         });
       }
-      const otpResult = await sendAndStoreOtp(user.email, "LOGIN_2FA", { userId: user._id });
+
+      const otpResult = await sendAndStoreOtp(recipientEmail, "LOGIN_2FA", { userId: user._id });
       return res.status(200).json({
         success: true,
         requires2FA: true,
         verificationId: otpResult.verificationId,
-        email: maskEmail(user.email),
+        email: maskEmail(recipientEmail),
         message: "Credentials verified. A 6-digit 2FA verification code has been sent to your email.",
       });
     }
