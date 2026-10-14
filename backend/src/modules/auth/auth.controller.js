@@ -282,27 +282,22 @@ const login = async (req, res) => {
     }
 
     // Server-side authoritative 2FA decision:
-    // Privileged administrative accounts enforce 2FA unconditionally; other accounts respect twoFactorEnabled or explicit request
-    const isPrivilegedRole = ["ADMIN", "PRINCIPAL", "HOD"].includes(user.role);
-    const shouldRequire2FA = isPrivilegedRole || user.twoFactorEnabled === true || requires2FA === true;
+    // ADMIN role logs in directly with username/password without 2FA or email OTP.
+    // Privileged institutional roles (PRINCIPAL, HOD) enforce 2FA unconditionally;
+    // other accounts respect twoFactorEnabled or explicit request.
+    const isPrivileged2FARole = ["PRINCIPAL", "HOD"].includes(user.role);
+    const shouldRequire2FA =
+      user.role !== "ADMIN" &&
+      (isPrivileged2FARole || user.twoFactorEnabled === true || requires2FA === true);
 
     if (shouldRequire2FA) {
-      // Determine recipient email: user.email -> pendingEmail -> env.ADMIN_EMAIL (for initial admin)
-      let recipientEmail = user.email || user.pendingEmail;
-      if (!recipientEmail && user.role === "ADMIN") {
-        recipientEmail = env.ADMIN_EMAIL || env.SMTP_USER;
-        // If an admin email was configured in environment, persist it to the account
-        if (recipientEmail) {
-          user.email = recipientEmail;
-          user.emailVerified = true;
-          await user.save().catch((err) => console.error("Non-fatal error updating admin email:", err.message));
-        }
-      }
+      // Determine recipient email: user.email -> pendingEmail
+      const recipientEmail = user.email || user.pendingEmail;
 
       if (!recipientEmail) {
         return res.status(403).json({
           success: false,
-          message: "Two-factor authentication is required for your role, but no email address is linked to this account. Please set ADMIN_EMAIL in your environment variables.",
+          message: "Two-factor authentication is required for your role, but no email address is linked to this account.",
         });
       }
 
@@ -314,6 +309,13 @@ const login = async (req, res) => {
         email: maskEmail(recipientEmail),
         message: "Credentials verified. A 6-digit 2FA verification code has been sent to your email.",
       });
+    }
+
+    // For ADMIN accounts without an explicit email in DB, fallback to environment-configured email if present
+    if (user.role === "ADMIN" && !user.email && (env.ADMIN_EMAIL || env.SMTP_USER)) {
+      user.email = env.ADMIN_EMAIL || env.SMTP_USER;
+      user.emailVerified = true;
+      await user.save().catch((err) => console.error("Non-fatal error updating admin email:", err.message));
     }
 
     const token = generateToken({
