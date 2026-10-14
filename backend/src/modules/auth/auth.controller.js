@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const env = require("../../config/env");
 const User = require("../users/user.model");
 const AccountSetupToken = require("./account-setup-token.model");
 const PasswordResetToken = require("./password-reset-token.model");
