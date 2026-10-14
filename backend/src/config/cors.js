@@ -4,6 +4,7 @@ const env = require("./env");
 const allowedOrigins = [
   env.APP_URL,
   "https://misc-eight-khaki.vercel.app",
+  "https://misc-a4b7aix7s-muhammedansar-pvns-projects.vercel.app",
   "http://localhost:3000",
   "http://127.0.0.1:3000",
   "http://localhost:3001",

@@ -19,6 +19,7 @@ app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
 // Global Middleware
 app.use(corsMiddleware);
+app.options("*", corsMiddleware);
 app.use(
   express.json({
     limit: "25mb",
