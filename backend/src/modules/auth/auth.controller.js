@@ -234,6 +234,7 @@ const login = async (req, res) => {
     }).select("+passwordHash");
 
     if (!user || user.isDeleted === true) {
+      console.log(`[AUTH-DIAGNOSTIC] User lookup failed for identifier. Found: ${Boolean(user)}, isDeleted: ${user?.isDeleted}`);
       return res.status(401).json({ success: false, message: "Invalid username or password" });
     }
 
@@ -245,10 +246,13 @@ const login = async (req, res) => {
     }
 
     if (!user.passwordHash) {
+      console.log(`[AUTH-DIAGNOSTIC] User found (${user.role}), but passwordHash field is missing/empty.`);
       return res.status(403).json({ success: false, message: "Account setup is not completed" });
     }
 
     const isPasswordValid = await comparePassword(password, user.passwordHash);
+    console.log(`[AUTH-DIAGNOSTIC] User found (${user.role}, status: ${user.status}, verified: ${user.emailVerified}). Password match: ${isPasswordValid}`);
+
     if (!isPasswordValid) {
       return res.status(401).json({ success: false, message: "Invalid username or password" });
     }
