@@ -8,10 +8,11 @@ import InstitutionDirectoryNotice from '@/components/institutions/InstitutionDir
 import InstitutionsCTA from '@/components/institutions/InstitutionsCTA';
 
 export const metadata: Metadata = {
-  title: 'Institutions - Markaz Integrated Studies Council',
+  title: 'Affiliated Institutions | Markaz Sanaviyya Academy · Jamia Markaz',
   description:
-    'Discover direct and collaborating institutions under the academic coordination of MISC.',
+    'Discover direct and collaborating educational centres under the academic coordination of Markaz Sanaviyya Academy.',
 };
+
 
 export default function InstitutionsPage() {
   return (

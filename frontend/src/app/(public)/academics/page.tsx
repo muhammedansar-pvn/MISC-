@@ -9,10 +9,11 @@ import AdmissionsOverview from '@/components/academics/AdmissionsOverview';
 import AcademicsCTA from '@/components/academics/AcademicsCTA';
 
 export const metadata: Metadata = {
-  title: 'Academics - Markaz Integrated Studies Council',
+  title: 'Academics | Markaz Sanaviyya Academy · Jamia Markaz',
   description:
-    'Explore the integrated educational programmes, curriculum structure, and academic pillars of MISC.',
+    'Explore the educational philosophy, authentic Islamic scholarship, and academic streams of Markaz Sanaviyya Academy.',
 };
+
 
 export default function AcademicsPage() {
   return (

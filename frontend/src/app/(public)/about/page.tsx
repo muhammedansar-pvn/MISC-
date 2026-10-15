@@ -8,10 +8,11 @@ import InstitutionalCoordination from '@/components/about/InstitutionalCoordinat
 import AboutCTA from '@/components/about/AboutCTA';
 
 export const metadata: Metadata = {
-  title: 'About MISC - Markaz Integrated Studies Council',
+  title: 'About Us | Markaz Sanaviyya Academy · Jamia Markaz',
   description:
-    'Learn about the vision, mission, educational framework, and institutional coordination of Markaz Integrated Studies Council (MISC).',
+    'Learn about Markaz Sanaviyya Academy, our approved mission, vision, educational philosophy, and commitment to Islamic scholarship and leadership.',
 };
+
 
 export default function AboutPage() {
   return (

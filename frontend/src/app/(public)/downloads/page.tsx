@@ -8,10 +8,11 @@ import DownloadsFAQ from '@/components/downloads/DownloadsFAQ';
 import DownloadsCTA from '@/components/downloads/DownloadsCTA';
 
 export const metadata: Metadata = {
-  title: 'Downloads & Resources - Markaz Integrated Studies Council',
+  title: 'Official Downloads & Resources | Markaz Sanaviyya Academy · Jamia Markaz',
   description:
-    'Access official academic syllabuses, guidelines, examination regulations, and resource downloads.',
+    'Access official academic syllabuses, guidelines, examination regulations, and resource downloads of Markaz Sanaviyya Academy.',
 };
+
 
 export default function DownloadsPage() {
   return (

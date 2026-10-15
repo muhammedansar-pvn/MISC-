@@ -7,10 +7,11 @@ import ContactNotice from '@/components/contact/ContactNotice';
 import ContactCTA from '@/components/contact/ContactCTA';
 
 export const metadata: Metadata = {
-  title: 'Contact Us - Markaz Integrated Studies Council',
+  title: 'Contact Secretariat | Markaz Sanaviyya Academy · Jamia Markaz',
   description:
-    'Get in touch with the MISC Secretariat at Jamia Markaz, Karanthur, Kozhikode.',
+    'Get in touch with the Markaz Sanaviyya Academy Secretariat at Jamia Markaz, Karanthur, Kozhikode.',
 };
+
 
 export default function ContactPage() {
   return (

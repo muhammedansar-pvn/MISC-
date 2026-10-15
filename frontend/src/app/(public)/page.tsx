@@ -1,72 +1,60 @@
 import type { Metadata } from 'next';
 import HeroSection from '@/components/home/HeroSection';
-import FeaturedHighlightSection from '@/components/home/FeaturedHighlightSection';
 import AboutSection from '@/components/home/AboutSection';
+import MissionSection from '@/components/home/MissionSection';
+import VisionSection from '@/components/home/VisionSection';
 import AcademicPillars from '@/components/home/AcademicPillars';
-import InstitutionalHighlightsSection from '@/components/home/InstitutionalHighlightsSection';
-import CoreServicesSection from '@/components/home/CoreServicesSection';
-import FeaturedInstitutionSection from '@/components/home/FeaturedInstitutionSection';
-import LatestUpdatesSection from '@/components/home/LatestUpdatesSection';
-import EventsSection from '@/components/home/EventsSection';
+import ChancellorMessageSection from '@/components/home/ChancellorMessageSection';
+import FounderMessageSection from '@/components/home/FounderMessageSection';
+import LibrarySection from '@/components/home/LibrarySection';
 import CampusLifeSection from '@/components/home/CampusLifeSection';
-import ArticlesSection from '@/components/home/ArticlesSection';
 import GallerySection from '@/components/home/GallerySection';
-import ImportantResourcesSection from '@/components/home/ImportantResourcesSection';
 import FinalCTA from '@/components/home/FinalCTA';
 import InstitutionalLogoStrip from '@/components/home/InstitutionalLogoStrip';
 
 export const metadata: Metadata = {
-  title: 'Sanaviyya - Markaz Integrated Studies Council | Jamia Markaz',
+  title: 'Markaz Sanaviyya Academy | Nurturing Knowledge. Inspiring Leadership.',
   description:
-    'Sanaviyya is the premier academic coordination council of Jamia Markaz, Karanthur, integrating classical Islamic scholarship with accredited university degree pathways and moral leadership.',
+    'Official website of Markaz Sanaviyya Academy, Jamia Markaz, Karanthur. Harmonising authentic Islamic scholarship with modern academic excellence, ethical values, and leadership.',
 };
 
 export default function HomePage() {
   return (
-    <div className="w-full bg-misc-page overflow-x-hidden">
-      {/* 1. CINEMATIC EDITORIAL HERO & MINIMAL STAT RAIL */}
+    <div className="w-full bg-white overflow-x-hidden">
+      {/* 1. HERO SECTION: Refined two-column layout with authentic photo & light-blue accents */}
       <HeroSection />
 
-      {/* 2. DYNAMIC FEATURED HIGHLIGHT (APEX GAZETTE & SPOTLIGHT DISPATCHES) */}
-      <FeaturedHighlightSection />
-
-      {/* 3. EDITORIAL INTRODUCTION (01 ABOUT SANAVIYYA & JAMIA MARKAZ) */}
+      {/* 2. ABOUT SECTION: "An Institution Rooted in Knowledge and Purpose" */}
       <AboutSection />
 
-      {/* 4. ACADEMIC PHILOSOPHY (02 SCHOLARSHIP, CHARACTER, EXCELLENCE, LEADERSHIP) */}
+      {/* 3. MISSION SECTION: Approved text, generous whitespace, soft light-blue background */}
+      <MissionSection />
+
+      {/* 4. VISION SECTION: Approved text, visually distinct with academic blue accents */}
+      <VisionSection />
+
+      {/* 5. ACADEMIC IDENTITY & EDUCATIONAL EXPERIENCE: 5 approved themes */}
       <AcademicPillars />
 
-      {/* 5. THE INTEGRATED FRAMEWORK (03 ACADEMIC ECOSYSTEM) */}
-      <InstitutionalHighlightsSection />
+      {/* 6. CHANCELLOR'S MESSAGE: Approved message and verified institutional attribution */}
+      <ChancellorMessageSection />
 
-      {/* 6. PROGRAMMES SHOWCASE (04 SANAVIYYA, MUTHAWWAL, ALIMIYYA & DIPLOMAS) */}
-      <CoreServicesSection />
+      {/* 7. FOUNDER'S MESSAGE: "A Vision for Generations" attributed to Sheikh Abubakar Ahmad */}
+      <FounderMessageSection />
 
-      {/* 7. INSTITUTIONAL FEDERATION (05 JAMIA MARKAZ & AFFILIATED CENTERS) */}
-      <FeaturedInstitutionSection />
+      {/* 8. LIBRARY SECTION: "A Gateway to Knowledge", 500+ Books, Tafseer, Aqeedah, Nahw, Fiqh */}
+      <LibrarySection />
 
-      {/* 8. NEWS & NOTICES (06 EDITORIAL DISPATCHES & CIRCULARS) */}
-      <LatestUpdatesSection />
-
-      {/* 9. ACADEMIC CALENDAR & UPCOMING EVENTS (07 CONVOCATIONS & SYMPOSIUMS) */}
-      <EventsSection />
-
-      {/* 10. STUDENT EXPERIENCE (08 HALAQAS, DEBATES, RESEARCH & COMMUNITY) */}
+      {/* 9. ACTIVITIES & STUDENT LIFE: Halaqas, rhetoric, tarbiyah, and community leadership */}
       <CampusLifeSection />
 
-      {/* 11. SCHOLARLY DISCOURSE & ARTICLES (09 PEER-REVIEWED MONOGRAPHS) */}
-      <ArticlesSection />
-
-      {/* 12. CURATED VISUAL GALLERY (10 ASYMMETRIC CAMPUS MOMENTS) */}
+      {/* 10. GALLERY: Authentic institutional photography and campus moments */}
       <GallerySection />
 
-      {/* 13. OFFICIAL RESOURCES & DOWNLOADS (11 PROSPECTUS & REGULATIONS) */}
-      <ImportantResourcesSection />
-
-      {/* 14. FINAL CLOSING INSTITUTIONAL CTA */}
+      {/* 11. CLOSING INSTITUTIONAL CTA */}
       <FinalCTA />
 
-      {/* 15. JAMIA MARKAZ AFFILIATION STRIP */}
+      {/* 12. AFFILIATION & INSTITUTIONAL STRIP */}
       <InstitutionalLogoStrip />
     </div>
   );

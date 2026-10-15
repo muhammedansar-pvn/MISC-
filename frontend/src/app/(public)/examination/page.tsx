@@ -10,10 +10,11 @@ import ExaminationNotice from '@/components/examination/ExaminationNotice';
 import ExaminationCTA from '@/components/examination/ExaminationCTA';
 
 export const metadata: Metadata = {
-  title: 'Examination Framework - Markaz Integrated Studies Council',
+  title: 'Examination Framework | Markaz Sanaviyya Academy · Jamia Markaz',
   description:
-    'Official examination board policies, schedules, evaluations, and grading standards of MISC.',
+    'Official examination board policies, schedules, evaluations, and grading standards of Markaz Sanaviyya Academy.',
 };
+
 
 export default function ExaminationPage() {
   return (

@@ -14,47 +14,32 @@ export const Header = () => {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        mobileMenuOpen
-          ? 'bg-misc-navy text-white border-b border-white/10'
-          : 'bg-white/95 backdrop-blur-md text-misc-text border-b border-misc-border shadow-2xs py-2'
-      }`}
+      className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md text-[#243447] border-b border-[#DCE8F3] shadow-xs py-2 transition-all duration-300"
     >
       <div className="misc-container flex items-center justify-between transition-all duration-300">
         <Link
           href="/"
           onClick={() => setMobileMenuOpen(false)}
           className="group flex min-w-0 items-center space-x-3.5 pr-3"
-          aria-label="MISC Homepage"
+          aria-label="Markaz Sanaviyya Academy Homepage"
         >
           <img
             src="/logo.png"
-            alt="MISC - Markaz Integrated Studies Council"
-            className="h-10 w-auto shrink-0 rounded-xs bg-white p-0.5 object-contain sm:h-11 lg:h-12"
+            alt="Markaz Sanaviyya Academy"
+            className="h-11 w-auto shrink-0 rounded-xs bg-white p-0.5 object-contain sm:h-12"
           />
           <div className="flex flex-col text-left">
-            <span
-              className={
-                mobileMenuOpen
-                  ? 'font-serif text-lg font-bold leading-none tracking-tight text-white sm:text-xl'
-                  : 'font-serif text-lg font-bold leading-none tracking-tight text-misc-text sm:text-xl'
-              }
-            >
-              SANAVIYYA
+            <span className="font-heading text-base font-bold tracking-tight text-[#173B65] sm:text-lg lg:text-xl">
+              MARKAZ SANAVIYYA ACADEMY
             </span>
-            <span
-              className={
-                mobileMenuOpen
-                  ? 'mt-1 text-[9px] uppercase tracking-[0.2em] text-slate-300 sm:text-[10px]'
-                  : 'mt-1 text-[9px] uppercase tracking-[0.2em] text-misc-muted sm:text-[10px]'
-              }
-            >
-              JAMIA MARKAZ, KARANTHUR
+            <span className="text-[9px] uppercase tracking-[0.2em] font-medium text-[#64748B] sm:text-[10px]">
+              Jamia Markaz · Karanthur
             </span>
           </div>
         </Link>
 
         <DesktopNav />
+
 
         <button
           type="button"

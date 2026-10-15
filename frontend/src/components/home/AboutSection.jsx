@@ -1,83 +1,88 @@
 'use client';
 
 import React from 'react';
-import { useNavigate } from '@/hooks/useNavigate';
-import { ArrowRight, CheckCircle2, ShieldCheck, GraduationCap, Award } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
-const coreHighlights = [
-  'Centralized governance overseeing curriculum standards and faculty credentials',
-  'Dual-track integration of classical Islamic disciplines with university degree pathways',
-  'Autonomous examination board ensuring academic parity and verified certifications',
+const corePillars = [
+  'Harmonising classical Islamic scholarship with contemporary academic development',
+  'Cultivating critical thinking, moral character, and social responsibility',
+  'Empowering students to identify and realize their individual intellectual potential',
 ];
 
 export const AboutSection = () => {
-  const navigate = useNavigate();
-
   return (
-    <section id="about" className="relative border-b border-misc-border bg-white py-14 sm:py-18 lg:py-20 text-misc-text">
+    <section id="about" className="relative border-b border-[#DCE8F3] bg-white py-16 sm:py-20 lg:py-24 text-[#243447]">
       <div className="misc-container">
-        {/* Section Heading & Category */}
-        <div className="mb-4 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-misc-primary">
-          <span className="h-1.5 w-1.5 rounded-full bg-misc-primary" />
-          <span>01 · The Institution</span>
+        {/* Editorial Eyebrow */}
+        <div className="mb-4 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#3182CE]">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#3182CE]" />
+          <span>ABOUT MARKAZ SANAVIYYA</span>
         </div>
 
-        {/* Split Editorial Composition */}
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-14">
-          {/* Left Narrative */}
-          <div className="space-y-5 lg:col-span-6">
-            <h2 className="font-serif text-3xl font-medium leading-[1.18] tracking-tight text-misc-text sm:text-4xl lg:text-[2.65rem]">
-              An Academic Network for Holistic Scholarship, Moral Character &amp; Leadership
+        {/* Two-Column Editorial Layout */}
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-16">
+          {/* Left Column: Narrative */}
+          <div className="space-y-6 lg:col-span-6">
+            <h2 className="font-heading text-2xl font-bold tracking-tight text-[#173B65] sm:text-3xl lg:text-4xl leading-[1.2]">
+              An Institution Rooted in Knowledge and Purpose
             </h2>
 
-            <p className="text-[15px] leading-relaxed text-misc-secondary sm:text-base sm:leading-7">
-              Established under the esteemed governance of Jamia Markaz in Karanthur, the Markaz Integrated Studies Council (MISC) oversees an extensive academic federation of direct institutions and affiliated collegiate centres across South Asia.
+            <p className="text-[15px] leading-relaxed text-[#64748B] sm:text-base sm:leading-7">
+              Markaz Sanaviyya Academy harmonises traditional Islamic scholarship with contemporary academic development. Established under the auspices of Jamia Markaz, the institution is dedicated to nurturing world-class scholars and empowering responsible professionals grounded in deep ethical principles.
             </p>
 
-            <p className="text-sm leading-relaxed text-misc-muted">
-              Through unified curriculum formulation, rigorous faculty empowerment, standardized evaluation protocols, and ongoing quality assurance, Sanaviyya nurtures scholars and professionals equipped for contemporary leadership while remaining firmly anchored in Islamic heritage.
+            <p className="text-sm leading-relaxed text-[#64748B]">
+              Through an integrated educational framework, students are immersed in foundational Islamic tenets alongside modern intellectual disciplines, cultivating the critical insight, moral rectitude, and communicative mastery necessary to address the needs of an evolving global society.
             </p>
 
-            {/* Clean checkmark list instead of repetitive cards */}
-            <ul className="pt-2 space-y-2.5 text-xs sm:text-sm text-misc-secondary">
-              {coreHighlights.map((highlight) => (
-                <li key={highlight} className="flex items-start gap-2.5">
-                  <CheckCircle2 className="h-4 w-4 text-misc-primary shrink-0 mt-0.5" />
-                  <span>{highlight}</span>
+            {/* Key Distinctions */}
+            <ul className="space-y-3 pt-2 text-xs sm:text-sm text-[#243447]">
+              {corePillars.map((pillar) => (
+                <li key={pillar} className="flex items-start gap-3">
+                  <CheckCircle2 className="h-4 w-4 text-[#3182CE] shrink-0 mt-0.5" />
+                  <span className="leading-snug">{pillar}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="pt-3">
-              <button
-                type="button"
-                onClick={() => navigate('/about')}
-                className="group inline-flex min-h-11 items-center gap-2.5 rounded-md bg-misc-primary px-5 py-3 text-xs font-semibold uppercase tracking-wider text-white shadow-xs transition-all hover:bg-misc-primary-dark active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-misc-primary focus-visible:ring-offset-2 sm:text-sm"
+            <div className="pt-2">
+              <Link
+                href="/about"
+                className="group inline-flex items-center gap-2 text-xs sm:text-sm font-bold uppercase tracking-wider text-[#173B65] hover:text-[#3182CE] transition-colors"
               >
-                <span>Discover Sanaviyya</span>
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </button>
+                <span>Learn More About Us</span>
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 text-[#3182CE]" />
+              </Link>
             </div>
           </div>
 
-          {/* Right Supporting Visual with Clean Border and No Negative Margins */}
+          {/* Right Column: Editorial Photograph */}
           <div className="lg:col-span-6">
-            <div className="overflow-hidden rounded-2xl border border-misc-border bg-misc-page p-2 shadow-xs">
-              <div className="relative aspect-[4/3] sm:aspect-[1.3] overflow-hidden rounded-xl bg-slate-100">
-                <img
-                  src="/DSC00390.webp"
-                  alt="Students engaged in scholarly study at Jamia Markaz"
-                  className="h-full w-full object-cover object-center transition-transform duration-700 hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-misc-navy/80 via-transparent to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6 text-white">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/80">
-                    Jamia Markaz · Karanthur, Kozhikode
-                  </p>
-                  <p className="mt-1 font-serif text-base sm:text-lg font-medium text-white">
-                    &ldquo;Knowledge with integrity, scholarship with service.&rdquo;
-                  </p>
+            <div className="relative mx-auto max-w-lg lg:max-w-none">
+              {/* Soft decorative backdrop */}
+              <div
+                aria-hidden="true"
+                className="absolute -inset-3 sm:-inset-4 rounded-3xl bg-[#F5FAFF] border border-[#DCE8F3] transform rotate-1 transition-transform"
+              />
+
+              <div className="relative overflow-hidden rounded-2xl border border-[#DCE8F3] bg-white p-2.5 shadow-sm">
+                <div className="relative aspect-[4/3] sm:aspect-[1.25] overflow-hidden rounded-xl bg-slate-100">
+                  <img
+                    src="/campus.webp"
+                    alt="Campus of Jamia Markaz, Karanthur"
+                    className="h-full w-full object-cover object-center transition-transform duration-700 hover:scale-102"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#173B65]/80 via-transparent to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/80">
+                      Jamia Markaz · Karanthur, Kozhikode
+                    </p>
+                    <p className="mt-1 font-heading text-base font-semibold text-white">
+                      Tradition &amp; Contemporary Excellence in Harmony
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

@@ -3,38 +3,38 @@ import { BookOpen, GraduationCap, ShieldCheck } from 'lucide-react';
 
 const streams = [
   {
-    title: "Islamic Jurisprudence & Sciences",
-    description: "Classical Quranic exegesis, Hadith studies, jurisprudence, Arabic language, and moral theology.",
+    title: "Classical Islamic Sciences",
+    description: "Foundational Quranic exegesis (Tafseer), Hadith textual inquiry, jurisprudence (Fiqh), Arabic grammar (Nahw), and theology (Aqeedah).",
     icon: BookOpen
   },
   {
-    title: "University Disciplines",
-    description: "University humanities, commerce, sciences, and contemporary academic disciplines.",
+    title: "Contemporary Disciplines",
+    description: "Rigorous modern humanities, languages, communication rhetoric, and contemporary academic development.",
     icon: GraduationCap
   },
   {
-    title: "Board Evaluation Framework",
-    description: "Centralized examination, standardized syllabus guidelines, and quality assurance moderation.",
+    title: "Ethical Leadership & Tarbiyah",
+    description: "Spiritual grounding, moral integrity, critical thinking, and proactive social responsibility.",
     icon: ShieldCheck
   }
 ];
 
 export const EducationalFramework = () => {
   return (
-    <section className="relative bg-misc-page py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-misc-border">
+    <section className="relative bg-[#F5FAFF] py-16 sm:py-20 lg:py-24 overflow-hidden border-b border-[#DCE8F3]">
       <div className="relative misc-container z-10">
         <div className="max-w-3xl space-y-4 mb-12">
           <div className="flex items-center space-x-3">
-            <span className="w-8 h-[2px] bg-misc-primary" />
-            <span className="text-xs sm:text-sm font-semibold tracking-widest text-misc-primary uppercase">
+            <span className="w-8 h-[2px] bg-[#3182CE]" />
+            <span className="text-xs sm:text-sm font-semibold tracking-widest text-[#3182CE] uppercase">
               EDUCATIONAL MODEL
             </span>
           </div>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-misc-text">
+          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-[#173B65]">
             Integrated Educational Framework
           </h2>
-          <p className="text-base text-misc-secondary leading-relaxed font-normal">
-            MISC harmonizes traditional Islamic learning with contemporary university education under a single, cohesive academic structure.
+          <p className="text-base text-[#64748B] leading-relaxed font-normal">
+            Markaz Sanaviyya Academy harmonizes traditional Islamic scholarship with contemporary intellectual disciplines under a cohesive academic model.
           </p>
         </div>
 
@@ -44,15 +44,15 @@ export const EducationalFramework = () => {
             return (
               <div
                 key={idx}
-                className="bg-white rounded-md border border-misc-border p-8 shadow-2xs space-y-4"
+                className="bg-white rounded-2xl border border-[#DCE8F3] p-6 sm:p-8 space-y-4 shadow-xs hover:border-[#3182CE]/50 transition-colors"
               >
-                <div className="w-12 h-12 rounded bg-misc-soft-blue text-misc-primary flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-[#EAF5FF] text-[#3182CE] flex items-center justify-center border border-[#DCE8F3]">
                   <Icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-serif text-xl font-bold text-misc-text">
+                <h3 className="font-heading text-lg font-bold text-[#173B65]">
                   {st.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-misc-secondary leading-relaxed font-normal">
+                <p className="text-xs sm:text-sm text-[#64748B] leading-relaxed">
                   {st.description}
                 </p>
               </div>

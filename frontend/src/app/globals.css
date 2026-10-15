@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Manrope:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @source "../components";
@@ -6,60 +6,74 @@
 @source "./";
 
 @theme {
-  --font-serif: 'Cormorant Garamond', 'Noto Naskh Arabic', Georgia, serif;
-  --font-display: 'Cormorant Garamond', 'Noto Naskh Arabic', Georgia, serif;
-  --font-sans: 'Manrope', 'Noto Sans Malayalam', 'Noto Naskh Arabic', system-ui, -apple-system, sans-serif;
-  --color-misc-primary: #2563EB;
-  --color-misc-primary-dark: #1D4ED8;
-  --color-misc-deep-blue: #1E3A8A;
-  --color-misc-blue: #3B82F6;
+  --font-serif: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-arabic: 'Noto Naskh Arabic', serif;
+
+  /* Official Markaz Sanaviyya Palette */
+  --color-brand-light-blue: #EAF5FF;
+  --color-brand-white: #FFFFFF;
+  --color-brand-blue: #3182CE;
+  --color-brand-academic: #173B65;
+  --color-brand-soft-blue: #F5FAFF;
+  --color-brand-text: #243447;
+  --color-brand-secondary: #64748B;
+  --color-brand-border: #DCE8F3;
+
+  /* Backward compatibility aliases */
+  --color-misc-primary: #3182CE;
+  --color-misc-primary-dark: #173B65;
+  --color-misc-deep-blue: #173B65;
+  --color-misc-blue: #3182CE;
   --color-misc-light-accent: #60A5FA;
-  --color-misc-soft-blue: #EFF6FF;
-  --color-misc-light-blue: #DBEAFE;
-  --color-misc-very-light-blue: #F8FBFF;
-  --color-misc-page: #FAFCFF;
-  --color-misc-text: #0F172A;
-  --color-misc-secondary: #475569;
+  --color-misc-soft-blue: #F5FAFF;
+  --color-misc-light-blue: #EAF5FF;
+  --color-misc-very-light-blue: #FFFFFF;
+  --color-misc-page: #FFFFFF;
+  --color-misc-text: #243447;
+  --color-misc-secondary: #64748B;
   --color-misc-muted: #64748B;
-  --color-misc-dark-muted: #CBD5E1;
-  --color-misc-border: #E2E8F0;
-  --color-misc-navy: #0F1F38;
-  --color-misc-navy-card: #132A46;
+  --color-misc-dark-muted: #94A3B8;
+  --color-misc-border: #DCE8F3;
+  --color-misc-navy: #173B65;
+  --color-misc-navy-card: #132E4F;
 }
 
 @layer base {
   :root {
     --misc-bg: #FFFFFF;
-    --misc-bg-subtle: #F7F7F3;
-    --misc-bg-light-blue: #DBEAFE;
-    --misc-bg-soft-blue: #EFF6FF;
-    --misc-charcoal: #132238;
-    --misc-text: #132238;
+    --misc-bg-subtle: #F5FAFF;
+    --misc-bg-light-blue: #EAF5FF;
+    --misc-bg-soft-blue: #F5FAFF;
+    --misc-charcoal: #173B65;
+    --misc-text: #243447;
     --misc-text-muted: #64748B;
-    --misc-blue-accent: #2563EB;
-    --misc-blue-hover: #1D4ED8;
-    --misc-border: #E2E8F0;
-    --misc-border-thin: rgba(15, 23, 42, 0.12);
+    --misc-blue-accent: #3182CE;
+    --misc-blue-hover: #173B65;
+    --misc-border: #DCE8F3;
+    --misc-border-thin: rgba(23, 59, 101, 0.12);
   }
 
   body {
-    background-color: var(--misc-bg-subtle);
-    color: var(--misc-text);
-    font-family: 'Manrope', 'Noto Sans Malayalam', 'Noto Naskh Arabic', system-ui, -apple-system, sans-serif;
+    background-color: #FFFFFF;
+    color: #243447;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
   }
 
   h1, h2, h3, h4, .font-serif, .font-display, .font-serif-heading {
-    font-family: 'Cormorant Garamond', 'Noto Naskh Arabic', Georgia, Cambria, serif;
+    font-family: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
   }
 
   /* Script fallback rules for Malayalam and Arabic */
   [lang="ml"], :lang(ml) {
-    font-family: 'Noto Sans Malayalam', 'Manrope', system-ui, sans-serif;
+    font-family: 'Noto Sans Malayalam', 'Inter', system-ui, sans-serif;
   }
 
   [lang="ar"], :lang(ar), [dir="rtl"] {
-    font-family: 'Noto Naskh Arabic', 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Noto Naskh Arabic', serif;
   }
 }
 
@@ -75,36 +89,33 @@
   }
 }
 
-/* Public Sanaviyya palette. Kept on the public layout so portal colors stay independent. */
+/* Public Sanaviyya palette */
 .sanaviyya-site {
-  --sanaviyya-brand-teal: #2F7C7A;
-  --sanaviyya-brand-teal-hover: #246462;
-  --sanaviyya-deep-navy: #132238;
-  --sanaviyya-navy-card: #1B2D47;
-  --sanaviyya-background: #F8FAFC;
-  --sanaviyya-surface: #FFFFFF;
-  --sanaviyya-soft-teal: #F0F7F6;
-  --sanaviyya-soft-blue: #F0F7F6;
-  --sanaviyya-text-primary: #132238;
-  --sanaviyya-text-secondary: #475569;
-  --sanaviyya-border: #E2E8F0;
+  --sanaviyya-brand-blue: #3182CE;
+  --sanaviyya-deep-academic: #173B65;
+  --sanaviyya-light-blue: #EAF5FF;
+  --sanaviyya-soft-blue: #F5FAFF;
+  --sanaviyya-white: #FFFFFF;
+  --sanaviyya-text-primary: #243447;
+  --sanaviyya-text-secondary: #64748B;
+  --sanaviyya-border: #DCE8F3;
 
-  --color-misc-primary: #2F7C7A;
-  --color-misc-primary-dark: #246462;
-  --color-misc-deep-blue: #132238;
-  --color-misc-blue: #2F7C7A;
-  --color-misc-light-accent: #3E9996;
-  --color-misc-soft-blue: #F0F7F6;
-  --color-misc-light-blue: #E2EFEF;
-  --color-misc-very-light-blue: #F8FAFC;
-  --color-misc-page: #F8FAFC;
-  --color-misc-text: #132238;
-  --color-misc-secondary: #475569;
+  --color-misc-primary: #3182CE;
+  --color-misc-primary-dark: #173B65;
+  --color-misc-deep-blue: #173B65;
+  --color-misc-blue: #3182CE;
+  --color-misc-light-accent: #60A5FA;
+  --color-misc-soft-blue: #F5FAFF;
+  --color-misc-light-blue: #EAF5FF;
+  --color-misc-very-light-blue: #FFFFFF;
+  --color-misc-page: #FFFFFF;
+  --color-misc-text: #243447;
+  --color-misc-secondary: #64748B;
   --color-misc-muted: #64748B;
-  --color-misc-dark-muted: #CBD5E1;
-  --color-misc-border: #E2E8F0;
-  --color-misc-navy: #132238;
-  --color-misc-navy-card: #1A2E49;
+  --color-misc-dark-muted: #94A3B8;
+  --color-misc-border: #DCE8F3;
+  --color-misc-navy: #173B65;
+  --color-misc-navy-card: #132E4F;
 }
 
 /* Green-and-white workspace theme used by the admin, student, and faculty portals. */
@@ -190,3 +201,16 @@
     padding-right: 2.5rem;
   }
 }
+
+/* Subtle Islamic Geometric Accents */
+.bg-islamic-pattern {
+  background-image: radial-gradient(circle at center, rgba(49, 130, 206, 0.05) 1.5px, transparent 1.5px),
+                    radial-gradient(circle at center, rgba(23, 59, 101, 0.03) 1px, transparent 1px);
+  background-size: 28px 28px, 14px 14px;
+  background-position: 0 0, 7px 7px;
+}
+
+.bg-geometric-stars {
+  background-image: url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233182ce' fill-opacity='0.04' fill-rule='evenodd'%3E%3Cpath d='M24 2l3 15 15 3-15 3-3 15-3-15-15-3 15-3z'/%3E%3C/g%3E%3C/svg%3E");
+}
+

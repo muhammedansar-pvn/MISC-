@@ -4,37 +4,37 @@ import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://misc.markaz.in'),
-  title: 'MISC - Markaz Integrated Studies Council',
+  title: 'Markaz Sanaviyya Academy | Jamia Markaz',
   description:
-    'Markaz Integrated Studies Council (MISC) is the academic coordination council of Jamia Markaz, overseeing integrated educational streams, standardized curricula, and board evaluations.',
+    'Markaz Sanaviyya Academy harmonises authentic Islamic scholarship with modern academic excellence, nurturing individuals of faith, knowledge, and noble character.',
   keywords: [
+    'Markaz Sanaviyya Academy',
+    'Sanaviyya',
     'MISC',
-    'Markaz Integrated Studies Council',
     'Jamia Markaz',
+    'Islamic Scholarship',
     'Integrated Education',
-    'Islamic Studies',
-    'Academic Board',
     'Karanthur',
     'Kozhikode',
   ],
-  authors: [{ name: 'Markaz Integrated Studies Council' }],
+  authors: [{ name: 'Markaz Sanaviyya Academy' }],
   icons: {
     icon: '/favicon.svg',
   },
   openGraph: {
-    title: 'MISC - Markaz Integrated Studies Council',
+    title: 'Markaz Sanaviyya Academy | Jamia Markaz',
     description:
-      'Integrating Islamic & Contemporary Education under the central academic management of Jamia Markaz.',
+      'Harmonising authentic Islamic scholarship with modern academic excellence under the central academic management of Jamia Markaz.',
     type: 'website',
     url: 'https://misc.markaz.in',
-    images: [{ url: '/favicon.svg' }],
+    images: [{ url: '/logo.png' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MISC - Markaz Integrated Studies Council',
+    title: 'Markaz Sanaviyya Academy | Jamia Markaz',
     description:
-      'Integrating Islamic & Contemporary Education under the central academic management of Jamia Markaz.',
-    images: ['/favicon.svg'],
+      'Harmonising authentic Islamic scholarship with modern academic excellence under the central academic management of Jamia Markaz.',
+    images: ['/logo.png'],
   },
 };
 
@@ -45,9 +45,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-[#F7F7F3] text-[#132238] antialiased selection:bg-[#2F7C7A]/30 selection:text-[#132238]" suppressHydrationWarning>
+      <body className="bg-white text-[#243447] antialiased selection:bg-[#3182CE]/20 selection:text-[#173B65]" suppressHydrationWarning>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
 }
+
